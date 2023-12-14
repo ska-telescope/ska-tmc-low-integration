@@ -1,0 +1,42 @@
+name: "mccssubarrayleafnode-test"
+function: telescope-monitoring
+domain: general-monitoring
+instances: ["01"]
+entrypoints:
+  - name: "ska_tmc_mccssubarrayleafnode.mccs_subarray_leaf_node.MccsSubarrayLeafNode"
+server:
+  name: "mccs_subarray_leaf_node"
+  instances:
+  {{ $mccs_sa_fqdn_prefix:= .Values.global.mccs_subarray_prefix}} 
+  {{$mccs_master_fqdn := .Values.global.mccs_master }}
+  {{- range  .Values.deviceServers.mccssubarrayleafnode.instances }}
+    - name: "{{ . }}"
+      classes:
+      - name: "MccsSubarrayLeafNode"
+        devices:
+          - name: "ska_low/tm_leaf_node/mccs_subarray{{ . }}"
+            properties:
+              - name: "MccsSubarrayFQDN"
+                values:
+                - "{{ $mccs_sa_fqdn_prefix }}/{{ . }}"
+              - name: "MccsMasterFQDN"
+                values:
+                - "{{$mccs_master_fqdn}}"
+              - name: "SkaLevel"
+                values:
+                - "3"
+              - name: "LoggingTargetsDefault"
+                values:
+                - "tango::logger"
+              - name: "LoggingLevelDefault"
+                values:
+                - "5"
+  {{- end}}
+depends_on:
+  - device: sys/database/2
+image:
+  registry: "{{.Values.mccssubarrayleafnode.image.registry}}"
+  image: "{{.Values.mccssubarrayleafnode.image.image}}"
+  tag: "{{.Values.mccssubarrayleafnode.image.tag}}"
+  pullPolicy: "{{.Values.mccssubarrayleafnode.image.pullPolicy}}"
+
