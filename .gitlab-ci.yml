@@ -1,22 +1,12 @@
-# GitLab CI in conjunction with GitLab Runner can use Docker Engine to test and build any application.
-# Docker, when used with GitLab CI, runs each job in a separate and isolated container using the predefined image that is set up in .gitlab-ci.yml.
-# In this case we use the latest python docker image to build and test this project.
 image: $SKA_K8S_TOOLS_DOCKER_BUILDER_IMAGE
 
 variables:
   GIT_SUBMODULE_STRATEGY: recursive
   DOCKER_DRIVER: overlay2
 
-# cache is used to specify a list of files and directories which should be cached between jobs. You can only use paths that are within the project workspace.
-# If cache is defined outside the scope of jobs, it means it is set globally and all jobs will use that definition
 cache:
   paths:
     - build
-
-# The YAML file defines a set of jobs with constraints stating when they should be run.
-# You can specify an unlimited number of jobs which are defined as top-level elements with an arbitrary name and always have to contain at least the script clause.
-# In this case we have only the test job which produce an artifacts (it must be placed into a directory called "public")
-# It is also specified that only the master branch will be subject of this job.
 
 stages:
   - lint
@@ -31,39 +21,26 @@ stages:
   - lifecycle
 
 include:
-# Python packages build,lint, test and publish
-- project: 'ska-telescope/templates-repository'
-  file: 'gitlab-ci/includes/python-lint.gitlab-ci.yml'
+  - project: 'ska-telescope/templates-repository'
+    file: 'gitlab-ci/includes/python-lint.gitlab-ci.yml'
 
-# # Helm Chart linting and Publish
-- project: 'ska-telescope/templates-repository'
-  file: 'gitlab-ci/includes/helm-chart.gitlab-ci.yml'
+  - project: 'ska-telescope/templates-repository'
+    file: 'gitlab-ci/includes/helm-chart.gitlab-ci.yml'
 
-# # Docs pages
-- project: 'ska-telescope/templates-repository'
-  file: 'gitlab-ci/includes/docs-pages.gitlab-ci.yml'
+  - project: 'ska-telescope/templates-repository'
+    file: 'gitlab-ci/includes/docs-pages.gitlab-ci.yml'
 
-# k8s steps
-- project: 'ska-telescope/templates-repository'
-  file: 'gitlab-ci/includes/k8s.gitlab-ci.yml'
+  - project: 'ska-telescope/templates-repository'
+    file: 'gitlab-ci/includes/k8s.gitlab-ci.yml'
 
-# integration job
-- project: 'ska-telescope/templates-repository'
-  file: 'gitlab-ci/includes/deploy.integration.gitlab-ci.yml'
+  - project: 'ska-telescope/templates-repository'
+    file: 'gitlab-ci/includes/deploy.integration.gitlab-ci.yml'
 
-# staging job
-- project: "ska-telescope/templates-repository"
-  file: "gitlab-ci/includes/deploy.staging.gitlab-ci.yml"
+  - project: "ska-telescope/templates-repository"
+    file: "gitlab-ci/includes/deploy.staging.gitlab-ci.yml"
 
-# Create Gitlab CI badges from CI metrics
-# https://developer.skatelescope.org/en/latest/tools/continuousintegration.html#automated-collection-of-ci-health-metrics-as-part-of-the-ci-pipeline
-- project: 'ska-telescope/templates-repository'
-  file: 'gitlab-ci/includes/finaliser.gitlab-ci.yml'
-
-# # Publish bdd test results on Jira.
-# - project: 'ska-telescope/templates-repository'
-#   file: 'gitlab-ci/includes/xray-publish.gitlab-ci.yml'
-
+  - project: 'ska-telescope/templates-repository'
+    file: 'gitlab-ci/includes/finaliser.gitlab-ci.yml'
 
 xray-publish:
   stage: publish
@@ -81,7 +58,7 @@ xray-publish:
     - XRAY_TEST_RESULT_FILE="build/cucumber.json" make xray-publish
   rules:
     - exists:
-        - tests/xray-config.json # needs to be configurable as per XRAY_EXECUTION_CONFIG in make
+        - tests/xray-config.json
   dependencies:
     - k8s-test
   allow_failure: true
@@ -104,11 +81,10 @@ on-demand-deploy:
   environment:
     name: $CI_PROJECT_NAME/$CI_COMMIT_REF_SLUG
     kubernetes:
-      # This repetition is needed for gitlab to parse the namespace correctly
       namespace: $KUBE_NAMESPACE
     on_stop: on-demand-destroy
   when: manual
-  allow_failure: true # need to keep this to unlock the pipeline
+  allow_failure: true
 
 on-demand-destroy:
   stage: on-demand
@@ -124,11 +100,10 @@ on-demand-destroy:
   environment:
     name: $CI_PROJECT_NAME/$CI_COMMIT_REF_SLUG
     kubernetes:
-      # This repetition is needed for gitlab to parse the namespace correctly
       namespace: $KUBE_NAMESPACE
     action: stop
   when: manual
-  allow_failure: true # need to keep this to unlock the pipeline
+  allow_failure: true
 
 k8s-test:
   retry: 1
@@ -187,7 +162,6 @@ deploy-integration:
   rules:
     - if: '$CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH || $CI_COMMIT_TAG'
 
-
 redeploy-integration:
   extends:
     - redeploy-integration
@@ -237,7 +211,6 @@ redeploy-staging:
   rules:
     - if: $CI_COMMIT_TAG
 
-
 info-staging:
   stage: staging
   when: manual
@@ -249,7 +222,6 @@ stop-staging:
   when: manual
   rules:
     - if: $CI_COMMIT_TAG
-
 
 deploy-staging:
   stage: staging
