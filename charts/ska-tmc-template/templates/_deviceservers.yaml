@@ -35,6 +35,11 @@
 
 {{- else }}
 
+
+{{- if hasKey $deviceserver "mid"}}
+{{- $telescopeStr := printf "%s" $localchart.Values.telescope}}
+{{ if eq $telescopeStr "SKA-mid" }}
+
 # Determine which subarray instances to use
 ## Unpack the subarray_count int into a list 1 to N (inclusive)
 {{- $unpacked_subarray_devices:=  ( regexSplit " " ((  $localchart.Values.global.subarray_count | int) | seq ) -1 ) }}
@@ -45,6 +50,8 @@
 {{- end }}
 ## Determine which instances to use
 {{- $_ := set  $localchart.Values "coalesced_subarray_devices" (coalesce $prepended_subarray_devices  $deviceserver.instances)  }}
+
+{{- $filedeviceserver := tpl ($.Files.Get $deviceserver.mid.file) $ | fromYaml }}
 
 {{- $_ := set $filedeviceserver "instances" (coalesce $localchart.Values.global.instances $deviceserver.instances $filedeviceserver.instances) }}
 

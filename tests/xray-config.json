@@ -34,7 +34,7 @@
       "test_environments": "customfield_11925"
     }
   },
-  "description": "Test execution results as generated from https://gitlab.com/ska-telescope/ska-tmc/ska-tmc-integration\n",
+  "description": "Test execution results as generated from https://gitlab.com/ska-telescope/ska-tmc/ska-tmc-low-integration\n",
   "test_environments": [
     {
       "env": "TEST_ENV",
