@@ -196,6 +196,9 @@ deviceServers:
   mocks:
     enabled: false
     file: "data/mocks.yaml"
+    is_simulated:
+      sdp: false
+
 
 
 nodeSelector: {}

@@ -64,6 +64,9 @@ tmc-low:
   deviceServers:
     mocks:
       enabled: true
+      is_simulated:
+        sdp: true
+
  
 ska-sdp:
   legacy_compatibility: true
