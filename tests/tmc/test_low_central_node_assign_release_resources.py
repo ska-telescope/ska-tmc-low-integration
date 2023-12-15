@@ -55,7 +55,7 @@ def check_assigned_resources_attribute_after_assign(
     ]
 
 
-class TestLowCentralNodeAssignResources(object):
+class TestLowCentralNodeAssignResources:
     @pytest.mark.SKA_low
     def test_low_centralnode_assign_resources(
         self,
@@ -149,7 +149,7 @@ class TestLowCentralNodeAssignResources(object):
         )
 
         # Execute Assign command and check command completed successfully
-        result, unique_id = central_node_low.perform_action(
+        _, unique_id = central_node_low.perform_action(
             "AssignResources", assign_input_json
         )
 
@@ -199,7 +199,7 @@ class TestLowCentralNodeAssignResources(object):
 
         # Execute release command and verify command completed successfully
 
-        result, unique_id = central_node_low.perform_action(
+        _, unique_id = central_node_low.perform_action(
             "ReleaseResources", release_resource_json
         )
 
@@ -290,7 +290,7 @@ class TestLowCentralNodeAssignResources(object):
         mccs_controller_sim.SetRaiseException(True)
 
         # Execute Assign command and check command completed successfully
-        result, unique_id = central_node_low.perform_action(
+        _, unique_id = central_node_low.perform_action(
             "AssignResources", assign_input_json
         )
 
@@ -377,7 +377,7 @@ class TestLowCentralNodeAssignResources(object):
         )
 
         # Execute Assign command and verify successful execution
-        result, unique_id = central_node_low.perform_action(
+        _, unique_id = central_node_low.perform_action(
             "AssignResources", assign_input_json
         )
 
@@ -399,7 +399,7 @@ class TestLowCentralNodeAssignResources(object):
         # Setting device to defective
         mccs_controller_sim.SetRaiseException(True)
 
-        result, unique_id = central_node_low.perform_action(
+        _, unique_id = central_node_low.perform_action(
             "ReleaseResources", release_resource_json
         )
 

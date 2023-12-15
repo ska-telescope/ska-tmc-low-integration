@@ -10,7 +10,7 @@ configure_logging(logging.DEBUG)
 LOGGER = logging.getLogger(__name__)
 
 
-class TestLowCentralNodeOnCommand(object):
+class TestLowCentralNodeOnCommand:
     @pytest.mark.SKA_low
     def test_low_central_node_on_command(
         self,

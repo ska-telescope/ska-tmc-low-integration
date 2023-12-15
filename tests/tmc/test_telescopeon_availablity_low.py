@@ -22,7 +22,7 @@ def test_assign(json_factory):
 
     assign_json = json_factory("command_assign_resource_low")
     central_node = DeviceProxy(centralnode)
-    result, message = central_node.AssignResources(assign_json)
+    _, message = central_node.AssignResources(assign_json)
     assert "Subarray ska_low/tm_subarray_node/1 is not available" in str(
         message
     )
@@ -35,7 +35,7 @@ def test_release(json_factory):
 
     release_json = json_factory("command_release_resource_low")
     central_node = DeviceProxy(centralnode)
-    result, message = central_node.ReleaseResources(release_json)
+    _, message = central_node.ReleaseResources(release_json)
 
     assert "Subarray ska_low/tm_subarray_node/1 is not available" in str(
         message

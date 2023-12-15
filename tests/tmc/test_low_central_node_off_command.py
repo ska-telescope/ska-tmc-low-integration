@@ -4,7 +4,7 @@ from tango import DevState
 from tests.resources.test_harness.utils.enums import SimulatorDeviceType
 
 
-class TestLowCentralNodeOffCommand(object):
+class TestLowCentralNodeOffCommand:
     @pytest.mark.SKA_low
     def test_low_central_node_off_command(
         self,

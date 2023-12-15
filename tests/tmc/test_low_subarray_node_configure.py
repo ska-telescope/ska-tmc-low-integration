@@ -4,7 +4,7 @@ from ska_tango_base.control_model import ObsState
 from tests.resources.test_harness.helpers import prepare_json_args_for_commands
 
 
-class TestSubarrayConfigure(object):
+class TestSubarrayConfigure:
     """This class implement test cases to validate obsState of sub array"""
 
     @pytest.mark.real_csp
