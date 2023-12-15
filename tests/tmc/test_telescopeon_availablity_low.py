@@ -11,7 +11,7 @@ from tests.resources.test_support.constant_low import (
 # Hence this test will be skipped on pipeline
 # Sample command to delete is
 # while true;
-# do kubectl delete pod/subarraynode-02-0 -n ska-tmc-low-integration; sleep 3;
+# do kubectl delete pod/subarraynode-02-0 -n ska-tmc-integration; sleep 3;
 # done
 
 

@@ -28,11 +28,7 @@ tmc_helper = TmcHelper(centralnode, tmc_subarraynode1)
 telescope_control = BaseTelescopeControl()
 
 
-@pytest.mark.skip(
-    reason="AssignResources and ReleaseResources"
-    " functionalities are not yet"
-    " implemented on mccs master leaf node."
-)
+@pytest.mark.skip(reason="Unskip after repository setup")
 @pytest.mark.SKA_low
 @scenario(
     "../features/check_invalid_json_not_allowed.feature",

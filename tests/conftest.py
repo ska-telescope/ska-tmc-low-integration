@@ -1,4 +1,4 @@
-"""Test configuration file for ska_tmc_integration"""
+"""Test configuration file for ska_tmc_low_integration"""
 import json
 import logging
 import os
