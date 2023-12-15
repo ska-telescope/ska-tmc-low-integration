@@ -1,8 +1,63 @@
+************* Module tests.tmc.test_configure_invalid_json_low
+tests/tmc/test_configure_invalid_json_low.py:1: [C0114(missing-module-docstring), ] Missing module docstring
+tests/tmc/test_configure_invalid_json_low.py:44: [C0116(missing-function-docstring), given_tmc] Missing function or method docstring
+tests/tmc/test_configure_invalid_json_low.py:66: [C0116(missing-function-docstring), tmc_check_status] Missing function or method docstring
+tests/tmc/test_configure_invalid_json_low.py:83: [C0116(missing-function-docstring), send] Missing function or method docstring
+tests/tmc/test_configure_invalid_json_low.py:128: [C0116(missing-function-docstring), invalid_command_rejection] Missing function or method docstring
+tests/tmc/test_configure_invalid_json_low.py:157: [C0116(missing-function-docstring), tmc_status] Missing function or method docstring
+tests/tmc/test_configure_invalid_json_low.py:168: [C0116(missing-function-docstring), tmc_accepts_next_commands] Missing function or method docstring
+************* Module tests.tmc.test_low_central_node_off_command
+tests/tmc/test_low_central_node_off_command.py:1: [C0114(missing-module-docstring), ] Missing module docstring
+tests/tmc/test_low_central_node_off_command.py:7: [C0115(missing-class-docstring), TestLowCentralNodeOffCommand] Missing class docstring
+tests/tmc/test_low_central_node_off_command.py:7: [R0205(useless-object-inheritance), TestLowCentralNodeOffCommand] Class 'TestLowCentralNodeOffCommand' inherits from object, can be safely removed from bases in python3
+************* Module tests.tmc.test_central_node_standby_comand
+tests/tmc/test_central_node_standby_comand.py:1: [C0114(missing-module-docstring), ] Missing module docstring
+tests/tmc/test_central_node_standby_comand.py:7: [C0115(missing-class-docstring), TestLowCentralNodeStandbyCommand] Missing class docstring
+tests/tmc/test_central_node_standby_comand.py:7: [R0205(useless-object-inheritance), TestLowCentralNodeStandbyCommand] Class 'TestLowCentralNodeStandbyCommand' inherits from object, can be safely removed from bases in python3
+************* Module tests.tmc.test_tmc_configure_command
+tests/tmc/test_tmc_configure_command.py:1: [C0114(missing-module-docstring), ] Missing module docstring
+tests/tmc/test_tmc_configure_command.py:6: [E0401(import-error), ] Unable to import 'tests.resources.test_harness.helpers'
+tests/tmc/test_tmc_configure_command.py:6: [E0611(no-name-in-module), ] No name 'helpers' in module 'tests.resources.test_harness'
+************* Module tests.tmc.test_abort_command_not_allowed_empty
+tests/tmc/test_abort_command_not_allowed_empty.py:1: [C0114(missing-module-docstring), ] Missing module docstring
+tests/tmc/test_abort_command_not_allowed_empty.py:51: [C0116(missing-function-docstring), invalid_command_rejection] Missing function or method docstring
+tests/tmc/test_abort_command_not_allowed_empty.py:59: [C0116(missing-function-docstring), tmc_status] Missing function or method docstring
+************* Module tests.tmc.test_low_central_node_on_command
+tests/tmc/test_low_central_node_on_command.py:1: [C0114(missing-module-docstring), ] Missing module docstring
+tests/tmc/test_low_central_node_on_command.py:13: [C0115(missing-class-docstring), TestLowCentralNodeOnCommand] Missing class docstring
+tests/tmc/test_low_central_node_on_command.py:13: [R0205(useless-object-inheritance), TestLowCentralNodeOnCommand] Class 'TestLowCentralNodeOnCommand' inherits from object, can be safely removed from bases in python3
+************* Module tests.tmc.test_low_subarray_node_configure
+tests/tmc/test_low_subarray_node_configure.py:1: [C0114(missing-module-docstring), ] Missing module docstring
+tests/tmc/test_low_subarray_node_configure.py:4: [E0401(import-error), ] Unable to import 'tests.resources.test_harness.helpers'
+tests/tmc/test_low_subarray_node_configure.py:4: [E0611(no-name-in-module), ] No name 'helpers' in module 'tests.resources.test_harness'
+tests/tmc/test_low_subarray_node_configure.py:7: [R0205(useless-object-inheritance), TestSubarrayConfigure] Class 'TestSubarrayConfigure' inherits from object, can be safely removed from bases in python3
+************* Module tests.tmc.test_tmc_abort_command
+tests/tmc/test_tmc_abort_command.py:1: [C0114(missing-module-docstring), ] Missing module docstring
+tests/tmc/test_tmc_abort_command.py:5: [E0401(import-error), ] Unable to import 'tests.resources.test_harness.helpers'
+tests/tmc/test_tmc_abort_command.py:5: [E0611(no-name-in-module), ] No name 'helpers' in module 'tests.resources.test_harness'
+************* Module tests.tmc.test_telescopeon_availablity_low
+tests/tmc/test_telescopeon_availablity_low.py:1: [C0114(missing-module-docstring), ] Missing module docstring
+tests/tmc/test_telescopeon_availablity_low.py:25: [W0612(unused-variable), test_assign] Unused variable 'result'
+tests/tmc/test_telescopeon_availablity_low.py:38: [W0612(unused-variable), test_release] Unused variable 'result'
+************* Module tests.tmc.test_low_central_node_assign_release_resources
+tests/tmc/test_low_central_node_assign_release_resources.py:1: [C0114(missing-module-docstring), ] Missing module docstring
+tests/tmc/test_low_central_node_assign_release_resources.py:13: [E0401(import-error), ] Unable to import 'tests.resources.test_harness.helpers'
+tests/tmc/test_low_central_node_assign_release_resources.py:13: [E0611(no-name-in-module), ] No name 'helpers' in module 'tests.resources.test_harness'
+tests/tmc/test_low_central_node_assign_release_resources.py:58: [C0115(missing-class-docstring), TestLowCentralNodeAssignResources] Missing class docstring
+tests/tmc/test_low_central_node_assign_release_resources.py:58: [R0205(useless-object-inheritance), TestLowCentralNodeAssignResources] Class 'TestLowCentralNodeAssignResources' inherits from object, can be safely removed from bases in python3
+tests/tmc/test_low_central_node_assign_release_resources.py:60: [R0914(too-many-locals), TestLowCentralNodeAssignResources.test_low_centralnode_assign_resources] Too many local variables (16/15)
+tests/tmc/test_low_central_node_assign_release_resources.py:152: [W0612(unused-variable), TestLowCentralNodeAssignResources.test_low_centralnode_assign_resources] Unused variable 'result'
+tests/tmc/test_low_central_node_assign_release_resources.py:293: [W0612(unused-variable), TestLowCentralNodeAssignResources.test_low_centralnode_assign_resources_exception_propagation] Unused variable 'result'
+tests/tmc/test_low_central_node_assign_release_resources.py:380: [W0612(unused-variable), TestLowCentralNodeAssignResources.test_low_centralnode_release_resources_exception_propagation] Unused variable 'result'
+************* Module tests.tmc.test_tmc_scan_command
+tests/tmc/test_tmc_scan_command.py:1: [C0114(missing-module-docstring), ] Missing module docstring
+tests/tmc/test_tmc_scan_command.py:7: [E0401(import-error), ] Unable to import 'tests.resources.test_harness.helpers'
+tests/tmc/test_tmc_scan_command.py:7: [E0611(no-name-in-module), ] No name 'helpers' in module 'tests.resources.test_harness'
 
 
 Report
 ======
-883 statements analysed.
+2208 statements analysed.
 
 Statistics by type
 ------------------
@@ -10,9 +65,9 @@ Statistics by type
 +---------+-------+-----------+-----------+------------+---------+
 |type     |number |old number |difference |%documented |%badname |
 +=========+=======+===========+===========+============+=========+
-|module   |12     |12         |=          |100.00      |0.00     |
+|module   |42     |12         |+30.00     |73.81       |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|class    |12     |12         |=          |100.00      |0.00     |
+|class    |17     |12         |+5.00      |76.47       |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
 |method   |0      |NC         |NC         |0           |0        |
 +---------+-------+-----------+-----------+------------+---------+
@@ -21,7 +76,7 @@ Statistics by type
 
 
 
-2111 lines have been analyzed
+6075 lines have been analyzed
 
 Raw metrics
 -----------
@@ -29,13 +84,13 @@ Raw metrics
 +----------+-------+------+---------+-----------+
 |type      |number |%     |previous |difference |
 +==========+=======+======+=========+===========+
-|code      |1376   |65.18 |1376     |=          |
+|code      |4094   |67.39 |1376     |+2718.00   |
 +----------+-------+------+---------+-----------+
-|docstring |377    |17.86 |377      |=          |
+|docstring |766    |12.61 |377      |+389.00    |
 +----------+-------+------+---------+-----------+
-|comment   |38     |1.80  |38       |=          |
+|comment   |312    |5.14  |38       |+274.00    |
 +----------+-------+------+---------+-----------+
-|empty     |320    |15.16 |320      |=          |
+|empty     |903    |14.86 |320      |+583.00    |
 +----------+-------+------+---------+-----------+
 
 
@@ -59,13 +114,13 @@ Messages by category
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |0      |0        |0          |
+|convention |23     |0        |0          |
 +-----------+-------+---------+-----------+
-|refactor   |0      |0        |0          |
+|refactor   |6      |0        |0          |
 +-----------+-------+---------+-----------+
-|warning    |0      |0        |0          |
+|warning    |5      |0        |0          |
 +-----------+-------+---------+-----------+
-|error      |0      |0        |0          |
+|error      |10     |0        |0          |
 +-----------+-------+---------+-----------+
 
 
@@ -73,13 +128,29 @@ Messages by category
 Messages
 --------
 
-+-----------+------------+
-|message id |occurrences |
-+===========+============+
++---------------------------+------------+
+|message id                 |occurrences |
++===========================+============+
+|missing-module-docstring   |11          |
++---------------------------+------------+
+|missing-function-docstring |8           |
++---------------------------+------------+
+|useless-object-inheritance |5           |
++---------------------------+------------+
+|unused-variable            |5           |
++---------------------------+------------+
+|no-name-in-module          |5           |
++---------------------------+------------+
+|import-error               |5           |
++---------------------------+------------+
+|missing-class-docstring    |4           |
++---------------------------+------------+
+|too-many-locals            |1           |
++---------------------------+------------+
 
 
 
 
---------------------------------------------------------------------
-Your code has been rated at 10.00/10 (previous run: 10.00/10, +0.00)
+-------------------------------------------------------------------
+Your code has been rated at 9.62/10 (previous run: 10.00/10, -0.38)
 

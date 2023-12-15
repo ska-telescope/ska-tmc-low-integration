@@ -1,0 +1,18 @@
+dependencies:
+- name: ska-tango-base
+  repository: https://artefact.skao.int/repository/helm-internal
+  version: 0.4.4
+- name: ska-tango-util
+  repository: https://artefact.skao.int/repository/helm-internal
+  version: 0.4.5
+- name: ska-tmc-template
+  repository: file://../ska-tmc-template
+  version: 0.0.1
+- name: ska-csp-lmc-low
+  repository: https://artefact.skao.int/repository/helm-internal
+  version: 0.9.1
+- name: ska-low-cbf
+  repository: https://artefact.skao.int/repository/helm-internal
+  version: 0.6.1
+digest: sha256:c242120aca7fb2e96b94d8e42413e1a7aa965676be6106e5b035da2118e76a4c
+generated: "2023-12-15T14:09:11.383684188+05:30"

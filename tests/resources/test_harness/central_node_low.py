@@ -5,7 +5,6 @@ from ska_ser_logging import configure_logging
 from ska_tango_base.control_model import HealthState
 from tango import DeviceProxy, DevState
 
-from tests.resources.test_harness.central_node import CentralNodeWrapper
 from tests.resources.test_harness.constant import (
     device_dict_low,
     low_centralnode,
@@ -27,20 +26,18 @@ from tests.resources.test_harness.utils.sync_decorators import (
     sync_release_resources,
     sync_restart,
 )
+from tests.resources.test_support.common_utils.common_helpers import Resource
 
 configure_logging(logging.DEBUG)
 LOGGER = logging.getLogger(__name__)
-# TODO: Currently the code for MCCS has been commented as it will be enabled
-#  in the upcoming sprints of PI-20
 
 
-class CentralNodeWrapperLow(CentralNodeWrapper):
+class CentralNodeWrapperLow(object):
     """A wrapper class to implement common tango specific details
     and standard set of commands for TMC Low CentralNode,
     defined by the SKA Control Model."""
 
     def __init__(self) -> None:
-        super().__init__()
         self.central_node = DeviceProxy(low_centralnode)
         self.subarray_node = DeviceProxy(tmc_low_subarraynode1)
         self.csp_master_leaf_node = DeviceProxy(low_csp_master_leaf_node)
@@ -66,6 +63,70 @@ class CentralNodeWrapperLow(CentralNodeWrapper):
             "assign_resources_low"
         )
 
+    @property
+    def state(self) -> DevState:
+        """TMC Low CentralNode operational state"""
+        self._state = Resource(self.central_node).get("State")
+        return self._state
+
+    @state.setter
+    def state(self, value):
+        """Sets value for TMC CentralNode operational state
+
+        Args:
+            value (DevState): operational state value
+        """
+        self._state = value
+
+    @property
+    def telescope_health_state(self) -> HealthState:
+        """Telescope health state representing overall health of telescope"""
+        self._telescope_health_state = Resource(self.central_node).get(
+            "telescopeHealthState"
+        )
+        return self._telescope_health_state
+
+    @telescope_health_state.setter
+    def telescope_health_state(self, value):
+        """Telescope health state representing overall health of telescope
+
+        Args:
+            value (HealthState): telescope health state value
+        """
+        self._telescope_health_state = value
+
+    def move_to_on(self):
+        """
+        A method to invoke TelescopeOn command to
+        put telescope in ON state
+        """
+        LOGGER.info("Starting up the Telescope")
+        self.central_node.TelescopeOn()
+        device_to_on_list = [
+            self.subarray_devices.get("csp_subarray"),
+            self.subarray_devices.get("sdp_subarray"),
+            self.subarray_devices.get("mccs_subarray"),
+        ]
+        for device in device_to_on_list:
+            device_proxy = DeviceProxy(device)
+            device_proxy.SetDirectState(DevState.ON)
+
+    def set_standby(self):
+        """
+        A method to invoke TelescopeStandby command to
+        put telescope in STANDBY state
+
+        """
+        self.central_node.TelescopeStandBy()
+        device_to_on_list = [
+            self.subarray_devices.get("csp_subarray"),
+            self.subarray_devices.get("sdp_subarray"),
+            self.subarray_devices.get("mccs_subarray"),
+        ]
+        for device in device_to_on_list:
+            device_proxy = DeviceProxy(device)
+            device_proxy.SetDirectState(DevState.STANDBY)
+
     def move_to_off(self):
         """
         A method to invoke TelescopeOff command to
@@ -76,6 +137,7 @@ class CentralNodeWrapperLow(CentralNodeWrapper):
         device_to_on_list = [
             self.subarray_devices.get("csp_subarray"),
             self.subarray_devices.get("sdp_subarray"),
+            self.subarray_devices.get("mccs_subarray"),
         ]
         for device in device_to_on_list:
             device_proxy = DeviceProxy(device)
@@ -114,8 +176,26 @@ class CentralNodeWrapperLow(CentralNodeWrapper):
 
     def _reset_health_state_for_mock_devices(self):
         """Reset Mock devices"""
-        super()._reset_health_state_for_mock_devices()
-        self.mccs_master.SetDirectHealthState(HealthState.UNKNOWN)
+
+        for mock_device in [
+            self.sdp_master,
+            self.csp_master,
+            self.mccs_master,
+        ]:
+            device = DeviceProxy(mock_device)
+            device.SetDirectHealthState(HealthState.UNKNOWN)
+
+    def perform_action(self, command_name: str, input_json: str):
+        """Execute provided command on centralnode
+        Args:
+            command_name (str): Name of command to execute
+            input_json (str): Json send as input to execute command
+        """
+
+        result, message = self.central_node.command_inout(
+            command_name, input_json
+        )
+        return result, message
 
     def tear_down(self):
         """Handle Tear down of central Node"""

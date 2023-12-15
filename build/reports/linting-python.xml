@@ -1,5 +1,5 @@
 <?xml version="1.0" ?>
-<testsuites disabled="0" errors="0" failures="0" tests="13" time="0.0">
+<testsuites disabled="0" errors="0" failures="44" tests="87" time="0.0">
 	<testsuite disabled="0" errors="0" failures="0" name="/home/ska/projects/ska-tmc-low-integration/pylintrc" skipped="0" tests="1" time="0">
 		<testcase name="/home/ska/projects/ska-tmc-low-integration/pylintrc:0:0" classname="pylint">
 			<system-out>All checks passed for: None</system-out>
@@ -18,6 +18,464 @@
 	<testsuite disabled="0" errors="0" failures="0" name="tests.conftest" skipped="0" tests="1" time="0">
 		<testcase name="tests.conftest:0:0" classname="pylint" file="tests/conftest.py">
 			<system-out>All checks passed for: tests/conftest.py</system-out>
+		</testcase>
+	</testsuite>
+	<testsuite disabled="0" errors="0" failures="0" name="tests.tmc_sdp.__init__" skipped="0" tests="1" time="0">
+		<testcase name="tests.tmc_sdp.__init__:0:0" classname="pylint" file="tests/tmc_sdp/__init__.py">
+			<system-out>All checks passed for: tests/tmc_sdp/__init__.py</system-out>
+		</testcase>
+	</testsuite>
+	<testsuite disabled="0" errors="0" failures="0" name="tests.tmc_mccs.__init__" skipped="0" tests="1" time="0">
+		<testcase name="tests.tmc_mccs.__init__:0:0" classname="pylint" file="tests/tmc_mccs/__init__.py">
+			<system-out>All checks passed for: tests/tmc_mccs/__init__.py</system-out>
+		</testcase>
+	</testsuite>
+	<testsuite disabled="0" errors="0" failures="0" name="tests.tmc.test_sdp_csp_ln_obsstate_low" skipped="0" tests="1" time="0">
+		<testcase name="tests.tmc.test_sdp_csp_ln_obsstate_low:0:0" classname="pylint" file="tests/tmc/test_sdp_csp_ln_obsstate_low.py">
+			<system-out>All checks passed for: tests/tmc/test_sdp_csp_ln_obsstate_low.py</system-out>
+		</testcase>
+	</testsuite>
+	<testsuite disabled="0" errors="0" failures="7" name="tests.tmc.test_configure_invalid_json_low" skipped="0" tests="8" time="0">
+		<testcase name="tests.tmc.test_configure_invalid_json_low:1:0" classname="pylint" class="convention" file="tests/tmc/test_configure_invalid_json_low.py" line="1">
+			<failure type="failure" message="missing-module-docstring">C0114:Missing module docstring
+tests/tmc/test_configure_invalid_json_low.py:1:0:import json</failure>
+			<system-out>tests/tmc/test_configure_invalid_json_low.py:1:0:import json</system-out>
+			<system-err>C0114:Missing module docstring
+tests/tmc/test_configure_invalid_json_low.py:1:0:import json</system-err>
+		</testcase>
+		<testcase name="tests.tmc.test_configure_invalid_json_low:44:0" classname="pylint" class="convention" file="tests/tmc/test_configure_invalid_json_low.py" line="44">
+			<failure type="failure" message="missing-function-docstring">C0116:Missing function or method docstring
+tests/tmc/test_configure_invalid_json_low.py:44:0:def given_tmc(json_factory):</failure>
+			<system-out>tests/tmc/test_configure_invalid_json_low.py:44:0:def given_tmc(json_factory):</system-out>
+			<system-err>C0116:Missing function or method docstring
+tests/tmc/test_configure_invalid_json_low.py:44:0:def given_tmc(json_factory):</system-err>
+		</testcase>
+		<testcase name="tests.tmc.test_configure_invalid_json_low:66:0" classname="pylint" class="convention" file="tests/tmc/test_configure_invalid_json_low.py" line="66">
+			<failure type="failure" message="missing-function-docstring">C0116:Missing function or method docstring
+tests/tmc/test_configure_invalid_json_low.py:66:0:def tmc_check_status(json_factory):</failure>
+			<system-out>tests/tmc/test_configure_invalid_json_low.py:66:0:def tmc_check_status(json_factory):</system-out>
+			<system-err>C0116:Missing function or method docstring
+tests/tmc/test_configure_invalid_json_low.py:66:0:def tmc_check_status(json_factory):</system-err>
+		</testcase>
+		<testcase name="tests.tmc.test_configure_invalid_json_low:83:0" classname="pylint" class="convention" file="tests/tmc/test_configure_invalid_json_low.py" line="83">
+			<failure type="failure" message="missing-function-docstring">C0116:Missing function or method docstring
+tests/tmc/test_configure_invalid_json_low.py:83:0:def send(json_factory, invalid_json):</failure>
+			<system-out>tests/tmc/test_configure_invalid_json_low.py:83:0:def send(json_factory, invalid_json):</system-out>
+			<system-err>C0116:Missing function or method docstring
+tests/tmc/test_configure_invalid_json_low.py:83:0:def send(json_factory, invalid_json):</system-err>
+		</testcase>
+		<testcase name="tests.tmc.test_configure_invalid_json_low:128:0" classname="pylint" class="convention" file="tests/tmc/test_configure_invalid_json_low.py" line="128">
+			<failure type="failure" message="missing-function-docstring">C0116:Missing function or method docstring
+tests/tmc/test_configure_invalid_json_low.py:128:0:def invalid_command_rejection(invalid_json):</failure>
+			<system-out>tests/tmc/test_configure_invalid_json_low.py:128:0:def invalid_command_rejection(invalid_json):</system-out>
+			<system-err>C0116:Missing function or method docstring
+tests/tmc/test_configure_invalid_json_low.py:128:0:def invalid_command_rejection(invalid_json):</system-err>
+		</testcase>
+		<testcase name="tests.tmc.test_configure_invalid_json_low:157:0" classname="pylint" class="convention" file="tests/tmc/test_configure_invalid_json_low.py" line="157">
+			<failure type="failure" message="missing-function-docstring">C0116:Missing function or method docstring
+tests/tmc/test_configure_invalid_json_low.py:157:0:def tmc_status():</failure>
+			<system-out>tests/tmc/test_configure_invalid_json_low.py:157:0:def tmc_status():</system-out>
+			<system-err>C0116:Missing function or method docstring
+tests/tmc/test_configure_invalid_json_low.py:157:0:def tmc_status():</system-err>
+		</testcase>
+		<testcase name="tests.tmc.test_configure_invalid_json_low:168:0" classname="pylint" class="convention" file="tests/tmc/test_configure_invalid_json_low.py" line="168">
+			<failure type="failure" message="missing-function-docstring">C0116:Missing function or method docstring
+tests/tmc/test_configure_invalid_json_low.py:168:0:def tmc_accepts_next_commands(json_factory):</failure>
+			<system-out>tests/tmc/test_configure_invalid_json_low.py:168:0:def tmc_accepts_next_commands(json_factory):</system-out>
+			<system-err>C0116:Missing function or method docstring
+tests/tmc/test_configure_invalid_json_low.py:168:0:def tmc_accepts_next_commands(json_factory):</system-err>
+		</testcase>
+		<testcase name="tests.tmc.test_configure_invalid_json_low:0:0" classname="pylint" file="tests/tmc/test_configure_invalid_json_low.py">
+			<system-out>All checks passed for: tests/tmc/test_configure_invalid_json_low.py</system-out>
+		</testcase>
+	</testsuite>
+	<testsuite disabled="0" errors="0" failures="0" name="tests.tmc.test_configure_end_command_low" skipped="0" tests="1" time="0">
+		<testcase name="tests.tmc.test_configure_end_command_low:0:0" classname="pylint" file="tests/tmc/test_configure_end_command_low.py">
+			<system-out>All checks passed for: tests/tmc/test_configure_end_command_low.py</system-out>
+		</testcase>
+	</testsuite>
+	<testsuite disabled="0" errors="0" failures="0" name="tests.tmc.test_low_abort_restart_command_in_idle" skipped="0" tests="1" time="0">
+		<testcase name="tests.tmc.test_low_abort_restart_command_in_idle:0:0" classname="pylint" file="tests/tmc/test_low_abort_restart_command_in_idle.py">
+			<system-out>All checks passed for: tests/tmc/test_low_abort_restart_command_in_idle.py</system-out>
+		</testcase>
+	</testsuite>
+	<testsuite disabled="0" errors="0" failures="0" name="tests.tmc.__init__" skipped="0" tests="1" time="0">
+		<testcase name="tests.tmc.__init__:0:0" classname="pylint" file="tests/tmc/__init__.py">
+			<system-out>All checks passed for: tests/tmc/__init__.py</system-out>
+		</testcase>
+	</testsuite>
+	<testsuite disabled="0" errors="0" failures="3" name="tests.tmc.test_low_central_node_off_command" skipped="0" tests="4" time="0">
+		<testcase name="tests.tmc.test_low_central_node_off_command:1:0" classname="pylint" class="convention" file="tests/tmc/test_low_central_node_off_command.py" line="1">
+			<failure type="failure" message="missing-module-docstring">C0114:Missing module docstring
+tests/tmc/test_low_central_node_off_command.py:1:0:import pytest</failure>
+			<system-out>tests/tmc/test_low_central_node_off_command.py:1:0:import pytest</system-out>
+			<system-err>C0114:Missing module docstring
+tests/tmc/test_low_central_node_off_command.py:1:0:import pytest</system-err>
+		</testcase>
+		<testcase name="tests.tmc.test_low_central_node_off_command:7:0" classname="pylint" class="convention" file="tests/tmc/test_low_central_node_off_command.py" line="7">
+			<failure type="failure" message="missing-class-docstring">C0115:Missing class docstring
+tests/tmc/test_low_central_node_off_command.py:7:0:class TestLowCentralNodeOffCommand(object):</failure>
+			<system-out>tests/tmc/test_low_central_node_off_command.py:7:0:class TestLowCentralNodeOffCommand(object):</system-out>
+			<system-err>C0115:Missing class docstring
+tests/tmc/test_low_central_node_off_command.py:7:0:class TestLowCentralNodeOffCommand(object):</system-err>
+		</testcase>
+		<testcase name="tests.tmc.test_low_central_node_off_command:7:0" classname="pylint" class="refactor" file="tests/tmc/test_low_central_node_off_command.py" line="7">
+			<failure type="failure" message="useless-object-inheritance">R0205:Class 'TestLowCentralNodeOffCommand' inherits from object, can be safely removed from bases in python3
+tests/tmc/test_low_central_node_off_command.py:7:0:class TestLowCentralNodeOffCommand(object):</failure>
+			<system-out>tests/tmc/test_low_central_node_off_command.py:7:0:class TestLowCentralNodeOffCommand(object):</system-out>
+			<system-err>R0205:Class 'TestLowCentralNodeOffCommand' inherits from object, can be safely removed from bases in python3
+tests/tmc/test_low_central_node_off_command.py:7:0:class TestLowCentralNodeOffCommand(object):</system-err>
+		</testcase>
+		<testcase name="tests.tmc.test_low_central_node_off_command:0:0" classname="pylint" file="tests/tmc/test_low_central_node_off_command.py">
+			<system-out>All checks passed for: tests/tmc/test_low_central_node_off_command.py</system-out>
+		</testcase>
+	</testsuite>
+	<testsuite disabled="0" errors="0" failures="3" name="tests.tmc.test_central_node_standby_comand" skipped="0" tests="4" time="0">
+		<testcase name="tests.tmc.test_central_node_standby_comand:1:0" classname="pylint" class="convention" file="tests/tmc/test_central_node_standby_comand.py" line="1">
+			<failure type="failure" message="missing-module-docstring">C0114:Missing module docstring
+tests/tmc/test_central_node_standby_comand.py:1:0:import pytest</failure>
+			<system-out>tests/tmc/test_central_node_standby_comand.py:1:0:import pytest</system-out>
+			<system-err>C0114:Missing module docstring
+tests/tmc/test_central_node_standby_comand.py:1:0:import pytest</system-err>
+		</testcase>
+		<testcase name="tests.tmc.test_central_node_standby_comand:7:0" classname="pylint" class="convention" file="tests/tmc/test_central_node_standby_comand.py" line="7">
+			<failure type="failure" message="missing-class-docstring">C0115:Missing class docstring
+tests/tmc/test_central_node_standby_comand.py:7:0:class TestLowCentralNodeStandbyCommand(object):</failure>
+			<system-out>tests/tmc/test_central_node_standby_comand.py:7:0:class TestLowCentralNodeStandbyCommand(object):</system-out>
+			<system-err>C0115:Missing class docstring
+tests/tmc/test_central_node_standby_comand.py:7:0:class TestLowCentralNodeStandbyCommand(object):</system-err>
+		</testcase>
+		<testcase name="tests.tmc.test_central_node_standby_comand:7:0" classname="pylint" class="refactor" file="tests/tmc/test_central_node_standby_comand.py" line="7">
+			<failure type="failure" message="useless-object-inheritance">R0205:Class 'TestLowCentralNodeStandbyCommand' inherits from object, can be safely removed from bases in python3
+tests/tmc/test_central_node_standby_comand.py:7:0:class TestLowCentralNodeStandbyCommand(object):</failure>
+			<system-out>tests/tmc/test_central_node_standby_comand.py:7:0:class TestLowCentralNodeStandbyCommand(object):</system-out>
+			<system-err>R0205:Class 'TestLowCentralNodeStandbyCommand' inherits from object, can be safely removed from bases in python3
+tests/tmc/test_central_node_standby_comand.py:7:0:class TestLowCentralNodeStandbyCommand(object):</system-err>
+		</testcase>
+		<testcase name="tests.tmc.test_central_node_standby_comand:0:0" classname="pylint" file="tests/tmc/test_central_node_standby_comand.py">
+			<system-out>All checks passed for: tests/tmc/test_central_node_standby_comand.py</system-out>
+		</testcase>
+	</testsuite>
+	<testsuite disabled="0" errors="0" failures="3" name="tests.tmc.test_tmc_configure_command" skipped="0" tests="4" time="0">
+		<testcase name="tests.tmc.test_tmc_configure_command:1:0" classname="pylint" class="convention" file="tests/tmc/test_tmc_configure_command.py" line="1">
+			<failure type="failure" message="missing-module-docstring">C0114:Missing module docstring
+tests/tmc/test_tmc_configure_command.py:1:0:import pytest</failure>
+			<system-out>tests/tmc/test_tmc_configure_command.py:1:0:import pytest</system-out>
+			<system-err>C0114:Missing module docstring
+tests/tmc/test_tmc_configure_command.py:1:0:import pytest</system-err>
+		</testcase>
+		<testcase name="tests.tmc.test_tmc_configure_command:6:0" classname="pylint" class="error" file="tests/tmc/test_tmc_configure_command.py" line="6">
+			<failure type="failure" message="import-error">E0401:Unable to import 'tests.resources.test_harness.helpers'
+tests/tmc/test_tmc_configure_command.py:6:0:from tests.resources.test_harness.helpers import (</failure>
+			<system-out>tests/tmc/test_tmc_configure_command.py:6:0:from tests.resources.test_harness.helpers import (</system-out>
+			<system-err>E0401:Unable to import 'tests.resources.test_harness.helpers'
+tests/tmc/test_tmc_configure_command.py:6:0:from tests.resources.test_harness.helpers import (</system-err>
+		</testcase>
+		<testcase name="tests.tmc.test_tmc_configure_command:6:0" classname="pylint" class="error" file="tests/tmc/test_tmc_configure_command.py" line="6">
+			<failure type="failure" message="no-name-in-module">E0611:No name 'helpers' in module 'tests.resources.test_harness'
+tests/tmc/test_tmc_configure_command.py:6:0:from tests.resources.test_harness.helpers import (</failure>
+			<system-out>tests/tmc/test_tmc_configure_command.py:6:0:from tests.resources.test_harness.helpers import (</system-out>
+			<system-err>E0611:No name 'helpers' in module 'tests.resources.test_harness'
+tests/tmc/test_tmc_configure_command.py:6:0:from tests.resources.test_harness.helpers import (</system-err>
+		</testcase>
+		<testcase name="tests.tmc.test_tmc_configure_command:0:0" classname="pylint" file="tests/tmc/test_tmc_configure_command.py">
+			<system-out>All checks passed for: tests/tmc/test_tmc_configure_command.py</system-out>
+		</testcase>
+	</testsuite>
+	<testsuite disabled="0" errors="0" failures="3" name="tests.tmc.test_abort_command_not_allowed_empty" skipped="0" tests="4" time="0">
+		<testcase name="tests.tmc.test_abort_command_not_allowed_empty:1:0" classname="pylint" class="convention" file="tests/tmc/test_abort_command_not_allowed_empty.py" line="1">
+			<failure type="failure" message="missing-module-docstring">C0114:Missing module docstring
+tests/tmc/test_abort_command_not_allowed_empty.py:1:0:import pytest</failure>
+			<system-out>tests/tmc/test_abort_command_not_allowed_empty.py:1:0:import pytest</system-out>
+			<system-err>C0114:Missing module docstring
+tests/tmc/test_abort_command_not_allowed_empty.py:1:0:import pytest</system-err>
+		</testcase>
+		<testcase name="tests.tmc.test_abort_command_not_allowed_empty:51:0" classname="pylint" class="convention" file="tests/tmc/test_abort_command_not_allowed_empty.py" line="51">
+			<failure type="failure" message="missing-function-docstring">C0116:Missing function or method docstring
+tests/tmc/test_abort_command_not_allowed_empty.py:51:0:def invalid_command_rejection():</failure>
+			<system-out>tests/tmc/test_abort_command_not_allowed_empty.py:51:0:def invalid_command_rejection():</system-out>
+			<system-err>C0116:Missing function or method docstring
+tests/tmc/test_abort_command_not_allowed_empty.py:51:0:def invalid_command_rejection():</system-err>
+		</testcase>
+		<testcase name="tests.tmc.test_abort_command_not_allowed_empty:59:0" classname="pylint" class="convention" file="tests/tmc/test_abort_command_not_allowed_empty.py" line="59">
+			<failure type="failure" message="missing-function-docstring">C0116:Missing function or method docstring
+tests/tmc/test_abort_command_not_allowed_empty.py:59:0:def tmc_status():</failure>
+			<system-out>tests/tmc/test_abort_command_not_allowed_empty.py:59:0:def tmc_status():</system-out>
+			<system-err>C0116:Missing function or method docstring
+tests/tmc/test_abort_command_not_allowed_empty.py:59:0:def tmc_status():</system-err>
+		</testcase>
+		<testcase name="tests.tmc.test_abort_command_not_allowed_empty:0:0" classname="pylint" file="tests/tmc/test_abort_command_not_allowed_empty.py">
+			<system-out>All checks passed for: tests/tmc/test_abort_command_not_allowed_empty.py</system-out>
+		</testcase>
+	</testsuite>
+	<testsuite disabled="0" errors="0" failures="3" name="tests.tmc.test_low_central_node_on_command" skipped="0" tests="4" time="0">
+		<testcase name="tests.tmc.test_low_central_node_on_command:1:0" classname="pylint" class="convention" file="tests/tmc/test_low_central_node_on_command.py" line="1">
+			<failure type="failure" message="missing-module-docstring">C0114:Missing module docstring
+tests/tmc/test_low_central_node_on_command.py:1:0:import logging</failure>
+			<system-out>tests/tmc/test_low_central_node_on_command.py:1:0:import logging</system-out>
+			<system-err>C0114:Missing module docstring
+tests/tmc/test_low_central_node_on_command.py:1:0:import logging</system-err>
+		</testcase>
+		<testcase name="tests.tmc.test_low_central_node_on_command:13:0" classname="pylint" class="convention" file="tests/tmc/test_low_central_node_on_command.py" line="13">
+			<failure type="failure" message="missing-class-docstring">C0115:Missing class docstring
+tests/tmc/test_low_central_node_on_command.py:13:0:class TestLowCentralNodeOnCommand(object):</failure>
+			<system-out>tests/tmc/test_low_central_node_on_command.py:13:0:class TestLowCentralNodeOnCommand(object):</system-out>
+			<system-err>C0115:Missing class docstring
+tests/tmc/test_low_central_node_on_command.py:13:0:class TestLowCentralNodeOnCommand(object):</system-err>
+		</testcase>
+		<testcase name="tests.tmc.test_low_central_node_on_command:13:0" classname="pylint" class="refactor" file="tests/tmc/test_low_central_node_on_command.py" line="13">
+			<failure type="failure" message="useless-object-inheritance">R0205:Class 'TestLowCentralNodeOnCommand' inherits from object, can be safely removed from bases in python3
+tests/tmc/test_low_central_node_on_command.py:13:0:class TestLowCentralNodeOnCommand(object):</failure>
+			<system-out>tests/tmc/test_low_central_node_on_command.py:13:0:class TestLowCentralNodeOnCommand(object):</system-out>
+			<system-err>R0205:Class 'TestLowCentralNodeOnCommand' inherits from object, can be safely removed from bases in python3
+tests/tmc/test_low_central_node_on_command.py:13:0:class TestLowCentralNodeOnCommand(object):</system-err>
+		</testcase>
+		<testcase name="tests.tmc.test_low_central_node_on_command:0:0" classname="pylint" file="tests/tmc/test_low_central_node_on_command.py">
+			<system-out>All checks passed for: tests/tmc/test_low_central_node_on_command.py</system-out>
+		</testcase>
+	</testsuite>
+	<testsuite disabled="0" errors="0" failures="4" name="tests.tmc.test_low_subarray_node_configure" skipped="0" tests="5" time="0">
+		<testcase name="tests.tmc.test_low_subarray_node_configure:1:0" classname="pylint" class="convention" file="tests/tmc/test_low_subarray_node_configure.py" line="1">
+			<failure type="failure" message="missing-module-docstring">C0114:Missing module docstring
+tests/tmc/test_low_subarray_node_configure.py:1:0:import pytest</failure>
+			<system-out>tests/tmc/test_low_subarray_node_configure.py:1:0:import pytest</system-out>
+			<system-err>C0114:Missing module docstring
+tests/tmc/test_low_subarray_node_configure.py:1:0:import pytest</system-err>
+		</testcase>
+		<testcase name="tests.tmc.test_low_subarray_node_configure:4:0" classname="pylint" class="error" file="tests/tmc/test_low_subarray_node_configure.py" line="4">
+			<failure type="failure" message="import-error">E0401:Unable to import 'tests.resources.test_harness.helpers'
+tests/tmc/test_low_subarray_node_configure.py:4:0:from tests.resources.test_harness.helpers import prepare_json_args_for_commands</failure>
+			<system-out>tests/tmc/test_low_subarray_node_configure.py:4:0:from tests.resources.test_harness.helpers import prepare_json_args_for_commands</system-out>
+			<system-err>E0401:Unable to import 'tests.resources.test_harness.helpers'
+tests/tmc/test_low_subarray_node_configure.py:4:0:from tests.resources.test_harness.helpers import prepare_json_args_for_commands</system-err>
+		</testcase>
+		<testcase name="tests.tmc.test_low_subarray_node_configure:4:0" classname="pylint" class="error" file="tests/tmc/test_low_subarray_node_configure.py" line="4">
+			<failure type="failure" message="no-name-in-module">E0611:No name 'helpers' in module 'tests.resources.test_harness'
+tests/tmc/test_low_subarray_node_configure.py:4:0:from tests.resources.test_harness.helpers import prepare_json_args_for_commands</failure>
+			<system-out>tests/tmc/test_low_subarray_node_configure.py:4:0:from tests.resources.test_harness.helpers import prepare_json_args_for_commands</system-out>
+			<system-err>E0611:No name 'helpers' in module 'tests.resources.test_harness'
+tests/tmc/test_low_subarray_node_configure.py:4:0:from tests.resources.test_harness.helpers import prepare_json_args_for_commands</system-err>
+		</testcase>
+		<testcase name="tests.tmc.test_low_subarray_node_configure:7:0" classname="pylint" class="refactor" file="tests/tmc/test_low_subarray_node_configure.py" line="7">
+			<failure type="failure" message="useless-object-inheritance">R0205:Class 'TestSubarrayConfigure' inherits from object, can be safely removed from bases in python3
+tests/tmc/test_low_subarray_node_configure.py:7:0:class TestSubarrayConfigure(object):</failure>
+			<system-out>tests/tmc/test_low_subarray_node_configure.py:7:0:class TestSubarrayConfigure(object):</system-out>
+			<system-err>R0205:Class 'TestSubarrayConfigure' inherits from object, can be safely removed from bases in python3
+tests/tmc/test_low_subarray_node_configure.py:7:0:class TestSubarrayConfigure(object):</system-err>
+		</testcase>
+		<testcase name="tests.tmc.test_low_subarray_node_configure:0:0" classname="pylint" file="tests/tmc/test_low_subarray_node_configure.py">
+			<system-out>All checks passed for: tests/tmc/test_low_subarray_node_configure.py</system-out>
+		</testcase>
+	</testsuite>
+	<testsuite disabled="0" errors="0" failures="0" name="tests.tmc.test_assign_resources_command_not_allowed_propagation_low" skipped="0" tests="1" time="0">
+		<testcase name="tests.tmc.test_assign_resources_command_not_allowed_propagation_low:0:0" classname="pylint" file="tests/tmc/test_assign_resources_command_not_allowed_propagation_low.py">
+			<system-out>All checks passed for: tests/tmc/test_assign_resources_command_not_allowed_propagation_low.py</system-out>
+		</testcase>
+	</testsuite>
+	<testsuite disabled="0" errors="0" failures="0" name="tests.tmc.test_low_abort_restart_command_in_aborting" skipped="0" tests="1" time="0">
+		<testcase name="tests.tmc.test_low_abort_restart_command_in_aborting:0:0" classname="pylint" file="tests/tmc/test_low_abort_restart_command_in_aborting.py">
+			<system-out>All checks passed for: tests/tmc/test_low_abort_restart_command_in_aborting.py</system-out>
+		</testcase>
+	</testsuite>
+	<testsuite disabled="0" errors="0" failures="0" name="tests.tmc.test_low_abort_restart_in_resourcing" skipped="0" tests="1" time="0">
+		<testcase name="tests.tmc.test_low_abort_restart_in_resourcing:0:0" classname="pylint" file="tests/tmc/test_low_abort_restart_in_resourcing.py">
+			<system-out>All checks passed for: tests/tmc/test_low_abort_restart_in_resourcing.py</system-out>
+		</testcase>
+	</testsuite>
+	<testsuite disabled="0" errors="0" failures="0" name="tests.tmc.test_low_abort_restart_in_ready" skipped="0" tests="1" time="0">
+		<testcase name="tests.tmc.test_low_abort_restart_in_ready:0:0" classname="pylint" file="tests/tmc/test_low_abort_restart_in_ready.py">
+			<system-out>All checks passed for: tests/tmc/test_low_abort_restart_in_ready.py</system-out>
+		</testcase>
+	</testsuite>
+	<testsuite disabled="0" errors="0" failures="3" name="tests.tmc.test_tmc_abort_command" skipped="0" tests="4" time="0">
+		<testcase name="tests.tmc.test_tmc_abort_command:1:0" classname="pylint" class="convention" file="tests/tmc/test_tmc_abort_command.py" line="1">
+			<failure type="failure" message="missing-module-docstring">C0114:Missing module docstring
+tests/tmc/test_tmc_abort_command.py:1:0:import pytest</failure>
+			<system-out>tests/tmc/test_tmc_abort_command.py:1:0:import pytest</system-out>
+			<system-err>C0114:Missing module docstring
+tests/tmc/test_tmc_abort_command.py:1:0:import pytest</system-err>
+		</testcase>
+		<testcase name="tests.tmc.test_tmc_abort_command:5:0" classname="pylint" class="error" file="tests/tmc/test_tmc_abort_command.py" line="5">
+			<failure type="failure" message="import-error">E0401:Unable to import 'tests.resources.test_harness.helpers'
+tests/tmc/test_tmc_abort_command.py:5:0:from tests.resources.test_harness.helpers import (</failure>
+			<system-out>tests/tmc/test_tmc_abort_command.py:5:0:from tests.resources.test_harness.helpers import (</system-out>
+			<system-err>E0401:Unable to import 'tests.resources.test_harness.helpers'
+tests/tmc/test_tmc_abort_command.py:5:0:from tests.resources.test_harness.helpers import (</system-err>
+		</testcase>
+		<testcase name="tests.tmc.test_tmc_abort_command:5:0" classname="pylint" class="error" file="tests/tmc/test_tmc_abort_command.py" line="5">
+			<failure type="failure" message="no-name-in-module">E0611:No name 'helpers' in module 'tests.resources.test_harness'
+tests/tmc/test_tmc_abort_command.py:5:0:from tests.resources.test_harness.helpers import (</failure>
+			<system-out>tests/tmc/test_tmc_abort_command.py:5:0:from tests.resources.test_harness.helpers import (</system-out>
+			<system-err>E0611:No name 'helpers' in module 'tests.resources.test_harness'
+tests/tmc/test_tmc_abort_command.py:5:0:from tests.resources.test_harness.helpers import (</system-err>
+		</testcase>
+		<testcase name="tests.tmc.test_tmc_abort_command:0:0" classname="pylint" file="tests/tmc/test_tmc_abort_command.py">
+			<system-out>All checks passed for: tests/tmc/test_tmc_abort_command.py</system-out>
+		</testcase>
+	</testsuite>
+	<testsuite disabled="0" errors="0" failures="3" name="tests.tmc.test_telescopeon_availablity_low" skipped="0" tests="4" time="0">
+		<testcase name="tests.tmc.test_telescopeon_availablity_low:1:0" classname="pylint" class="convention" file="tests/tmc/test_telescopeon_availablity_low.py" line="1">
+			<failure type="failure" message="missing-module-docstring">C0114:Missing module docstring
+tests/tmc/test_telescopeon_availablity_low.py:1:0:import pytest</failure>
+			<system-out>tests/tmc/test_telescopeon_availablity_low.py:1:0:import pytest</system-out>
+			<system-err>C0114:Missing module docstring
+tests/tmc/test_telescopeon_availablity_low.py:1:0:import pytest</system-err>
+		</testcase>
+		<testcase name="tests.tmc.test_telescopeon_availablity_low:25:4" classname="pylint" class="warning" file="tests/tmc/test_telescopeon_availablity_low.py" line="25">
+			<failure type="failure" message="unused-variable">W0612:Unused variable 'result'
+tests/tmc/test_telescopeon_availablity_low.py:25:4:result, message = central_node.AssignResources(assign_json)</failure>
+			<system-out>tests/tmc/test_telescopeon_availablity_low.py:25:4:result, message = central_node.AssignResources(assign_json)</system-out>
+			<system-err>W0612:Unused variable 'result'
+tests/tmc/test_telescopeon_availablity_low.py:25:4:result, message = central_node.AssignResources(assign_json)</system-err>
+		</testcase>
+		<testcase name="tests.tmc.test_telescopeon_availablity_low:38:4" classname="pylint" class="warning" file="tests/tmc/test_telescopeon_availablity_low.py" line="38">
+			<failure type="failure" message="unused-variable">W0612:Unused variable 'result'
+tests/tmc/test_telescopeon_availablity_low.py:38:4:result, message = central_node.ReleaseResources(release_json)</failure>
+			<system-out>tests/tmc/test_telescopeon_availablity_low.py:38:4:result, message = central_node.ReleaseResources(release_json)</system-out>
+			<system-err>W0612:Unused variable 'result'
+tests/tmc/test_telescopeon_availablity_low.py:38:4:result, message = central_node.ReleaseResources(release_json)</system-err>
+		</testcase>
+		<testcase name="tests.tmc.test_telescopeon_availablity_low:0:0" classname="pylint" file="tests/tmc/test_telescopeon_availablity_low.py">
+			<system-out>All checks passed for: tests/tmc/test_telescopeon_availablity_low.py</system-out>
+		</testcase>
+	</testsuite>
+	<testsuite disabled="0" errors="0" failures="0" name="tests.tmc.test_telescopestandby_command_low" skipped="0" tests="1" time="0">
+		<testcase name="tests.tmc.test_telescopestandby_command_low:0:0" classname="pylint" file="tests/tmc/test_telescopestandby_command_low.py">
+			<system-out>All checks passed for: tests/tmc/test_telescopestandby_command_low.py</system-out>
+		</testcase>
+	</testsuite>
+	<testsuite disabled="0" errors="0" failures="0" name="tests.tmc.test_low_abort_restart_command_in_configuring" skipped="0" tests="1" time="0">
+		<testcase name="tests.tmc.test_low_abort_restart_command_in_configuring:0:0" classname="pylint" file="tests/tmc/test_low_abort_restart_command_in_configuring.py">
+			<system-out>All checks passed for: tests/tmc/test_low_abort_restart_command_in_configuring.py</system-out>
+		</testcase>
+	</testsuite>
+	<testsuite disabled="0" errors="0" failures="9" name="tests.tmc.test_low_central_node_assign_release_resources" skipped="0" tests="10" time="0">
+		<testcase name="tests.tmc.test_low_central_node_assign_release_resources:1:0" classname="pylint" class="convention" file="tests/tmc/test_low_central_node_assign_release_resources.py" line="1">
+			<failure type="failure" message="missing-module-docstring">C0114:Missing module docstring
+tests/tmc/test_low_central_node_assign_release_resources.py:1:0:import json</failure>
+			<system-out>tests/tmc/test_low_central_node_assign_release_resources.py:1:0:import json</system-out>
+			<system-err>C0114:Missing module docstring
+tests/tmc/test_low_central_node_assign_release_resources.py:1:0:import json</system-err>
+		</testcase>
+		<testcase name="tests.tmc.test_low_central_node_assign_release_resources:13:0" classname="pylint" class="error" file="tests/tmc/test_low_central_node_assign_release_resources.py" line="13">
+			<failure type="failure" message="import-error">E0401:Unable to import 'tests.resources.test_harness.helpers'
+tests/tmc/test_low_central_node_assign_release_resources.py:13:0:from tests.resources.test_harness.helpers import (</failure>
+			<system-out>tests/tmc/test_low_central_node_assign_release_resources.py:13:0:from tests.resources.test_harness.helpers import (</system-out>
+			<system-err>E0401:Unable to import 'tests.resources.test_harness.helpers'
+tests/tmc/test_low_central_node_assign_release_resources.py:13:0:from tests.resources.test_harness.helpers import (</system-err>
+		</testcase>
+		<testcase name="tests.tmc.test_low_central_node_assign_release_resources:13:0" classname="pylint" class="error" file="tests/tmc/test_low_central_node_assign_release_resources.py" line="13">
+			<failure type="failure" message="no-name-in-module">E0611:No name 'helpers' in module 'tests.resources.test_harness'
+tests/tmc/test_low_central_node_assign_release_resources.py:13:0:from tests.resources.test_harness.helpers import (</failure>
+			<system-out>tests/tmc/test_low_central_node_assign_release_resources.py:13:0:from tests.resources.test_harness.helpers import (</system-out>
+			<system-err>E0611:No name 'helpers' in module 'tests.resources.test_harness'
+tests/tmc/test_low_central_node_assign_release_resources.py:13:0:from tests.resources.test_harness.helpers import (</system-err>
+		</testcase>
+		<testcase name="tests.tmc.test_low_central_node_assign_release_resources:58:0" classname="pylint" class="convention" file="tests/tmc/test_low_central_node_assign_release_resources.py" line="58">
+			<failure type="failure" message="missing-class-docstring">C0115:Missing class docstring
+tests/tmc/test_low_central_node_assign_release_resources.py:58:0:class TestLowCentralNodeAssignResources(object):</failure>
+			<system-out>tests/tmc/test_low_central_node_assign_release_resources.py:58:0:class TestLowCentralNodeAssignResources(object):</system-out>
+			<system-err>C0115:Missing class docstring
+tests/tmc/test_low_central_node_assign_release_resources.py:58:0:class TestLowCentralNodeAssignResources(object):</system-err>
+		</testcase>
+		<testcase name="tests.tmc.test_low_central_node_assign_release_resources:58:0" classname="pylint" class="refactor" file="tests/tmc/test_low_central_node_assign_release_resources.py" line="58">
+			<failure type="failure" message="useless-object-inheritance">R0205:Class 'TestLowCentralNodeAssignResources' inherits from object, can be safely removed from bases in python3
+tests/tmc/test_low_central_node_assign_release_resources.py:58:0:class TestLowCentralNodeAssignResources(object):</failure>
+			<system-out>tests/tmc/test_low_central_node_assign_release_resources.py:58:0:class TestLowCentralNodeAssignResources(object):</system-out>
+			<system-err>R0205:Class 'TestLowCentralNodeAssignResources' inherits from object, can be safely removed from bases in python3
+tests/tmc/test_low_central_node_assign_release_resources.py:58:0:class TestLowCentralNodeAssignResources(object):</system-err>
+		</testcase>
+		<testcase name="tests.tmc.test_low_central_node_assign_release_resources:60:4" classname="pylint" class="refactor" file="tests/tmc/test_low_central_node_assign_release_resources.py" line="60">
+			<failure type="failure" message="too-many-locals">R0914:Too many local variables (16/15)
+tests/tmc/test_low_central_node_assign_release_resources.py:60:4:def test_low_centralnode_assign_resources(</failure>
+			<system-out>tests/tmc/test_low_central_node_assign_release_resources.py:60:4:def test_low_centralnode_assign_resources(</system-out>
+			<system-err>R0914:Too many local variables (16/15)
+tests/tmc/test_low_central_node_assign_release_resources.py:60:4:def test_low_centralnode_assign_resources(</system-err>
+		</testcase>
+		<testcase name="tests.tmc.test_low_central_node_assign_release_resources:152:8" classname="pylint" class="warning" file="tests/tmc/test_low_central_node_assign_release_resources.py" line="152">
+			<failure type="failure" message="unused-variable">W0612:Unused variable 'result'
+tests/tmc/test_low_central_node_assign_release_resources.py:152:8:result, unique_id = central_node_low.perform_action(</failure>
+			<system-out>tests/tmc/test_low_central_node_assign_release_resources.py:152:8:result, unique_id = central_node_low.perform_action(</system-out>
+			<system-err>W0612:Unused variable 'result'
+tests/tmc/test_low_central_node_assign_release_resources.py:152:8:result, unique_id = central_node_low.perform_action(</system-err>
+		</testcase>
+		<testcase name="tests.tmc.test_low_central_node_assign_release_resources:293:8" classname="pylint" class="warning" file="tests/tmc/test_low_central_node_assign_release_resources.py" line="293">
+			<failure type="failure" message="unused-variable">W0612:Unused variable 'result'
+tests/tmc/test_low_central_node_assign_release_resources.py:293:8:result, unique_id = central_node_low.perform_action(</failure>
+			<system-out>tests/tmc/test_low_central_node_assign_release_resources.py:293:8:result, unique_id = central_node_low.perform_action(</system-out>
+			<system-err>W0612:Unused variable 'result'
+tests/tmc/test_low_central_node_assign_release_resources.py:293:8:result, unique_id = central_node_low.perform_action(</system-err>
+		</testcase>
+		<testcase name="tests.tmc.test_low_central_node_assign_release_resources:380:8" classname="pylint" class="warning" file="tests/tmc/test_low_central_node_assign_release_resources.py" line="380">
+			<failure type="failure" message="unused-variable">W0612:Unused variable 'result'
+tests/tmc/test_low_central_node_assign_release_resources.py:380:8:result, unique_id = central_node_low.perform_action(</failure>
+			<system-out>tests/tmc/test_low_central_node_assign_release_resources.py:380:8:result, unique_id = central_node_low.perform_action(</system-out>
+			<system-err>W0612:Unused variable 'result'
+tests/tmc/test_low_central_node_assign_release_resources.py:380:8:result, unique_id = central_node_low.perform_action(</system-err>
+		</testcase>
+		<testcase name="tests.tmc.test_low_central_node_assign_release_resources:0:0" classname="pylint" file="tests/tmc/test_low_central_node_assign_release_resources.py">
+			<system-out>All checks passed for: tests/tmc/test_low_central_node_assign_release_resources.py</system-out>
+		</testcase>
+	</testsuite>
+	<testsuite disabled="0" errors="0" failures="0" name="tests.tmc.test_recover_subarray_stuck_in_resourcing_low" skipped="0" tests="1" time="0">
+		<testcase name="tests.tmc.test_recover_subarray_stuck_in_resourcing_low:0:0" classname="pylint" file="tests/tmc/test_recover_subarray_stuck_in_resourcing_low.py">
+			<system-out>All checks passed for: tests/tmc/test_recover_subarray_stuck_in_resourcing_low.py</system-out>
+		</testcase>
+	</testsuite>
+	<testsuite disabled="0" errors="0" failures="0" name="tests.tmc.test_scan_endscan_command_low" skipped="0" tests="1" time="0">
+		<testcase name="tests.tmc.test_scan_endscan_command_low:0:0" classname="pylint" file="tests/tmc/test_scan_endscan_command_low.py">
+			<system-out>All checks passed for: tests/tmc/test_scan_endscan_command_low.py</system-out>
+		</testcase>
+	</testsuite>
+	<testsuite disabled="0" errors="0" failures="0" name="tests.tmc.test_assign_release_command_low" skipped="0" tests="1" time="0">
+		<testcase name="tests.tmc.test_assign_release_command_low:0:0" classname="pylint" file="tests/tmc/test_assign_release_command_low.py">
+			<system-out>All checks passed for: tests/tmc/test_assign_release_command_low.py</system-out>
+		</testcase>
+	</testsuite>
+	<testsuite disabled="0" errors="0" failures="0" name="tests.tmc.test_low_abort_restart_command_in_restarting" skipped="0" tests="1" time="0">
+		<testcase name="tests.tmc.test_low_abort_restart_command_in_restarting:0:0" classname="pylint" file="tests/tmc/test_low_abort_restart_command_in_restarting.py">
+			<system-out>All checks passed for: tests/tmc/test_low_abort_restart_command_in_restarting.py</system-out>
+		</testcase>
+	</testsuite>
+	<testsuite disabled="0" errors="0" failures="0" name="tests.tmc.test_telescopeon_command_low" skipped="0" tests="1" time="0">
+		<testcase name="tests.tmc.test_telescopeon_command_low:0:0" classname="pylint" file="tests/tmc/test_telescopeon_command_low.py">
+			<system-out>All checks passed for: tests/tmc/test_telescopeon_command_low.py</system-out>
+		</testcase>
+	</testsuite>
+	<testsuite disabled="0" errors="0" failures="3" name="tests.tmc.test_tmc_scan_command" skipped="0" tests="4" time="0">
+		<testcase name="tests.tmc.test_tmc_scan_command:1:0" classname="pylint" class="convention" file="tests/tmc/test_tmc_scan_command.py" line="1">
+			<failure type="failure" message="missing-module-docstring">C0114:Missing module docstring
+tests/tmc/test_tmc_scan_command.py:1:0:import pytest</failure>
+			<system-out>tests/tmc/test_tmc_scan_command.py:1:0:import pytest</system-out>
+			<system-err>C0114:Missing module docstring
+tests/tmc/test_tmc_scan_command.py:1:0:import pytest</system-err>
+		</testcase>
+		<testcase name="tests.tmc.test_tmc_scan_command:7:0" classname="pylint" class="error" file="tests/tmc/test_tmc_scan_command.py" line="7">
+			<failure type="failure" message="import-error">E0401:Unable to import 'tests.resources.test_harness.helpers'
+tests/tmc/test_tmc_scan_command.py:7:0:from tests.resources.test_harness.helpers import (</failure>
+			<system-out>tests/tmc/test_tmc_scan_command.py:7:0:from tests.resources.test_harness.helpers import (</system-out>
+			<system-err>E0401:Unable to import 'tests.resources.test_harness.helpers'
+tests/tmc/test_tmc_scan_command.py:7:0:from tests.resources.test_harness.helpers import (</system-err>
+		</testcase>
+		<testcase name="tests.tmc.test_tmc_scan_command:7:0" classname="pylint" class="error" file="tests/tmc/test_tmc_scan_command.py" line="7">
+			<failure type="failure" message="no-name-in-module">E0611:No name 'helpers' in module 'tests.resources.test_harness'
+tests/tmc/test_tmc_scan_command.py:7:0:from tests.resources.test_harness.helpers import (</failure>
+			<system-out>tests/tmc/test_tmc_scan_command.py:7:0:from tests.resources.test_harness.helpers import (</system-out>
+			<system-err>E0611:No name 'helpers' in module 'tests.resources.test_harness'
+tests/tmc/test_tmc_scan_command.py:7:0:from tests.resources.test_harness.helpers import (</system-err>
+		</testcase>
+		<testcase name="tests.tmc.test_tmc_scan_command:0:0" classname="pylint" file="tests/tmc/test_tmc_scan_command.py">
+			<system-out>All checks passed for: tests/tmc/test_tmc_scan_command.py</system-out>
+		</testcase>
+	</testsuite>
+	<testsuite disabled="0" errors="0" failures="0" name="tests.tmc.test_low_abort_restart_in_scanning" skipped="0" tests="1" time="0">
+		<testcase name="tests.tmc.test_low_abort_restart_in_scanning:0:0" classname="pylint" file="tests/tmc/test_low_abort_restart_in_scanning.py">
+			<system-out>All checks passed for: tests/tmc/test_low_abort_restart_in_scanning.py</system-out>
+		</testcase>
+	</testsuite>
+	<testsuite disabled="0" errors="0" failures="0" name="tests.tmc_csp.__init__" skipped="0" tests="1" time="0">
+		<testcase name="tests.tmc_csp.__init__:0:0" classname="pylint" file="tests/tmc_csp/__init__.py">
+			<system-out>All checks passed for: tests/tmc_csp/__init__.py</system-out>
 		</testcase>
 	</testsuite>
 	<testsuite disabled="0" errors="0" failures="0" name="tests.resources.__init__" skipped="0" tests="1" time="0">
