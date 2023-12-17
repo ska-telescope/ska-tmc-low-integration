@@ -1,3 +1,12 @@
+"""
+This module contains test cases for the low-level CentralNode functionality
+related to the AssignResources command.It utilizes the pytest framework and
+mocks certain components for testing purposes.
+The test cases cover various scenarios, including the successful execution of
+the AssignResources command,
+verification of attribute updates, exception handling, and proper propagation
+of exceptions.
+"""
 import json
 
 import pytest
@@ -10,13 +19,13 @@ from tests.resources.test_harness.constant import (
     mccs_master_leaf_node,
     tmc_low_subarraynode1,
 )
-from tests.resources.test_harness.helpers import (
+from tests.resources.test_harness.utils.enums import SimulatorDeviceType
+from tests.resources.test_support.common_utils.common_helpers import Waiter
+from tests.resources.test_support.common_utils.tmc_helpers import (
     prepare_json_args_for_centralnode_commands,
     prepare_json_args_for_commands,
     wait_for_attribute_update,
 )
-from tests.resources.test_harness.utils.enums import SimulatorDeviceType
-from tests.resources.test_support.common_utils.common_helpers import Waiter
 
 
 def check_assigned_resources_attribute_after_release(
@@ -55,7 +64,11 @@ def check_assigned_resources_attribute_after_assign(
     ]
 
 
-class TestLowCentralNodeAssignResources(object):
+class TestLowCentralNodeAssignResources:
+    """TMC CentralNode Assign Resources by checking the state transitions of
+    simulated master devices (CSP, SDP, MCCS) and the overall
+      telescope state."""
+
     @pytest.mark.SKA_low
     def test_low_centralnode_assign_resources(
         self,
@@ -149,7 +162,7 @@ class TestLowCentralNodeAssignResources(object):
         )
 
         # Execute Assign command and check command completed successfully
-        result, unique_id = central_node_low.perform_action(
+        _, unique_id = central_node_low.perform_action(
             "AssignResources", assign_input_json
         )
 
@@ -199,7 +212,7 @@ class TestLowCentralNodeAssignResources(object):
 
         # Execute release command and verify command completed successfully
 
-        result, unique_id = central_node_low.perform_action(
+        _, unique_id = central_node_low.perform_action(
             "ReleaseResources", release_resource_json
         )
 
@@ -290,7 +303,7 @@ class TestLowCentralNodeAssignResources(object):
         mccs_controller_sim.SetRaiseException(True)
 
         # Execute Assign command and check command completed successfully
-        result, unique_id = central_node_low.perform_action(
+        _, unique_id = central_node_low.perform_action(
             "AssignResources", assign_input_json
         )
 
@@ -377,7 +390,7 @@ class TestLowCentralNodeAssignResources(object):
         )
 
         # Execute Assign command and verify successful execution
-        result, unique_id = central_node_low.perform_action(
+        _, unique_id = central_node_low.perform_action(
             "AssignResources", assign_input_json
         )
 
@@ -399,7 +412,7 @@ class TestLowCentralNodeAssignResources(object):
         # Setting device to defective
         mccs_controller_sim.SetRaiseException(True)
 
-        result, unique_id = central_node_low.perform_action(
+        _, unique_id = central_node_low.perform_action(
             "ReleaseResources", release_resource_json
         )
 

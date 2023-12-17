@@ -1,10 +1,25 @@
+"""
+Module: test_low_central_node_standby_command
+
+This module defines a Pytest test class to verify the behavior of the Standby
+command on a Telescope Monitoring and Control (TMC) CentralNode Low.
+The test includes checking the transitions triggered by the Standby command
+and validating the completion transitions, assuming that external subsystems
+work fine.
+"""
+
 import pytest
 from tango import DevState
 
 from tests.resources.test_harness.utils.enums import SimulatorDeviceType
 
 
-class TestLowCentralNodeStandbyCommand(object):
+class TestLowCentralNodeStandbyCommand:
+    """Validates the behavior of the Standby command on the
+    TMC CentralNode Low by checking the state transitions of simulated master
+    devices(CSP, SDP, MCCS) and the overall telescope state.
+    """
+
     @pytest.mark.SKA_low
     def test_low_central_node_standby_command(
         self,

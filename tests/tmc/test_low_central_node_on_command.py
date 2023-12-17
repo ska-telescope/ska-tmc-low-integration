@@ -1,3 +1,12 @@
+"""
+Module: test_low_central_node_on_command
+
+This module defines a Pytest test class to verify the behavior of the
+On command on a Telescope Monitoring and Control (TMC) CentralNode Low.
+The test includes checking the transitions triggered by the On command and
+validating the completion transitions assuming that external subsystems work
+fine.
+"""
 import logging
 
 import pytest
@@ -10,7 +19,11 @@ configure_logging(logging.DEBUG)
 LOGGER = logging.getLogger(__name__)
 
 
-class TestLowCentralNodeOnCommand(object):
+class TestLowCentralNodeOnCommand:
+    """TMC CentralNode Low On command by checking the state transitions of
+    simulated master devices (CSP, SDP, MCCS) and the overall
+      telescope state."""
+
     @pytest.mark.SKA_low
     def test_low_central_node_on_command(
         self,

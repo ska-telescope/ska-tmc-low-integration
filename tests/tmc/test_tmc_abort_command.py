@@ -1,11 +1,16 @@
+"""
+This module defines a Pytest BDD test scenario for the successful execution of
+Abort command of a Low Telescope Subarray in the Telescope Monitoring
+and Control (TMC) system.
+"""
 import pytest
 from pytest_bdd import given, parsers, scenario, then, when
 from ska_control_model import ObsState
 
-from tests.resources.test_harness.helpers import (
+from tests.resources.test_support.common_utils.result_code import ResultCode
+from tests.resources.test_support.common_utils.tmc_helpers import (
     set_subarray_to_given_obs_state,
 )
-from tests.resources.test_support.common_utils.result_code import ResultCode
 
 
 @pytest.mark.SKA_low

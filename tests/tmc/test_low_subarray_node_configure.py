@@ -1,11 +1,19 @@
+"""
+Module Description:
+
+This module contains test cases to validate the observation state
+transitions of the subarray.
+"""
 import pytest
 from ska_tango_base.control_model import ObsState
 
-from tests.resources.test_harness.helpers import prepare_json_args_for_commands
+from tests.resources.test_support.common_utils.tmc_helpers import (
+    prepare_json_args_for_commands,
+)
 
 
-class TestSubarrayConfigure(object):
-    """This class implement test cases to validate obsState of sub array"""
+class TestSubarrayConfigure:
+    """This class implement test cases to validate obsState of subarray"""
 
     @pytest.mark.real_csp
     @pytest.mark.parametrize(
