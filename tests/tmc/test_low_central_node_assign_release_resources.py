@@ -70,6 +70,7 @@ class TestLowCentralNodeAssignResources:
       telescope state."""
 
     @pytest.mark.SKA_low
+    @pytest.mark.skip(reason="Unskip after repository setup")
     def test_low_centralnode_assign_resources(
         self,
         central_node_low,

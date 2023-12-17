@@ -39,7 +39,7 @@ telescope_control = BaseTelescopeControl()
 @pytest.mark.skip(reason="Unskip after repository setup")
 @pytest.mark.SKA_low
 @scenario(
-    "../features/check_invalid_json_not_allowed.feature",
+    "../features/tmc/check_invalid_json_not_allowed.feature",
     "Invalid json rejected by TMC Low for Configure command",
 )
 def test_invalid_json_in_configure_obsState():

@@ -21,7 +21,53 @@ Statistics by type
 
 
 
-6309 lines have been analyzed
+External dependencies
+---------------------
+::
+
+    numpy (tests.resources.test_support.common_utils.common_helpers)
+    pytest (tests.conftest,tests.tmc.test_abort_command_not_allowed_empty,tests.tmc.test_assign_release_command_low,tests.tmc.test_assign_resources_command_not_allowed_propagation_low,tests.tmc.test_central_node_standby_comand,tests.tmc.test_configure_end_command_low,tests.tmc.test_configure_invalid_json_low,tests.tmc.test_low_abort_restart_command_in_aborting,tests.tmc.test_low_abort_restart_command_in_configuring,tests.tmc.test_low_abort_restart_command_in_idle,tests.tmc.test_low_abort_restart_command_in_restarting,tests.tmc.test_low_abort_restart_in_ready,tests.tmc.test_low_abort_restart_in_resourcing,tests.tmc.test_low_abort_restart_in_scanning,tests.tmc.test_low_central_node_assign_release_resources,tests.tmc.test_low_central_node_off_command,tests.tmc.test_low_central_node_on_command,tests.tmc.test_low_subarray_node_configure,tests.tmc.test_recover_subarray_stuck_in_resourcing_low,tests.tmc.test_scan_endscan_command_low,tests.tmc.test_sdp_csp_ln_obsstate_low,tests.tmc.test_telescopeon_availablity_low,tests.tmc.test_telescopeon_command_low,tests.tmc.test_telescopestandby_command_low,tests.tmc.test_tmc_abort_command,tests.tmc.test_tmc_configure_command,tests.tmc.test_tmc_scan_command)
+    pytest_bdd (tests.tmc.test_abort_command_not_allowed_empty,tests.tmc.test_configure_invalid_json_low,tests.tmc.test_tmc_abort_command,tests.tmc.test_tmc_configure_command,tests.tmc.test_tmc_scan_command)
+      \-parsers (tests.tmc.test_configure_invalid_json_low,tests.tmc.test_tmc_abort_command)
+      \-scenario (tests.tmc.test_abort_command_not_allowed_empty,tests.tmc.test_configure_invalid_json_low,tests.tmc.test_tmc_abort_command,tests.tmc.test_tmc_configure_command,tests.tmc.test_tmc_scan_command)
+    ska_control_model (tests.resources.test_support.common_utils.tmc_helpers,tests.resources.test_support.constant_low,tests.tmc.test_abort_command_not_allowed_empty,tests.tmc.test_assign_release_command_low,tests.tmc.test_low_central_node_assign_release_resources,tests.tmc.test_recover_subarray_stuck_in_resourcing_low,tests.tmc.test_tmc_abort_command,tests.tmc.test_tmc_configure_command,tests.tmc.test_tmc_scan_command)
+    ska_ser_logging (tests.conftest,tests.resources.test_support.common_utils.common_helpers,tests.resources.test_support.common_utils.sync_decorators,tests.resources.test_support.common_utils.tmc_helpers,tests.tmc.test_low_central_node_on_command)
+    ska_tango_base 
+      \-commands (tests.tmc.test_low_central_node_assign_release_resources)
+      \-control_model (tests.tmc.test_assign_resources_command_not_allowed_propagation_low,tests.tmc.test_configure_end_command_low,tests.tmc.test_low_subarray_node_configure)
+    ska_tango_testing 
+      \-mock 
+        \-placeholders (tests.tmc.test_assign_release_command_low,tests.tmc.test_assign_resources_command_not_allowed_propagation_low,tests.tmc.test_configure_end_command_low,tests.tmc.test_recover_subarray_stuck_in_resourcing_low)
+        \-tango 
+          \-event_callback (tests.conftest)
+    tango (tests.conftest,tests.resources.test_support.common_utils.common_helpers,tests.resources.test_support.common_utils.tmc_helpers,tests.tmc.test_abort_command_not_allowed_empty,tests.tmc.test_assign_release_command_low,tests.tmc.test_assign_resources_command_not_allowed_propagation_low,tests.tmc.test_central_node_standby_comand,tests.tmc.test_configure_end_command_low,tests.tmc.test_low_abort_restart_command_in_aborting,tests.tmc.test_low_abort_restart_command_in_configuring,tests.tmc.test_low_abort_restart_command_in_restarting,tests.tmc.test_low_abort_restart_in_resourcing,tests.tmc.test_low_abort_restart_in_scanning,tests.tmc.test_low_central_node_assign_release_resources,tests.tmc.test_low_central_node_off_command,tests.tmc.test_low_central_node_on_command,tests.tmc.test_recover_subarray_stuck_in_resourcing_low,tests.tmc.test_telescopeon_availablity_low,tests.tmc.test_tmc_configure_command,tests.tmc.test_tmc_scan_command)
+    tests 
+      \-conftest (tests.resources.test_support.common_utils.sync_decorators,tests.resources.test_support.common_utils.telescope_controls,tests.tmc.test_assign_release_command_low,tests.tmc.test_assign_resources_command_not_allowed_propagation_low,tests.tmc.test_configure_end_command_low,tests.tmc.test_configure_invalid_json_low,tests.tmc.test_low_abort_restart_command_in_aborting,tests.tmc.test_low_abort_restart_command_in_configuring,tests.tmc.test_low_abort_restart_command_in_idle,tests.tmc.test_low_abort_restart_command_in_restarting,tests.tmc.test_low_abort_restart_in_ready,tests.tmc.test_low_abort_restart_in_resourcing,tests.tmc.test_low_abort_restart_in_scanning,tests.tmc.test_recover_subarray_stuck_in_resourcing_low,tests.tmc.test_scan_endscan_command_low,tests.tmc.test_sdp_csp_ln_obsstate_low,tests.tmc.test_telescopeon_command_low,tests.tmc.test_telescopestandby_command_low)
+      \-resources 
+        \-test_harness 
+        | \-central_node_low (tests.conftest)
+        | \-central_node_with_csp_low (tests.conftest)
+        | \-constant (tests.tmc.test_low_central_node_assign_release_resources,tests.tmc.test_tmc_scan_command)
+        | \-event_recorder (tests.conftest)
+        | \-simulator_factory (tests.conftest)
+        | \-subarray_node_low (tests.conftest)
+        | \-subarray_node_with_csp_low (tests.conftest)
+        | \-utils 
+        |   \-common_utils (tests.conftest,tests.resources.test_support.common_utils.tmc_helpers)
+        |   \-enums (tests.tmc.test_central_node_standby_comand,tests.tmc.test_low_central_node_assign_release_resources,tests.tmc.test_low_central_node_off_command,tests.tmc.test_low_central_node_on_command)
+        \-test_support 
+          \-common_utils 
+          | \-base_utils (tests.resources.test_support.common_utils.sync_decorators)
+          | \-common_helpers (tests.resources.test_support.common_utils.base_utils,tests.resources.test_support.common_utils.sync_decorators,tests.resources.test_support.common_utils.telescope_controls,tests.resources.test_support.common_utils.tmc_helpers,tests.tmc.test_assign_release_command_low,tests.tmc.test_assign_resources_command_not_allowed_propagation_low,tests.tmc.test_configure_end_command_low,tests.tmc.test_low_abort_restart_command_in_aborting,tests.tmc.test_low_abort_restart_command_in_configuring,tests.tmc.test_low_abort_restart_command_in_restarting,tests.tmc.test_low_abort_restart_in_resourcing,tests.tmc.test_low_central_node_assign_release_resources,tests.tmc.test_recover_subarray_stuck_in_resourcing_low,tests.tmc.test_sdp_csp_ln_obsstate_low,tests.tmc.test_tmc_scan_command)
+          | \-result_code (tests.resources.test_support.common_utils.tmc_helpers,tests.resources.test_support.constant_low,tests.tmc.test_assign_release_command_low,tests.tmc.test_assign_resources_command_not_allowed_propagation_low,tests.tmc.test_configure_end_command_low,tests.tmc.test_configure_invalid_json_low,tests.tmc.test_tmc_abort_command)
+          | \-sync_decorators (tests.resources.test_support.common_utils.tmc_helpers)
+          | \-telescope_controls (tests.resources.test_support.common_utils.tmc_helpers,tests.tmc.test_abort_command_not_allowed_empty,tests.tmc.test_assign_release_command_low,tests.tmc.test_assign_resources_command_not_allowed_propagation_low,tests.tmc.test_configure_end_command_low,tests.tmc.test_configure_invalid_json_low,tests.tmc.test_low_abort_restart_command_in_aborting,tests.tmc.test_low_abort_restart_command_in_configuring,tests.tmc.test_low_abort_restart_command_in_idle,tests.tmc.test_low_abort_restart_command_in_restarting,tests.tmc.test_low_abort_restart_in_ready,tests.tmc.test_low_abort_restart_in_resourcing,tests.tmc.test_low_abort_restart_in_scanning,tests.tmc.test_recover_subarray_stuck_in_resourcing_low,tests.tmc.test_scan_endscan_command_low,tests.tmc.test_sdp_csp_ln_obsstate_low,tests.tmc.test_telescopeon_command_low,tests.tmc.test_telescopestandby_command_low)
+          | \-tmc_helpers (tests.tmc.test_assign_release_command_low,tests.tmc.test_assign_resources_command_not_allowed_propagation_low,tests.tmc.test_configure_end_command_low,tests.tmc.test_configure_invalid_json_low,tests.tmc.test_low_abort_restart_command_in_aborting,tests.tmc.test_low_abort_restart_command_in_configuring,tests.tmc.test_low_abort_restart_command_in_idle,tests.tmc.test_low_abort_restart_command_in_restarting,tests.tmc.test_low_abort_restart_in_ready,tests.tmc.test_low_abort_restart_in_resourcing,tests.tmc.test_low_abort_restart_in_scanning,tests.tmc.test_low_central_node_assign_release_resources,tests.tmc.test_low_subarray_node_configure,tests.tmc.test_recover_subarray_stuck_in_resourcing_low,tests.tmc.test_scan_endscan_command_low,tests.tmc.test_sdp_csp_ln_obsstate_low,tests.tmc.test_telescopeon_command_low,tests.tmc.test_telescopestandby_command_low,tests.tmc.test_tmc_abort_command,tests.tmc.test_tmc_configure_command,tests.tmc.test_tmc_scan_command)
+          \-constant_low (tests.resources.test_support.common_utils.tmc_helpers,tests.tmc.test_abort_command_not_allowed_empty,tests.tmc.test_assign_release_command_low,tests.tmc.test_assign_resources_command_not_allowed_propagation_low,tests.tmc.test_configure_end_command_low,tests.tmc.test_configure_invalid_json_low,tests.tmc.test_low_abort_restart_command_in_aborting,tests.tmc.test_low_abort_restart_command_in_configuring,tests.tmc.test_low_abort_restart_command_in_idle,tests.tmc.test_low_abort_restart_command_in_restarting,tests.tmc.test_low_abort_restart_in_ready,tests.tmc.test_low_abort_restart_in_resourcing,tests.tmc.test_low_abort_restart_in_scanning,tests.tmc.test_recover_subarray_stuck_in_resourcing_low,tests.tmc.test_scan_endscan_command_low,tests.tmc.test_sdp_csp_ln_obsstate_low,tests.tmc.test_telescopeon_availablity_low,tests.tmc.test_telescopeon_command_low,tests.tmc.test_telescopestandby_command_low)
+
+
+
+6269 lines have been analyzed
 
 Raw metrics
 -----------
@@ -29,13 +75,13 @@ Raw metrics
 +----------+-------+------+---------+-----------+
 |type      |number |%     |previous |difference |
 +==========+=======+======+=========+===========+
-|code      |4179   |66.24 |4179     |=          |
+|code      |4165   |66.44 |4179     |-14.00     |
 +----------+-------+------+---------+-----------+
-|docstring |889    |14.09 |889      |=          |
+|docstring |863    |13.77 |889      |-26.00     |
 +----------+-------+------+---------+-----------+
-|comment   |320    |5.07  |320      |=          |
+|comment   |320    |5.10  |320      |=          |
 +----------+-------+------+---------+-----------+
-|empty     |921    |14.60 |921      |=          |
+|empty     |921    |14.69 |921      |=          |
 +----------+-------+------+---------+-----------+
 
 
