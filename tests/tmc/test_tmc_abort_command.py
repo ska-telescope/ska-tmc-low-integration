@@ -16,7 +16,7 @@ from tests.resources.test_support.common_utils.tmc_helpers import (
 @pytest.mark.skip(reason="Unskip after repository setup")
 @pytest.mark.SKA_low
 @scenario(
-    "../features/check_abort_command.feature",
+    "../features/tmc/check_abort_command.feature",
     "TMC validates Abort Command",
 )
 def test_tmc_abort_command():
