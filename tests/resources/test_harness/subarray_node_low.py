@@ -148,9 +148,7 @@ class SubarrayNodeWrapperLow:
 
     def move_to_off(self):
         # Move Subarray to OFF state
-        Resource(self.tmc_subarraynode1).assert_attribute("State").equals(
-            "OFF"
-        )
+        Resource(self.tmc_subarraynode1).assert_attribute("State").equals("ON")
         result, message = self.subarray_node.Off()
         LOGGER.info("Invoked OFF on SubarrayNode")
         return result, message
