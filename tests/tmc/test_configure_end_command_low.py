@@ -216,7 +216,11 @@ def test_configure_timeout_and_error_propagation_csp(
         )
 
 
-@pytest.mark.skip(reason="Unskip after repository setup")
+@pytest.mark.skip(
+    reason="AssignResources and ReleaseResources"
+    " functionalities are not yet"
+    " implemented on mccs master leaf node."
+)
 @pytest.mark.SKA_low
 def test_configure_timeout_sdp(json_factory, change_event_callbacks):
     """Verify timeout exception raised when csp set to defective."""

@@ -21,7 +21,6 @@ class TestLowCentralNodeStandbyCommand:
     """
 
     @pytest.mark.SKA_low
-    @pytest.mark.skip(reason="Unskip after repository setup")
     def test_low_central_node_standby_command(
         self,
         central_node_low,

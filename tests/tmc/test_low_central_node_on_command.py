@@ -25,7 +25,6 @@ class TestLowCentralNodeOnCommand:
       telescope state."""
 
     @pytest.mark.SKA_low
-    @pytest.mark.skip(reason="Unskip after repository setup")
     def test_low_central_node_on_command(
         self,
         central_node_low,

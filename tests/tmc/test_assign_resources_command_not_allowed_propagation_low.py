@@ -34,7 +34,11 @@ telescope_control = BaseTelescopeControl()
 tmc_helper = TmcHelper(centralnode, tmc_subarraynode1)
 
 
-@pytest.mark.skip(reason="Unskip after repository setup")
+@pytest.mark.skip(
+    reason="AssignResources and ReleaseResources"
+    " functionalities are not yet"
+    " implemented on mccs master leaf node."
+)
 @pytest.mark.SKA_low
 def test_assign_release_command_not_allowed_propagation_csp_ln_low(
     json_factory, change_event_callbacks

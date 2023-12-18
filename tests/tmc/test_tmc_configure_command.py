@@ -21,7 +21,6 @@ from tests.resources.test_support.common_utils.tmc_helpers import (
 
 
 @pytest.mark.SKA_low
-@pytest.mark.skip(reason="Unskip after repository setup")
 @scenario(
     "../features/tmc/check_configure_command.feature",
     "Successful Configuration of Low Telescope Subarray in TMC",

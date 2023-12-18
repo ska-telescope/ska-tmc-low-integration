@@ -16,7 +16,6 @@ class TestSubarrayConfigure:
     """This class implement test cases to validate obsState of subarray"""
 
     @pytest.mark.real_csp
-    @pytest.mark.skip(reason="Unskip after repository setup")
     @pytest.mark.parametrize(
         "source_obs_state, trigger, args_for_command,\
         intermediate_obs_state, destination_obs_state",
