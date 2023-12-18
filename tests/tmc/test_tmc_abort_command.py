@@ -14,6 +14,7 @@ from tests.resources.test_support.common_utils.tmc_helpers import (
 
 
 @pytest.mark.SKA_low
+@pytest.mark.abort
 @scenario(
     "../features/tmc/check_abort_command.feature",
     "TMC validates Abort Command",

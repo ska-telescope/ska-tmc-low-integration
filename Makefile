@@ -21,7 +21,7 @@ ADD_ARGS ?= ## Additional args to pass to pytest
 FILE_NAME?= alarm_rules.txt
 EXIT_AT_FAIL = true ## Flag for determining exit at failure. Set 'true' to exit at first failure.
 
-ifeq ($(EXIT_AT_FAIL),true)
+ifeq ($(EXIT_AT_FAIL),false)
 ADD_ARGS += -x
 endif
 
