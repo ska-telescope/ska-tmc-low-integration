@@ -17,9 +17,7 @@
   "chart_info": {
     "env": "DEPLOYMENT_CONFIGURATION",
     "maps_to": {
-      "default": "charts/ska-tmc-mid/Chart.yaml",
-      "tmc_low": "charts/ska-tmc-low/Chart.yaml",
-       "tmc_mid": "charts/ska-tmc-mid/Chart.yaml"
+      "tmc_low": "charts/ska-tmc-low/Chart.yaml"
     }
   },
   "test_report": "build/report.json",
@@ -42,10 +40,8 @@
         "default": "STFC-CI",
         "PSI-LOW-TOPIC": "PSI-LOW-TOPIC",
         "PSI-LOW": "PSI-LOW",
-        "PSI-MID-MDA": "PSI-MID-MDA",
         "dev": "dev-testing",
-        "ITF-LOW": "ITF-LOW",
-        "ITF-MID": "ITF-MID"
+        "ITF-LOW": "ITF-LOW"
       }
     }
   ],
@@ -64,8 +60,8 @@
       "env": "CI_COMMIT_BRANCH",
       "maps_to": {
         "default": "",
-        "main": "PI20",
-        "master": "PI20"
+        "main": "PI21",
+        "master": "PI21"
       }
     }
   ],
