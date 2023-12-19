@@ -1,0 +1,36 @@
+apiVersion: v2
+name: ska-tmc-testing-low
+description: An umbrella Helm chart for SKA-TMC-Low deployment.
+type: application
+version: 0.1.0
+appVersion: 1.16.0
+icon: https://www.skatelescope.org/wp-content/uploads/2016/07/09545_NEW_LOGO_2014.png
+maintainers:
+  - name: Jayant Kumbhar
+    email: jayant.ska@gmail.com
+  - name: Devesh Pandey
+    email: devesh.ska@gmail.com
+dependencies:
+  - name: ska-tango-util
+    version: 0.4.5
+    repository: https://artefact.skao.int/repository/helm-internal
+  - name: ska-tango-base
+    version: 0.4.4
+    repository: https://artefact.skao.int/repository/helm-internal
+  - name: ska-tmc-low
+    version: 0.12.0
+    repository: file://../ska-tmc-low
+    alias: tmc-low
+    condition: tmc-low.enabled
+  - name: ska-ser-skuid
+    version: 0.3.0
+    repository: https://artefact.skao.int/repository/helm-internal
+    condition: ska-ser-skuid.enabled
+  - name: ska-tango-taranta
+    version: 2.3.1
+    repository: https://artefact.skao.int/repository/helm-internal
+    condition: ska-taranta.enabled
+  - name: ska-tango-tangogql
+    version: 1.3.7
+    repository: https://artefact.skao.int/repository/helm-internal
+    condition: ska-taranta.enabled

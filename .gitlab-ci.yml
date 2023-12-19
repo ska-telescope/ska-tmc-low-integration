@@ -1,0 +1,201 @@
+image: $SKA_K8S_TOOLS_DOCKER_BUILDER_IMAGE
+
+variables:
+  GIT_SUBMODULE_STRATEGY: recursive
+  DOCKER_DRIVER: overlay2
+
+cache:
+  paths:
+    - build
+
+stages:
+  - lint
+  - build
+  - on-demand
+  - test
+  - integration
+  - publish
+  - staging
+  - pages
+  - scan
+  - lifecycle
+
+include:
+  - project: 'ska-telescope/templates-repository'
+    file: 'gitlab-ci/includes/python-lint.gitlab-ci.yml'
+
+  - project: 'ska-telescope/templates-repository'
+    file: 'gitlab-ci/includes/helm-chart.gitlab-ci.yml'
+
+  - project: 'ska-telescope/templates-repository'
+    file: 'gitlab-ci/includes/docs-pages.gitlab-ci.yml'
+
+  - project: 'ska-telescope/templates-repository'
+    file: 'gitlab-ci/includes/k8s.gitlab-ci.yml'
+
+  - project: 'ska-telescope/templates-repository'
+    file: 'gitlab-ci/includes/deploy.integration.gitlab-ci.yml'
+
+  - project: "ska-telescope/templates-repository"
+    file: "gitlab-ci/includes/deploy.staging.gitlab-ci.yml"
+
+  - project: 'ska-telescope/templates-repository'
+    file: 'gitlab-ci/includes/finaliser.gitlab-ci.yml'
+
+xray-publish:
+  stage: publish
+  image: $SKA_K8S_TOOLS_BUILD_DEPLOY
+  tags:
+    - k8srunner
+  before_script:
+    - '[ -f .make/xray.mk ] || (echo "File xray.mk not included in Makefile; exit 1")'
+    - "make help | grep xray-publish"
+  script:
+    - ls -al
+    - ls -al build
+    - ls -al tests
+    - pip3 install -U ska-ser-xray
+    - XRAY_TEST_RESULT_FILE="build/cucumber.json" make xray-publish
+  rules:
+    - exists:
+        - tests/xray-config.json
+  dependencies:
+    - k8s-test
+  allow_failure: true
+
+on-demand-deploy:
+  stage: on-demand
+  tags:
+    - k8srunner
+  variables:
+    SERVICE_ACCOUNT: "ci-svc-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA"
+    KUBE_NAMESPACE: "ci-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-on-demand"
+    TARANTA_ENABLED: "true"
+  script:
+    - make cred SERVICE_ACCOUNT=$SERVICE_ACCOUNT
+    - '[ -f .make/k8s.mk ] || (echo "File k8s.mk not included in Makefile; exit 1")'
+    - make k8s-install-chart
+    - make k8s-wait
+    - make taranta-link
+    - make alarm-handler-configurator-link
+  environment:
+    name: $CI_PROJECT_NAME/$CI_COMMIT_REF_SLUG
+    kubernetes:
+      namespace: $KUBE_NAMESPACE
+    on_stop: on-demand-destroy
+  when: manual
+  allow_failure: true
+
+on-demand-destroy:
+  stage: on-demand
+  tags:
+    - k8srunner
+  variables:
+    SERVICE_ACCOUNT: "ci-svc-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA"
+    KUBE_NAMESPACE: "ci-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-on-demand"
+  script:
+    - make cred SERVICE_ACCOUNT=$SERVICE_ACCOUNT
+    - '[ -f .make/k8s.mk ] || (echo "File k8s.mk not included in Makefile; exit 1")'
+    - make k8s-uninstall-chart
+  environment:
+    name: $CI_PROJECT_NAME/$CI_COMMIT_REF_SLUG
+    kubernetes:
+      namespace: $KUBE_NAMESPACE
+    action: stop
+  when: manual
+  allow_failure: true
+
+k8s-test:
+  retry: 1
+  variables:
+    KUBE_NAMESPACE: 'ci-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA'
+    SERVICE_ACCOUNT: "ci-svc-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA"
+  script:
+    - make cred SERVICE_ACCOUNT=$SERVICE_ACCOUNT
+    - make k8s-install-chart
+    - make k8s-wait
+    - make k8s-test
+  environment:
+    name: test/$CI_COMMIT_REF_SLUG
+    on_stop: stop-k8s-test
+    auto_stop_in: 1 minute
+
+stop-k8s-test:
+  variables:
+    KUBE_NAMESPACE: 'ci-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA'
+  script:
+    - make k8s-uninstall-chart
+    - kubectl -n $KUBE_NAMESPACE delete pods,svc,daemonsets,deployments,replicasets,statefulsets,cronjobs,jobs,ingresses,configmaps --all
+    - make k8s-delete-namespace
+
+k8s-test-with-csp:
+  retry: 1
+  extends:
+    - k8s-test
+  variables:
+    KUBE_NAMESPACE: 'ci-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-csp-low'
+    SERVICE_ACCOUNT: "ci-svc-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-csp-low"
+    MARK: 'real_csp'
+    CSP_SIMULATION_ENABLED: 'false'
+  script:
+    - make cred SERVICE_ACCOUNT=$SERVICE_ACCOUNT
+    - make k8s-install-chart
+    - make k8s-wait
+    - make k8s-test
+  environment:
+    name: test/$CI_COMMIT_REF_SLUG
+    on_stop: stop-k8s-test-low-with-csp
+    auto_stop_in: 1 minute
+
+stop-k8s-test-low-with-csp:
+  extends:
+    - stop-k8s-test
+  variables:
+    KUBE_NAMESPACE: 'ci-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-csp-low'
+  script:
+    - make k8s-uninstall-chart
+    - kubectl -n $KUBE_NAMESPACE delete pods,svc,daemonsets,deployments,replicasets,statefulsets,cronjobs,jobs,ingresses,configmaps --all
+    - make k8s-delete-namespace
+
+deploy-integration:
+  rules:
+    - if: '$CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH || $CI_COMMIT_TAG'
+
+redeploy-integration:
+  rules:
+    - if: '$CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH || $CI_COMMIT_TAG'
+
+info-integration:
+  rules:
+    - if: '$CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH || $CI_COMMIT_TAG'
+
+stop-integration:
+  rules:
+    - if: '$CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH || $CI_COMMIT_TAG'
+
+
+#staging
+deploy-staging:
+  stage: staging
+  when: manual
+  rules:
+    - if: $CI_COMMIT_TAG
+
+redeploy-staging:
+  stage: staging
+  when: manual
+  rules:
+    - if: $CI_COMMIT_TAG
+
+info-staging:
+  stage: staging
+  when: manual
+  rules:
+    - if: $CI_COMMIT_TAG
+
+stop-staging:
+  stage: staging
+  when: manual
+  rules:
+    - if: $CI_COMMIT_TAG
+

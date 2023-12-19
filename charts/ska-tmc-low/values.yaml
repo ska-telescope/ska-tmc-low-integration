@@ -1,0 +1,205 @@
+display: ":0"
+xauthority: "~/.Xauthority"
+
+enabled: true
+
+legacy_compatibility: true
+
+system: TM-low
+telescope: SKA-low
+subsystem: ska-tmc-low
+
+labels:
+  app: ska-tmc-low
+annotations:
+  app.gitlab.com/app: CI_PROJECT_PATH_SLUG
+  app.gitlab.com/env: CI_ENVIRONMENT_SLUG
+
+global:
+  minikube: false
+  tango_host: databaseds-tango-base-test:10000
+
+  ##  Order of instances resolution ##
+  # .Values.global.dishes & .Values.global.subarray_count
+  # .Values.deviceServers.<device>.instances
+  # File, data/<device>.yaml, instances
+
+  # subarray_count, this will be expanded (1 to N inclusive) and applied to instances of:
+  # deviceServers.cspsubarrayleafnode, deviceServers.sdpsubarrayleafnode,
+  # deviceServers.subarraynode , deviceServers.mccssubarrayleafnode
+  subarray_devices:
+    - "cspsubarrayleafnode"
+    - "sdpsubarrayleafnode"
+    - "subarraynode"
+    - "mccssubarrayleafnode"
+  subarray_count: 2
+  csp:
+    isSimulated:
+      enabled: true
+
+  # fqdn for low devices
+  tmc_subarray_prefix: "ska_low/tm_subarray_node"
+  csp_subarray_ln_prefix: "ska_low/tm_leaf_node/csp_subarray"
+  sdp_subarray_ln_prefix: "ska_low/tm_leaf_node/sdp_subarray"
+  csp_master_ln_prefix: "ska_low/tm_leaf_node/csp_master"
+  sdp_master_ln_prefix: "ska_low/tm_leaf_node/sdp_master"
+  mccs_master_ln_prefix: "ska_low/tm_leaf_node/mccs_master"
+  csp_subarray_prefix: "low-csp/subarray"
+  sdp_subarray_prefix: "low-sdp/subarray"
+  csp_master: "low-csp/control/0"
+  sdp_master: "low-sdp/control/0"
+  mccs_master: "low-mccs/control/control"
+  mccs_subarray_ln_prefix: "ska_low/tm_leaf_node/mccs_subarray"
+  mccs_subarray_prefix: "low-mccs/subarray"
+dsconfig:
+  configuration_file: data/tmc-low-config.json
+  image:
+    registry: artefact.skao.int
+    image: ska-tango-images-tango-dsconfig
+    tag: 1.5.7
+    pullPolicy: IfNotPresent
+
+itango:
+  image:
+    registry: artefact.skao.int
+    image: ska-tango-images-tango-itango
+    tag: 9.3.10
+    pullPolicy: IfNotPresent
+
+centralnode:
+   image:
+     registry: artefact.skao.int
+     image: ska-tmc-centralnode
+     tag: 0.11.8
+     pullPolicy: IfNotPresent
+
+subarraynode:
+  image:
+    registry: artefact.skao.int
+    image: ska-tmc-subarraynode
+    tag: 0.13.11
+    pullPolicy: IfNotPresent
+
+sdpleafnodes:
+  image:
+    registry: artefact.skao.int
+    image: ska-tmc-sdpleafnodes
+    tag: 0.13.2
+    pullPolicy: IfNotPresent
+
+cspmasterleafnode:
+  image:
+    registry: artefact.skao.int
+    image: ska-tmc-cspleafnodes
+    tag: 0.9.2
+    pullPolicy: IfNotPresent
+
+cspsubarrayleafnode:
+  image:
+    registry: artefact.skao.int
+    image: ska-tmc-cspleafnodes
+    tag: 0.10.1
+    pullPolicy: IfNotPresent
+
+mccsmasterleafnode:
+  image:
+    registry: artefact.skao.int
+    image: ska-tmc-mccsleafnodes
+    tag: 0.1.5
+    pullPolicy: IfNotPresent
+
+mccssubarrayleafnode:
+  image:
+    registry: artefact.skao.int
+    image: ska-tmc-mccsleafnodes
+    tag: 0.1.5
+    pullPolicy: IfNotPresent
+
+resources:
+  limits:
+    cpu: 300m
+    memory: 500Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+
+ska-low-cbf:
+  enabled: false
+  minikube: true
+  ska-low-cbf-conn:
+    enabled: false
+  ska-low-cbf-proc:
+    enabled: false
+    deviceServers:
+      processor:
+        instances: ["0","1","2"]  # 2x CNIC, 1x SUT
+        # TODO - check if the resources section is needed - in principle, it should be set in -proc chart
+        resources:
+          limits:
+            xilinx.com/fpga-xilinx_u55c_gen3x16_xdma_base_3-0: 0  # no FPGA hardware
+            memory: 512Mi  # reduced
+
+ska-csp-lmc-low:
+  legacy_compatibility: true
+  enabled: false
+  deviceServers:
+    cspcontroller:
+      instances: ["controller"]
+      file: "data/controller_cbf_only.yaml"
+    cspsubarray:
+      instances: ["subarray1"]
+      file: "data/subarray_cbf_only.yaml"
+
+
+deviceServers:
+  centralnode:
+    enabled: true
+    instances: ["01"]
+    subarray_count: 2
+    file: "data/centralnode.yaml"
+
+  subarraynode:
+    enabled: true
+    instances: ["01","02"]
+    file: "data/subarraynode.yaml"
+
+  sdpsubarrayleafnode:
+    enabled: true
+    instances: ["01","02"]
+    file: "data/sdpsubarrayleafnode.yaml"
+
+  sdpmasterleafnode:
+    enabled: true
+    instances: ["01"]
+    file: "data/sdpmasterleafnode.yaml"
+
+  cspmasterleafnode:
+    enabled: true
+    instances: ["01"]
+    file: "data/cspmasterleafnode.yaml"
+
+  cspsubarrayleafnode:
+    enabled: true
+    instances: ["01","02"]
+    file: "data/cspsubarrayleafnode.yaml"
+
+  mccsmasterleafnode:
+    enabled: true
+    instances: ["01"]
+    file: "data/mccsmasterleafnode.yaml"
+
+  mccssubarrayleafnode:
+    enabled: true
+    instances: ["01", "02"]
+    file: "data/mccssubarrayleafnode.yaml"
+
+  mocks:
+    enabled: false
+    file: "data/mocks.yaml"
+
+
+nodeSelector: {}
+
+affinity: {}
+
+tolerations: []

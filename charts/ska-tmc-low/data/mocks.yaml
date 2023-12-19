@@ -1,0 +1,50 @@
+name: "mocks-{{.Release.Name}}"
+function: testing
+domain: mocks
+instances: ["01"]
+entrypoints:
+  - name: "ska_tmc_common.test_helpers.helper_subarray_device.HelperSubArrayDevice"
+  - name: "ska_tmc_common.test_helpers.helper_base_device.HelperBaseDevice"
+  - name: "ska_tmc_common.test_helpers.helper_csp_subarray.HelperCspSubarray"
+  - name: "ska_tmc_common.test_helpers.helper_csp_master_device.HelperCspMasterDevice"
+  - name: "ska_tmc_common.test_helpers.helper_sdp_subarray.HelperSdpSubarray"
+  - name: "ska_tmc_common.test_helpers.helper_mccs_controller_device.HelperMCCSController"
+  - name: "ska_tmc_common.test_helpers.helper_subarray_device.HelperSubArrayDevice"
+server:
+  name: "mocks"
+  instances:
+    {{- $isCspSimulated := .Values.global.csp.isSimulated.enabled }}
+    - name: "01"
+      classes:
+        {{- if eq $isCspSimulated true }}
+        - name: "HelperCspMasterDevice"
+          devices:
+          - name: "low-csp/control/0"
+        {{- end }}
+        - name: "HelperBaseDevice"
+          devices:
+          - name: "low-sdp/control/0"
+        - name: "HelperMCCSController"
+          devices:
+          - name: "low-mccs/control/control"
+        - name: "HelperSdpSubarray"
+          devices:
+          - name: "low-sdp/subarray/01"
+          - name: "low-sdp/subarray/02"
+        {{- if eq $isCspSimulated true }}
+        - name: "HelperCspSubarray"
+          devices:
+          - name: "low-csp/subarray/01"
+          - name: "low-csp/subarray/02"
+        {{- end }}
+        - name: "HelperSubArrayDevice"
+          devices:
+          - name: "low-mccs/subarray/01"
+          - name: "low-mccs/subarray/02"
+depends_on:
+  - device: sys/database/2
+image:
+  registry: "{{.Values.subarraynode.image.registry}}"
+  image: "{{.Values.subarraynode.image.image}}"
+  tag: "{{.Values.subarraynode.image.tag}}"
+  pullPolicy: "{{.Values.subarraynode.image.pullPolicy}}"
