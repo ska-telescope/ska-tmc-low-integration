@@ -67,7 +67,7 @@ class SubarrayNodeWrapperLow:
         self.sdp_subarray_leaf_node = DeviceProxy(low_sdp_subarray_leaf_node)
         self.mccs_subarray_leaf_node = DeviceProxy(mccs_subarray_leaf_node)
         self._state = DevState.OFF
-        self.obs_state = SubarrayObsState.EMPTY
+        self._obs_state = SubarrayObsState.EMPTY
         self.csp_subarray1 = low_csp_subarray1
         self.sdp_subarray1 = low_sdp_subarray1
         # Subarray state
@@ -75,6 +75,68 @@ class SubarrayNodeWrapperLow:
         self.IDLE_OBS_STATE = IDLE
         self.READY_OBS_STATE = READY
         self.ABORTED_OBS_STATE = ABORTED
+
+    @property
+    def state(self) -> DevState:
+        """TMC SubarrayNode operational state"""
+        self._state = Resource(self.tmc_subarraynode1).get("State")
+        return self._state
+
+    @state.setter
+    def state(self, value):
+        """Sets value for TMC subarrayNode operational state
+
+        Args:
+            value (DevState): operational state value
+        """
+        self._state = value
+
+    @property
+    def obs_state(self):
+        """TMC SubarrayNode observation state"""
+        self._obs_state = Resource(self.tmc_subarraynode1).get("obsState")
+        return self._obs_state
+
+    @obs_state.setter
+    def obs_state(self, value):
+        """Sets value for TMC subarrayNode observation state
+
+        Args:
+            value (DevState): observation state value
+        """
+        self._obs_state = value
+
+    @property
+    def health_state(self) -> HealthState:
+        """Telescope health state representing overall health of telescope"""
+        self._health_state = Resource(self.tmc_subarraynode1).get(
+            "healthState"
+        )
+        return self._health_state
+
+    @health_state.setter
+    def health_state(self, value):
+        """Telescope health state representing overall health of telescope
+
+        Args:
+            value (HealthState): telescope health state value
+        """
+        self._health_state = value
+
+    @property
+    def obs_state(self):
+        """TMC SubarrayNode observation state"""
+        self._obs_state = Resource(self.tmc_subarraynode1).get("obsState")
+        return self._obs_state
+
+    @obs_state.setter
+    def obs_state(self, value):
+        """Sets value for TMC subarrayNode observation state
+
+        Args:
+            value (DevState): observation state value
+        """
+        self._obs_state = value
 
     @sync_configure(device_dict=device_dict_low)
     def store_configuration_data(self, input_string: str):
@@ -124,6 +186,11 @@ class SubarrayNodeWrapperLow:
         LOGGER.info("Invoked Release Resource on SubarrayNode")
         return result, message
 
+    def store_scan_data(self, input_string):
+        result, message = self.subarray_node.Scan(input_string)
+        LOGGER.info("Invoked Scan on SubarrayNode")
+        return result, message
+
     def execute_transition(self, command_name: str, argin=None):
         """Execute provided command on subarray
         Args:
@@ -138,9 +205,9 @@ class SubarrayNodeWrapperLow:
 
     def move_to_on(self):
         # Move subarray to ON state
-        if self._state != self.ON_STATE:
+        if self.state != self.ON_STATE:
             Resource(self.tmc_subarraynode1).assert_attribute("State").equals(
-                "ON"
+                "OFF"
             )
             result, message = self.subarray_node.On()
             LOGGER.info("Invoked ON on SubarrayNode")
