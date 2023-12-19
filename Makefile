@@ -7,11 +7,18 @@ TANGO_HOST ?= tango-databaseds:10000## TANGO_HOST connection to the Tango DS
 TELESCOPE ?= SKA-low
 KUBE_NAMESPACE ?= ska-tmc-low-integration
 KUBE_NAMESPACE_SDP ?= ska-tmc-integration-sdp
+CSP_SIMULATION_ENABLED ?= true
+SDP_SIMULATION_ENABLED ?= true
+MCCS_SIMULATION_ENABLED ?= true
 PYTHON_VARS_BEFORE_PYTEST ?= PYTHONPATH=.:./src \
 							 TANGO_HOST=$(TANGO_HOST) \
 							 TELESCOPE=$(TELESCOPE) \
 							 KUBE_NAMESPACE=$(KUBE_NAMESPACE) \
 							 KUBE_NAMESPACE_SDP=$(KUBE_NAMESPACE_SDP) \
+							 CSP_SIMULATION_ENABLED=$(CSP_SIMULATION_ENABLED) \
+							 SDP_SIMULATION_ENABLED=$(SDP_SIMULATION_ENABLED) \
+							 MCCS_SIMULATION_ENABLED=$(MCCS_SIMULATION_ENABLED) \
+
 
 PYTHON_LINT_TARGET ?= tests/
 
@@ -72,8 +79,8 @@ K8S_TEST_RUNNER = test-runner-$(HELM_RELEASE)
 
 CI_PROJECT_PATH_SLUG ?= ska-tmc-low-integration
 CI_ENVIRONMENT_SLUG ?= ska-tmc-low-integration
-CSP_SIMULATION_ENABLED ?= true
-SDP_SIMULATION_ENABLED ?= true
+
+
 ifeq ($(MAKECMDGOALS),k8s-test)
 ADD_ARGS +=  --true-context
 MARK ?= $(shell echo $(TELESCOPE) | sed "s/-/_/g")
