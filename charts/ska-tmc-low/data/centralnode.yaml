@@ -39,12 +39,12 @@ server:
           {{- range  ( regexSplit " " ((.Values.deviceServers.centralnode.subarray_count | int) | seq ) -1 )  }}
           - "{{ $tmc_sa_fqdn_prefix }}/{{ . }}"
           {{- end }}
-        - name: "TMCLowCspSubarrayLeafNodes"
+        - name: "CspSubarrayLeafNodes"
           values:
           {{- range  ( regexSplit " " ((.Values.deviceServers.centralnode.subarray_count | int) | seq ) -1 )  }}
           - "{{ $csp_sa_ln_fqdn_prefix }}{{ printf "%02s" . }}"
           {{- end }}
-        - name: "TMCLowSdpSubarrayLeafNodes"
+        - name: "SdpSubarrayLeafNodes"
           values:
           {{- range  ( regexSplit " " ((.Values.deviceServers.centralnode.subarray_count | int) | seq ) -1 )  }}
           - "{{ $sdp_sa_ln_fqdn_prefix }}{{ printf "%02s" . }}"
