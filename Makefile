@@ -45,8 +45,8 @@ K8S_CHART ?= $(HELM_CHART)
 CLUSTER_DOMAIN ?= svc.cluster.local
 PORT ?= 10000
 SUBARRAY_COUNT ?= 2
-SDP_MASTER ?= tango://$(TANGO_HOST).$(KUBE_NAMESPACE).$(CLUSTER_DOMAIN):$(PORT)/mid-sdp/control/0
-SDP_SUBARRAY_PREFIX ?= tango://$(TANGO_HOST).$(KUBE_NAMESPACE).$(CLUSTER_DOMAIN):$(PORT)/mid-sdp/subarray
+SDP_MASTER ?= tango://$(TANGO_HOST).$(KUBE_NAMESPACE).$(CLUSTER_DOMAIN):$(PORT)/low-sdp/control/0
+SDP_SUBARRAY_PREFIX ?= tango://$(TANGO_HOST).$(KUBE_NAMESPACE).$(CLUSTER_DOMAIN):$(PORT)/low-sdp/subarray
 CI_REGISTRY ?= gitlab.com
 
 K8S_TEST_IMAGE_TO_TEST ?= artefact.skao.int/ska-tango-images-tango-itango:9.3.12## docker image that will be run for testing purpose
@@ -90,10 +90,14 @@ CUSTOM_VALUES =	--set global.csp.isSimulated.enabled=$(CSP_SIMULATION_ENABLED)\
 	--set tmc-low.ska-low-cbf.ska-low-cbf-proc.enabled=true
 endif
 
+
 ifeq ($(SDP_SIMULATION_ENABLED),false)
-CUSTOM_VALUES =	--set tmc-mid.deviceServers.mocks.is_simulated.sdp=$(SDP_SIMULATION_ENABLED)\
+CUSTOM_VALUES =	--set tmc-low.deviceServers.mocks.is_simulated.sdp=$(SDP_SIMULATION_ENABLED)\
+	--set global.sdp_master="$(SDP_MASTER)"\
+	--set global.sdp_subarray_prefix="$(SDP_SUBARRAY_PREFIX)"\
 	--set ska-sdp.enabled=true 
 endif
+
 
 
 K8S_CHART_PARAMS = --set global.minikube=$(MINIKUBE) \
