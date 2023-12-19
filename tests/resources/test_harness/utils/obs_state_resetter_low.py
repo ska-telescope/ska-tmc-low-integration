@@ -1,12 +1,9 @@
 from typing import Any
 
 from tests.resources.test_harness.utils.common_utils import JsonFactory
-from tests.resources.test_harness.utils.obs_state_resetter import (
-    ObsStateResetter,
-)
 
 
-class ObsStateResetterLow(ObsStateResetter):
+class ObsStateResetterLow:
     """
     Class to reset the obsState of Device
     """

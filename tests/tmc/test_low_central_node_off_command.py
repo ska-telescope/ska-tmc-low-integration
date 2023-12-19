@@ -1,3 +1,12 @@
+"""
+Module: test_low_central_node_off_command
+
+This module defines a Pytest test class to verify the behavior of the
+Off command on a Telescope Monitoring and Control (TMC) CentralNode Low.
+The test includes checking the transitions triggered by the Off command and
+validating the completion transitions assuming that external subsystems work
+fine.
+"""
 import pytest
 from tango import DevState
 
@@ -5,6 +14,10 @@ from tests.resources.test_harness.utils.enums import SimulatorDeviceType
 
 
 class TestLowCentralNodeOffCommand:
+    """TMC CentralNode Low  Off command by checking the state transitions
+    of simulated master devices (CSP, SDP, MCCS) and the overall
+    telescope state."""
+
     @pytest.mark.SKA_low
     def test_low_central_node_off_command(
         self,

@@ -1,6 +1,8 @@
+import json
 import logging
 
 from ska_ser_logging import configure_logging
+from ska_tango_base.control_model import HealthState
 from tango import DeviceProxy, DevState
 
 from tests.resources.test_harness.constant import (
@@ -33,6 +35,7 @@ from tests.resources.test_harness.utils.sync_decorators import (
     sync_release_resources,
     sync_restart,
 )
+from tests.resources.test_support.common_utils.common_helpers import Resource
 
 configure_logging(logging.DEBUG)
 LOGGER = logging.getLogger(__name__)
@@ -64,7 +67,7 @@ class SubarrayNodeWrapperLow:
         self.sdp_subarray_leaf_node = DeviceProxy(low_sdp_subarray_leaf_node)
         self.mccs_subarray_leaf_node = DeviceProxy(mccs_subarray_leaf_node)
         self._state = DevState.OFF
-        self.obs_state = SubarrayObsState.EMPTY
+        self._obs_state = SubarrayObsState.EMPTY
         self.csp_subarray1 = low_csp_subarray1
         self.sdp_subarray1 = low_sdp_subarray1
         # Subarray state
@@ -72,6 +75,68 @@ class SubarrayNodeWrapperLow:
         self.IDLE_OBS_STATE = IDLE
         self.READY_OBS_STATE = READY
         self.ABORTED_OBS_STATE = ABORTED
+
+    @property
+    def state(self) -> DevState:
+        """TMC SubarrayNode operational state"""
+        self._state = Resource(self.tmc_subarraynode1).get("State")
+        return self._state
+
+    @state.setter
+    def state(self, value):
+        """Sets value for TMC subarrayNode operational state
+
+        Args:
+            value (DevState): operational state value
+        """
+        self._state = value
+
+    @property
+    def obs_state(self):
+        """TMC SubarrayNode observation state"""
+        self._obs_state = Resource(self.tmc_subarraynode1).get("obsState")
+        return self._obs_state
+
+    @obs_state.setter
+    def obs_state(self, value):
+        """Sets value for TMC subarrayNode observation state
+
+        Args:
+            value (DevState): observation state value
+        """
+        self._obs_state = value
+
+    @property
+    def health_state(self) -> HealthState:
+        """Telescope health state representing overall health of telescope"""
+        self._health_state = Resource(self.tmc_subarraynode1).get(
+            "healthState"
+        )
+        return self._health_state
+
+    @health_state.setter
+    def health_state(self, value):
+        """Telescope health state representing overall health of telescope
+
+        Args:
+            value (HealthState): telescope health state value
+        """
+        self._health_state = value
+
+    @property
+    def obs_state(self):
+        """TMC SubarrayNode observation state"""
+        self._obs_state = Resource(self.tmc_subarraynode1).get("obsState")
+        return self._obs_state
+
+    @obs_state.setter
+    def obs_state(self, value):
+        """Sets value for TMC subarrayNode observation state
+
+        Args:
+            value (DevState): observation state value
+        """
+        self._obs_state = value
 
     @sync_configure(device_dict=device_dict_low)
     def store_configuration_data(self, input_string: str):
@@ -121,19 +186,47 @@ class SubarrayNodeWrapperLow:
         LOGGER.info("Invoked Release Resource on SubarrayNode")
         return result, message
 
+    def store_scan_data(self, input_string):
+        result, message = self.subarray_node.Scan(input_string)
+        LOGGER.info("Invoked Scan on SubarrayNode")
+        return result, message
+
     def execute_transition(self, command_name: str, argin=None):
         """Execute provided command on subarray
         Args:
             command_name (str): Name of command to execute
         """
-        # This methods needs to change, with subsequent changes in the Tear
-        # Down of the fixtures. Will be done as an improvement later.
-        if command_name == "AssignResources":
-            result, message = self.central_node.AssignResources(argin)
-            LOGGER.info("Invoked Assign Resource on CentralNode")
+        if command_name is not None:
+            result, message = self.subarray_node.command_inout(
+                command_name, argin
+            )
+            LOGGER.info(f"Invoked {command_name} on SubarrayNode")
             return result, message
-        else:
-            return super().execute_transition(command_name, argin)
+
+    def move_to_on(self):
+        # Move subarray to ON state
+        if self.state != self.ON_STATE:
+            Resource(self.tmc_subarraynode1).assert_attribute("State").equals(
+                "OFF"
+            )
+            result, message = self.subarray_node.On()
+            LOGGER.info("Invoked ON on SubarrayNode")
+            return result, message
+
+    def move_to_off(self):
+        # Move Subarray to OFF state
+        Resource(self.tmc_subarraynode1).assert_attribute("State").equals("ON")
+        result, message = self.subarray_node.Off()
+        LOGGER.info("Invoked OFF on SubarrayNode")
+        return result, message
+
+    def _reset_simulator_devices(self):
+        """Reset Simulator devices to it's original state"""
+        for sim_device_fqdn in [self.sdp_subarray1, self.csp_subarray1]:
+            device = DeviceProxy(sim_device_fqdn)
+            device.ResetDelay()
+            device.SetDirectHealthState(HealthState.UNKNOWN)
+            device.SetDefective(json.dumps({"enabled": False}))
 
     def force_change_of_obs_state(self, dest_state_name: str) -> None:
         """Force SubarrayNode obsState to provided obsState
@@ -147,6 +240,21 @@ class SubarrayNodeWrapperLow:
         )
         obs_state_resetter.reset()
         self._clear_command_call_and_transition_data()
+
+    def clear_all_data(self):
+        """Method to clear the observations
+        and put the SubarrayNode in EMPTY"""
+        if self.obs_state in [
+            "IDLE",
+            "RESOURCING",
+            "READY",
+            "CONFIGURING",
+            "SCANNING",
+        ]:
+            self.abort_subarray()
+            self.restart_subarray()
+        elif self.obs_state == "ABORTED":
+            self.restart_subarray()
 
     def _clear_command_call_and_transition_data(self, clear_transition=False):
         """Clears the command call data"""

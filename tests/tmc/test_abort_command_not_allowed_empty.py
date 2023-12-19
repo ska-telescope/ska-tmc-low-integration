@@ -1,3 +1,9 @@
+"""
+This module defines a BDD (Behavior-Driven Development) test scenario
+using pytest-bdd to verify the behavior of the Telescope Monitoring and
+Control (TMC) system when the Abort command is executed in an EMPTY
+observation state.
+"""
 import pytest
 import tango
 from pytest_bdd import given, scenario, then, when
@@ -16,7 +22,7 @@ telescope_control = BaseTelescopeControl()
 
 @pytest.mark.SKA_low
 @scenario(
-    "../features/check_abort_command.feature",
+    "../features/tmc/check_abort_command.feature",
     "TMC executes Abort Command in EMPTY obsState.",
 )
 def test_abort_command_not_allowed_empty():
@@ -49,6 +55,10 @@ def invoke_abort_command(
 
 @then("TMC should reject the command with ResultCode.REJECTED")
 def invalid_command_rejection():
+    """
+    Verifies that the TMC rejects a command with ResultCode.REJECTED,
+    and checks for a specific error message in the command result.
+    """
     assert (
         "Abort command not permitted in observation state EMPTY"
         in pytest.command_result
@@ -57,6 +67,9 @@ def invalid_command_rejection():
 
 @then("the Subarray remains in obsState EMPTY")
 def tmc_status():
+    """
+    Verifies that the Subarray remains in the observation state EMPTY.
+    """
     assert telescope_control.is_in_valid_state(
         DEVICE_OBS_STATE_EMPTY_INFO, "obsState"
     )

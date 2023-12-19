@@ -1,3 +1,11 @@
+"""
+This module defines a Pytest BDD test scenario for checking the rejection of
+invalid JSON inputs during the Configure command execution on a
+Telescope Monitoring and Control (TMC) system
+The scenario includes steps to set up the TMC, configure the subarray,
+and validate the rejection
+of various invalid JSON inputs.
+"""
 import json
 from copy import deepcopy
 
@@ -28,10 +36,14 @@ tmc_helper = TmcHelper(centralnode, tmc_subarraynode1)
 telescope_control = BaseTelescopeControl()
 
 
-@pytest.mark.skip(reason="Unskip after repository setup")
+@pytest.mark.skip(
+    reason="AssignResources and ReleaseResources"
+    " functionalities are not yet"
+    " implemented on mccs master leaf node."
+)
 @pytest.mark.SKA_low
 @scenario(
-    "../features/check_invalid_json_not_allowed.feature",
+    "../features/tmc/check_invalid_json_not_allowed.feature",
     "Invalid json rejected by TMC Low for Configure command",
 )
 def test_invalid_json_in_configure_obsState():
@@ -42,6 +54,7 @@ def test_invalid_json_in_configure_obsState():
 
 @given("the TMC is On")
 def given_tmc(json_factory):
+    """Ensure the TMC is in the 'On' state."""
     release_json = json_factory("command_release_resource_low")
     try:
         # Verify Telescope is Off/Standby
@@ -64,6 +77,7 @@ def given_tmc(json_factory):
 
 @given("the subarray is in IDLE obsState")
 def tmc_check_status(json_factory):
+    """Set the subarray to 'IDLE' observation state."""
     assert telescope_control.is_in_valid_state(
         DEVICE_OBS_STATE_EMPTY_INFO, "obsState"
     )
@@ -81,6 +95,7 @@ def tmc_check_status(json_factory):
     parsers.parse("the command Configure is invoked with {invalid_json} input")
 )
 def send(json_factory, invalid_json):
+    """Invoke the Configure command with different invalid JSON inputs."""
     device_params = deepcopy(ON_OFF_DEVICE_COMMAND_DICT)
     device_params["set_wait_for_obsstate"] = False
     release_json = json_factory("command_release_resource_low")
@@ -126,6 +141,8 @@ def send(json_factory, invalid_json):
     )
 )
 def invalid_command_rejection(invalid_json):
+    """Verify that the TMC rejects the invalid JSON with the expected
+    ResultCode  and validation messages."""
     # asserting validation resultcode
     assert pytest.command_result[0][0] == ResultCode.REJECTED
     # asserting validations message as per invalid json
@@ -155,6 +172,8 @@ def invalid_command_rejection(invalid_json):
 
 @then("TMC subarray remains in IDLE obsState")
 def tmc_status():
+    """Ensure that the TMC subarray remains in the 'IDLE' observation state
+    after rejection."""
     # Verify obsState transitions
     assert telescope_control.is_in_valid_state(
         DEVICE_OBS_STATE_IDLE_INFO, "obsState"
@@ -166,6 +185,8 @@ def tmc_status():
 command for the subarray with a valid json"
 )
 def tmc_accepts_next_commands(json_factory):
+    """Execute the Configure command with a valid JSON and verify successful
+    execution."""
     release_json = json_factory("command_release_resource_low")
     try:
         configure_json = json_factory("command_Configure_low")

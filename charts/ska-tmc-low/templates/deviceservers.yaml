@@ -1,4 +1,3 @@
-{{- define "ska-tmc.deviceservers.tpl" }}
 {{ $localchart := . }}
 
 {{- range $key, $deviceserver := .Values.deviceServers }}
@@ -36,9 +35,9 @@
 {{- else }}
 
 
-{{- if hasKey $deviceserver "mid"}}
+{{- if hasKey $deviceserver "low"}}
 {{- $telescopeStr := printf "%s" $localchart.Values.telescope}}
-{{ if eq $telescopeStr "SKA-mid" }}
+{{ if eq $telescopeStr "SKA-low" }}
 
 # Determine which subarray instances to use
 ## Unpack the subarray_count int into a list 1 to N (inclusive)
@@ -51,7 +50,7 @@
 ## Determine which instances to use
 {{- $_ := set  $localchart.Values "coalesced_subarray_devices" (coalesce $prepended_subarray_devices  $deviceserver.instances)  }}
 
-{{- $filedeviceserver := tpl ($.Files.Get $deviceserver.mid.file) $ | fromYaml }}
+{{- $filedeviceserver := tpl ($.Files.Get $deviceserver.low.file) $ | fromYaml }}
 
 {{- $_ := set $filedeviceserver "instances" (coalesce $localchart.Values.global.instances $deviceserver.instances $filedeviceserver.instances) }}
 
@@ -112,4 +111,3 @@
 {{- end }}
 
 {{- end }} # deviceservers
-{{- end }}

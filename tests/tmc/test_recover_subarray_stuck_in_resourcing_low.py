@@ -36,11 +36,7 @@ from tests.resources.test_support.constant_low import (
 )
 
 
-@pytest.mark.skip(
-    reason="AssignResources and ReleaseResources"
-    " functionalities are not yet"
-    " implemented on mccs master leaf node."
-)
+@pytest.mark.skip(reason="Unskip after repository setup")
 @pytest.mark.SKA_low
 def test_recover_subarray_stuck_in_resourcing_low(
     json_factory, change_event_callbacks

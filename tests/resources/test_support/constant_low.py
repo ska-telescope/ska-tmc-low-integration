@@ -130,3 +130,10 @@ DEVICE_OBS_STATE_ABORT_IN_EMPTY_CSP = {
     sdp_subarray1: ["ABORTED"],
     tmc_subarraynode1: ["ABORTED"],
 }
+INTERMEDIATE_CONFIGURING_OBS_STATE_DEFECT = {
+    "enabled": True,
+    "fault_type": FaultType.STUCK_IN_INTERMEDIATE_STATE,
+    "error_message": "Device stuck in intermediate state",
+    "result": ResultCode.FAILED,
+    "intermediate_state": ObsState.CONFIGURING,
+}

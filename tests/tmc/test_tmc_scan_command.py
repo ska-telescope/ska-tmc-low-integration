@@ -1,19 +1,24 @@
+"""
+This module defines a Pytest BDD test scenario for the successful execution of
+Scan Command of a Low Telescope Subarray in the Telescope Monitoring and
+Control (TMC) system.
+"""
 import pytest
 from pytest_bdd import given, scenario, then, when
 from ska_control_model import ObsState
 from tango import DevState
 
 from tests.resources.test_harness.constant import tmc_low_subarraynode1
-from tests.resources.test_harness.helpers import (
+from tests.resources.test_support.common_utils.common_helpers import Waiter
+from tests.resources.test_support.common_utils.tmc_helpers import (
     prepare_json_args_for_centralnode_commands,
     prepare_json_args_for_commands,
 )
-from tests.resources.test_support.common_utils.common_helpers import Waiter
 
 
 @pytest.mark.SKA_low
 @scenario(
-    "../features/check_scan_command.feature",
+    "../features/tmc/check_scan_command.feature",
     "Successful Execution of Scan Command on Low Telescope Subarray in TMC",
 )
 def test_tmc_mccssln_scan_command():

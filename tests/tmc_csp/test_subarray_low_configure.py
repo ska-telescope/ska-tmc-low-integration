@@ -1,8 +1,8 @@
 """
-Module Description:
+Module: test_subarray_configure.py
 
-This module contains test cases to validate the observation state
-transitions of the subarray.
+This module contains test cases for validating the observation state
+transitions of a subarray in response to the Configure command.
 """
 import pytest
 from ska_tango_base.control_model import ObsState
@@ -13,7 +13,7 @@ from tests.resources.test_support.common_utils.tmc_helpers import (
 
 
 class TestSubarrayConfigure:
-    """This class implement test cases to validate obsState of subarray"""
+    """This class implement test cases to validate obsState of sub array"""
 
     @pytest.mark.real_csp
     @pytest.mark.parametrize(
@@ -30,7 +30,6 @@ class TestSubarrayConfigure:
         ],
     )
     @pytest.mark.real_csp
-    @pytest.mark.skip(reason="Unskip after repository setup")
     def test_subarray_low_configure(
         self,
         subarray_node_real_csp_low,

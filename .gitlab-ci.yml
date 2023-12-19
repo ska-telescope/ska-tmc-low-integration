@@ -133,14 +133,13 @@ k8s-test-with-csp:
   extends:
     - k8s-test
   variables:
-    TELESCOPE: 'SKA-low'
-    KUBE_NAMESPACE: 'ci-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-csp'
-    SERVICE_ACCOUNT: "ci-svc-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-csp"
+    KUBE_NAMESPACE: 'ci-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-csp-low'
+    SERVICE_ACCOUNT: "ci-svc-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-csp-low"
     MARK: 'real_csp'
     CSP_SIMULATION_ENABLED: 'false'
   script:
     - make cred SERVICE_ACCOUNT=$SERVICE_ACCOUNT
-    - make k8s-install-chart TELESCOPE=SKA-low
+    - make k8s-install-chart
     - make k8s-wait
     - make k8s-test
   environment:
@@ -152,7 +151,7 @@ stop-k8s-test-with-csp:
   extends:
     - stop-k8s-test
   variables:
-    KUBE_NAMESPACE: 'ci-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-csp'
+    KUBE_NAMESPACE: 'ci-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-csp-low'
   script:
     - make k8s-uninstall-chart
     - kubectl -n $KUBE_NAMESPACE delete pods,svc,daemonsets,deployments,replicasets,statefulsets,cronjobs,jobs,ingresses,configmaps --all
