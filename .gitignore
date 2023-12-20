@@ -288,4 +288,3 @@ setup.py
 setup.cfg
 tests/requirements*
 .vscode
-.devcontainer
