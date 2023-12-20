@@ -11,27 +11,27 @@ from ska_tango_base.control_model import HealthState
 from ska_tango_testing.mock.placeholders import Anything
 from tango import DeviceProxy
 
-from tests.resources.test_harness.utils.common_utils import JsonFactory
-from tests.resources.test_harness.utils.enums import SimulatorDeviceType
-from tests.resources.test_harness.utils.wait_helpers import Waiter, watch
-from tests.resources.test_support.common_utils.common_helpers import Resource
-from tests.resources.test_support.constant_low import (
+from tests.resources.test_harness.constant import (
     INTERMEDIATE_CONFIGURING_OBS_STATE_DEFECT,
     INTERMEDIATE_STATE_DEFECT,
 )
-from tests.resources.test_support.constant_low import csp_subarray1
-from tests.resources.test_support.constant_low import (
+from tests.resources.test_harness.constant import csp_subarray1
+from tests.resources.test_harness.constant import (
     csp_subarray1 as csp_subarray1_low,
 )
-from tests.resources.test_support.constant_low import sdp_subarray1
-from tests.resources.test_support.constant_low import (
+from tests.resources.test_harness.constant import sdp_subarray1
+from tests.resources.test_harness.constant import (
     sdp_subarray1 as sdp_subarray1_low,
 )
-from tests.resources.test_support.constant_low import (
+from tests.resources.test_harness.constant import (
     tmc_csp_subarray_leaf_node,
     tmc_sdp_subarray_leaf_node,
     tmc_subarraynode1,
 )
+from tests.resources.test_harness.utils.common_utils import JsonFactory
+from tests.resources.test_harness.utils.enums import SimulatorDeviceType
+from tests.resources.test_harness.utils.wait_helpers import Waiter, watch
+from tests.resources.test_support.common_utils.common_helpers import Resource
 
 configure_logging(logging.DEBUG)
 LOGGER = logging.getLogger(__name__)
