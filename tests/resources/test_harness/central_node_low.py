@@ -256,13 +256,13 @@ class CentralNodeWrapperLow(object):
             self.central_node.TelescopeOn()
             self.set_value_with_csp_sdp_mocks(DevState.ON)
 
-        elif self.simulated_devices_dict["csp_and_dish"]:
-            LOGGER.info("Invoking command with csp and Dish simulated")
+        elif self.simulated_devices_dict["csp_and_mccs"]:
+            LOGGER.info("Invoking command with csp and MCCS simulated")
             self.central_node.TelescopeOn()
             self.set_values_with_csp_mccs_mocks(DevState.ON)
 
-        elif self.simulated_devices_dict["sdp_and_dish"]:
-            LOGGER.info("Invoking command with sdp and dish simulated")
+        elif self.simulated_devices_dict["sdp_and_mccs"]:
+            LOGGER.info("Invoking command with sdp and mccss simulated")
             self.central_node.TelescopeOn()
             self.set_values_with_sdp_mccs_mocks(DevState.ON)
         else:
@@ -286,13 +286,13 @@ class CentralNodeWrapperLow(object):
             self.central_node.TelescopeStandBy()
             self.set_value_with_csp_sdp_mocks(DevState.STANDBY)
 
-        elif self.simulated_devices_dict["csp_and_dish"]:
-            LOGGER.info("Invoking command with csp and Dish simulated")
+        elif self.simulated_devices_dict["csp_and_mccs"]:
+            LOGGER.info("Invoking command with csp and mccs simulated")
             self.central_node.TelescopeStandBy()
             self.set_values_with_csp_mccs_mocks(DevState.STANDBY)
 
-        elif self.simulated_devices_dict["sdp_and_dish"]:
-            LOGGER.info("Invoking command with sdp and dish simulated")
+        elif self.simulated_devices_dict["sdp_and_mccs"]:
+            LOGGER.info("Invoking command with sdp and mccs simulated")
             self.central_node.TelescopeStandBy()
             self.set_values_with_sdp_mccs_mocks(DevState.STANDBY)
         else:
@@ -359,13 +359,12 @@ class CentralNodeWrapperLow(object):
         )
         return result, message
 
-    def set_values_with_all_mocks(self, subarray_state, dish_mode):
+    def set_values_with_all_mocks(self, subarray_state):
         """
-        A method to set values on mock CSP, SDP and Dish devices.
+        A method to set values on mock CSP, SDP and MCCS devices.
         Args:
             subarray_state: DevState - subarray state value for
                                         CSP and SDP Subarrays
-            dish_mode: DishMode - dish mode value for Dish Masters
         """
         device_to_on_list = [
             self.subarray_devices.get("csp_subarray"),
@@ -391,13 +390,12 @@ class CentralNodeWrapperLow(object):
             device_proxy = DeviceProxy(device)
             device_proxy.SetDirectState(subarray_state)
 
-    def set_values_with_csp_mccs_mocks(self, subarray_state, dish_mode):
+    def set_values_with_csp_mccs_mocks(self, subarray_state):
         """
-        A method to set values on mock CSP and Dish devices.
+        A method to set values on mock CSP and MCCS devices.
         Args:
             subarray_state: DevState - subarray state value for
                                     CSP Subarray
-            dish_mode: DishMode - dish mode value for Dish Masters
         """
         device_to_on_list = [
             self.subarray_devices.get("csp_subarray"),
@@ -407,13 +405,12 @@ class CentralNodeWrapperLow(object):
             device_proxy = DeviceProxy(device)
             device_proxy.SetDirectState(subarray_state)
 
-    def set_values_with_sdp_dish_mocks(self, subarray_state, dish_mode):
+    def set_values_with_sdp_mccs_mocks(self, subarray_state):
         """
-        A method to set values on mock SDP and Dish devices.
+        A method to set values on mock SDP and MCCS devices.
         Args:
             subarray_state: DevState - subarray state value for
                                     SDP Subarray
-            dish_mode: DishMode - dish mode value for Dish Masters
         """
         device_to_on_list = [
             self.subarray_devices.get("sdp_subarray"),

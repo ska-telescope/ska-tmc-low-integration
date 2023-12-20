@@ -288,18 +288,6 @@ def set_desired_health_state(
         device.SetDirectHealthState(health_state_value)
 
 
-def check_assigned_resources(device: Any, receiptor_ids: tuple):
-    """
-    Method to verify assignedResources attribute value on subarraynode
-    Args:
-        device : tango device proxy object.
-        receiptor_ids: dish ids.
-    """
-    assigned_resources = device.read_attribute("assignedResources").value
-    LOGGER.info(f"assigned Resources:{assigned_resources}")
-    return assigned_resources == receiptor_ids
-
-
 def device_attribute_changed(
     device: Any,
     attribute_name_list: list,

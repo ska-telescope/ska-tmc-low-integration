@@ -321,7 +321,6 @@ class Waiter:
         self.tmc_csp_subarray_leaf_node = kwargs.get(
             "tmc_csp_subarray_leaf_node"
         )
-        self.dish_master1 = kwargs.get("dish_master")
 
     def clear_watches(self):
         """Resets the waits list"""
@@ -349,12 +348,6 @@ class Waiter:
                 "State", changed_to="OFF"
             )
         )
-        if self.dish_master1:
-            self.waits.append(
-                watch(Resource(self.dish_master1)).to_become(
-                    "dishMode", changed_to="STANDBY_LP"
-                )
-            )
 
     def set_wait_for_going_to_standby(self):
         """Sets waits for turning the devices to standby mode"""
@@ -378,12 +371,6 @@ class Waiter:
                 "State", changed_to="STANDBY"
             )
         )
-        if self.dish_master1:
-            self.waits.append(
-                watch(Resource(self.dish_master1)).to_become(
-                    "State", changed_to="STANDBY"
-                )
-            )
 
     def set_wait_for_telescope_on(self):
         """Sets waits for turning the devices in ON state"""
@@ -407,12 +394,6 @@ class Waiter:
                 "State", changed_to="ON"
             )
         )
-        if self.dish_master1:
-            self.waits.append(
-                watch(Resource(self.dish_master1)).to_become(
-                    "dishMode", changed_to="STANDBY_FP"
-                )
-            )
 
     def set_wait_for_going_to_empty(self):
         """Sets wait for devices to change the obstate to EMPTY"""
@@ -477,13 +458,6 @@ class Waiter:
             )
         )
 
-        if self.dish_master1:
-            self.waits.append(
-                watch(Resource(self.dish_master1)).to_become(
-                    "pointingState", changed_to="TRACK"
-                )
-            )
-
         self.waits.append(
             watch(Resource(self.tmc_subarraynode1)).to_become(
                 "obsState", changed_to=obs_state
@@ -502,13 +476,6 @@ class Waiter:
                 "obsState", changed_to="READY"
             )
         )
-
-        if self.dish_master1:
-            self.waits.append(
-                watch(Resource(self.dish_master1)).to_become(
-                    "pointingState", changed_to="TRACK"
-                )
-            )
 
         self.waits.append(
             watch(Resource(self.tmc_subarraynode1)).to_become(
