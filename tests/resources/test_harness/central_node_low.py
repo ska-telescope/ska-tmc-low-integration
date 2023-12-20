@@ -151,21 +151,21 @@ class CentralNodeWrapperLow(object):
     #         device_proxy = DeviceProxy(device)
     #         device_proxy.SetDirectState(DevState.STANDBY)
 
-    # def move_to_off(self):
-    #     """
-    #     A method to invoke TelescopeOff command to
-    #     put telescope in OFF state
+    def move_to_off(self):
+        """
+        A method to invoke TelescopeOff command to
+        put telescope in OFF state
 
-    #     """
-    #     self.central_node.TelescopeOff()
-    #     device_to_on_list = [
-    #         self.subarray_devices.get("csp_subarray"),
-    #         self.subarray_devices.get("sdp_subarray"),
-    #         self.subarray_devices.get("mccs_subarray"),
-    #     ]
-    #     for device in device_to_on_list:
-    #         device_proxy = DeviceProxy(device)
-    #         device_proxy.SetDirectState(DevState.OFF)
+        """
+        self.central_node.TelescopeOff()
+        device_to_on_list = [
+            self.subarray_devices.get("csp_subarray"),
+            self.subarray_devices.get("sdp_subarray"),
+            self.subarray_devices.get("mccs_subarray"),
+        ]
+        for device in device_to_on_list:
+            device_proxy = DeviceProxy(device)
+            device_proxy.SetDirectState(DevState.OFF)
 
     # @sync_assign_resources(device_dict=device_dict_low)
     # def store_resources(self, assign_json: str):
@@ -279,7 +279,7 @@ class CentralNodeWrapperLow(object):
         if self.simulated_devices_dict["all_mocks"]:
             LOGGER.info("Invoking commands with all Mocks")
             self.central_node.TelescopeStandBy()
-            self.set_values_with_all_mocks(DevState.STANDBY, DevState.STANDBY)
+            self.set_values_with_all_mocks(DevState.STANDBY)
 
         elif self.simulated_devices_dict["csp_and_sdp"]:
             LOGGER.info("Invoking command with csp and sdp simulated")
