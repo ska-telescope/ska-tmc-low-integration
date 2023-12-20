@@ -26,4 +26,4 @@ The documentation for this project, including how to get started with it,can be 
 | CSP Subarray Leaf Node| ska-tmc-cspleafnodes |
 | SDP Master Leaf Node| ska-tmc-sdpleafnodes |
 | SDP Subarray Leaf Node| ska-tmc-sdpleafnodes 
-| Dish Leaf Node| ska-tmc-mccsleafnodes |
+| MCCS Leaf Node| ska-tmc-mccsleafnodes |

@@ -117,8 +117,6 @@ K8S_CHART_PARAMS = --set global.minikube=$(MINIKUBE) \
 	--set ska-taranta.enabled=$(TARANTA_ENABLED)\
 	--set global.subarray_count=$(SUBARRAY_COUNT)\
 	--set ska-sdp.helmdeploy.namespace=$(KUBE_NAMESPACE_SDP)\
-	--set global.sdp_master="$(SDP_MASTER)"\
-	--set global.sdp_subarray_prefix="$(SDP_SUBARRAY_PREFIX)"\
 	$(CUSTOM_VALUES)
 
 

@@ -49,7 +49,7 @@ ska-tango-base:
   enabled: true
   vnc:
     replicas: 1
-    enabled: true
+    enabled: false
   tangorest:
     enabled: true
     replicas: 1
@@ -72,7 +72,7 @@ ska-sdp:
   legacy_compatibility: true
   enabled: false
   lmc:
-    prefix: mid
+    prefix: low
     nsubarray: 2
   console:
     enabled: true

@@ -15,22 +15,22 @@ from tests.resources.test_harness.utils.common_utils import JsonFactory
 from tests.resources.test_harness.utils.enums import SimulatorDeviceType
 from tests.resources.test_harness.utils.wait_helpers import Waiter, watch
 from tests.resources.test_support.common_utils.common_helpers import Resource
-from tests.resources.test_support.constant import (
+from tests.resources.test_support.constant_low import (
     INTERMEDIATE_CONFIGURING_OBS_STATE_DEFECT,
     INTERMEDIATE_STATE_DEFECT,
-    csp_subarray1,
-    dish_master1,
-    dish_master2,
-    sdp_subarray1,
-    tmc_csp_subarray_leaf_node,
-    tmc_sdp_subarray_leaf_node,
-    tmc_subarraynode1,
 )
+from tests.resources.test_support.constant_low import csp_subarray1
 from tests.resources.test_support.constant_low import (
     csp_subarray1 as csp_subarray1_low,
 )
+from tests.resources.test_support.constant_low import sdp_subarray1
 from tests.resources.test_support.constant_low import (
     sdp_subarray1 as sdp_subarray1_low,
+)
+from tests.resources.test_support.constant_low import (
+    tmc_csp_subarray_leaf_node,
+    tmc_sdp_subarray_leaf_node,
+    tmc_subarraynode1,
 )
 
 configure_logging(logging.DEBUG)
@@ -59,8 +59,6 @@ def check_subarray_obs_state(obs_state=None, timeout=50):
         f"{csp_subarray1}.obsState : "
         + str(Resource(csp_subarray1).get("obsState"))
     )
-    if obs_state == "READY":
-        device_dict["dish_master_list"] = [dish_master1, dish_master2]
     the_waiter = Waiter(**device_dict)
     the_waiter.set_wait_for_obs_state(obs_state=obs_state)
     the_waiter.wait(timeout / 0.1)
@@ -85,18 +83,12 @@ def get_device_simulators(simulator_factory):
         simulator(sim) objects
     """
     sdp_sim = simulator_factory.get_or_create_simulator_device(
-        SimulatorDeviceType.MID_SDP_DEVICE
+        SimulatorDeviceType.LOW_SDP_DEVICE
     )
     csp_sim = simulator_factory.get_or_create_simulator_device(
-        SimulatorDeviceType.MID_CSP_DEVICE
+        SimulatorDeviceType.LOW_CSP_DEVICE
     )
-    dish_sim_1 = simulator_factory.get_or_create_simulator_device(
-        SimulatorDeviceType.DISH_DEVICE, sim_number=1
-    )
-    dish_sim_2 = simulator_factory.get_or_create_simulator_device(
-        SimulatorDeviceType.DISH_DEVICE, sim_number=2
-    )
-    return csp_sim, sdp_sim, dish_sim_1, dish_sim_2
+    return csp_sim, sdp_sim
 
 
 def get_master_device_simulators(simulator_factory):
@@ -110,22 +102,14 @@ def get_master_device_simulators(simulator_factory):
         simulator(sim) objects
     """
     csp_master_sim = simulator_factory.get_or_create_simulator_device(
-        SimulatorDeviceType.MID_CSP_MASTER_DEVICE
+        SimulatorDeviceType.LOW_CSP_MASTER_DEVICE
     )
     sdp_master_sim = simulator_factory.get_or_create_simulator_device(
-        SimulatorDeviceType.MID_SDP_MASTER_DEVICE
-    )
-    dish_master_sim_1 = simulator_factory.get_or_create_simulator_device(
-        SimulatorDeviceType.DISH_DEVICE, sim_number=1
-    )
-    dish_master_sim_2 = simulator_factory.get_or_create_simulator_device(
-        SimulatorDeviceType.DISH_DEVICE, sim_number=2
+        SimulatorDeviceType.LOW_SDP_MASTER_DEVICE
     )
     return (
         csp_master_sim,
         sdp_master_sim,
-        dish_master_sim_1,
-        dish_master_sim_2,
     )
 
 
@@ -135,10 +119,10 @@ def get_device_simulator_with_given_name(simulator_factory, devices):
         devices (list): simulator devices list
     """
     device_name_type_dict = {
-        "csp subarray": SimulatorDeviceType.MID_CSP_DEVICE,
-        "sdp subarray": SimulatorDeviceType.MID_SDP_DEVICE,
-        "csp master": SimulatorDeviceType.MID_CSP_MASTER_DEVICE,
-        "sdp master": SimulatorDeviceType.MID_SDP_MASTER_DEVICE,
+        "csp subarray": SimulatorDeviceType.LOW_CSP_DEVICE,
+        "sdp subarray": SimulatorDeviceType.LOW_SDP_DEVICE,
+        "csp master": SimulatorDeviceType.LOW_CSP_MASTER_DEVICE,
+        "sdp master": SimulatorDeviceType.LOW_SDP_MASTER_DEVICE,
     }
     sim_device_proxy_list = []
     for device_name in devices:
@@ -147,13 +131,6 @@ def get_device_simulator_with_given_name(simulator_factory, devices):
             sim_device_proxy_list.append(
                 simulator_factory.get_or_create_simulator_device(
                     sim_device_type
-                )
-            )
-        elif device_name.startswith("dish"):
-            sim_number = device_name.split()[-1]
-            sim_device_proxy_list.append(
-                simulator_factory.get_or_create_simulator_device(
-                    SimulatorDeviceType.DISH_DEVICE, sim_number=int(sim_number)
                 )
             )
     return sim_device_proxy_list
@@ -309,18 +286,6 @@ def set_desired_health_state(
         device.SetDirectHealthState(health_state_value)
         device.SetDirectHealthState(health_state_value)
         device.SetDirectHealthState(health_state_value)
-
-
-def check_assigned_resources(device: Any, receiptor_ids: tuple):
-    """
-    Method to verify assignedResources attribute value on subarraynode
-    Args:
-        device : tango device proxy object.
-        receiptor_ids: dish ids.
-    """
-    assigned_resources = device.read_attribute("assignedResources").value
-    LOGGER.info(f"assigned Resources:{assigned_resources}")
-    return assigned_resources == receiptor_ids
 
 
 def device_attribute_changed(
