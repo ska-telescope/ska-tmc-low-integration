@@ -72,7 +72,7 @@ ska-sdp:
   legacy_compatibility: true
   enabled: false
   lmc:
-    prefix: mid
+    prefix: low
     nsubarray: 2
   console:
     enabled: true

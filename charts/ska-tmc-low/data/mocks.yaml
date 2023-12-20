@@ -30,11 +30,11 @@ server:
         - name: "HelperBaseDevice"
           devices:
           - name: "low-sdp/control/0"
-        {{- end }}
         - name: "HelperSdpSubarray"
           devices:
           - name: "low-sdp/subarray/01"
           - name: "low-sdp/subarray/02"
+        {{- end }}
         - name: "HelperMCCSController"
           devices:
           - name: "low-mccs/control/control"
