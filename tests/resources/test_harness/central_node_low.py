@@ -25,6 +25,7 @@ from tests.resources.test_harness.utils.sync_decorators import (
     sync_abort,
     sync_release_resources,
     sync_restart,
+    sync_set_to_off,
 )
 
 # sync_assign_resources,
@@ -151,75 +152,36 @@ class CentralNodeWrapperLow(object):
     #         device_proxy = DeviceProxy(device)
     #         device_proxy.SetDirectState(DevState.STANDBY)
 
+    @sync_set_to_off(device_dict=device_dict_low)
     def move_to_off(self):
         """
         A method to invoke TelescopeOff command to
         put telescope in OFF state
 
         """
-        self.central_node.TelescopeOff()
-        device_to_on_list = [
-            self.subarray_devices.get("csp_subarray"),
-            self.subarray_devices.get("sdp_subarray"),
-            self.subarray_devices.get("mccs_subarray"),
-        ]
-        for device in device_to_on_list:
-            device_proxy = DeviceProxy(device)
-            device_proxy.SetDirectState(DevState.OFF)
+        if self.simulated_devices_dict["all_mocks"]:
+            LOGGER.info("Invoking commands with all Mocks")
+            self.central_node.TelescopeOff()
+            self.set_values_with_all_mocks(DevState.OFF)
 
-    # @sync_assign_resources(device_dict=device_dict_low)
-    # def store_resources(self, assign_json: str):
-    #     """Invoke Assign Resource command on central Node
-    #     Args:
-    #         assign_json (str): Assign resource input json
-    #     """
-    #     result, message = self.central_node.AssignResources(assign_json)
-    #     LOGGER.info("Invoked AssignResources on CentralNode")
-    #     return result, message
+        elif self.simulated_devices_dict["csp_and_sdp"]:
+            LOGGER.info("Invoking command with csp and sdp simulated")
+            self.central_node.TelescopeOff()
+            self.set_value_with_csp_sdp_mocks(DevState.OFF)
 
-    # @sync_release_resources(device_dict=device_dict_low)
-    # def invoke_release_resources(self, input_string: str):
-    #     """Invoke Release Resource command on central Node
-    #     Args:
-    #         input_string (str): Release resource input json
-    #     """
-    #     result, message = self.central_node.ReleaseResources(input_string)
-    #     return result, message
+        elif self.simulated_devices_dict["csp_and_mccs"]:
+            LOGGER.info("Invoking command with csp and mccs simulated")
+            self.central_node.TelescopeOff()
+            self.set_values_with_csp_mccs_mocks(DevState.OFF)
 
-    # @sync_abort(device_dict=device_dict_low)
-    # def subarray_abort(self):
-    #     """Invoke Abort command on subarray Node"""
-    #     result, message = self.subarray_node.Abort()
-    #     return result, message
+        elif self.simulated_devices_dict["sdp_and_mccs"]:
+            LOGGER.info("Invoking command with sdp and mccs simulated")
+            self.central_node.TelescopeOff()
+            self.set_values_with_sdp_mccs_mocks(DevState.OFF)
 
-    # @sync_restart(device_dict=device_dict_low)
-    # def subarray_restart(self):
-    #     """Invoke Restart command on subarray Node"""
-    #     result, message = self.subarray_node.Restart()
-    #     return result, message
-
-    # def _reset_health_state_for_mock_devices(self):
-    #     """Reset Mock devices"""
-
-    #     for mock_device in [
-    #         self.sdp_master,
-    #         self.csp_master,
-    #         self.mccs_master,
-    #     ]:
-    #         device = DeviceProxy(mock_device)
-    #         device.SetDirectHealthState(HealthState.UNKNOWN)
-
-    # def perform_action(self, command_name: str, input_json: str):
-    #     """Execute provided command on centralnode
-    #     Args:
-    #         command_name (str): Name of command to execute
-    #         input_json (str): Json send as input to execute command
-    #     """
-
-    #     result, message = self.central_node.command_inout(
-    #         command_name, input_json
-    #     )
-    #     return result, message
+        else:
+            LOGGER.info("Invoke command with all real sub-systems")
+            self.central_node.TelescopeOff()
 
     def tear_down(self):
         """Handle Tear down of central Node"""
