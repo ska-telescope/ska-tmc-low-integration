@@ -118,7 +118,7 @@ PYTHON_VARS_BEFORE_PYTEST ?= PYTHONPATH=.:./src \
 							 CSP_SIMULATION_ENABLED=$(CSP_SIMULATION_ENABLED) \
 							 SDP_SIMULATION_ENABLED=$(SDP_SIMULATION_ENABLED) \
 							 MCCS_SIMULATION_ENABLED=$(MCCS_SIMULATION_ENABLED) \
-
+							 
 K8S_TEST_TEST_COMMAND ?= $(PYTHON_VARS_BEFORE_PYTEST) $(PYTHON_RUNNER) \
 						pytest \
 						$(PYTHON_VARS_AFTER_PYTEST) ./tests \
@@ -138,23 +138,18 @@ K8S_TEST_TEST_COMMAND ?= $(PYTHON_VARS_BEFORE_PYTEST) $(PYTHON_RUNNER) \
 
 # to create SDP namespace
 k8s-pre-install-chart:
-ifeq ($(SDP_SIMULATION_ENABLED),false)
 	@echo "k8s-pre-install-chart: creating the SDP namespace $(KUBE_NAMESPACE_SDP)"
 	@make k8s-namespace KUBE_NAMESPACE=$(KUBE_NAMESPACE_SDP)
-endif
 
 # to create SDP namespace
 k8s-pre-install-chart-car:
-ifeq ($(SDP_SIMULATION_ENABLED),false)
 	@echo "k8s-pre-install-chart-car: creating the SDP namespace $(KUBE_NAMESPACE_SDP)"
 	@make k8s-namespace KUBE_NAMESPACE=$(KUBE_NAMESPACE_SDP)
-endif
+
 # to delete SDP namespace
 k8s-post-uninstall-chart:
-ifeq ($(SDP_SIMULATION_ENABLED),false)
 	@echo "k8s-post-uninstall-chart: deleting the SDP namespace $(KUBE_NAMESPACE_SDP)"
 	@make k8s-delete-namespace KUBE_NAMESPACE=$(KUBE_NAMESPACE_SDP)
-endif
 
 
 taranta-link:
