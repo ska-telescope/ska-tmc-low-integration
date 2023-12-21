@@ -24,7 +24,7 @@ def test_tmc_sdp_shutdown_telescope():
 
 @pytest.mark.real_sdp
 @scenario(
-    "../features/tmc/standby_tmc_sdp.feature",
+    "../features/tmc_sdp/standby_tmc_sdp.feature",
     "Standby the telescope having TMC and SDP subsystems",
 )
 def test_tmc_sdp_standby_telescope():
