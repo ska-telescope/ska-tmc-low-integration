@@ -1,4 +1,4 @@
-
+@XTP-29229 @XTP-29227
 Scenario: Switch off the telescope having TMC and SDP subsystems 
     Given a Telescope consisting of TMC and SDP that is in ON State
     And  simulated CSP and MCCS in ON States
