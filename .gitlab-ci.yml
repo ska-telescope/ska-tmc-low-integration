@@ -106,7 +106,6 @@ on-demand-destroy:
   allow_failure: true
 
 k8s-test:
-  retry: 1
   variables:
     KUBE_NAMESPACE: 'ci-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA'
     SERVICE_ACCOUNT: "ci-svc-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA"
@@ -119,6 +118,7 @@ k8s-test:
     name: test/$CI_COMMIT_REF_SLUG
     on_stop: stop-k8s-test
     auto_stop_in: 1 minute
+  retry: 1
 
 stop-k8s-test:
   variables:
@@ -129,7 +129,6 @@ stop-k8s-test:
     - make k8s-delete-namespace
 
 k8s-test-tmc-with-csp:
-  retry: 1
   extends:
     - k8s-test
   variables:
@@ -146,6 +145,7 @@ k8s-test-tmc-with-csp:
     name: test/$CI_COMMIT_REF_SLUG
     on_stop: stop-k8s-test-tmc-with-csp
     auto_stop_in: 1 minute
+  retry: 1
 
 stop-k8s-test-tmc-with-csp:
   extends:
@@ -158,7 +158,6 @@ stop-k8s-test-tmc-with-csp:
     - make k8s-delete-namespace
 
 k8s-test-tmc-with-sdp:
-  retry: 1
   extends:
     - k8s-test
   variables:
@@ -180,6 +179,7 @@ k8s-test-tmc-with-sdp:
     name: test/$CI_COMMIT_REF_SLUG
     on_stop: stop-k8s-test-tmc-with-sdp
     auto_stop_in: 1 minute
+  retry: 1
 
 
 stop-k8s-test-tmc-with-sdp:
