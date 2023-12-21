@@ -120,38 +120,6 @@ class CentralNodeWrapperLow(object):
         """
         self._telescope_state = value
 
-    # def move_to_on(self):
-    #     """
-    #     A method to invoke TelescopeOn command to
-    #     put telescope in ON state
-    #     """
-    #     LOGGER.info("Starting up the Telescope")
-    #     self.central_node.TelescopeOn()
-    #     device_to_on_list = [
-    #         self.subarray_devices.get("csp_subarray"),
-    #         self.subarray_devices.get("sdp_subarray"),
-    #         self.subarray_devices.get("mccs_subarray"),
-    #     ]
-    #     for device in device_to_on_list:
-    #         device_proxy = DeviceProxy(device)
-    #         device_proxy.SetDirectState(DevState.ON)
-
-    # def set_standby(self):
-    #     """
-    #     A method to invoke TelescopeStandby command to
-    #     put telescope in STANDBY state
-
-    #     """
-    #     self.central_node.TelescopeStandBy()
-    #     device_to_on_list = [
-    #         self.subarray_devices.get("csp_subarray"),
-    #         self.subarray_devices.get("sdp_subarray"),
-    #         self.subarray_devices.get("mccs_subarray"),
-    #     ]
-    #     for device in device_to_on_list:
-    #         device_proxy = DeviceProxy(device)
-    #         device_proxy.SetDirectState(DevState.STANDBY)
-
     @sync_set_to_off(device_dict=device_dict_low)
     def move_to_off(self):
         """
@@ -280,6 +248,15 @@ class CentralNodeWrapperLow(object):
     def subarray_restart(self):
         """Invoke Restart command on subarray Node"""
         result, message = self.subarray_node.Restart()
+        return result, message
+
+    def store_resources(self, assign_json: str):
+        """Invoke Assign Resource command on central Node
+        Args:
+            assign_json (str): Assign resource input json
+        """
+        result, message = self.central_node.AssignResources(assign_json)
+        LOGGER.info("Invoked AssignResources on CentralNode")
         return result, message
 
     def _reset_health_state_for_mock_devices(self):
