@@ -8,7 +8,7 @@ TELESCOPE ?= SKA-low
 KUBE_NAMESPACE ?= ska-tmc-low-integration
 KUBE_NAMESPACE_SDP ?= ska-tmc-integration-sdp
 CSP_SIMULATION_ENABLED ?= true
-SDP_SIMULATION_ENABLED ?= true
+SDP_SIMULATION_ENABLED ?= false
 MCCS_SIMULATION_ENABLED ?= true
 
 
@@ -94,7 +94,7 @@ ifeq ($(SDP_SIMULATION_ENABLED),false)
 CUSTOM_VALUES =	--set tmc-low.deviceServers.mocks.is_simulated.sdp=$(SDP_SIMULATION_ENABLED)\
 	--set ska-sdp.enabled=true \
 	--set global.sdp_master="$(SDP_MASTER)"\
-	--set global.sdp_subarray_prefix="$(SDP_SUBARRAY_PREFIX)"\	
+	--set global.sdp_subarray_prefix="$(SDP_SUBARRAY_PREFIX)"\
 	--set ska-sdp.helmdeploy.namespace=$(KUBE_NAMESPACE_SDP)
 endif
 
