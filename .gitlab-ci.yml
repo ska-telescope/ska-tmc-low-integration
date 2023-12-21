@@ -128,7 +128,7 @@ stop-k8s-test:
     - kubectl -n $KUBE_NAMESPACE delete pods,svc,daemonsets,deployments,replicasets,statefulsets,cronjobs,jobs,ingresses,configmaps --all
     - make k8s-delete-namespace
 
-k8s-test-with-csp:
+k8s-test-tmc-with-csp:
   retry: 1
   extends:
     - k8s-test
@@ -144,10 +144,10 @@ k8s-test-with-csp:
     - make k8s-test
   environment:
     name: test/$CI_COMMIT_REF_SLUG
-    on_stop: stop-k8s-test-with-csp
+    on_stop: stop-k8s-test-tmc-with-csp
     auto_stop_in: 1 minute
 
-stop-k8s-test-with-csp:
+stop-k8s-test-tmc-with-csp:
   extends:
     - stop-k8s-test
   variables:

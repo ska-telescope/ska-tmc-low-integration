@@ -8,16 +8,8 @@ TELESCOPE ?= SKA-low
 KUBE_NAMESPACE ?= ska-tmc-low-integration
 KUBE_NAMESPACE_SDP ?= ska-tmc-integration-sdp
 CSP_SIMULATION_ENABLED ?= true
-SDP_SIMULATION_ENABLED ?= false
+SDP_SIMULATION_ENABLED ?= true
 MCCS_SIMULATION_ENABLED ?= true
-PYTHON_VARS_BEFORE_PYTEST ?= PYTHONPATH=.:./src \
-							 TANGO_HOST=$(TANGO_HOST) \
-							 TELESCOPE=$(TELESCOPE) \
-							 KUBE_NAMESPACE=$(KUBE_NAMESPACE) \
-							 KUBE_NAMESPACE_SDP=$(KUBE_NAMESPACE_SDP) \
-							 CSP_SIMULATION_ENABLED=$(CSP_SIMULATION_ENABLED) \
-							 SDP_SIMULATION_ENABLED=$(SDP_SIMULATION_ENABLED) \
-							 MCCS_SIMULATION_ENABLED=$(MCCS_SIMULATION_ENABLED) \
 
 
 PYTHON_LINT_TARGET ?= tests/
@@ -106,20 +98,27 @@ CUSTOM_VALUES =	--set tmc-low.deviceServers.mocks.is_simulated.sdp=$(SDP_SIMULAT
 endif
 
 
-
 K8S_CHART_PARAMS = --set global.minikube=$(MINIKUBE) \
 	--set global.tango_host=$(TANGO_HOST) \
 	--set ska-tango-base.display=$(DISPLAY) \
 	--set ska-tango-base.xauthority=$(XAUTHORITY) \
 	--set ska-tango-base.jive.enabled=$(JIVE) \
 	--set global.exposeAllDS=true \
-	--set global.operator=false \
+	--set global.operator=true \
 	--set ska-taranta.enabled=$(TARANTA_ENABLED)\
 	--set global.subarray_count=$(SUBARRAY_COUNT)\
 	--set ska-sdp.helmdeploy.namespace=$(KUBE_NAMESPACE_SDP)\
 	$(CUSTOM_VALUES)
 
-
+PYTHON_VARS_BEFORE_PYTEST ?= PYTHONPATH=.:./src \
+							 TANGO_HOST=$(TANGO_HOST) \
+							 TELESCOPE=$(TELESCOPE) \
+							 KUBE_NAMESPACE=$(KUBE_NAMESPACE) \
+							 KUBE_NAMESPACE_SDP=$(KUBE_NAMESPACE_SDP) \
+							 CSP_SIMULATION_ENABLED=$(CSP_SIMULATION_ENABLED) \
+							 SDP_SIMULATION_ENABLED=$(SDP_SIMULATION_ENABLED) \
+							 MCCS_SIMULATION_ENABLED=$(MCCS_SIMULATION_ENABLED) \
+							 
 K8S_TEST_TEST_COMMAND ?= $(PYTHON_VARS_BEFORE_PYTEST) $(PYTHON_RUNNER) \
 						pytest \
 						$(PYTHON_VARS_AFTER_PYTEST) ./tests \
