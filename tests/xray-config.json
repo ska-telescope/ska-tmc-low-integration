@@ -18,7 +18,7 @@
   "chart_info": {
     "env": "DEPLOYMENT_CONFIGURATION",
     "maps_to": {
-      "tmc_low": "charts/ska-tmc-low/Chart.yaml"
+      "default": "charts/ska-tmc-low/Chart.yaml"
     }
   },
   "test_report": "build/report.json",
