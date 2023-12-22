@@ -29,7 +29,6 @@ class Waiter:
         self.csp_subarray1 = kwargs.get("csp_subarray")
         self.csp_master = kwargs.get("csp_master")
         self.tmc_subarraynode1 = kwargs.get("tmc_subarraynode")
-        self.dish_master_list = kwargs.get("dish_master_list")
         self.tmc_csp_subarray_leaf_node = kwargs.get("csp_subarray_leaf_node")
         self.tmc_sdp_subarray_leaf_node = kwargs.get("sdp_subarray_leaf_node")
         self.cbf_subarray1 = kwargs.get("cbf_subarray1")
@@ -37,15 +36,6 @@ class Waiter:
 
     def clear_watches(self):
         self.waits = []
-
-    def set_wait_for_dish(self, attribute_name, state_name):
-        """Set wait for dish"""
-        for dish_master in self.dish_master_list:
-            self.waits.append(
-                watch(Resource(dish_master)).to_become(
-                    attribute_name, changed_to=state_name
-                )
-            )
 
     def set_wait_for_going_to_off(self):
         self.waits.append(
@@ -68,8 +58,6 @@ class Waiter:
                 "State", changed_to="OFF"
             )
         )
-        if self.dish_master_list:
-            self.set_wait_for_dish("dishMode", "STANDBY_LP")
 
     def set_wait_for_going_to_standby(self):
         self.waits.append(
@@ -92,8 +80,6 @@ class Waiter:
                 "State", changed_to="STANDBY"
             )
         )
-        if self.dish_master_list:
-            self.set_wait_for_dish("State", "STANDBY")
 
     def set_wait_for_telescope_on(self):
         self.waits.append(
@@ -116,8 +102,6 @@ class Waiter:
                 "State", changed_to="ON"
             )
         )
-        if self.dish_master_list:
-            self.set_wait_for_dish("dishMode", "STANDBY_FP")
 
         if self.cbf_subarray1:
             watch(Resource(self.cbf_subarray1)).to_become(
@@ -225,8 +209,6 @@ class Waiter:
                 "obsState", changed_to=obs_state
             )
         )
-        if self.dish_master_list:
-            self.set_wait_for_dish("pointingState", "TRACK")
 
     def set_wait_for_configure(self):
         self.waits.append(
@@ -255,9 +237,6 @@ class Waiter:
                 "obsState", changed_to="READY"
             )
         )
-        if self.dish_master_list:
-            self.set_wait_for_dish("dishMode", "OPERATE")
-            self.set_wait_for_dish("pointingState", "TRACK")
 
     def set_wait_for_idle(self):
         self.waits.append(

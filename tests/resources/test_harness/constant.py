@@ -75,6 +75,7 @@ RESET_DEFECT = json.dumps(
     }
 )
 
+
 COMMAND_FAILED_WITH_EXCEPTION_OBSSTATE_IDLE = {
     "enabled": True,
     "fault_type": FaultType.FAILED_RESULT,
@@ -106,6 +107,7 @@ mccs_subarray1 = "low-mccs/subarray/01"
 mccs_subarray2 = "low-mccs/subarray/02"
 mccs_subarray3 = "low-mccs/subarray/03"
 processor1 = "low-cbf/processor/0.0.0"
+
 
 device_dict_low = {
     "csp_master": low_csp_master,

@@ -14,7 +14,7 @@ LOGGER = logging.getLogger(__name__)
 
 class SimulatorFactory:
     """This Simulator factory used to implement method for creating
-    Tango simulator(sim) object for Mid/Low Telescope.
+    Tango simulator(sim) object for Low Telescope.
     """
 
     def __init__(self):

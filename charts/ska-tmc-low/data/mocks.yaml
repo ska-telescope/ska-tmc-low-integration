@@ -14,29 +14,30 @@ server:
   name: "mocks"
   instances:
     {{- $isCspSimulated := .Values.global.csp.isSimulated.enabled }}
+    {{- $isSimulatedSdp := .Values.deviceServers.mocks.is_simulated.sdp }}
     - name: "01"
       classes:
         {{- if eq $isCspSimulated true }}
         - name: "HelperCspMasterDevice"
           devices:
           - name: "low-csp/control/0"
-        {{- end }}
-        - name: "HelperBaseDevice"
-          devices:
-          - name: "low-sdp/control/0"
-        - name: "HelperMCCSController"
-          devices:
-          - name: "low-mccs/control/control"
-        - name: "HelperSdpSubarray"
-          devices:
-          - name: "low-sdp/subarray/01"
-          - name: "low-sdp/subarray/02"
-        {{- if eq $isCspSimulated true }}
         - name: "HelperCspSubarray"
           devices:
           - name: "low-csp/subarray/01"
           - name: "low-csp/subarray/02"
         {{- end }}
+        {{- if eq $isSimulatedSdp true }}
+        - name: "HelperBaseDevice"
+          devices:
+          - name: "low-sdp/control/0"
+        - name: "HelperSdpSubarray"
+          devices:
+          - name: "low-sdp/subarray/01"
+          - name: "low-sdp/subarray/02"
+        {{- end }}
+        - name: "HelperMCCSController"
+          devices:
+          - name: "low-mccs/control/control"
         - name: "HelperSubArrayDevice"
           devices:
           - name: "low-mccs/subarray/01"

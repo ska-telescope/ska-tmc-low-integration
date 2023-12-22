@@ -126,12 +126,6 @@ class TmcHelper:
                 device_proxy = DeviceProxy(device)
                 device_proxy.SetDirectState(DevState.ON)
 
-        # If Dish master provided then set it to standby
-        dish_master = kwargs.get("dish_master")
-        if dish_master:
-            device_proxy = DeviceProxy(dish_master)
-            device_proxy.SetDirectState(DevState.STANDBY)
-
     @sync_set_to_off
     def set_to_off(self, **kwargs: dict) -> None:
         """
@@ -148,12 +142,6 @@ class TmcHelper:
         for device in device_to_off_list:
             device_proxy = DeviceProxy(device)
             device_proxy.SetDirectState(DevState.OFF)
-
-        # If Dish master provided then set it to standby
-        dish_master = kwargs.get("dish_master")
-        if dish_master:
-            device_proxy = DeviceProxy(dish_master)
-            device_proxy.SetDirectState(DevState.STANDBY)
 
         LOGGER.info(
             f"After invoking TelescopeOff command {central_node} State is:\
@@ -178,14 +166,6 @@ class TmcHelper:
             device_proxy.SetDirectState(DevState.OFF)
             # TODO: move this to proper place
             device_proxy.ClearCommandCallInfo()
-
-        # If Dish master provided then set it to standby
-        dish_master_list = kwargs.get("dish_master_list")
-        if dish_master_list:
-            for dish_master in dish_master_list:
-                device_proxy = DeviceProxy(dish_master)
-                device_proxy.SetDirectState(DevState.STANDBY)
-                device_proxy.ClearCommandCallInfo()
 
         LOGGER.info(
             f"After invoking TelescopeStandBy command {central_node} State is:\
