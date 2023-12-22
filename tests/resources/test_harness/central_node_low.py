@@ -250,6 +250,15 @@ class CentralNodeWrapperLow(object):
         result, message = self.subarray_node.Restart()
         return result, message
 
+    def store_resources(self, assign_json: str):
+        """Invoke Assign Resource command on central Node
+        Args:
+            assign_json (str): Assign resource input json
+        """
+        result, message = self.central_node.AssignResources(assign_json)
+        LOGGER.info("Invoked AssignResources on CentralNode")
+        return result, message
+
     def _reset_health_state_for_mock_devices(self):
         """Reset Mock devices"""
         if (

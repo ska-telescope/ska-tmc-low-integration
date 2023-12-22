@@ -105,31 +105,8 @@ on-demand-destroy:
   when: manual
   allow_failure: true
 
-k8s-test:
-  retry: 1
-  variables:
-    KUBE_NAMESPACE: 'ci-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA'
-    SERVICE_ACCOUNT: "ci-svc-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA"
-  script:
-    - make cred SERVICE_ACCOUNT=$SERVICE_ACCOUNT
-    - make k8s-install-chart
-    - make k8s-wait
-    - make k8s-test
-  environment:
-    name: test/$CI_COMMIT_REF_SLUG
-    on_stop: stop-k8s-test
-    auto_stop_in: 1 minute
-
-stop-k8s-test:
-  variables:
-    KUBE_NAMESPACE: 'ci-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA'
-  script:
-    - make k8s-uninstall-chart
-    - kubectl -n $KUBE_NAMESPACE delete pods,svc,daemonsets,deployments,replicasets,statefulsets,cronjobs,jobs,ingresses,configmaps --all
-    - make k8s-delete-namespace
 
 k8s-test-tmc-with-csp:
-  retry: 1
   extends:
     - k8s-test
   variables:
@@ -137,28 +114,15 @@ k8s-test-tmc-with-csp:
     SERVICE_ACCOUNT: "ci-svc-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-csp-low"
     MARK: 'real_csp'
     CSP_SIMULATION_ENABLED: 'false'
-  script:
-    - make cred SERVICE_ACCOUNT=$SERVICE_ACCOUNT
-    - make k8s-install-chart
-    - make k8s-wait
-    - make k8s-test
-  environment:
-    name: test/$CI_COMMIT_REF_SLUG
-    on_stop: stop-k8s-test-tmc-with-csp
-    auto_stop_in: 1 minute
+  retry: 1
 
 stop-k8s-test-tmc-with-csp:
   extends:
     - stop-k8s-test
   variables:
     KUBE_NAMESPACE: 'ci-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-csp-low'
-  script:
-    - make k8s-uninstall-chart
-    - kubectl -n $KUBE_NAMESPACE delete pods,svc,daemonsets,deployments,replicasets,statefulsets,cronjobs,jobs,ingresses,configmaps --all
-    - make k8s-delete-namespace
 
 k8s-test-tmc-with-sdp:
-  retry: 1
   extends:
     - k8s-test
   variables:
@@ -171,15 +135,7 @@ k8s-test-tmc-with-sdp:
     MARK: 'real_sdp'
     SDP_SIMULATION_ENABLED: 'false'
     TARANTA_ENABLED: 'true'
-  script:
-    - make cred SERVICE_ACCOUNT=$SERVICE_ACCOUNT
-    - make k8s-install-chart TELESCOPE=SKA-low
-    - make k8s-wait
-    - make k8s-test
-  environment:
-    name: test/$CI_COMMIT_REF_SLUG
-    on_stop: stop-k8s-test-tmc-with-sdp
-    auto_stop_in: 1 minute
+  retry: 1
 
 
 stop-k8s-test-tmc-with-sdp:
@@ -187,10 +143,6 @@ stop-k8s-test-tmc-with-sdp:
     - stop-k8s-test
   variables:
     KUBE_NAMESPACE: 'ci-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-tmc-sdp'
-  script:
-    - make k8s-uninstall-chart
-    - kubectl -n $KUBE_NAMESPACE delete pods,svc,daemonsets,deployments,replicasets,statefulsets,cronjobs,jobs,ingresses,configmaps --all
-    - make k8s-delete-namespace
 
 
 deploy-integration:
