@@ -28,8 +28,6 @@ from tests.resources.test_harness.utils.sync_decorators import (
     sync_restart,
     sync_set_to_off,
 )
-
-# sync_assign_resources,
 from tests.resources.test_support.common_utils.common_helpers import Resource
 
 SDP_SIMULATION_ENABLED = os.getenv("SDP_SIMULATION_ENABLED")
