@@ -127,27 +127,35 @@ class CentralNodeWrapperLow(object):
 
         """
         if self.simulated_devices_dict["all_mocks"]:
-            LOGGER.info("Invoking commands with all Mocks")
+            LOGGER.info("Invoking TelescopeOff command with all Mocks")
             self.central_node.TelescopeOff()
             self.set_values_with_all_mocks(DevState.OFF)
 
         elif self.simulated_devices_dict["csp_and_sdp"]:
-            LOGGER.info("Invoking command with csp and sdp simulated")
+            LOGGER.info(
+                "Invoking TelescopeOff command with csp and sdp simulated"
+            )
             self.central_node.TelescopeOff()
             self.set_value_with_csp_sdp_mocks(DevState.OFF)
 
         elif self.simulated_devices_dict["csp_and_mccs"]:
-            LOGGER.info("Invoking command with csp and mccs simulated")
+            LOGGER.info(
+                "Invoking TelescopeOff command with csp and mccs simulated"
+            )
             self.central_node.TelescopeOff()
             self.set_values_with_csp_mccs_mocks(DevState.OFF)
 
         elif self.simulated_devices_dict["sdp_and_mccs"]:
-            LOGGER.info("Invoking command with sdp and mccs simulated")
+            LOGGER.info(
+                "Invoking TelescopeOff command with sdp and mccs simulated"
+            )
             self.central_node.TelescopeOff()
             self.set_values_with_sdp_mccs_mocks(DevState.OFF)
 
         else:
-            LOGGER.info("Invoke command with all real sub-systems")
+            LOGGER.info(
+                "Invoke TelescopeOff command with all real sub-systems"
+            )
             self.central_node.TelescopeOff()
 
     def tear_down(self):
@@ -176,26 +184,32 @@ class CentralNodeWrapperLow(object):
             f"Received simulated devices: {self.simulated_devices_dict}"
         )
         if self.simulated_devices_dict["all_mocks"]:
-            LOGGER.info("Invoking commands with all Mocks")
+            LOGGER.info("Invoking TelescopeOn command with all Mocks")
             self.central_node.TelescopeOn()
             self.set_values_with_all_mocks(DevState.ON)
 
         elif self.simulated_devices_dict["csp_and_sdp"]:
-            LOGGER.info("Invoking command with csp and sdp simulated")
+            LOGGER.info(
+                "Invoking TelescopeOn command with csp and sdp simulated"
+            )
             self.central_node.TelescopeOn()
             self.set_value_with_csp_sdp_mocks(DevState.ON)
 
         elif self.simulated_devices_dict["csp_and_mccs"]:
-            LOGGER.info("Invoking command with csp and MCCS simulated")
+            LOGGER.info(
+                "Invoking TelescopeOn command with csp and MCCS simulated"
+            )
             self.central_node.TelescopeOn()
             self.set_values_with_csp_mccs_mocks(DevState.ON)
 
         elif self.simulated_devices_dict["sdp_and_mccs"]:
-            LOGGER.info("Invoking command with sdp and mccss simulated")
+            LOGGER.info(
+                "Invoking TelescopeOn command with sdp and mccss simulated"
+            )
             self.central_node.TelescopeOn()
             self.set_values_with_sdp_mccs_mocks(DevState.ON)
         else:
-            LOGGER.info("Invoke command with all real sub-systems")
+            LOGGER.info("Invoke TelescopeOn command with all real sub-systems")
             self.central_node.TelescopeOn()
 
     def set_standby(self):
@@ -206,26 +220,34 @@ class CentralNodeWrapperLow(object):
         """
         LOGGER.info("Putting Telescope in Standby state")
         if self.simulated_devices_dict["all_mocks"]:
-            LOGGER.info("Invoking commands with all Mocks")
+            LOGGER.info("Invoking TelescopeStandby commands with all Mocks")
             self.central_node.TelescopeStandBy()
             self.set_values_with_all_mocks(DevState.STANDBY)
 
         elif self.simulated_devices_dict["csp_and_sdp"]:
-            LOGGER.info("Invoking command with csp and sdp simulated")
+            LOGGER.info(
+                "Invoking TelescopeStandby command with csp and sdp simulated"
+            )
             self.central_node.TelescopeStandBy()
             self.set_value_with_csp_sdp_mocks(DevState.STANDBY)
 
         elif self.simulated_devices_dict["csp_and_mccs"]:
-            LOGGER.info("Invoking command with csp and mccs simulated")
+            LOGGER.info(
+                "Invoking TelescopeStandby command with csp and mccs simulated"
+            )
             self.central_node.TelescopeStandBy()
             self.set_values_with_csp_mccs_mocks(DevState.STANDBY)
 
         elif self.simulated_devices_dict["sdp_and_mccs"]:
-            LOGGER.info("Invoking command with sdp and mccs simulated")
+            LOGGER.info(
+                "Invoking TelescopeStandby command with sdp and mccs simulated"
+            )
             self.central_node.TelescopeStandBy()
             self.set_values_with_sdp_mccs_mocks(DevState.STANDBY)
         else:
-            LOGGER.info("Invoke command with all real sub-systems")
+            LOGGER.info(
+                "Invoke TelescopeStandby command with all real sub-systems"
+            )
             self.central_node.TelescopeStandBy()
 
     @sync_assign_resources(device_dict=device_dict_low)

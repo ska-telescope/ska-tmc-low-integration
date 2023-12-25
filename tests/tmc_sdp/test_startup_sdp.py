@@ -67,7 +67,7 @@ def check_sdp_is_on(central_node_low, event_recorder):
 
 @then("telescope state is ON")
 def check_telescopestate(central_node_low, event_recorder):
-    """A method to check CentralNode.telescopeState"""
+    """A method to check CentralNode telescopeState"""
     event_recorder.subscribe_event(
         central_node_low.central_node, "telescopeState"
     )
