@@ -19,7 +19,7 @@ LOGGER = logging.getLogger(__name__)
 @pytest.mark.release
 @scenario(
     "../features/tmc_sdp/release_resources_to_sdp_subarray.feature",
-    """Release resources to SDP subarray using TMC""",
+    """Release resources from SDP Subarray using TMC""",
 )
 def test_tmc_sdp_release_resources():
     """
@@ -46,10 +46,10 @@ def telescope_is_in_idle_state(
         "telescopeState",
         DevState.ON,
     )
-    release_input_json = prepare_json_args_for_centralnode_commands(
-        "relase_resources_low", command_input_factory
+    assign_input_json = prepare_json_args_for_centralnode_commands(
+        "assign_resources_low", command_input_factory
     )
-    central_node_low.store_resources(release_input_json)
+    central_node_low.store_resources(assign_input_json)
     event_recorder.subscribe_event(central_node_low.subarray_node, "obsState")
     assert event_recorder.has_change_event_occurred(
         central_node_low.subarray_node,
@@ -58,9 +58,7 @@ def telescope_is_in_idle_state(
     )
 
 
-@when(
-    parsers.parse("I release all resources assigned to subarray {subarray_id}")
-)
+@when(parsers.parse("I release all resources assigned to it"))
 def release_resources_to_subarray(central_node_low, command_input_factory):
     """Method to release resources to subarray."""
     release_input_json = prepare_json_args_for_centralnode_commands(

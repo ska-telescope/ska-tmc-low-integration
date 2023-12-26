@@ -1,3 +1,4 @@
+import json
 import logging
 import os
 
@@ -20,6 +21,7 @@ from tests.resources.test_harness.constant import (
     mccs_subarray1,
     tmc_low_subarraynode1,
 )
+from tests.resources.test_harness.helpers import generate_eb_pb_ids
 from tests.resources.test_harness.utils.common_utils import JsonFactory
 from tests.resources.test_harness.utils.sync_decorators import (
     sync_abort,
@@ -258,7 +260,11 @@ class CentralNodeWrapperLow(object):
         """
         # This methods needs to change, with subsequent changes in the Tear
         # Down of the fixtures. Will be done as an improvement later.
-        result, message = self.central_node.AssignResources(assign_json)
+        input_json = json.loads(assign_json)
+        generate_eb_pb_ids(input_json)
+        result, message = self.central_node.AssignResources(
+            json.dumps(input_json)
+        )
         LOGGER.info("Invoked AssignResources on CentralNode")
         return result, message
 

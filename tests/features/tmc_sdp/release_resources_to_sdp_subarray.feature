@@ -5,7 +5,6 @@ Scenario: Release resources from SDP Subarray using TMC
     When I release all resources assigned to it
     Then the SDP subarray <subarray_id> must be in EMPTY obsState
     And TMC subarray <subarray_id> obsState transitions to EMPTY
-
- Example
+    Examples:
         | subarray_id   | 
-        |  1                   | 
+        | 1            |
