@@ -16,6 +16,7 @@ from tests.resources.test_support.common_utils.tmc_helpers import (
 LOGGER = logging.getLogger(__name__)
 
 
+@pytest.mark.jtest
 @pytest.mark.real_sdp
 @pytest.mark.assign
 @scenario(
@@ -133,7 +134,9 @@ def check_tmc_is_in_idle_obsstate(central_node_low, event_recorder):
 )
 def check_assign_resources_to_tmc(central_node_low, receptors):
     """Method to check whether resources are assigned"""
-    # assert str(central_node_low.subarray_node.assignedResources) == receptors
-    # central_node_low.subarray_devices["sdp_subarray"].Resources = receptor
-    # receptor ==(receptors)
-    pass
+    receptor = json.loads(
+        central_node_low.subarray_devices["sdp_subarray"].Resources
+    )["receptors"]
+    receptors = receptors.replace('"', "")
+    receptors = receptors.split(", ")
+    assert receptor == receptors
