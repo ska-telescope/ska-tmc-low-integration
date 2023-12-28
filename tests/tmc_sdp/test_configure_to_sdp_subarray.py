@@ -1,3 +1,6 @@
+"""
+Test TMC-SDP Configure functionality.
+"""
 import json
 import logging
 
