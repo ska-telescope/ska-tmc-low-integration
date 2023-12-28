@@ -7,6 +7,7 @@ from ska_tango_base.control_model import HealthState
 from tango import DeviceProxy, DevState
 
 from tests.resources.test_harness.constant import (
+    RESET_DEFECT,
     device_dict_low,
     low_centralnode,
     low_csp_master,
@@ -408,3 +409,8 @@ class CentralNodeWrapperLow(object):
                 ]
             ),
         }
+
+    def reset_defects_for_devices(self, device_list: list):
+        """Resets the defects for given devices."""
+        for device in device_list:
+            device.SetDefective(RESET_DEFECT)

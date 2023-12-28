@@ -75,7 +75,6 @@ RESET_DEFECT = json.dumps(
     }
 )
 
-
 COMMAND_FAILED_WITH_EXCEPTION_OBSSTATE_IDLE = {
     "enabled": True,
     "fault_type": FaultType.FAILED_RESULT,
@@ -83,6 +82,15 @@ COMMAND_FAILED_WITH_EXCEPTION_OBSSTATE_IDLE = {
     "result": ResultCode.FAILED,
     "target_obsstates": [ObsState.RESOURCING, ObsState.IDLE],
 }
+
+COMMAND_NOT_ALLOWED_DEFECT = json.dumps(
+    {
+        "enabled": True,
+        "fault_type": FaultType.COMMAND_NOT_ALLOWED,
+        "error_message": "Command is not allowed",
+        "result": ResultCode.FAILED,
+    }
+)
 
 low_centralnode = "ska_low/tm_central/central_node"
 tmc_low_subarraynode1 = "ska_low/tm_subarray_node/1"

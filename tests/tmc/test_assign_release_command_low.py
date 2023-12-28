@@ -23,8 +23,6 @@ from tests.resources.test_support.common_utils.tmc_helpers import (
 )
 from tests.resources.test_support.constant_low import (
     DEVICE_HEALTH_STATE_OK_INFO,
-    DEVICE_LIST_FOR_CHECK_DEVICES,
-    DEVICE_OBS_STATE_EMPTY_INFO,
     DEVICE_OBS_STATE_IDLE_INFO,
     DEVICE_STATE_ON_INFO,
     DEVICE_STATE_STANDBY_INFO,
@@ -40,56 +38,6 @@ from tests.resources.test_support.constant_low import (
 
 telescope_control = BaseTelescopeControl()
 tmc_helper = TmcHelper(centralnode, tmc_subarraynode1)
-
-
-@pytest.mark.skip(
-    reason="AssignResources and ReleaseResources"
-    " functionalities are not yet"
-    " implemented on mccs master leaf node."
-)
-@pytest.mark.SKA_low
-def test_assign_release_low(json_factory):
-    """AssignResources and ReleaseResources is executed."""
-    assign_json = json_factory("command_assign_resource_low")
-    release_json = json_factory("command_release_resource_low")
-    try:
-        tmc_helper.check_devices(DEVICE_LIST_FOR_CHECK_DEVICES)
-        assert telescope_control.is_in_valid_state(
-            DEVICE_STATE_STANDBY_INFO, "State"
-        )
-        # Invoke TelescopeOn() command on TMC CentralNode
-        tmc_helper.set_to_on(**ON_OFF_DEVICE_COMMAND_DICT)
-        # Verify State transitions after TelescopeOn
-        assert telescope_control.is_in_valid_state(
-            DEVICE_STATE_ON_INFO, "State"
-        )
-
-        # Check Telescope availability
-        tmc_helper.check_telescope_availability()
-        # Invoke AssignResources() Command on TMC
-        tmc_helper.compose_sub(assign_json, **ON_OFF_DEVICE_COMMAND_DICT)
-        assert telescope_control.is_in_valid_state(
-            DEVICE_OBS_STATE_IDLE_INFO, "obsState"
-        )
-
-        # Invoke ReleaseResources() command on TMC
-        tmc_helper.invoke_releaseResources(
-            release_json, **ON_OFF_DEVICE_COMMAND_DICT
-        )
-        assert telescope_control.is_in_valid_state(
-            DEVICE_OBS_STATE_EMPTY_INFO, "obsState"
-        )
-
-        # Check Telescope availability
-        tmc_helper.check_telescope_availability()
-        # Invoke Standby() command on TMC
-        tmc_helper.set_to_standby(**ON_OFF_DEVICE_COMMAND_DICT)
-        assert telescope_control.is_in_valid_state(
-            DEVICE_STATE_STANDBY_INFO, "State"
-        )
-    except Exception as e:
-        LOGGER.exception("The exception is: %s", e)
-        tear_down(release_json, **ON_OFF_DEVICE_COMMAND_DICT)
 
 
 @pytest.mark.skip(
@@ -149,7 +97,7 @@ def test_assign_release_timeout_csp(json_factory, change_event_callbacks):
             f"Exception occurred on device: {tmc_subarraynode1}: "
             + "Exception occurred on the following devices:\n"
             + f"{tmc_csp_subarray_leaf_node}: "
-            + "Timeout has occured, command failed\n"
+            + "Timeout has occurred, command failed\n"
         )
         assert exception_message in assertion_data["attribute_value"][1]
         csp_subarray.SetDefective(json.dumps({"enabled": False}))
@@ -217,7 +165,7 @@ def test_assign_release_timeout_sdp(json_factory, change_event_callbacks):
         )
         assert "AssignResources" in assertion_data["attribute_value"][0]
         assert (
-            "Timeout has occured, command failed"
+            "Timeout has occurred, command failed"
             in assertion_data["attribute_value"][1]
         )
         assert (
@@ -294,7 +242,7 @@ def test_release_exception_propagation(json_factory, change_event_callbacks):
             f"Exception occurred on device: {tmc_subarraynode1}: "
             + "Exception occurred on the following devices:\n"
             + f"{tmc_csp_subarray_leaf_node}: "
-            + "Timeout has occured, command failed\n"
+            + "Timeout has occurred, command failed\n"
         )
 
         change_event_callbacks["longRunningCommandResult"].assert_change_event(
@@ -331,11 +279,6 @@ def test_release_exception_propagation(json_factory, change_event_callbacks):
         tear_down(release_json, **ON_OFF_DEVICE_COMMAND_DICT)
 
 
-@pytest.mark.skip(
-    reason="AssignResources and ReleaseResources"
-    " functionalities are not yet"
-    " implemented on mccs master leaf node."
-)
 @pytest.mark.SKA_low
 def test_health_check_low():
     """Test health state check for low"""

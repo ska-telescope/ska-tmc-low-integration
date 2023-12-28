@@ -1,7 +1,6 @@
 """Test cases for Configure and End Command
     for low"""
 import json
-import time
 from copy import deepcopy
 
 import pytest
@@ -9,12 +8,10 @@ from ska_tango_base.control_model import ObsState
 from ska_tango_testing.mock.placeholders import Anything
 from tango import DeviceProxy, EventType
 
-from tests.conftest import LOGGER, TIMEOUT
-from tests.resources.test_support.common_utils.common_helpers import Waiter
+from tests.conftest import LOGGER
 from tests.resources.test_support.common_utils.result_code import ResultCode
 from tests.resources.test_support.common_utils.telescope_controls import (
     BaseTelescopeControl,
-    check_subarray1_availability,
 )
 from tests.resources.test_support.common_utils.tmc_helpers import (
     TmcHelper,
@@ -22,10 +19,7 @@ from tests.resources.test_support.common_utils.tmc_helpers import (
 )
 from tests.resources.test_support.constant_low import (
     COMMAND_NOT_ALLOWED_DEFECT,
-    DEVICE_LIST_FOR_CHECK_DEVICES,
-    DEVICE_OBS_STATE_EMPTY_INFO,
     DEVICE_OBS_STATE_IDLE_INFO,
-    DEVICE_OBS_STATE_READY_INFO,
     DEVICE_STATE_ON_INFO,
     DEVICE_STATE_STANDBY_INFO,
     INTERMEDIATE_STATE_DEFECT,
@@ -42,90 +36,6 @@ tmc_helper = TmcHelper(centralnode, tmc_subarraynode1)
 telescope_control = BaseTelescopeControl()
 
 
-@pytest.mark.skip(
-    reason="AssignResources and ReleaseResources"
-    " functionalities are not yet"
-    " implemented on mccs master leaf node."
-)
-@pytest.mark.SKA_low
-def test_configure_end_low(json_factory):
-    """Configure and End is executed."""
-    assign_json = json_factory("command_assign_resource_low")
-    release_json = json_factory("command_release_resource_low")
-    configure_json = json_factory("command_Configure_low")
-    try:
-        tmc_helper.check_devices(DEVICE_LIST_FOR_CHECK_DEVICES)
-        assert telescope_control.is_in_valid_state(
-            DEVICE_STATE_STANDBY_INFO, "State"
-        )
-        # Invoke TelescopeOn() command on TMC CentralNode
-        tmc_helper.set_to_on(**ON_OFF_DEVICE_COMMAND_DICT)
-        # Verify State transitions after TelescopeOn
-        assert telescope_control.is_in_valid_state(
-            DEVICE_STATE_ON_INFO, "State"
-        )
-        LOGGER.info("TelescopeOn command is executed.")
-        # Check Subarray1 availability
-        assert check_subarray1_availability(tmc_subarraynode1)
-        csp_subarray = DeviceProxy(tmc_csp_subarray_leaf_node)
-        # Invoke AssignResources() Command on TMC
-        tmc_helper.compose_sub(assign_json, **ON_OFF_DEVICE_COMMAND_DICT)
-        assert telescope_control.is_in_valid_state(
-            DEVICE_OBS_STATE_IDLE_INFO, "obsState"
-        )
-        LOGGER.info("AssignResources command is executed.")
-        LOGGER.info(f"The Obstate is:{csp_subarray.cspSubarrayObsState}")
-        LOGGER.info(f"DelayModel is:{csp_subarray.delayModel}")
-        # Invoke Configure() Command on TMC
-        tmc_helper.configure_subarray(
-            configure_json, **ON_OFF_DEVICE_COMMAND_DICT
-        )
-        LOGGER.info(f"The Obstate is:{csp_subarray.cspSubarrayObsState}")
-
-        time.sleep(1)
-        waiter = Waiter(**ON_OFF_DEVICE_COMMAND_DICT)
-        waiter.set_wait_for_delayvalue()
-        waiter.wait(TIMEOUT)
-        LOGGER.info(f"DelayModel is:{csp_subarray.delayModel}")
-
-        assert telescope_control.is_in_valid_state(
-            DEVICE_OBS_STATE_READY_INFO, "obsState"
-        )
-        LOGGER.info("Configure command is executed.")
-        LOGGER.info(f"The Obstate is:{csp_subarray.cspSubarrayObsState}")
-        LOGGER.info(f"DelayModel is:{csp_subarray.delayModel}")
-        # Teardowning
-        # Invoke End() Command on TMC
-        tmc_helper.end(**ON_OFF_DEVICE_COMMAND_DICT)
-        assert telescope_control.is_in_valid_state(
-            DEVICE_OBS_STATE_IDLE_INFO, "obsState"
-        )
-        LOGGER.info("End command is executed.")
-        LOGGER.info(f"The Obstate is:{csp_subarray.cspSubarrayObsState}")
-        LOGGER.info(f"DelayModel is:{csp_subarray.delayModel}")
-        # Invoke ReleaseResources() command on TMC
-        tmc_helper.invoke_releaseResources(
-            release_json, **ON_OFF_DEVICE_COMMAND_DICT
-        )
-        assert telescope_control.is_in_valid_state(
-            DEVICE_OBS_STATE_EMPTY_INFO, "obsState"
-        )
-        LOGGER.info("ReleaseResources command is executed.")
-        # Invoke Standby() command on TMC
-        tmc_helper.set_to_standby(**ON_OFF_DEVICE_COMMAND_DICT)
-        assert telescope_control.is_in_valid_state(
-            DEVICE_STATE_STANDBY_INFO, "State"
-        )
-    except Exception as e:
-        LOGGER.exception("The exception is: %s", e)
-        tear_down(release_json, **ON_OFF_DEVICE_COMMAND_DICT)
-
-
-@pytest.mark.skip(
-    reason="AssignResources and ReleaseResources"
-    " functionalities are not yet"
-    " implemented on mccs master leaf node."
-)
 @pytest.mark.SKA_low
 def test_configure_timeout_and_error_propagation_csp(
     json_factory, change_event_callbacks
@@ -184,7 +94,7 @@ def test_configure_timeout_and_error_propagation_csp(
 
         assert "Configure" in assertion_data["attribute_value"][0]
         assert (
-            "Timeout has occured, command failed"
+            "Timeout has occurred, command failed"
             in assertion_data["attribute_value"][1]
         )
         assert (
@@ -216,11 +126,6 @@ def test_configure_timeout_and_error_propagation_csp(
         )
 
 
-@pytest.mark.skip(
-    reason="AssignResources and ReleaseResources"
-    " functionalities are not yet"
-    " implemented on mccs master leaf node."
-)
 @pytest.mark.SKA_low
 def test_configure_timeout_sdp(json_factory, change_event_callbacks):
     """Verify timeout exception raised when csp set to defective."""
@@ -277,7 +182,7 @@ def test_configure_timeout_sdp(json_factory, change_event_callbacks):
 
         assert "Configure" in assertion_data["attribute_value"][0]
         assert (
-            "Timeout has occured, command failed"
+            "Timeout has occurred, command failed"
             in assertion_data["attribute_value"][1]
         )
         assert (
@@ -309,11 +214,6 @@ def test_configure_timeout_sdp(json_factory, change_event_callbacks):
         )
 
 
-@pytest.mark.skip(
-    reason="AssignResources and ReleaseResources"
-    " functionalities are not yet"
-    " implemented on mccs master leaf node."
-)
 @pytest.mark.SKA_low
 def test_configure_error_propagation_sdp(json_factory, change_event_callbacks):
     """Verify timeout exception raised when csp set to defective."""
