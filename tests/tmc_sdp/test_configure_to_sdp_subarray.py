@@ -20,7 +20,7 @@ LOGGER = logging.getLogger(__name__)
 @pytest.mark.configure
 @scenario(
     "../features/tmc_sdp/configure_to_sdp_subarray.feature",
-    """Configure SDP subarray for a scan using TMC""",
+    """Configure a SDP subarray for a scan using TMC""",
 )
 def test_configure_sdp_subarray():
     """
