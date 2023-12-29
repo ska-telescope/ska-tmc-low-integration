@@ -6,7 +6,6 @@ from tango import DevState
 
 from tests.resources.test_harness.constant import (
     INTERMEDIATE_CONFIGURING_STATE_DEFECT,
-    RESET_DEFECT,
     low_csp_subarray_leaf_node,
     low_sdp_subarray_leaf_node,
 )
@@ -82,9 +81,6 @@ class TestConfigureErrorPropagation:
             low_csp_subarray_leaf_node in assertion_data["attribute_value"][1]
         )
 
-        # Resetting defect
-        csp_subarray_sim.SetDefective(RESET_DEFECT)
-
     @pytest.mark.SKA_low
     def test_configure_timeout_sdp_ln(
         self,
@@ -146,6 +142,3 @@ class TestConfigureErrorPropagation:
         assert (
             low_sdp_subarray_leaf_node in assertion_data["attribute_value"][1]
         )
-
-        # Resetting defect
-        sdp_subarray_sim.SetDefective(RESET_DEFECT)
