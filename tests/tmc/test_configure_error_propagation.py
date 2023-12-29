@@ -33,19 +33,28 @@ class TestConfigureErrorPropagation:
         csp_subarray_sim = simulator_factory.get_or_create_simulator_device(
             SimulatorDeviceType.LOW_CSP_DEVICE
         )
-
-        subarray_node_low.move_to_on()
+        # Event Subscriptions
         event_recorder.subscribe_event(
             subarray_node_low.subarray_node, "State"
         )
+        event_recorder.subscribe_event(
+            subarray_node_low.subarray_node, "obsState"
+        )
+        event_recorder.subscribe_event(
+            subarray_node_low.subarray_node, "longRunningCommandResult"
+        )
+
+        # Preparing input files
+        configure_input_str = prepare_json_args_for_commands(
+            "configure_low", command_input_factory
+        )
+
+        subarray_node_low.move_to_on()
         assert event_recorder.has_change_event_occurred(
             subarray_node_low.subarray_node, "State", DevState.ON
         )
 
         subarray_node_low.force_change_of_obs_state("IDLE")
-        event_recorder.subscribe_event(
-            subarray_node_low.subarray_node, "obsState"
-        )
         assert event_recorder.has_change_event_occurred(
             subarray_node_low.subarray_node, "obsState", ObsState.IDLE
         )
@@ -53,9 +62,6 @@ class TestConfigureErrorPropagation:
         # Inducing Fault
         csp_subarray_sim.SetDefective(INTERMEDIATE_CONFIGURING_STATE_DEFECT)
 
-        configure_input_str = prepare_json_args_for_commands(
-            "configure_low", command_input_factory
-        )
         _, unique_id = subarray_node_low.execute_transition(
             "Configure", configure_input_str
         )
@@ -63,9 +69,6 @@ class TestConfigureErrorPropagation:
             subarray_node_low.subarray_node, "obsState", ObsState.CONFIGURING
         )
 
-        event_recorder.subscribe_event(
-            subarray_node_low.subarray_node, "longRunningCommandResult"
-        )
         assertion_data = event_recorder.has_change_event_occurred(
             subarray_node_low.subarray_node,
             "longRunningCommandResult",
@@ -95,19 +98,28 @@ class TestConfigureErrorPropagation:
         sdp_subarray_sim = simulator_factory.get_or_create_simulator_device(
             SimulatorDeviceType.LOW_SDP_DEVICE
         )
-
-        subarray_node_low.move_to_on()
+        # Event Subscriptions
         event_recorder.subscribe_event(
             subarray_node_low.subarray_node, "State"
         )
+        event_recorder.subscribe_event(
+            subarray_node_low.subarray_node, "obsState"
+        )
+        event_recorder.subscribe_event(
+            subarray_node_low.subarray_node, "longRunningCommandResult"
+        )
+
+        # Preparing input files
+        configure_input_str = prepare_json_args_for_commands(
+            "configure_low", command_input_factory
+        )
+
+        subarray_node_low.move_to_on()
         assert event_recorder.has_change_event_occurred(
             subarray_node_low.subarray_node, "State", DevState.ON
         )
 
         subarray_node_low.force_change_of_obs_state("IDLE")
-        event_recorder.subscribe_event(
-            subarray_node_low.subarray_node, "obsState"
-        )
         assert event_recorder.has_change_event_occurred(
             subarray_node_low.subarray_node, "obsState", ObsState.IDLE
         )
@@ -115,9 +127,6 @@ class TestConfigureErrorPropagation:
         # Inducing Fault
         sdp_subarray_sim.SetDefective(INTERMEDIATE_CONFIGURING_STATE_DEFECT)
 
-        configure_input_str = prepare_json_args_for_commands(
-            "configure_low", command_input_factory
-        )
         _, unique_id = subarray_node_low.execute_transition(
             "Configure", configure_input_str
         )
@@ -125,9 +134,6 @@ class TestConfigureErrorPropagation:
             subarray_node_low.subarray_node, "obsState", ObsState.CONFIGURING
         )
 
-        event_recorder.subscribe_event(
-            subarray_node_low.subarray_node, "longRunningCommandResult"
-        )
         assertion_data = event_recorder.has_change_event_occurred(
             subarray_node_low.subarray_node,
             "longRunningCommandResult",

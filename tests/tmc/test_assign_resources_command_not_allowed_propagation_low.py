@@ -34,9 +34,20 @@ class TestAssignCommandNotAllowedPropagation:
             SimulatorDeviceType.MCCS_SUBARRAY_DEVICE
         )
 
+        # Event Subscriptions
         event_recorder.subscribe_event(
             central_node_low.central_node, "telescopeState"
         )
+        event_recorder.subscribe_event(
+            central_node_low.central_node, "longRunningCommandResult"
+        )
+        event_recorder.subscribe_event(mccs_subarray_sim, "obsState")
+
+        # Preparing input arguments
+        assign_input_json = prepare_json_args_for_centralnode_commands(
+            "assign_resources_low", command_input_factory
+        )
+
         central_node_low.move_to_on()
         assert event_recorder.has_change_event_occurred(
             central_node_low.central_node,
@@ -47,13 +58,7 @@ class TestAssignCommandNotAllowedPropagation:
         # Setting Defects on Devices
         csp_subarray_sim.SetDefective(COMMAND_NOT_ALLOWED_DEFECT)
 
-        assign_input_json = prepare_json_args_for_centralnode_commands(
-            "assign_resources_low", command_input_factory
-        )
         _, unique_id = central_node_low.store_resources(assign_input_json)
-        event_recorder.subscribe_event(
-            central_node_low.central_node, "longRunningCommandResult"
-        )
 
         ERROR_MESSAGE = (
             "The invocation of the AssignResources command is "
@@ -69,7 +74,6 @@ class TestAssignCommandNotAllowedPropagation:
         # Manually setting the obsState to EMPTY to circumvent the Restart
         # command bug. Will be removed once the Bug is fixed under HM-371
         mccs_subarray_sim.SetDirectObsState(ObsState.EMPTY)
-        event_recorder.subscribe_event(mccs_subarray_sim, "obsState")
         assert event_recorder.has_change_event_occurred(
             mccs_subarray_sim,
             "obsState",
@@ -94,9 +98,20 @@ class TestAssignCommandNotAllowedPropagation:
             SimulatorDeviceType.MCCS_SUBARRAY_DEVICE
         )
 
+        # Event Subscriptions
         event_recorder.subscribe_event(
             central_node_low.central_node, "telescopeState"
         )
+        event_recorder.subscribe_event(
+            central_node_low.central_node, "longRunningCommandResult"
+        )
+        event_recorder.subscribe_event(mccs_subarray_sim, "obsState")
+
+        # Preparing input arguments
+        assign_input_json = prepare_json_args_for_centralnode_commands(
+            "assign_resources_low", command_input_factory
+        )
+
         central_node_low.move_to_on()
         assert event_recorder.has_change_event_occurred(
             central_node_low.central_node,
@@ -107,13 +122,7 @@ class TestAssignCommandNotAllowedPropagation:
         # Setting Defects on Devices
         sdp_subarray_sim.SetDirectObsState(ObsState.RESOURCING)
 
-        assign_input_json = prepare_json_args_for_centralnode_commands(
-            "assign_resources_low", command_input_factory
-        )
         _, unique_id = central_node_low.store_resources(assign_input_json)
-        event_recorder.subscribe_event(
-            central_node_low.central_node, "longRunningCommandResult"
-        )
 
         ERROR_MESSAGE = (
             "ska_tmc_common.exceptions.InvalidObsStateError: AssignResources "
@@ -129,7 +138,6 @@ class TestAssignCommandNotAllowedPropagation:
         # Manually setting the obsState to EMPTY to circumvent the Restart
         # command bug. Will be removed once the Bug is fixed under HM-371
         mccs_subarray_sim.SetDirectObsState(ObsState.EMPTY)
-        event_recorder.subscribe_event(mccs_subarray_sim, "obsState")
         assert event_recorder.has_change_event_occurred(
             mccs_subarray_sim,
             "obsState",
