@@ -34,6 +34,16 @@ INTERMEDIATE_STATE_DEFECT = {
     "intermediate_state": ObsState.RESOURCING,
 }
 
+INTERMEDIATE_CONFIGURING_STATE_DEFECT = json.dumps(
+    {
+        "enabled": True,
+        "fault_type": FaultType.STUCK_IN_INTERMEDIATE_STATE,
+        "error_message": "Device stuck in intermediate state",
+        "result": ResultCode.FAILED,
+        "intermediate_state": ObsState.CONFIGURING,
+    }
+)
+
 OBS_STATE_RESOURCING_STUCK_DEFECT = {
     "enabled": True,
     "fault_type": FaultType.STUCK_IN_OBSTATE,
@@ -127,6 +137,7 @@ device_dict_low = {
     "sdp_subarray_leaf_node": low_sdp_subarray_leaf_node,
     "csp_subarray_leaf_node": low_csp_subarray_leaf_node,
     "mccs_master_leaf_node": mccs_master_leaf_node,
+    "mccs_subarray_leaf_node": mccs_subarray_leaf_node,
 }
 
 SIMULATOR_DEVICE_FQDN_DICT = {
