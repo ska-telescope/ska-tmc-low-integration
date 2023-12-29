@@ -166,9 +166,7 @@ class CentralNodeWrapperLow(object):
         # reset HealthState.UNKNOWN for mock devices
         LOGGER.info("Calling Tear down for central node.")
         self._reset_health_state_for_mock_devices()
-        self.reset_defects_for_devices(
-            [self.csp_subarray1, self.sdp_subarray1]
-        )
+        self.reset_defects_for_devices()
         if self.subarray_node.obsState == ObsState.IDLE:
             LOGGER.info("Calling ReleaseResources on CentralNode")
             self.invoke_release_resources(self.release_input)
@@ -414,7 +412,8 @@ class CentralNodeWrapperLow(object):
             ),
         }
 
-    def reset_defects_for_devices(self, device_list: list):
+    def reset_defects_for_devices(self):
         """Resets the defects for given devices."""
-        for device in device_list:
-            device.SetDefective(RESET_DEFECT)
+        if self.simulated_devices_dict["all_mocks"]:
+            self.csp_subarray1.SetDefective(RESET_DEFECT)
+            self.sdp_subarray1.SetDefective(RESET_DEFECT)
