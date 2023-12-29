@@ -79,7 +79,6 @@ class TestAssignCommandNotAllowedPropagation:
             "obsState",
             ObsState.EMPTY,
         )
-        central_node_low.reset_defects_for_devices([csp_subarray_sim])
 
     @pytest.mark.SKA_low
     def test_assign_command_not_allowed_propagation_sdp_ln_low(
