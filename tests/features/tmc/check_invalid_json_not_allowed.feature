@@ -1,6 +1,6 @@
 Feature: Commands with invalid json input
-    Scenario: AssignResource command with invalid JSON is rejected by the TMC 
-        Given the TMC is in ON state 
+    Scenario: AssignResource command with invalid JSON is rejected by the TMC
+        Given the TMC is in ON state
         And the subarray is in EMPTY obsState
         When the command AssignResources is invoked with <invalid_json> input
         Then TMC should reject the AssignResources command
@@ -13,7 +13,7 @@ Feature: Commands with invalid json input
             | missing_count_key             |
             | missing_receptor_id_key       |
 
-            
+
     Scenario:   Invalid json rejected by TMC for Configure command
         Given the TMC is On
         And the subarray is in IDLE obsState

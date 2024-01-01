@@ -148,26 +148,26 @@ def invalid_command_rejection(invalid_json):
     # asserting validations message as per invalid json
     if invalid_json == "csp_key_missing":
         assert (
-            "Missing csp key in the scan configuration."
+            "Malformed input string. The key: `csp` is missing."
             in pytest.command_result[1][0]
         )
     elif invalid_json == "sdp_key_missing":
         assert (
-            "Missing sdp key in the scan configuration."
+            "Malformed input string. The key: `sdp` is missing."
             in pytest.command_result[1][0]
         )
     elif invalid_json == "tmc_key_missing":
         assert (
-            "Missing tmc key in the scan configuration."
+            "Malformed input string. The key: `tmc` is missing."
             in pytest.command_result[1][0]
         )
     elif invalid_json == "scan_duration_key_missing":
         assert (
-            "Missing scan_duration in the scan configuration."
+            "Malformed input string. The key -> `scan_duration` is missing"
             in pytest.command_result[1][0]
         )
     elif invalid_json == "empty_string":
-        assert "Malformed input JSON" in pytest.command_result[1][0]
+        assert "Malformed input string" in pytest.command_result[1][0]
 
 
 @then("TMC subarray remains in IDLE obsState")

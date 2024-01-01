@@ -34,6 +34,16 @@ INTERMEDIATE_STATE_DEFECT = {
     "intermediate_state": ObsState.RESOURCING,
 }
 
+INTERMEDIATE_CONFIGURING_STATE_DEFECT = json.dumps(
+    {
+        "enabled": True,
+        "fault_type": FaultType.STUCK_IN_INTERMEDIATE_STATE,
+        "error_message": "Device stuck in intermediate state",
+        "result": ResultCode.FAILED,
+        "intermediate_state": ObsState.CONFIGURING,
+    }
+)
+
 OBS_STATE_RESOURCING_STUCK_DEFECT = {
     "enabled": True,
     "fault_type": FaultType.STUCK_IN_OBSTATE,
@@ -75,7 +85,6 @@ RESET_DEFECT = json.dumps(
     }
 )
 
-
 COMMAND_FAILED_WITH_EXCEPTION_OBSSTATE_IDLE = {
     "enabled": True,
     "fault_type": FaultType.FAILED_RESULT,
@@ -83,6 +92,15 @@ COMMAND_FAILED_WITH_EXCEPTION_OBSSTATE_IDLE = {
     "result": ResultCode.FAILED,
     "target_obsstates": [ObsState.RESOURCING, ObsState.IDLE],
 }
+
+COMMAND_NOT_ALLOWED_DEFECT = json.dumps(
+    {
+        "enabled": True,
+        "fault_type": FaultType.COMMAND_NOT_ALLOWED,
+        "error_message": "Command is not allowed",
+        "result": ResultCode.FAILED,
+    }
+)
 
 low_centralnode = "ska_low/tm_central/central_node"
 tmc_low_subarraynode1 = "ska_low/tm_subarray_node/1"
@@ -119,6 +137,7 @@ device_dict_low = {
     "sdp_subarray_leaf_node": low_sdp_subarray_leaf_node,
     "csp_subarray_leaf_node": low_csp_subarray_leaf_node,
     "mccs_master_leaf_node": mccs_master_leaf_node,
+    "mccs_subarray_leaf_node": mccs_subarray_leaf_node,
 }
 
 SIMULATOR_DEVICE_FQDN_DICT = {

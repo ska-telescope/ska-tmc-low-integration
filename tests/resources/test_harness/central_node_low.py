@@ -8,6 +8,7 @@ from ska_tango_base.control_model import HealthState
 from tango import DeviceProxy, DevState
 
 from tests.resources.test_harness.constant import (
+    RESET_DEFECT,
     device_dict_low,
     low_centralnode,
     low_csp_master,
@@ -56,6 +57,7 @@ class CentralNodeWrapperLow(object):
             "mccs_subarray": DeviceProxy(mccs_subarray1),
         }
         self.csp_subarray1 = DeviceProxy(low_csp_subarray1)
+        self.sdp_subarray1 = DeviceProxy(low_sdp_subarray1)
         self.sdp_master = DeviceProxy(low_sdp_master)
         self.csp_master = DeviceProxy(low_csp_master)
         self.mccs_master = DeviceProxy(mccs_controller)
@@ -165,6 +167,7 @@ class CentralNodeWrapperLow(object):
         # reset HealthState.UNKNOWN for mock devices
         LOGGER.info("Calling Tear down for central node.")
         self._reset_health_state_for_mock_devices()
+        self.reset_defects_for_devices()
         if self.subarray_node.obsState == ObsState.IDLE:
             LOGGER.info("Calling ReleaseResources on CentralNode")
             self.invoke_release_resources(self.release_input)
@@ -414,3 +417,9 @@ class CentralNodeWrapperLow(object):
                 ]
             ),
         }
+
+    def reset_defects_for_devices(self):
+        """Resets the defects for given devices."""
+        if self.simulated_devices_dict["all_mocks"]:
+            self.csp_subarray1.SetDefective(RESET_DEFECT)
+            self.sdp_subarray1.SetDefective(RESET_DEFECT)
