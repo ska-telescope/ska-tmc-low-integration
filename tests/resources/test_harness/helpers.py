@@ -380,7 +380,7 @@ def generate_id(prefix: str) -> str:
     return f"{prefix}-{timestamp[:-8]}-{suffix}"
 
 
-def generate_eb_pb_ids(input_json: dict) -> None:
+def set_eb_pb_ids(input_json: dict) -> str:
     """
     Method to generate different eb_id and pb_id
     :param input_json: json to utilised to update values.
@@ -388,3 +388,4 @@ def generate_eb_pb_ids(input_json: dict) -> None:
     input_json["sdp"]["execution_block"]["eb_id"] = generate_id("eb-test")
     for pb in input_json["sdp"]["processing_blocks"]:
         pb["pb_id"] = generate_id("pb-test")
+    return json.dumps(input_json)
