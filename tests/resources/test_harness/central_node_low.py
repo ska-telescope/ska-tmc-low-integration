@@ -266,7 +266,6 @@ class CentralNodeWrapperLow(object):
         generate_eb_pb_ids(json.loads(assign_json))
         result, message = self.central_node.AssignResources(assign_json)
         LOGGER.info("Invoked AssignResources on CentralNode")
-        LOGGER.info(assign_json)
         return result, message
 
     @sync_release_resources(device_dict=device_dict_low)
