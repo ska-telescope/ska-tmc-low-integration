@@ -83,14 +83,12 @@ def assign_resources_to_subarray(
     assign_input_json = prepare_json_args_for_centralnode_commands(
         "assign_resources_low", command_input_factory
     )
-    receptors = receptors.replace('"', "")
-    receptors = receptors.split(", ")
     assign_input_json = update_receptors(assign_input_json, receptors)
 
     central_node_low.store_resources(assign_input_json)
 
 
-@then(parsers.parse("the sdp subarray {subarray_id} obsState is IDLE"))
+@then(parsers.parse("the SDP subarray {subarray_id} obsState is IDLE"))
 def check_sdp_is_in_idle_obsstate(central_node_low, event_recorder):
     """Method to check SDP is in IDLE obsstate"""
     event_recorder.subscribe_event(
