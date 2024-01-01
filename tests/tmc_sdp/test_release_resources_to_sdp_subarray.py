@@ -15,7 +15,7 @@ from tests.resources.test_support.common_utils.tmc_helpers import (
 LOGGER = logging.getLogger(__name__)
 
 
-@pytest.mark.real_sdp
+@pytest.mark.tmc_sdp
 @pytest.mark.release
 @scenario(
     "../features/tmc_sdp/release_resources_to_sdp_subarray.feature",
