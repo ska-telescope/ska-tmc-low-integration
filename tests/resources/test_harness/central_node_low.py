@@ -260,11 +260,8 @@ class CentralNodeWrapperLow(object):
         """
         # This methods needs to change, with subsequent changes in the Tear
         # Down of the fixtures. Will be done as an improvement later.
-        input_json = json.loads(assign_json)
-        generate_eb_pb_ids(input_json)
-        result, message = self.central_node.AssignResources(
-            json.dumps(input_json)
-        )
+        generate_eb_pb_ids(json.loads(assign_json))
+        result, message = self.central_node.AssignResources(assign_json)
         LOGGER.info("Invoked AssignResources on CentralNode")
         return result, message
 
