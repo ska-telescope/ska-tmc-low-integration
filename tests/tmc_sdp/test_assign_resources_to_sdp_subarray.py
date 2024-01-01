@@ -83,6 +83,8 @@ def assign_resources_to_subarray(
     assign_input_json = prepare_json_args_for_centralnode_commands(
         "assign_resources_low", command_input_factory
     )
+    receptors = receptors.replace('"', "")
+    receptors = receptors.split(", ")
     assign_input_json = update_receptors(assign_input_json, receptors)
 
     central_node_low.store_resources(assign_input_json)
