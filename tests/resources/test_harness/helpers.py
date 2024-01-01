@@ -368,7 +368,7 @@ def check_lrcr_events(
             pytest.fail("Assertion Failed")
 
 
-def generate_id(prefix: str, suffix_length: int) -> str:
+def generate_id(prefix: str) -> str:
     """
     Generate a time-based unique id with the given prefix and suffix length.
     :param prefix: the prefix for the unique id.
@@ -376,8 +376,8 @@ def generate_id(prefix: str, suffix_length: int) -> str:
     :return: the generated id.
     """
     timestamp = str(int(datetime.now().timestamp()))
-    suffix = "".join(random.choices(string.digits, k=suffix_length))
-    return f"{prefix}-{timestamp[-8:]}-{suffix}"
+    suffix = "".join(random.choices(string.digits, k=5))
+    return f"{prefix}-{timestamp[:-8]}-{suffix}"
 
 
 def generate_eb_pb_ids(input_json: dict) -> None:
@@ -385,6 +385,6 @@ def generate_eb_pb_ids(input_json: dict) -> None:
     Method to generate different eb_id and pb_id
     :param input_json: json to utilised to update values.
     """
-    input_json["sdp"]["execution_block"]["eb_id"] = generate_id("eb-test", 5)
+    input_json["sdp"]["execution_block"]["eb_id"] = generate_id("eb-test")
     for pb in input_json["sdp"]["processing_blocks"]:
-        pb["pb_id"] = generate_id("pb-test", 5)
+        pb["pb_id"] = generate_id("pb-test")
