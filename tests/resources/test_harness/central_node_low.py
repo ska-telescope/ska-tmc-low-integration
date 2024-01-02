@@ -63,7 +63,6 @@ class CentralNodeWrapperLow(object):
         self.sdp_master = DeviceProxy(low_sdp_master)
         self.csp_master = DeviceProxy(low_csp_master)
         self.mccs_master = DeviceProxy(mccs_controller)
-        self.simulated_devices_dict = self.get_simulated_devices_info()
         self._state = DevState.OFF
         self.json_factory = JsonFactory()
         self.release_input = (
