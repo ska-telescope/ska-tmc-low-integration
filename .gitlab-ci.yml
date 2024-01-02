@@ -30,8 +30,8 @@ include:
   - project: 'ska-telescope/templates-repository'
     file: 'gitlab-ci/includes/docs-pages.gitlab-ci.yml'
 
-  - project: 'ska-telescope/templates-repository'
-    file: 'gitlab-ci/includes/k8s.gitlab-ci.yml'
+  # - project: 'ska-telescope/templates-repository'
+  #   file: 'gitlab-ci/includes/k8s.gitlab-ci.yml'
 
   - project: 'ska-telescope/templates-repository'
     file: 'gitlab-ci/includes/deploy.integration.gitlab-ci.yml'
@@ -106,21 +106,21 @@ on-demand-destroy:
   allow_failure: true
 
 
-k8s-test-tmc-with-csp:
-  extends:
-    - k8s-test
-  variables:
-    KUBE_NAMESPACE: 'ci-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-csp-low'
-    SERVICE_ACCOUNT: "ci-svc-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-csp-low"
-    MARK: 'real_csp'
-    CSP_SIMULATION_ENABLED: 'false'
-  retry: 1
+# k8s-test-tmc-with-csp:
+#   extends:
+#     - k8s-test
+#   variables:
+#     KUBE_NAMESPACE: 'ci-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-csp-low'
+#     SERVICE_ACCOUNT: "ci-svc-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-csp-low"
+#     MARK: 'real_csp'
+#     CSP_SIMULATION_ENABLED: 'false'
+#   retry: 1
 
-stop-k8s-test-tmc-with-csp:
-  extends:
-    - stop-k8s-test
-  variables:
-    KUBE_NAMESPACE: 'ci-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-csp-low'
+# stop-k8s-test-tmc-with-csp:
+#   extends:
+#     - stop-k8s-test
+#   variables:
+#     KUBE_NAMESPACE: 'ci-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-csp-low'
 
 k8s-test-tmc-with-sdp:
   extends:
