@@ -402,8 +402,10 @@ def generate_eb_pb_ids(input_json: str) -> None:
     Method to generate different eb_id and pb_id
     :param input_json: json to utilised to update values.
     """
+    input_json = json.loads(input_json)
     input_json["sdp"]["execution_block"]["eb_id"] = generate_id(
         "eb-test-********-*****"
     )
     for pb in input_json["sdp"]["processing_blocks"]:
         pb["pb_id"] = generate_id("pb-test-********-*****")
+    input_json = json.dumps(input_json)
