@@ -1,7 +1,6 @@
 import json
 import logging
-import random
-import string
+import re
 import time
 from datetime import datetime
 from typing import Any
@@ -368,24 +367,43 @@ def check_lrcr_events(
             pytest.fail("Assertion Failed")
 
 
-def generate_id(prefix: str) -> str:
+def generate_id(id_pattern: str) -> str:
     """
-    Generate a time-based unique id with the given prefix and suffix length.
-    :param prefix: the prefix for the unique id.
-    :param suffix_length: the length of the suffix for the unique id.
-    :return: the generated id.
+    Generate a time-based unique id.
+    :param id_pattern: the string pattern as to how the unique id should
+        be rendered.
+        e.g :
+            input: eb-mvp01-********-*****
+            output: eb-mvp01-35825416-12979
+    :return: the id rendered according to the requested pattern
     """
-    timestamp = str(int(datetime.now().timestamp()))
-    suffix = "".join(random.choices(string.digits, k=5))
-    return f"{prefix}-{timestamp[:-8]}-{suffix}"
+    prefix, suffix = re.split(r"(?=\*)[\*-]*(?<=\*)", id_pattern)
+    id_pattern = re.findall(r"(?=\*)[\*-]*(?<=\*)", id_pattern)[0]
+    length = id_pattern.count("*")
+    assert length < EB_PB_ID_LENGTH
+    LOGGER.info(f"Invalid id pattern, exceeded the length to {length}")
+    timestamp = str(datetime.now().timestamp()).replace(".", "")
+    sections = id_pattern.split("-")
+    unique_id = ""
+    sections.reverse()
+    for section in sections:
+        section_length = len(section)
+        section_id = timestamp[-section_length:]
+        timestamp = timestamp[:-section_length]
+        if unique_id:
+            unique_id = f"{section_id}-{unique_id}"
+        else:
+            unique_id = section_id
+    return f"{prefix}{unique_id}{suffix}"
 
 
-def set_eb_pb_ids(input_json: dict) -> str:
+def generate_eb_pb_ids(input_json: str) -> None:
     """
     Method to generate different eb_id and pb_id
     :param input_json: json to utilised to update values.
     """
-    input_json["sdp"]["execution_block"]["eb_id"] = generate_id("eb-test")
+    input_json["sdp"]["execution_block"]["eb_id"] = generate_id(
+        "eb-test-********-*****"
+    )
     for pb in input_json["sdp"]["processing_blocks"]:
-        pb["pb_id"] = generate_id("pb-test")
-    return json.dumps(input_json)
+        pb["pb_id"] = generate_id("pb-test-********-*****")

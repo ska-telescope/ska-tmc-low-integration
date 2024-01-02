@@ -22,7 +22,7 @@ from tests.resources.test_harness.constant import (
     mccs_subarray1,
     tmc_low_subarraynode1,
 )
-from tests.resources.test_harness.helpers import set_eb_pb_ids
+from tests.resources.test_harness.helpers import generate_eb_pb_ids
 from tests.resources.test_harness.utils.common_utils import JsonFactory
 from tests.resources.test_harness.utils.sync_decorators import (
     sync_abort,
@@ -257,14 +257,17 @@ class CentralNodeWrapperLow(object):
 
     @sync_assign_resources(device_dict=device_dict_low)
     def store_resources(self, assign_json: str):
-        """Invoke Assign Resource command on Central Node
+        """Invoke Assign Resource command on subarray Node
         Args:
             assign_json (str): Assign resource input json
         """
         # This methods needs to change, with subsequent changes in the Tear
         # Down of the fixtures. Will be done as an improvement later.
-        assign_json = set_eb_pb_ids(json.loads(assign_json))
-        result, message = self.central_node.AssignResources(assign_json)
+        input_json = json.loads(assign_json)
+        generate_eb_pb_ids(input_json)
+        result, message = self.central_node.AssignResources(
+            json.dumps(input_json)
+        )
         LOGGER.info("Invoked AssignResources on CentralNode")
         return result, message
 

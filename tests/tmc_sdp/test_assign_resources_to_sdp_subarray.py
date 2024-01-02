@@ -8,9 +8,7 @@ from pytest_bdd import given, parsers, scenario, then, when
 from ska_control_model import ObsState
 from tango import DevState
 
-from tests.resources.test_harness.utils.common_utils import (
-    update_receptors_in_assignresources_json,
-)
+from tests.resources.test_harness.utils.common_utils import update_receptors
 from tests.resources.test_support.common_utils.tmc_helpers import (
     prepare_json_args_for_centralnode_commands,
 )
@@ -84,15 +82,14 @@ def assign_resources_to_subarray(
     assign_input_json = prepare_json_args_for_centralnode_commands(
         "assign_resources_low", command_input_factory
     )
-
-    assign_input_json = update_receptors_in_assignresources_json(
-        assign_input_json, receptors
-    )
+    receptors = receptors.replace('"', "")
+    receptors = receptors.split(", ")
+    assign_input_json = update_receptors(assign_input_json, receptors)
 
     central_node_low.store_resources(assign_input_json)
 
 
-@then(parsers.parse("the SDP subarray {subarray_id} obsState is IDLE"))
+@then(parsers.parse("the sdp subarray {subarray_id} obsState is IDLE"))
 def check_sdp_is_in_idle_obsstate(central_node_low, event_recorder):
     """Method to check SDP is in IDLE obsstate"""
     event_recorder.subscribe_event(

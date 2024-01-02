@@ -2,6 +2,7 @@
 """
 import json
 from os.path import dirname, join
+from typing import List
 
 
 def get_subarray_input_json(slug):
@@ -46,14 +47,12 @@ def get_centralnode_input_json(slug):
     return assign_json
 
 
-def update_receptors_in_assignresources_json(
-    input_json_str: str, receptors: str
-) -> str:
+def update_receptors(assign_input_json: str, receptor_list: List[str]) -> str:
     """
     Update the list of receptors in the given JSON string.
 
     Args:
-        input_json_str (str): Input JSON string containing SDP resources.
+        assign_input_json (str): Input JSON string containing SDP resources.
         receptor_list (List[str]): List of receptors to replace existing one.
 
     Returns:
@@ -61,17 +60,15 @@ def update_receptors_in_assignresources_json(
 
     """
     # Parse the input JSON string
-    receptors = receptors.replace('"', "")
-    receptors = receptors.split(", ")
-    input_json_str = json.loads(input_json_str)
+    assign_input_json = json.loads(assign_input_json)
 
     # Update the list of receptors
-    input_json_str["sdp"]["resources"]["receptors"] = receptors
+    assign_input_json["sdp"]["resources"]["receptors"] = receptor_list
 
     # Convert the modified JSON back to a string
-    input_json_str = json.dumps(input_json_str)
+    assign_input_json = json.dumps(assign_input_json)
 
-    return input_json_str
+    return assign_input_json
 
 
 class JsonFactory(object):

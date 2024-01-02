@@ -16,7 +16,6 @@ LOGGER = logging.getLogger(__name__)
 
 
 @pytest.mark.tmc_sdp
-@pytest.mark.release
 @scenario(
     "../features/tmc_sdp/release_resources_to_sdp_subarray.feature",
     """Release resources from SDP Subarray using TMC""",
