@@ -377,7 +377,7 @@ def get_simulated_devices_info() -> dict:
 
     SDP_SIMULATION_ENABLED = os.getenv("SDP_SIMULATION_ENABLED")
     CSP_SIMULATION_ENABLED = os.getenv("CSP_SIMULATION_ENABLED")
-    MCCS_SIMULATION_ENABLED = os.getenv("MCCSMULATION_ENABLED")
+    MCCS_SIMULATION_ENABLED = os.getenv("MCCS_SIMULATION_ENABLED")
 
     is_csp_simulated = CSP_SIMULATION_ENABLED.lower() == "true"
     is_sdp_simulated = SDP_SIMULATION_ENABLED.lower() == "true"
