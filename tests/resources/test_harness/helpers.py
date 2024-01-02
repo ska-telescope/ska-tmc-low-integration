@@ -377,7 +377,7 @@ def get_simulated_devices_info() -> dict:
 
     SDP_SIMULATION_ENABLED = os.getenv("SDP_SIMULATION_ENABLED")
     CSP_SIMULATION_ENABLED = os.getenv("CSP_SIMULATION_ENABLED")
-    MCCS_SIMULATION_ENABLED = os.getenv("DISH_SIMULATION_ENABLED")
+    MCCS_SIMULATION_ENABLED = os.getenv("MCCSMULATION_ENABLED")
 
     is_csp_simulated = CSP_SIMULATION_ENABLED.lower() == "true"
     is_sdp_simulated = SDP_SIMULATION_ENABLED.lower() == "true"
@@ -385,11 +385,11 @@ def get_simulated_devices_info() -> dict:
     return {
         "csp_and_sdp": all(
             [is_csp_simulated, is_sdp_simulated]
-        ),  # real DISH.LMC enabled
-        "csp_and_dish": all(
+        ),  # real MCCS enabled
+        "csp_and_mccs": all(
             [is_csp_simulated, is_mccs_simulated]
         ),  # real SDP enabled
-        "sdp_and_dish": all(
+        "sdp_and_mccs": all(
             [is_sdp_simulated, is_mccs_simulated]
         ),  # real CSP.LMC enabled
         "all_mocks": all(
