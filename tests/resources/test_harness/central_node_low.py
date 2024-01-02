@@ -70,6 +70,26 @@ class CentralNodeWrapperLow(object):
             "assign_resources_low"
         )
 
+    def set_subarray_id(self, subarray_id):
+        self.subarray_node = DeviceProxy(
+            f"ska_low/tm_subarray_node/{subarray_id}"
+        )
+        subarray_id = "{:02d}".format(subarray_id)
+        self.subarray_devices = {
+            "csp_subarray": DeviceProxy(f"low-csp/subarray/{subarray_id}"),
+            "sdp_subarray": DeviceProxy(f"low-sdp/subarray/{subarray_id}"),
+            "mccs_subarray": DeviceProxy(f"low-mccs/subarray/{subarray_id}"),
+        }
+        self.csp_subarray_leaf_node = DeviceProxy(
+            f"ska_low/tm_leaf_node/csp_subarray{subarray_id}"
+        )
+        self.sdp_subarray_leaf_node = DeviceProxy(
+            f"ska_low/tm_leaf_node/sdp_subarray{subarray_id}"
+        )
+        self.mccs_subarray_leaf_node = DeviceProxy(
+            f"ska_low/tm_leaf_node/mccs_subarray{subarray_id}"
+        )
+
     @property
     def state(self) -> DevState:
         """TMC Low CentralNode operational state"""
