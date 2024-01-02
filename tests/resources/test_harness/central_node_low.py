@@ -1,3 +1,4 @@
+import json
 import logging
 import os
 
@@ -21,6 +22,10 @@ from tests.resources.test_harness.constant import (
     mccs_subarray1,
     tmc_low_subarraynode1,
 )
+from tests.resources.test_harness.helpers import (
+    generate_eb_pb_ids,
+    get_simulated_devices_info,
+)
 from tests.resources.test_harness.utils.common_utils import JsonFactory
 from tests.resources.test_harness.utils.sync_decorators import (
     sync_abort,
@@ -28,8 +33,6 @@ from tests.resources.test_harness.utils.sync_decorators import (
     sync_restart,
     sync_set_to_off,
 )
-
-# sync_assign_resources,
 from tests.resources.test_support.common_utils.common_helpers import Resource
 
 SDP_SIMULATION_ENABLED = os.getenv("SDP_SIMULATION_ENABLED")
@@ -71,6 +74,7 @@ class CentralNodeWrapperLow(object):
         self.assign_input = self.json_factory.create_centralnode_configuration(
             "assign_resources_low"
         )
+        self.simulated_devices_dict = get_simulated_devices_info()
 
     @property
     def state(self) -> DevState:
@@ -280,7 +284,11 @@ class CentralNodeWrapperLow(object):
         Args:
             assign_json (str): Assign resource input json
         """
-        result, message = self.central_node.AssignResources(assign_json)
+        input_json = json.loads(assign_json)
+        generate_eb_pb_ids(input_json)
+        result, message = self.central_node.AssignResources(
+            json.dumps(input_json)
+        )
         LOGGER.info("Invoked AssignResources on CentralNode")
         return result, message
 
@@ -383,34 +391,6 @@ class CentralNodeWrapperLow(object):
         for device in device_to_on_list:
             device_proxy = DeviceProxy(device)
             device_proxy.SetDirectState(subarray_state)
-
-    def get_simulated_devices_info(self) -> dict:
-        """
-        A method to get simulated devices present in the deployement.
-
-        return: dict
-        """
-        self.is_csp_simulated = CSP_SIMULATION_ENABLED.lower() == "true"
-        self.is_sdp_simulated = SDP_SIMULATION_ENABLED.lower() == "true"
-        self.is_mccs_simulated = MCCS_SIMULATION_ENABLED.lower() == "true"
-        return {
-            "csp_and_sdp": all(
-                [self.is_csp_simulated, self.is_sdp_simulated]
-            ),  # real MCCS enabled
-            "csp_and_mccs": all(
-                [self.is_csp_simulated, self.is_mccs_simulated]
-            ),  # real SDP enabled
-            "sdp_and_mccs": all(
-                [self.is_sdp_simulated, self.is_mccs_simulated]
-            ),  # real CSP.LMC enabled
-            "all_mocks": all(
-                [
-                    self.is_csp_simulated,
-                    self.is_sdp_simulated,
-                    self.is_mccs_simulated,
-                ]
-            ),
-        }
 
     def reset_defects_for_devices(self):
         """Resets the defects for given devices."""

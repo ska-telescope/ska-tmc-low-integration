@@ -14,8 +14,13 @@ from tests.resources.test_harness.constant import (
     low_sdp_master,
     low_sdp_subarray1,
     low_sdp_subarray_leaf_node,
+    mccs_subarray1,
     mccs_subarray_leaf_node,
     tmc_low_subarraynode1,
+)
+from tests.resources.test_harness.helpers import (
+    generate_eb_pb_ids,
+    get_simulated_devices_info,
 )
 from tests.resources.test_harness.utils.constant import (
     ABORTED,
@@ -51,6 +56,7 @@ device_dict = {
     "csp_subarray_leaf_node": low_csp_subarray_leaf_node,
     "sdp_subarray_leaf_node": low_sdp_subarray_leaf_node,
     "mccs_subarray_leaf_node": mccs_subarray_leaf_node,
+    "mccs_subarray": mccs_subarray1,
 }
 
 
@@ -70,11 +76,19 @@ class SubarrayNodeWrapperLow:
         self._obs_state = SubarrayObsState.EMPTY
         self.csp_subarray1 = low_csp_subarray1
         self.sdp_subarray1 = low_sdp_subarray1
+        self.mccs_subarray1 = mccs_subarray1
+        self.subarray_devices = {
+            "csp_subarray": DeviceProxy(low_csp_subarray1),
+            "sdp_subarray": DeviceProxy(low_sdp_subarray1),
+            "mccs_subarray": DeviceProxy(mccs_subarray1),
+        }
+
         # Subarray state
         self.ON_STATE = ON
         self.IDLE_OBS_STATE = IDLE
         self.READY_OBS_STATE = READY
         self.ABORTED_OBS_STATE = ABORTED
+        self.simulated_devices_dict = get_simulated_devices_info()
 
     @property
     def state(self) -> DevState:
@@ -176,7 +190,11 @@ class SubarrayNodeWrapperLow:
         """
         # This methods needs to change, with subsequent changes in the Tear
         # Down of the fixtures. Will be done as an improvement later.
-        result, message = self.central_node.AssignResources(assign_json)
+        input_json = json.loads(assign_json)
+        generate_eb_pb_ids(input_json)
+        result, message = self.central_node.AssignResources(
+            json.dumps(input_json)
+        )
         LOGGER.info("Invoked AssignResources on CentralNode")
         return result, message
 
@@ -203,6 +221,24 @@ class SubarrayNodeWrapperLow:
             LOGGER.info(f"Invoked {command_name} on SubarrayNode")
             return result, message
 
+    def set_subarray_id(self, requested_subarray_id: str) -> None:
+        """This method creates subarray devices for the requested subarray
+        id"""
+        self.subarray_node = DeviceProxy(
+            f"ska_low/tm_subarray_node/{requested_subarray_id}"
+        )
+        subarray_id = str(requested_subarray_id).zfill(2)
+        self.subarray_devices = {
+            "csp_subarray": DeviceProxy(f"low-csp/subarray/{subarray_id}"),
+            "sdp_subarray": DeviceProxy(f"low-sdp/subarray/{subarray_id}"),
+        }
+        self.csp_subarray_leaf_node = DeviceProxy(
+            f"ska_low/tm_leaf_node/csp_subarray{subarray_id}"
+        )
+        self.sdp_subarray_leaf_node = DeviceProxy(
+            f"ska_low/tm_leaf_node/sdp_subarray{subarray_id}"
+        )
+
     def move_to_on(self):
         # Move subarray to ON state
         if self.state != self.ON_STATE:
@@ -222,13 +258,36 @@ class SubarrayNodeWrapperLow:
 
     def _reset_simulator_devices(self):
         """Reset Simulator devices to it's original state"""
-        for sim_device_fqdn in [self.sdp_subarray1, self.csp_subarray1]:
+        if (
+            self.simulated_devices_dict["csp_and_sdp"]
+            or self.simulated_devices_dict["all_mocks"]
+        ):
+            sim_device_fqdn_list = [self.sdp_subarray1, self.csp_subarray1]
+        elif self.simulated_devices_dict["csp_and_mccs"]:
+            sim_device_fqdn_list = [self.csp_subarray1]
+        elif self.simulated_devices_dict["sdp_and_mccs"]:
+            sim_device_fqdn_list = [self.sdp_subarray1]
+        for sim_device_fqdn in sim_device_fqdn_list:
             device = DeviceProxy(sim_device_fqdn)
             device.ResetDelay()
             device.SetDirectHealthState(HealthState.UNKNOWN)
             device.SetDefective(json.dumps({"enabled": False}))
 
-    def force_change_of_obs_state(self, dest_state_name: str) -> None:
+        # for sim_device_fqdn in [self.sdp_subarray1, self.csp_subarray1]:
+        #     device = DeviceProxy(sim_device_fqdn)
+        #     device.ResetDelay()
+        #     device.SetDirectHealthState(HealthState.UNKNOWN)
+        #     device.SetDefective(json.dumps({"enabled": False}))
+
+    # def force_change_of_obs_state(self, dest_state_name: str) -> None:
+
+    def force_change_of_obs_state(
+        self,
+        dest_state_name: str,
+        assign_input_json: str = "",
+        configure_input_json: str = "",
+        scan_input_json: str = "",
+    ) -> None:
         """Force SubarrayNode obsState to provided obsState
 
         Args:
@@ -238,8 +297,26 @@ class SubarrayNodeWrapperLow:
         obs_state_resetter = factory_obj.create_obs_state_resetter(
             dest_state_name, self
         )
+        if assign_input_json:
+            obs_state_resetter.assign_input = assign_input_json
+        if configure_input_json:
+            obs_state_resetter.configure_input = configure_input_json
+        if scan_input_json:
+            obs_state_resetter.scan_input = scan_input_json
         obs_state_resetter.reset()
         self._clear_command_call_and_transition_data()
+
+        # """Force SubarrayNode obsState to provided obsState
+
+        # Args:
+        #     dest_state_name (str): Destination obsState
+        # """
+        # factory_obj = ObsStateResetterFactoryLow()
+        # obs_state_resetter = factory_obj.create_obs_state_resetter(
+        #     dest_state_name, self
+        # )
+        # obs_state_resetter.reset()
+        # self._clear_command_call_and_transition_data()
 
     def clear_all_data(self):
         """Method to clear the observations
@@ -258,13 +335,47 @@ class SubarrayNodeWrapperLow:
 
     def _clear_command_call_and_transition_data(self, clear_transition=False):
         """Clears the command call data"""
-        for sim_device in [
-            low_sdp_subarray1,
-        ]:
-            device = DeviceProxy(sim_device)
-            device.ClearCommandCallInfo()
-            if clear_transition:
-                device.ResetTransitions()
+        if self.simulated_devices_dict["csp_and_sdp"]:
+            for sim_device in [
+                self.sdp_subarray1,
+                self.csp_subarray1,
+            ]:
+                device = DeviceProxy(sim_device)
+                device.ClearCommandCallInfo()
+                if clear_transition:
+                    device.ResetTransitions()
+        elif self.simulated_devices_dict["csp_and_mccs"]:
+            for sim_device in [self.csp_subarray1, self.mccs_subarray1]:
+                device = DeviceProxy(sim_device)
+                device.ClearCommandCallInfo()
+                if clear_transition:
+                    device.ResetTransitions()
+        elif self.simulated_devices_dict["sdp_and_mccs"]:
+            for sim_device in [self.sdp_subarray1, mccs_subarray1]:
+                device = DeviceProxy(sim_device)
+                device.ClearCommandCallInfo()
+                if clear_transition:
+                    device.ResetTransitions()
+        elif self.simulated_devices_dict["all_mocks"]:
+            for sim_device in [
+                self.sdp_subarray1,
+                self.csp_subarray1,
+                mccs_subarray1,
+            ]:
+                device = DeviceProxy(sim_device)
+                device.ClearCommandCallInfo()
+                if clear_transition:
+                    device.ResetTransitions()
+        else:
+            LOGGER.info("Devices deployed are real")
+
+        # for sim_device in [
+        #     low_sdp_subarray1,
+        # ]:
+        #     device = DeviceProxy(sim_device)
+        #     device.ClearCommandCallInfo()
+        #     if clear_transition:
+        #         device.ResetTransitions()
 
     def tear_down(self):
         """Tear down after each test run"""
