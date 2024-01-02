@@ -72,10 +72,10 @@ def check_subarray_is_configured(
     """Method to check tmc and sdp subarray is in READY obstate"""
 
     assign_input_json = prepare_json_args_for_centralnode_commands(
-        "assign_resources_mid", command_input_factory
+        "assign_resources_low", command_input_factory
     )
     configure_input_json = prepare_json_args_for_commands(
-        "configure_mid", command_input_factory
+        "configure_low", command_input_factory
     )
 
     subarray_node_low.set_subarray_id(subarray_id)
