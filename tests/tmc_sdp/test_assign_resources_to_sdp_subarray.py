@@ -88,16 +88,14 @@ def assign_resources_to_subarray(
 ):
     """Method to assign resources to subarray."""
     central_node_low.set_subarray_id(subarray_id)
-    assign_input_json = prepare_json_args_for_centralnode_commands(
+    input_json = prepare_json_args_for_centralnode_commands(
         "assign_resources_low", command_input_factory
     )
     receptors = receptors.replace('"', "")
     receptors = receptors.split(", ")
-    assign_input_json = update_receptors_in_assign_json(
-        assign_input_json, receptors
-    )
-    assign_input_json = generate_eb_pb_ids(assign_input_json)
-    central_node_low.store_resources(assign_input_json)
+    input_json = update_receptors_in_assign_json(input_json, receptors)
+    input_json = generate_eb_pb_ids(input_json)
+    central_node_low.store_resources(input_json)
 
 
 @then(parsers.parse("the sdp subarray {subarray_id} obsState is IDLE"))
