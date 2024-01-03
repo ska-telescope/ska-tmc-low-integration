@@ -43,7 +43,6 @@ def telescope_is_in_on_state(central_node_low, event_recorder):
     )
 
 
-
 @given(parsers.parse("TMC subarray in obsState IDLE"))
 def check_subarray_obs_state(
     central_node_low, event_recorder, command_input_factory
@@ -74,11 +73,11 @@ def check_subarray_obs_state(
     parsers.parse("I configure with {scan_type} to the subarray {subarray_id}")
 )
 def configure_sdp_subarray(
-   central_node_low, 
-   scan_type, 
-   subarray_node_low, 
-   command_input_factory, 
-   subarray_id,
+    central_node_low,
+    scan_type,
+    subarray_node_low,
+    command_input_factory,
+    subarray_id,
 ):
     """Method to configure SDP subarray."""
     configure_input_json = prepare_json_args_for_commands(
@@ -88,30 +87,12 @@ def configure_sdp_subarray(
     configure_input_json["sdp"]["scan_type"] = scan_type
     central_node_low.set_subarray_id(subarray_id)
 
-    subarray_node_low.execute_transition("Configure", argin=json.dumps(configure_input_json))
+    subarray_node_low.execute_transition(
+        "Configure", argin=json.dumps(configure_input_json)
+    )
+
 
 @then(parsers.parse("the SDP subarray {subarray_id} obsState is READY"))
-def check_sdp_subarray_in_ready(
-    central_node_mid, subarray_node, event_recorder, subarray_id
-):
-    """A method to check SDP subarray obsstate"""
-    event_recorder.subscribe_event(
-        subarray_node.subarray_devices["sdp_subarray"], "obsState"
-    )
-
-    central_node_mid.set_subarray_id(subarray_id)
-    assert event_recorder.has_change_event_occurred(
-        subarray_node.subarray_devices["sdp_subarray"],
-        "obsState",
-        ObsState.READY,
-    )
-
-
-@then(
-    parsers.parse(
-        "the SDP subarray {subarray_id} obsState is READY"
-    )
-)
 def check_sdp_subarray_in_ready(
     central_node_low, subarray_node, event_recorder, subarray_id
 ):
@@ -126,6 +107,7 @@ def check_sdp_subarray_in_ready(
         "obsState",
         ObsState.READY,
     )
+
 
 @then(
     parsers.parse(
