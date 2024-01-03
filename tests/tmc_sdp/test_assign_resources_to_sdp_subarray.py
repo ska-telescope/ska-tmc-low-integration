@@ -71,11 +71,7 @@ def subarray_is_in_empty_obsstate(
     """
     central_node_low.set_subarray_id(subarray_id)
     event_recorder.subscribe_event(central_node_low.subarray_node, "obsState")
-    assert event_recorder.has_change_event_occurred(
-        central_node_low.subarray_node,
-        "obsState",
-        ObsState.EMPTY,
-    )
+    assert central_node_low.subarray_node.obsState == ObsState.EMPTY
 
 
 @when(
