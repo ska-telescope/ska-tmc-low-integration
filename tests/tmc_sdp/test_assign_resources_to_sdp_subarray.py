@@ -129,8 +129,8 @@ def check_tmc_is_in_idle_obsstate(
 
 @then(
     parsers.parse(
-        "the correct resources {receptors} are assigned to sdp subarray "
-        + "and TMC subarray"
+        "the correct resources {receptors} are assigned to the SDP subarray "
+        + "and the TMC subarray"
     )
 )
 def check_assign_resources_to_tmc(central_node_low, receptors):
