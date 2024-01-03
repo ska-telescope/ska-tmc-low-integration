@@ -1,8 +1,6 @@
 """
 Test TMC-SDP Release Resources functionality.
 """
-import logging
-
 import pytest
 from pytest_bdd import given, parsers, scenario, then, when
 from ska_control_model import ObsState
@@ -12,8 +10,6 @@ from tests.resources.test_harness.helpers import generate_eb_pb_ids
 from tests.resources.test_support.common_utils.tmc_helpers import (
     prepare_json_args_for_centralnode_commands,
 )
-
-LOGGER = logging.getLogger(__name__)
 
 
 @pytest.mark.tmc_sdp

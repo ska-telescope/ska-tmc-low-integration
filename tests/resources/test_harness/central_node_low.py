@@ -74,7 +74,7 @@ class CentralNodeWrapperLow(object):
         self.subarray_node = DeviceProxy(
             f"ska_low/tm_subarray_node/{subarray_id}"
         )
-        subarray_id = "{:02d}".format(subarray_id)
+        subarray_id = "{:02d}".format(int(subarray_id))
         self.subarray_devices = {
             "csp_subarray": DeviceProxy(f"low-csp/subarray/{subarray_id}"),
             "sdp_subarray": DeviceProxy(f"low-sdp/subarray/{subarray_id}"),
