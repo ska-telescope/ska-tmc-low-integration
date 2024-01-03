@@ -75,6 +75,26 @@ class CentralNodeWrapperLow(object):
         )
         self.simulated_devices_dict = get_simulated_devices_info()
 
+    def set_subarray_id(self, subarray_id):
+        self.subarray_node = DeviceProxy(
+            f"ska_low/tm_subarray_node/{subarray_id}"
+        )
+        subarray_id = "{:02d}".format(int(subarray_id))
+        self.subarray_devices = {
+            "csp_subarray": DeviceProxy(f"low-csp/subarray/{subarray_id}"),
+            "sdp_subarray": DeviceProxy(f"low-sdp/subarray/{subarray_id}"),
+            "mccs_subarray": DeviceProxy(f"low-mccs/subarray/{subarray_id}"),
+        }
+        self.csp_subarray_leaf_node = DeviceProxy(
+            f"ska_low/tm_leaf_node/csp_subarray{subarray_id}"
+        )
+        self.sdp_subarray_leaf_node = DeviceProxy(
+            f"ska_low/tm_leaf_node/sdp_subarray{subarray_id}"
+        )
+        self.mccs_subarray_leaf_node = DeviceProxy(
+            f"ska_low/tm_leaf_node/mccs_subarray{subarray_id}"
+        )
+
     @property
     def state(self) -> DevState:
         """TMC Low CentralNode operational state"""
@@ -257,6 +277,17 @@ class CentralNodeWrapperLow(object):
             )
             self.central_node.TelescopeStandBy()
 
+    def store_resources(self, assign_json: str):
+        """Invoke Assign Resource command on subarray Node
+        Args:
+            assign_json (str): Assign resource input json
+        """
+        # This methods needs to change, with subsequent changes in the Tear
+        # Down of the fixtures. Will be done as an improvement later.
+        result, message = self.central_node.AssignResources(assign_json)
+        LOGGER.info("Invoked AssignResources on CentralNode")
+        return result, message
+
     @sync_release_resources(device_dict=device_dict_low)
     def invoke_release_resources(self, input_string):
         """Invoke Release Resource command on central Node
@@ -276,19 +307,6 @@ class CentralNodeWrapperLow(object):
     def subarray_restart(self):
         """Invoke Restart command on subarray Node"""
         result, message = self.subarray_node.Restart()
-        return result, message
-
-    def store_resources(self, assign_json: str):
-        """Invoke Assign Resource command on central Node
-        Args:
-            assign_json (str): Assign resource input json
-        """
-        input_json = json.loads(assign_json)
-        generate_eb_pb_ids(input_json)
-        result, message = self.central_node.AssignResources(
-            json.dumps(input_json)
-        )
-        LOGGER.info("Invoked AssignResources on CentralNode")
         return result, message
 
     def _reset_health_state_for_mock_devices(self):
