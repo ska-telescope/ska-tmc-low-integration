@@ -14,6 +14,7 @@ from tests.resources.test_harness.constant import (
     low_sdp_master,
     low_sdp_subarray1,
     low_sdp_subarray_leaf_node,
+    mccs_subarray1,
     mccs_subarray_leaf_node,
     tmc_low_subarraynode1,
 )
@@ -70,6 +71,11 @@ class SubarrayNodeWrapperLow:
         self._obs_state = SubarrayObsState.EMPTY
         self.csp_subarray1 = low_csp_subarray1
         self.sdp_subarray1 = low_sdp_subarray1
+        self.subarray_devices = {
+            "csp_subarray": DeviceProxy(low_csp_subarray1),
+            "sdp_subarray": DeviceProxy(low_sdp_subarray1),
+            "mccs_subarray": DeviceProxy(mccs_subarray1),
+        }
         # Subarray state
         self.ON_STATE = ON
         self.IDLE_OBS_STATE = IDLE
@@ -228,7 +234,33 @@ class SubarrayNodeWrapperLow:
             device.SetDirectHealthState(HealthState.UNKNOWN)
             device.SetDefective(json.dumps({"enabled": False}))
 
-    def force_change_of_obs_state(self, dest_state_name: str) -> None:
+    def set_subarray_id(self, subarray_id):
+        self.subarray_node = DeviceProxy(
+            f"ska_low/tm_subarray_node/{subarray_id}"
+        )
+        subarray_id = "{:02d}".format(int(subarray_id))
+        self.subarray_devices = {
+            "csp_subarray": DeviceProxy(f"low-csp/subarray/{subarray_id}"),
+            "sdp_subarray": DeviceProxy(f"low-sdp/subarray/{subarray_id}"),
+            "mccs_subarray": DeviceProxy(f"low-mccs/subarray/{subarray_id}"),
+        }
+        self.csp_subarray_leaf_node = DeviceProxy(
+            f"ska_low/tm_leaf_node/csp_subarray{subarray_id}"
+        )
+        self.sdp_subarray_leaf_node = DeviceProxy(
+            f"ska_low/tm_leaf_node/sdp_subarray{subarray_id}"
+        )
+        self.mccs_subarray_leaf_node = DeviceProxy(
+            f"ska_low/tm_leaf_node/mccs_subarray{subarray_id}"
+        )
+
+    def force_change_of_obs_state(
+        self,
+        dest_state_name: str,
+        assign_input_json: str = "",
+        configure_input_json: str = "",
+        scan_input_json: str = "",
+    ) -> None:
         """Force SubarrayNode obsState to provided obsState
 
         Args:
@@ -238,6 +270,12 @@ class SubarrayNodeWrapperLow:
         obs_state_resetter = factory_obj.create_obs_state_resetter(
             dest_state_name, self
         )
+        if assign_input_json:
+            obs_state_resetter.assign_input = assign_input_json
+        if configure_input_json:
+            obs_state_resetter.configure_input = configure_input_json
+        if scan_input_json:
+            obs_state_resetter.scan_input = scan_input_json
         obs_state_resetter.reset()
         self._clear_command_call_and_transition_data()
 
