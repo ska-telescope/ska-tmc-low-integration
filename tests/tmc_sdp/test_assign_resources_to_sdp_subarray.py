@@ -119,7 +119,6 @@ def check_tmc_is_in_idle_obsstate(
 ):
     """Method to check TMC is is in IDLE obsstate."""
     central_node_low.set_subarray_id(subarray_id)
-    event_recorder.subscribe_event(central_node_low.subarray_node, "obsState")
     assert event_recorder.has_change_event_occurred(
         central_node_low.subarray_node,
         "obsState",
