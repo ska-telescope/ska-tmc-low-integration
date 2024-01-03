@@ -5,9 +5,6 @@ from ska_ser_logging import configure_logging
 from ska_tango_base.control_model import HealthState
 from tango import DeviceProxy, DevState
 
-from tests.resources.test_harness.central_node_low import (
-    get_simulated_devices_info,
-)
 from tests.resources.test_harness.constant import (
     device_dict_low,
     low_centralnode,
@@ -21,7 +18,10 @@ from tests.resources.test_harness.constant import (
     mccs_subarray_leaf_node,
     tmc_low_subarraynode1,
 )
-from tests.resources.test_harness.helpers import generate_eb_pb_ids
+from tests.resources.test_harness.helpers import (
+    generate_eb_pb_ids,
+    get_simulated_devices_info,
+)
 from tests.resources.test_harness.utils.constant import (
     ABORTED,
     IDLE,
