@@ -24,7 +24,7 @@ def test_tmc_sdp_release_resources():
 
 
 @given("a TMC and SDP")
-def telescope_is_in_on_state(central_node_low):
+def test_tmc_sdp_availablity(central_node_low):
     """ "A method to define TMC and SDP."""
     assert central_node_low.central_node.ping() > 0
     assert central_node_low.subarray_devices["sdp_subarray"].ping() > 0
