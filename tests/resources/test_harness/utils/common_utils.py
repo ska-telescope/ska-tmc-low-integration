@@ -1,6 +1,8 @@
 """This module implement common utils
 """
+import json
 from os.path import dirname, join
+from typing import List
 
 
 def get_subarray_input_json(slug):
@@ -43,6 +45,30 @@ def get_centralnode_input_json(slug):
     with open(assign_json_file_path, "r", encoding="UTF-8") as f:
         assign_json = f.read()
     return assign_json
+
+
+def update_receptors(assign_input_json: str, receptor_list: List[str]) -> str:
+    """
+    Update the list of receptors in the given JSON string.
+
+    Args:
+        assign_input_json (str): Input JSON string containing SDP resources.
+        receptor_list (List[str]): List of receptors to replace existing one.
+
+    Returns:
+        str: Updated JSON string with the list of receptors modified.
+
+    """
+    # Parse the input JSON string
+    assign_input_json = json.loads(assign_input_json)
+
+    # Update the list of receptors
+    assign_input_json["sdp"]["resources"]["receptors"] = receptor_list
+
+    # Convert the modified JSON back to a string
+    assign_input_json = json.dumps(assign_input_json)
+
+    return assign_input_json
 
 
 class JsonFactory(object):

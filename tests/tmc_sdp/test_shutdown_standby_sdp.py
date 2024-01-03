@@ -6,7 +6,7 @@ from tango import DevState
 from tests.resources.test_harness.helpers import get_master_device_simulators
 
 
-@pytest.mark.real_sdp
+@pytest.mark.tmc_sdp
 @scenario(
     "../features/tmc_sdp/shutdown_tmc_sdp.feature",
     "Switch off the telescope having TMC and SDP subsystems",
@@ -22,7 +22,7 @@ def test_tmc_sdp_shutdown_telescope():
     """
 
 
-@pytest.mark.real_sdp
+@pytest.mark.tmc_sdp
 @scenario(
     "../features/tmc_sdp/standby_tmc_sdp.feature",
     "Standby the telescope having TMC and SDP subsystems",

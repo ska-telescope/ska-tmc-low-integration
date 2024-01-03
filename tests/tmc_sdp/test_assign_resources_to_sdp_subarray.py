@@ -2,31 +2,30 @@
 Test TMC-SDP Assign Resources functionality.
 """
 import json
-import logging
 
 import pytest
 from pytest_bdd import given, parsers, scenario, then, when
 from ska_control_model import ObsState
 from tango import DevState
 
+from tests.resources.test_harness.helpers import generate_eb_pb_ids
+from tests.resources.test_harness.utils.common_utils import update_receptors
 from tests.resources.test_support.common_utils.tmc_helpers import (
     prepare_json_args_for_centralnode_commands,
 )
 
-LOGGER = logging.getLogger(__name__)
 
-
-@pytest.mark.jtest
-@pytest.mark.real_sdp
-@pytest.mark.assign
+@pytest.mark.tmc_sdp
 @scenario(
     "../features/tmc_sdp/assign_resources_to_sdp_subarray.feature",
     """Assign resources to SDP subarray using TMC""",
 )
-def test_tmc_sdp_assign_resources():
+def test_tmc_sdp_assign_resources(central_node_low):
     """
     Test case to verify TMC-SDP Assignresources() functionality
     """
+    assert central_node_low.central_node.ping() > 0
+    assert central_node_low.subarray_devices["sdp_subarray"].ping() > 0
 
 
 @given("the Telescope is in ON state")
@@ -52,7 +51,9 @@ def telescope_is_in_on_state(central_node_low, event_recorder):
 
 
 @given(parsers.parse("the subarray {subarray_id} obsState is EMPTY"))
-def subarray_is_in_empty_obsstate(event_recorder, central_node_low):
+def subarray_is_in_empty_obsstate(
+    event_recorder, central_node_low, subarray_id
+):
     """Verify that the specified subarray is in the EMPTY observation state.
 
     Args:
@@ -66,6 +67,7 @@ def subarray_is_in_empty_obsstate(event_recorder, central_node_low):
         AssertionError: If the specified subarray fails to transition to the
         EMPTY observation state or if the expected event is not recorded.
     """
+    central_node_low.set_subarray_id(subarray_id)
     event_recorder.subscribe_event(central_node_low.subarray_node, "obsState")
     assert event_recorder.has_change_event_occurred(
         central_node_low.subarray_node,
@@ -79,28 +81,27 @@ def subarray_is_in_empty_obsstate(event_recorder, central_node_low):
         "I assign resources with the {receptors} to the subarray {subarray_id}"
     )
 )
-def assign_resources_to_subarray(central_node_low, command_input_factory):
+def assign_resources_to_subarray(
+    central_node_low, command_input_factory, receptors, subarray_id
+):
     """Method to assign resources to subarray."""
+    central_node_low.set_subarray_id(subarray_id)
     assign_input_json = prepare_json_args_for_centralnode_commands(
         "assign_resources_low", command_input_factory
     )
-    assign_input_json = json.loads(assign_input_json)
-    assign_input_json["sdp"]["resources"]["receptors"] = [
-        "C10",
-        "C136",
-        "C1",
-        "C217",
-        "C13",
-        "C42",
-    ]
-    assign_input_json = json.dumps(assign_input_json)
-
+    receptors = receptors.replace('"', "")
+    receptors = receptors.split(", ")
+    assign_input_json = update_receptors(assign_input_json, receptors)
+    assign_input_json = generate_eb_pb_ids(assign_input_json)
     central_node_low.store_resources(assign_input_json)
 
 
 @then(parsers.parse("the sdp subarray {subarray_id} obsState is IDLE"))
-def check_sdp_is_in_idle_obsstate(central_node_low, event_recorder):
+def check_sdp_is_in_idle_obsstate(
+    central_node_low, event_recorder, subarray_id
+):
     """Method to check SDP is in IDLE obsstate"""
+    central_node_low.set_subarray_id(subarray_id)
     event_recorder.subscribe_event(
         central_node_low.subarray_devices.get("sdp_subarray"), "obsState"
     )
@@ -116,8 +117,11 @@ def check_sdp_is_in_idle_obsstate(central_node_low, event_recorder):
         "the TMC subarray {subarray_id} obsState is transitioned to IDLE"
     )
 )
-def check_tmc_is_in_idle_obsstate(central_node_low, event_recorder):
+def check_tmc_is_in_idle_obsstate(
+    central_node_low, event_recorder, subarray_id
+):
     """Method to check TMC is is in IDLE obsstate."""
+    central_node_low.set_subarray_id(subarray_id)
     event_recorder.subscribe_event(central_node_low.subarray_node, "obsState")
     assert event_recorder.has_change_event_occurred(
         central_node_low.subarray_node,

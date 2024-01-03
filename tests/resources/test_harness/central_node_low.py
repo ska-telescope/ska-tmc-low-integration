@@ -1,4 +1,3 @@
-import json
 import logging
 import os
 
@@ -22,11 +21,9 @@ from tests.resources.test_harness.constant import (
     mccs_subarray1,
     tmc_low_subarraynode1,
 )
-from tests.resources.test_harness.helpers import generate_eb_pb_ids
 from tests.resources.test_harness.utils.common_utils import JsonFactory
 from tests.resources.test_harness.utils.sync_decorators import (
     sync_abort,
-    sync_assign_resources,
     sync_release_resources,
     sync_restart,
     sync_set_to_off,
@@ -71,6 +68,26 @@ class CentralNodeWrapperLow(object):
         )
         self.assign_input = self.json_factory.create_centralnode_configuration(
             "assign_resources_low"
+        )
+
+    def set_subarray_id(self, subarray_id):
+        self.subarray_node = DeviceProxy(
+            f"ska_low/tm_subarray_node/{subarray_id}"
+        )
+        subarray_id = "{:02d}".format(int(subarray_id))
+        self.subarray_devices = {
+            "csp_subarray": DeviceProxy(f"low-csp/subarray/{subarray_id}"),
+            "sdp_subarray": DeviceProxy(f"low-sdp/subarray/{subarray_id}"),
+            "mccs_subarray": DeviceProxy(f"low-mccs/subarray/{subarray_id}"),
+        }
+        self.csp_subarray_leaf_node = DeviceProxy(
+            f"ska_low/tm_leaf_node/csp_subarray{subarray_id}"
+        )
+        self.sdp_subarray_leaf_node = DeviceProxy(
+            f"ska_low/tm_leaf_node/sdp_subarray{subarray_id}"
+        )
+        self.mccs_subarray_leaf_node = DeviceProxy(
+            f"ska_low/tm_leaf_node/mccs_subarray{subarray_id}"
         )
 
     @property
@@ -255,7 +272,6 @@ class CentralNodeWrapperLow(object):
             )
             self.central_node.TelescopeStandBy()
 
-    @sync_assign_resources(device_dict=device_dict_low)
     def store_resources(self, assign_json: str):
         """Invoke Assign Resource command on subarray Node
         Args:
@@ -263,11 +279,7 @@ class CentralNodeWrapperLow(object):
         """
         # This methods needs to change, with subsequent changes in the Tear
         # Down of the fixtures. Will be done as an improvement later.
-        input_json = json.loads(assign_json)
-        generate_eb_pb_ids(input_json)
-        result, message = self.central_node.AssignResources(
-            json.dumps(input_json)
-        )
+        result, message = self.central_node.AssignResources(assign_json)
         LOGGER.info("Invoked AssignResources on CentralNode")
         return result, message
 
