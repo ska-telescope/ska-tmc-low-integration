@@ -92,7 +92,7 @@ def assign_resources_to_subarray(
     receptors = receptors.replace('"', "")
     receptors = receptors.split(", ")
     assign_input_json = update_receptors(assign_input_json, receptors)
-    generate_eb_pb_ids(assign_input_json)
+    assign_input_json = generate_eb_pb_ids(assign_input_json)
     central_node_low.store_resources(assign_input_json)
 
 

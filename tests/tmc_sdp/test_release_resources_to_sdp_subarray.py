@@ -48,7 +48,7 @@ def telescope_is_in_idle_state(
     assign_input_json = prepare_json_args_for_centralnode_commands(
         "assign_resources_low", command_input_factory
     )
-    generate_eb_pb_ids(assign_input_json)
+    assign_input_json = generate_eb_pb_ids(assign_input_json)
     central_node_low.store_resources(assign_input_json)
     event_recorder.subscribe_event(central_node_low.subarray_node, "obsState")
     assert event_recorder.has_change_event_occurred(
