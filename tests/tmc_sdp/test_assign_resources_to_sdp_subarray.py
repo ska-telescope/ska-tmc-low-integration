@@ -53,9 +53,7 @@ def telescope_is_in_on_state(central_node_low, event_recorder):
 
 
 @given(
-    parsers.parse(
-        "Then the SDP subarray {subarray_id}" + " must be in IDLE obsState"
-    )
+    parsers.parse("the SDP subarray {subarray_id} must be in EMPTY obsState")
 )
 def subarray_is_in_empty_obsstate(
     event_recorder, central_node_low, subarray_id
