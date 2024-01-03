@@ -1,4 +1,3 @@
-import json
 import logging
 import os
 
@@ -22,10 +21,7 @@ from tests.resources.test_harness.constant import (
     mccs_subarray1,
     tmc_low_subarraynode1,
 )
-from tests.resources.test_harness.helpers import (
-    generate_eb_pb_ids,
-    get_simulated_devices_info,
-)
+from tests.resources.test_harness.helpers import get_simulated_devices_info
 from tests.resources.test_harness.utils.common_utils import JsonFactory
 from tests.resources.test_harness.utils.sync_decorators import (
     sync_abort,

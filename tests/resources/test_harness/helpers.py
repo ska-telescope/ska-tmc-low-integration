@@ -1,9 +1,5 @@
 import json
 import logging
-<<<<<<< HEAD
-import os
-=======
->>>>>>> 1bd3d3221a4e2b8237066963e3e5cb52fdcce6e7
 import re
 import time
 from datetime import datetime
@@ -42,11 +38,7 @@ from tests.resources.test_support.constant_low import (
 configure_logging(logging.DEBUG)
 LOGGER = logging.getLogger(__name__)
 TIMEOUT = 20
-<<<<<<< HEAD
-EB_PB_ID_LENGTH = 15
-=======
 EB_PB_ID_LENGTH = 16
->>>>>>> 1bd3d3221a4e2b8237066963e3e5cb52fdcce6e7
 
 
 def check_subarray_obs_state(obs_state=None, timeout=50):
