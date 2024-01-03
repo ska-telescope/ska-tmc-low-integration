@@ -8,7 +8,7 @@ from pytest_bdd import given, parsers, scenario, then, when
 from ska_control_model import ObsState
 from tango import DevState
 
-from tests.resources.test_harness.helpers import generate_eb_pb_ids
+from tests.resources.test_harness.helpers import update_eb_pb_ids
 from tests.resources.test_harness.utils.common_utils import (
     update_receptors_in_assign_json,
 )
@@ -91,7 +91,7 @@ def assign_resources_to_subarray(
     )
     receptors = receptors.replace('"', "").split(", ")
     input_json = update_receptors_in_assign_json(input_json, receptors)
-    input_json = generate_eb_pb_ids(input_json)
+    input_json = update_eb_pb_ids(input_json)
     central_node_low.store_resources(input_json)
 
 

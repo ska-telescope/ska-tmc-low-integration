@@ -377,7 +377,7 @@ def generate_id(prefix: str) -> str:
     return f"{prefix}-{timestamp[:8]}-{timestamp[-5:0:-1]}"
 
 
-def generate_eb_pb_ids(input_json: str) -> str:
+def update_eb_pb_ids(input_json: str) -> str:
     """
     Method to generate different eb_id and pb_id
     :param input_json: json to utilised to update values.
