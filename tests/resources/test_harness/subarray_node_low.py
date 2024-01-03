@@ -270,6 +270,7 @@ class SubarrayNodeWrapperLow:
         """Tear down after each test run"""
 
         LOGGER.info("Calling Tear down for subarray")
+        self._reset_simulator_devices()
         self._clear_command_call_and_transition_data(clear_transition=True)
         if self.obs_state in ("RESOURCING", "CONFIGURING", "SCANNING"):
             """Invoke Abort and Restart"""
@@ -285,4 +286,3 @@ class SubarrayNodeWrapperLow:
 
         # Move Subarray to OFF state
         self.move_to_off()
-        self._reset_simulator_devices()
