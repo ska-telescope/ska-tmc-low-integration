@@ -417,30 +417,30 @@ def generate_eb_pb_ids(input_json: str) -> str:
     return input_json
 
 
-def get_simulated_devices_info(self) -> dict:
+def get_simulated_devices_info() -> dict:
     """
     A method to get simulated devices present in the deployement.
 
     return: dict
     """
-    self.is_csp_simulated = CSP_SIMULATION_ENABLED.lower() == "true"
-    self.is_sdp_simulated = SDP_SIMULATION_ENABLED.lower() == "true"
-    self.is_mccs_simulated = MCCS_SIMULATION_ENABLED.lower() == "true"
+    is_csp_simulated = CSP_SIMULATION_ENABLED.lower() == "true"
+    is_sdp_simulated = SDP_SIMULATION_ENABLED.lower() == "true"
+    is_mccs_simulated = MCCS_SIMULATION_ENABLED.lower() == "true"
     return {
         "csp_and_sdp": all(
-            [self.is_csp_simulated, self.is_sdp_simulated]
+            [is_csp_simulated, is_sdp_simulated]
         ),  # real MCCS enabled
         "csp_and_mccs": all(
-            [self.is_csp_simulated, self.is_mccs_simulated]
+            [is_csp_simulated, is_mccs_simulated]
         ),  # real SDP enabled
         "sdp_and_mccs": all(
-            [self.is_sdp_simulated, self.is_mccs_simulated]
+            [is_sdp_simulated, is_mccs_simulated]
         ),  # real CSP.LMC enabled
         "all_mocks": all(
             [
-                self.is_csp_simulated,
-                self.is_sdp_simulated,
-                self.is_mccs_simulated,
+                is_csp_simulated,
+                is_sdp_simulated,
+                is_mccs_simulated,
             ]
         ),
     }
