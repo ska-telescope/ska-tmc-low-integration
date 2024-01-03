@@ -21,7 +21,6 @@ from tests.resources.test_harness.constant import (
     mccs_subarray1,
     tmc_low_subarraynode1,
 )
-from tests.resources.test_harness.helpers import get_simulated_devices_info
 from tests.resources.test_harness.utils.common_utils import JsonFactory
 from tests.resources.test_harness.utils.sync_decorators import (
     sync_abort,
@@ -69,7 +68,7 @@ class CentralNodeWrapperLow(object):
         self.assign_input = self.json_factory.create_centralnode_configuration(
             "assign_resources_low"
         )
-        self.simulated_devices_dict = get_simulated_devices_info()
+        self.simulated_devices_dict = self.get_simulated_devices_info()
 
     def set_subarray_id(self, subarray_id):
         self.subarray_node = DeviceProxy(
@@ -234,6 +233,34 @@ class CentralNodeWrapperLow(object):
         else:
             LOGGER.info("Invoke TelescopeOn command with all real sub-systems")
             self.central_node.TelescopeOn()
+
+    def get_simulated_devices_info(self) -> dict:
+        """
+        A method to get simulated devices present in the deployement.
+
+        return: dict
+        """
+        self.is_csp_simulated = CSP_SIMULATION_ENABLED.lower() == "true"
+        self.is_sdp_simulated = SDP_SIMULATION_ENABLED.lower() == "true"
+        self.is_mccs_simulated = MCCS_SIMULATION_ENABLED.lower() == "true"
+        return {
+            "csp_and_sdp": all(
+                [self.is_csp_simulated, self.is_sdp_simulated]
+            ),  # real MCCS enabled
+            "csp_and_mccs": all(
+                [self.is_csp_simulated, self.is_mccs_simulated]
+            ),  # real SDP enabled
+            "sdp_and_mccs": all(
+                [self.is_sdp_simulated, self.is_mccs_simulated]
+            ),  # real CSP.LMC enabled
+            "all_mocks": all(
+                [
+                    self.is_csp_simulated,
+                    self.is_sdp_simulated,
+                    self.is_mccs_simulated,
+                ]
+            ),
+        }
 
     def set_standby(self):
         """
