@@ -12,6 +12,7 @@ from tests.resources.test_support.common_utils.tmc_helpers import (
 )
 
 
+@pytest.mark.test
 @pytest.mark.tmc_sdp
 @scenario(
     "../features/tmc_sdp/release_resources_to_sdp_subarray.feature",
@@ -92,4 +93,4 @@ def check_tmc_is_in_empty_obsstate(central_node_low, event_recorder):
         "obsState",
         ObsState.EMPTY,
     )
-    assert central_node_low.subarray_devices["sdp_subarray"].Resources == {}
+    assert central_node_low.subarray_devices["sdp_subarray"].Resources == "{}"
