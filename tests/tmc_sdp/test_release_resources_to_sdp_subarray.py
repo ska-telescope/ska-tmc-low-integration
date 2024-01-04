@@ -92,3 +92,4 @@ def check_tmc_is_in_empty_obsstate(central_node_low, event_recorder):
         "obsState",
         ObsState.EMPTY,
     )
+    assert central_node_low.subarray_devices["sdp_subarray"].Resources == {}
