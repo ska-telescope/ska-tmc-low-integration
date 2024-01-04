@@ -47,7 +47,9 @@ def get_centralnode_input_json(slug):
     return assign_json
 
 
-def update_receptors(assign_input_json: str, receptor_list: List[str]) -> str:
+def update_receptors_in_assign_json(
+    assign_input_json: str, receptor_list: List[str]
+) -> str:
     """
     Update the list of receptors in the given JSON string.
 
