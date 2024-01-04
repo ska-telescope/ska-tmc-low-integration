@@ -19,8 +19,8 @@ from tests.resources.test_harness.constant import (
     tmc_low_subarraynode1,
 )
 from tests.resources.test_harness.helpers import (
-    generate_eb_pb_ids,
     get_simulated_devices_info,
+    update_eb_pb_ids,
 )
 from tests.resources.test_harness.utils.constant import (
     ABORTED,
@@ -191,7 +191,7 @@ class SubarrayNodeWrapperLow:
         # This methods needs to change, with subsequent changes in the Tear
         # Down of the fixtures. Will be done as an improvement later.
         input_json = json.loads(assign_json)
-        generate_eb_pb_ids(input_json)
+        update_eb_pb_ids(input_json)
         result, message = self.central_node.AssignResources(
             json.dumps(input_json)
         )
