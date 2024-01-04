@@ -1,6 +1,7 @@
 import json
 import logging
 import time
+import uuid
 from typing import Any
 
 import pytest
@@ -36,6 +37,7 @@ from tests.resources.test_support.constant_low import (
 configure_logging(logging.DEBUG)
 LOGGER = logging.getLogger(__name__)
 TIMEOUT = 20
+EB_PB_ID_LENGTH = 16
 
 
 def check_subarray_obs_state(obs_state=None, timeout=50):
@@ -362,3 +364,26 @@ def check_lrcr_events(
         COUNT = COUNT + 1
         if COUNT >= retries:
             pytest.fail("Assertion Failed")
+
+
+def generate_id(prefix: str) -> str:
+    """
+    Generate a UUID-based numerical id with the given prefix
+    :param prefix: the prefix for the unique id.
+    :return: the generated id.
+    """
+    unique_id = str(int(uuid.uuid4().hex, 16))
+    return f"{prefix}-{unique_id[:8]}-{unique_id[-5:]}"
+
+
+def update_eb_pb_ids(input_json: str) -> str:
+    """
+    Method to generate different eb_id and pb_id
+    :param input_json: json to utilised to update values.
+    """
+    input_json = json.loads(input_json)
+    input_json["sdp"]["execution_block"]["eb_id"] = generate_id("eb-test")
+    for pb in input_json["sdp"]["processing_blocks"]:
+        pb["pb_id"] = generate_id("pb-test")
+    input_json = json.dumps(input_json)
+    return input_json

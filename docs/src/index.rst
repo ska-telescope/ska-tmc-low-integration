@@ -32,6 +32,14 @@ This project is integration of the TMC components for the `Square Kilometre Arra
    :caption: Developer guide
 
    developer_guide/code_quality
+   
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Testing
+
+   developer_guide/testing/pair_wise_test
+   developer_guide/testing/test_harness
 
 Indices and tables
 ------------------
