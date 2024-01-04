@@ -1,7 +1,7 @@
 import json
 import logging
 import time
-from datetime import datetime
+import uuid
 from typing import Any
 
 import pytest
@@ -368,13 +368,12 @@ def check_lrcr_events(
 
 def generate_id(prefix: str) -> str:
     """
-    Generate a time-based unique id with the given prefix and suffix length.
+    Generate a UUID-based numerical id with the given prefix
     :param prefix: the prefix for the unique id.
-    :param suffix_length: the length of the suffix for the unique id.
     :return: the generated id.
     """
-    timestamp = str(int(datetime.now().timestamp()))
-    return f"{prefix}-{timestamp[:8]}-{timestamp[-5:0:-1]}"
+    unique_id = str(int(uuid.uuid4().hex, 16))
+    return f"{prefix}-{unique_id[:8]}-{unique_id[-5:]}"
 
 
 def update_eb_pb_ids(input_json: str) -> str:
