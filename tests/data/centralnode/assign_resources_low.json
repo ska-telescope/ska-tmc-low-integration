@@ -162,18 +162,11 @@
     },
     "processing_blocks": [
       {
-        "pb_id": "pb-mvp01-20210623-00000",       
-        "script": {
-          "kind": "realtime",
-          "name": "test-receive-addresses",
-          "version": "0.7.1"
-        },
-        "sbi_ids": [
-          "sbi-mvp01-20210623-00000"
-        ],
-        "parameters": {
-
-        }
+        "pb_id": "pb-test-20220916-00000",
+        "script": {"kind": "realtime", "name": "test-receive-addresses", "version": "0.7.1"},
+        "sbi_ids": ["sbi-test-20220916-00000"],
+        "parameters": {}
+  
       }
     ]
   }
