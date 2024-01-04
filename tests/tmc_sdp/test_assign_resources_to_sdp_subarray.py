@@ -139,6 +139,5 @@ def check_assign_resources_to_tmc(central_node_low, receptors):
     receptor = json.loads(
         central_node_low.subarray_devices["sdp_subarray"].Resources
     )["receptors"]
-    receptors = receptors.replace('"', "")
-    receptors = receptors.split(", ")
+    receptors = receptors.replace('"', "").split(", ")
     assert receptor == receptors
