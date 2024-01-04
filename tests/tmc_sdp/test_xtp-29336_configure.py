@@ -9,6 +9,7 @@ from pytest_bdd import given, parsers, scenario, then, when
 from ska_control_model import ObsState
 from tango import DevState
 
+from tests.resources.test_harness.helpers import update_eb_pb_ids
 from tests.resources.test_support.common_utils.tmc_helpers import (
     prepare_json_args_for_centralnode_commands,
     prepare_json_args_for_commands,
@@ -18,6 +19,7 @@ LOGGER = logging.getLogger(__name__)
 
 
 @pytest.mark.tmc_sdp
+@pytest.mark.configure
 @scenario(
     "../features/tmc_sdp/xtp-29336_configure.feature",
     """Configure a SDP subarray for a scan using TMC""",
@@ -56,10 +58,11 @@ def check_subarray_obs_state(
     event_recorder.subscribe_event(
         subarray_node_low.subarray_devices.get("sdp_subarray"), "obsState"
     )
-    assign_input_json = prepare_json_args_for_centralnode_commands(
+    input_json = prepare_json_args_for_centralnode_commands(
         "assign_resources_low", command_input_factory
     )
-    central_node_low.store_resources(assign_input_json)
+    input_json = update_eb_pb_ids(input_json)
+    central_node_low.store_resources(input_json)
 
     assert event_recorder.has_change_event_occurred(
         subarray_node_low.subarray_devices.get("sdp_subarray"),
@@ -84,26 +87,25 @@ def invoke_configure(
     command_input_factory,
 ):
     """A method to invoke Configure command"""
-    input_json = prepare_json_args_for_commands(
+    configure_input_json = prepare_json_args_for_commands(
         "configure_low", command_input_factory
     )
-    input_json = json.loads(input_json)
-    input_json["sdp"]["scan_type"] = scan_type
+    configure_input_json = json.loads(configure_input_json)
+    configure_input_json["sdp"]["scan_type"] = scan_type
     central_node_low.set_subarray_id(subarray_id)
     subarray_node_low.execute_transition(
-        "Configure", argin=json.dumps(input_json)
+        "Configure", argin=json.dumps(configure_input_json)
     )
 
 
 @then(parsers.parse("the SDP subarray {subarray_id} obsState is READY"))
-def check_sdp_subarray_in_ready(
+def check_sdp_is_in_ready_obsstate(
     central_node_low, subarray_node_low, event_recorder, subarray_id
 ):
-    """A method to check SDP subarray obsstate"""
+    """Method to check SDP is in IDLE obsstate"""
     event_recorder.subscribe_event(
         subarray_node_low.subarray_devices["sdp_subarray"], "obsState"
     )
-
     central_node_low.set_subarray_id(subarray_id)
     assert event_recorder.has_change_event_occurred(
         subarray_node_low.subarray_devices["sdp_subarray"],

@@ -321,6 +321,7 @@ class SubarrayNodeWrapperLow:
         elif self.obs_state == "READY":
             "Invoke End"
             self.end_observation()
+            self.release_resources_subarray()
         elif self.obs_state == "ABORTED":
             """Invoke Restart"""
             LOGGER.info("Invoking Restart on Subarray")
