@@ -8,8 +8,10 @@ from pytest_bdd import given, parsers, scenario, then, when
 from ska_control_model import ObsState
 from tango import DevState
 
-from tests.resources.test_harness.helpers import generate_eb_pb_ids
-from tests.resources.test_harness.utils.common_utils import update_receptors
+from tests.resources.test_harness.helpers import update_eb_pb_ids
+from tests.resources.test_harness.utils.common_utils import (
+    update_receptors_in_assign_json,
+)
 from tests.resources.test_support.common_utils.tmc_helpers import (
     prepare_json_args_for_centralnode_commands,
 )
@@ -69,11 +71,7 @@ def subarray_is_in_empty_obsstate(
     """
     central_node_low.set_subarray_id(subarray_id)
     event_recorder.subscribe_event(central_node_low.subarray_node, "obsState")
-    assert event_recorder.has_change_event_occurred(
-        central_node_low.subarray_node,
-        "obsState",
-        ObsState.EMPTY,
-    )
+    assert central_node_low.subarray_node.obsState == ObsState.EMPTY
 
 
 @when(
@@ -82,26 +80,21 @@ def subarray_is_in_empty_obsstate(
     )
 )
 def assign_resources_to_subarray(
-    central_node_low, command_input_factory, receptors, subarray_id
+    central_node_low, command_input_factory, receptors
 ):
     """Method to assign resources to subarray."""
-    central_node_low.set_subarray_id(subarray_id)
-    assign_input_json = prepare_json_args_for_centralnode_commands(
+    input_json = prepare_json_args_for_centralnode_commands(
         "assign_resources_low", command_input_factory
     )
-    receptors = receptors.replace('"', "")
-    receptors = receptors.split(", ")
-    assign_input_json = update_receptors(assign_input_json, receptors)
-    assign_input_json = generate_eb_pb_ids(assign_input_json)
-    central_node_low.store_resources(assign_input_json)
+    receptors = receptors.replace('"', "").split(", ")
+    input_json = update_receptors_in_assign_json(input_json, receptors)
+    input_json = update_eb_pb_ids(input_json)
+    central_node_low.store_resources(input_json)
 
 
-@then(parsers.parse("the sdp subarray {subarray_id} obsState is IDLE"))
-def check_sdp_is_in_idle_obsstate(
-    central_node_low, event_recorder, subarray_id
-):
+@then(parsers.parse("the SDP subarray {subarray_id} must be in IDLE obsState"))
+def check_sdp_is_in_idle_obsstate(central_node_low, event_recorder):
     """Method to check SDP is in IDLE obsstate"""
-    central_node_low.set_subarray_id(subarray_id)
     event_recorder.subscribe_event(
         central_node_low.subarray_devices.get("sdp_subarray"), "obsState"
     )
@@ -117,12 +110,8 @@ def check_sdp_is_in_idle_obsstate(
         "the TMC subarray {subarray_id} obsState is transitioned to IDLE"
     )
 )
-def check_tmc_is_in_idle_obsstate(
-    central_node_low, event_recorder, subarray_id
-):
+def check_tmc_is_in_idle_obsstate(central_node_low, event_recorder):
     """Method to check TMC is is in IDLE obsstate."""
-    central_node_low.set_subarray_id(subarray_id)
-    event_recorder.subscribe_event(central_node_low.subarray_node, "obsState")
     assert event_recorder.has_change_event_occurred(
         central_node_low.subarray_node,
         "obsState",
@@ -132,8 +121,8 @@ def check_tmc_is_in_idle_obsstate(
 
 @then(
     parsers.parse(
-        "the correct resources {receptors} are assigned to sdp subarray "
-        + "and TMC subarray"
+        "the correct resources {receptors} are assigned to the SDP subarray "
+        + "and the TMC subarray"
     )
 )
 def check_assign_resources_to_tmc(central_node_low, receptors):
@@ -141,6 +130,5 @@ def check_assign_resources_to_tmc(central_node_low, receptors):
     receptor = json.loads(
         central_node_low.subarray_devices["sdp_subarray"].Resources
     )["receptors"]
-    receptors = receptors.replace('"', "")
-    receptors = receptors.split(", ")
+    receptors = receptors.replace('"', "").split(", ")
     assert receptor == receptors
