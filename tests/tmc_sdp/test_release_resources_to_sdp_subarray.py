@@ -70,11 +70,8 @@ def release_resources_to_subarray(central_node_low, command_input_factory):
 @then(
     parsers.parse("the SDP subarray {subarray_id} must be in EMPTY obsState")
 )
-def check_sdp_is_in_empty_obsstate(
-    central_node_low, event_recorder, subarray_id
-):
+def check_sdp_is_in_empty_obsstate(central_node_low, event_recorder):
     """Method to check SDP is in EMPTY obsstate"""
-    central_node_low.set_subarray_id(subarray_id)
     event_recorder.subscribe_event(
         central_node_low.subarray_devices.get("sdp_subarray"), "obsState"
     )
@@ -88,11 +85,8 @@ def check_sdp_is_in_empty_obsstate(
 @then(
     parsers.parse("TMC subarray {subarray_id} obsState transitions to EMPTY")
 )
-def check_tmc_is_in_empty_obsstate(
-    central_node_low, event_recorder, subarray_id
-):
+def check_tmc_is_in_empty_obsstate(central_node_low, event_recorder):
     """Method to check TMC is is in EMPTY obsstate."""
-    central_node_low.set_subarray_id(subarray_id)
     assert event_recorder.has_change_event_occurred(
         central_node_low.subarray_node,
         "obsState",

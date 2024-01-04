@@ -80,10 +80,9 @@ def subarray_is_in_empty_obsstate(
     )
 )
 def assign_resources_to_subarray(
-    central_node_low, command_input_factory, receptors, subarray_id
+    central_node_low, command_input_factory, receptors
 ):
     """Method to assign resources to subarray."""
-    central_node_low.set_subarray_id(subarray_id)
     input_json = prepare_json_args_for_centralnode_commands(
         "assign_resources_low", command_input_factory
     )
@@ -94,11 +93,8 @@ def assign_resources_to_subarray(
 
 
 @then(parsers.parse("the SDP subarray {subarray_id} must be in IDLE obsState"))
-def check_sdp_is_in_idle_obsstate(
-    central_node_low, event_recorder, subarray_id
-):
+def check_sdp_is_in_idle_obsstate(central_node_low, event_recorder):
     """Method to check SDP is in IDLE obsstate"""
-    central_node_low.set_subarray_id(subarray_id)
     event_recorder.subscribe_event(
         central_node_low.subarray_devices.get("sdp_subarray"), "obsState"
     )
@@ -114,11 +110,8 @@ def check_sdp_is_in_idle_obsstate(
         "the TMC subarray {subarray_id} obsState is transitioned to IDLE"
     )
 )
-def check_tmc_is_in_idle_obsstate(
-    central_node_low, event_recorder, subarray_id
-):
+def check_tmc_is_in_idle_obsstate(central_node_low, event_recorder):
     """Method to check TMC is is in IDLE obsstate."""
-    central_node_low.set_subarray_id(subarray_id)
     assert event_recorder.has_change_event_occurred(
         central_node_low.subarray_node,
         "obsState",
