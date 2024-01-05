@@ -81,7 +81,6 @@ class TestConfigureErrorPropagation:
             low_csp_subarray_leaf_node in assertion_data["attribute_value"][1]
         )
 
-    @pytest.mark.akibhai
     @pytest.mark.SKA_low
     def test_configure_timeout_sdp_ln(
         self,
