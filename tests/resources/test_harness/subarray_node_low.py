@@ -20,7 +20,7 @@ from tests.resources.test_harness.constant import (
     tmc_low_subarraynode1,
 )
 from tests.resources.test_harness.helpers import (
-    get_simulated_devices_info,
+    SIMULATED_DEVICES_DICT,
     update_eb_pb_ids,
 )
 from tests.resources.test_harness.utils.constant import (
@@ -90,7 +90,6 @@ class SubarrayNodeWrapperLow:
         self.IDLE_OBS_STATE = IDLE
         self.READY_OBS_STATE = READY
         self.ABORTED_OBS_STATE = ABORTED
-        self.simulated_devices_dict = get_simulated_devices_info()
 
     @property
     def state(self) -> DevState:
@@ -261,13 +260,13 @@ class SubarrayNodeWrapperLow:
     def _reset_simulator_devices(self):
         """Reset Simulator devices to it's original state"""
         if (
-            self.simulated_devices_dict["csp_and_sdp"]
-            or self.simulated_devices_dict["all_mocks"]
+            SIMULATED_DEVICES_DICT["csp_and_sdp"]
+            or SIMULATED_DEVICES_DICT["all_mocks"]
         ):
             sim_device_fqdn_list = [self.sdp_subarray1, self.csp_subarray1]
-        elif self.simulated_devices_dict["csp_and_mccs"]:
+        elif SIMULATED_DEVICES_DICT["csp_and_mccs"]:
             sim_device_fqdn_list = [self.csp_subarray1]
-        elif self.simulated_devices_dict["sdp_and_mccs"]:
+        elif SIMULATED_DEVICES_DICT["sdp_and_mccs"]:
             sim_device_fqdn_list = [self.sdp_subarray1]
         for sim_device_fqdn in sim_device_fqdn_list:
             device = DeviceProxy(sim_device_fqdn)
@@ -318,7 +317,7 @@ class SubarrayNodeWrapperLow:
 
     def _clear_command_call_and_transition_data(self, clear_transition=False):
         """Clears the command call data"""
-        if self.simulated_devices_dict["csp_and_sdp"]:
+        if SIMULATED_DEVICES_DICT["csp_and_sdp"]:
             for sim_device in [
                 self.sdp_subarray1,
                 self.csp_subarray1,
@@ -327,19 +326,19 @@ class SubarrayNodeWrapperLow:
                 device.ClearCommandCallInfo()
                 if clear_transition:
                     device.ResetTransitions()
-        elif self.simulated_devices_dict["csp_and_mccs"]:
+        elif SIMULATED_DEVICES_DICT["csp_and_mccs"]:
             for sim_device in [self.csp_subarray1, self.mccs_subarray1]:
                 device = DeviceProxy(sim_device)
                 device.ClearCommandCallInfo()
                 if clear_transition:
                     device.ResetTransitions()
-        elif self.simulated_devices_dict["sdp_and_mccs"]:
+        elif SIMULATED_DEVICES_DICT["sdp_and_mccs"]:
             for sim_device in [self.sdp_subarray1, mccs_subarray1]:
                 device = DeviceProxy(sim_device)
                 device.ClearCommandCallInfo()
                 if clear_transition:
                     device.ResetTransitions()
-        elif self.simulated_devices_dict["all_mocks"]:
+        elif SIMULATED_DEVICES_DICT["all_mocks"]:
             for sim_device in [
                 self.sdp_subarray1,
                 self.csp_subarray1,

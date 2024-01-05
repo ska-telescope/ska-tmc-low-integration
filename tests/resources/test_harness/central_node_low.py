@@ -21,7 +21,7 @@ from tests.resources.test_harness.constant import (
     mccs_subarray1,
     tmc_low_subarraynode1,
 )
-from tests.resources.test_harness.helpers import get_simulated_devices_info
+from tests.resources.test_harness.helpers import SIMULATED_DEVICES_DICT
 from tests.resources.test_harness.utils.common_utils import JsonFactory
 from tests.resources.test_harness.utils.sync_decorators import (
     sync_abort,
@@ -69,7 +69,6 @@ class CentralNodeWrapperLow(object):
         self.assign_input = self.json_factory.create_centralnode_configuration(
             "assign_resources_low"
         )
-        self.simulated_devices_dict = get_simulated_devices_info()
 
     def set_subarray_id(self, subarray_id):
         self.subarray_node = DeviceProxy(
@@ -148,26 +147,26 @@ class CentralNodeWrapperLow(object):
         put telescope in OFF state
 
         """
-        if self.simulated_devices_dict["all_mocks"]:
+        if SIMULATED_DEVICES_DICT["all_mocks"]:
             LOGGER.info("Invoking TelescopeOff command with all Mocks")
             self.central_node.TelescopeOff()
             self.set_values_with_all_mocks(DevState.OFF)
 
-        elif self.simulated_devices_dict["csp_and_sdp"]:
+        elif SIMULATED_DEVICES_DICT["csp_and_sdp"]:
             LOGGER.info(
                 "Invoking TelescopeOff command with csp and sdp simulated"
             )
             self.central_node.TelescopeOff()
             self.set_value_with_csp_sdp_mocks(DevState.OFF)
 
-        elif self.simulated_devices_dict["csp_and_mccs"]:
+        elif SIMULATED_DEVICES_DICT["csp_and_mccs"]:
             LOGGER.info(
                 "Invoking TelescopeOff command with csp and mccs simulated"
             )
             self.central_node.TelescopeOff()
             self.set_values_with_csp_mccs_mocks(DevState.OFF)
 
-        elif self.simulated_devices_dict["sdp_and_mccs"]:
+        elif SIMULATED_DEVICES_DICT["sdp_and_mccs"]:
             LOGGER.info(
                 "Invoking TelescopeOff command with sdp and mccs simulated"
             )
@@ -182,7 +181,7 @@ class CentralNodeWrapperLow(object):
 
     def _clear_command_call_and_transition_data(self, clear_transition=False):
         """Clears the command call data"""
-        if self.simulated_devices_dict["all_mocks"]:
+        if SIMULATED_DEVICES_DICT["all_mocks"]:
             for sim_device in [
                 low_csp_subarray1,
                 low_sdp_subarray1,
@@ -217,29 +216,27 @@ class CentralNodeWrapperLow(object):
         put telescope in ON state
         """
         LOGGER.info("Starting up the Telescope")
-        LOGGER.info(
-            f"Received simulated devices: {self.simulated_devices_dict}"
-        )
-        if self.simulated_devices_dict["all_mocks"]:
+        LOGGER.info(f"Received simulated devices: {SIMULATED_DEVICES_DICT}")
+        if SIMULATED_DEVICES_DICT["all_mocks"]:
             LOGGER.info("Invoking TelescopeOn command with all Mocks")
             self.central_node.TelescopeOn()
             self.set_values_with_all_mocks(DevState.ON)
 
-        elif self.simulated_devices_dict["csp_and_sdp"]:
+        elif SIMULATED_DEVICES_DICT["csp_and_sdp"]:
             LOGGER.info(
                 "Invoking TelescopeOn command with csp and sdp simulated"
             )
             self.central_node.TelescopeOn()
             self.set_value_with_csp_sdp_mocks(DevState.ON)
 
-        elif self.simulated_devices_dict["csp_and_mccs"]:
+        elif SIMULATED_DEVICES_DICT["csp_and_mccs"]:
             LOGGER.info(
                 "Invoking TelescopeOn command with csp and MCCS simulated"
             )
             self.central_node.TelescopeOn()
             self.set_values_with_csp_mccs_mocks(DevState.ON)
 
-        elif self.simulated_devices_dict["sdp_and_mccs"]:
+        elif SIMULATED_DEVICES_DICT["sdp_and_mccs"]:
             LOGGER.info(
                 "Invoking TelescopeOn command with sdp and mccss simulated"
             )
@@ -256,26 +253,26 @@ class CentralNodeWrapperLow(object):
 
         """
         LOGGER.info("Putting Telescope in Standby state")
-        if self.simulated_devices_dict["all_mocks"]:
+        if SIMULATED_DEVICES_DICT["all_mocks"]:
             LOGGER.info("Invoking TelescopeStandby commands with all Mocks")
             self.central_node.TelescopeStandBy()
             self.set_values_with_all_mocks(DevState.STANDBY)
 
-        elif self.simulated_devices_dict["csp_and_sdp"]:
+        elif SIMULATED_DEVICES_DICT["csp_and_sdp"]:
             LOGGER.info(
                 "Invoking TelescopeStandby command with csp and sdp simulated"
             )
             self.central_node.TelescopeStandBy()
             self.set_value_with_csp_sdp_mocks(DevState.STANDBY)
 
-        elif self.simulated_devices_dict["csp_and_mccs"]:
+        elif SIMULATED_DEVICES_DICT["csp_and_mccs"]:
             LOGGER.info(
                 "Invoking TelescopeStandby command with csp and mccs simulated"
             )
             self.central_node.TelescopeStandBy()
             self.set_values_with_csp_mccs_mocks(DevState.STANDBY)
 
-        elif self.simulated_devices_dict["sdp_and_mccs"]:
+        elif SIMULATED_DEVICES_DICT["sdp_and_mccs"]:
             LOGGER.info(
                 "Invoking TelescopeStandby command with sdp and mccs simulated"
             )
@@ -322,8 +319,8 @@ class CentralNodeWrapperLow(object):
     def _reset_health_state_for_mock_devices(self):
         """Reset Mock devices"""
         if (
-            self.simulated_devices_dict["csp_and_sdp"]
-            or self.simulated_devices_dict["all_mocks"]
+            SIMULATED_DEVICES_DICT["csp_and_sdp"]
+            or SIMULATED_DEVICES_DICT["all_mocks"]
         ):
             for mock_device in [
                 self.sdp_master,
@@ -331,13 +328,13 @@ class CentralNodeWrapperLow(object):
             ]:
                 device = DeviceProxy(mock_device)
                 device.SetDirectHealthState(HealthState.UNKNOWN)
-        elif self.simulated_devices_dict["csp_and_mccs"]:
+        elif SIMULATED_DEVICES_DICT["csp_and_mccs"]:
             for mock_device in [
                 self.csp_master,
             ]:
                 device = DeviceProxy(mock_device)
                 device.SetDirectHealthState(HealthState.UNKNOWN)
-        elif self.simulated_devices_dict["sdp_and_mccs"]:
+        elif SIMULATED_DEVICES_DICT["sdp_and_mccs"]:
             for mock_device in [
                 self.sdp_master,
             ]:
@@ -421,6 +418,6 @@ class CentralNodeWrapperLow(object):
 
     def reset_defects_for_devices(self):
         """Resets the defects for given devices."""
-        if self.simulated_devices_dict["all_mocks"]:
+        if SIMULATED_DEVICES_DICT["all_mocks"]:
             self.csp_subarray1.SetDefective(RESET_DEFECT)
             self.sdp_subarray1.SetDefective(RESET_DEFECT)
