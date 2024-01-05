@@ -96,7 +96,9 @@ def invoke_configure(
     input_json = json.loads(input_json)
     input_json["sdp"]["scan_type"] = scan_type
     central_node_low.set_subarray_id(subarray_id)
-    subarray_node_low.store_configuration_data(argin=json.dumps(input_json))
+    subarray_node_low.store_configuration_data(
+        input_json=json.dumps(input_json)
+    )
 
 
 @then(
