@@ -25,7 +25,6 @@ from tests.resources.test_harness.helpers import get_simulated_devices_info
 from tests.resources.test_harness.utils.common_utils import JsonFactory
 from tests.resources.test_harness.utils.sync_decorators import (
     sync_abort,
-    sync_end,
     sync_release_resources,
     sync_restart,
     sync_set_to_off,
@@ -198,24 +197,17 @@ class CentralNodeWrapperLow(object):
         LOGGER.info("Calling Tear down for Central node.")
         # reset HealthState.UNKNOWN for mock devices
         self._reset_health_state_for_mock_devices()
-        if self.subarray_node.obsState == ObsState.READY:
-            LOGGER.info("Calling End on subarraynode")
-            self.invoke_end()
-        if self.subarray_node.obsState == ObsState.IDLE:
-            LOGGER.info("Calling Release Resource on centralnode")
-            self.invoke_release_resources(self.release_input)
-        elif self.subarray_node.obsState in [
+        if self.subarray_node.obsState in [
             ObsState.RESOURCING,
-            ObsState.SCANNING,
-            ObsState.CONFIGURING,
-            ObsState.READY,
-            ObsState.IDLE,
         ]:
             LOGGER.info("Calling Abort and Restart on SubarrayNode")
             self.subarray_abort()
             self.subarray_restart()
         elif self.subarray_node.obsState == ObsState.ABORTED:
             self.subarray_restart()
+        elif self.subarray_node.obsState == ObsState.IDLE:
+            LOGGER.info("Calling Release Resource on centralnode")
+            self.invoke_release_resources(self.release_input)
         self.move_to_off()
         self._clear_command_call_and_transition_data(clear_transition=True)
 
@@ -313,12 +305,6 @@ class CentralNodeWrapperLow(object):
             input_string (str): Release resource input json
         """
         result, message = self.central_node.ReleaseResources(input_string)
-        return result, message
-
-    @sync_end(device_dict=device_dict_low)
-    def invoke_end(self):
-        """Invoke End command on subarray node"""
-        result, message = self.subarray_node.End()
         return result, message
 
     @sync_abort(device_dict=device_dict_low)

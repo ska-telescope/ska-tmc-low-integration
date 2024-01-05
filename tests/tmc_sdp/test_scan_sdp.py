@@ -111,10 +111,10 @@ def invoke_scan(
         "scan_low", command_input_factory
     )
     scan_json = json.loads(input_json)
-    scan_json["scan_id"] = scan_id
+    scan_json["scan_id"] = int(scan_id)
 
     subarray_node_low.set_subarray_id(subarray_id)
-    subarray_node_low.execute_transition("Scan", argin=json.dumps(scan_json))
+    subarray_node_low.store_scan_data(json.dumps(scan_json))
 
 
 @then(

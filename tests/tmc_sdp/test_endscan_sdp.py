@@ -10,7 +10,6 @@ from tests.resources.test_harness.helpers import (
 )
 
 
-@pytest.mark.aki
 @pytest.mark.tmc_sdp
 @scenario(
     "../features/tmc_sdp/tmc_sdp_end_scan.feature",
@@ -112,10 +111,10 @@ def check_subarray_is_configured(
         "I issue the Endscan command to the TMC subarray {subarray_id}"
     )
 )
-def invoke_scan(subarray_node_low, subarray_id):
+def invoke_endscan(subarray_node_low, subarray_id):
     """A method to invoke EndScan command"""
     subarray_node_low.set_subarray_id(subarray_id)
-    subarray_node_low.execute_transition("EndScan")
+    subarray_node_low.remove_scan_data()
 
 
 @then(parsers.parse("the SDP subarray transitions to ObsState READY"))
@@ -133,13 +132,13 @@ def check_sdp_subarray_obs_State(subarray_node_low, event_recorder):
         "the TMC subarray {subarray_id} transitions to ObsState READY"
     )
 )
-def check_sdp_subarray_in_ready(
+def check_tmc_subarray_obs_state(
     subarray_node_low, event_recorder, subarray_id
 ):
-    """A method to check SDP subarray obsstate"""
+    """A method to check TMC subarray obsstate"""
     subarray_node_low.set_subarray_id(subarray_id)
     assert event_recorder.has_change_event_occurred(
-        subarray_node_low.subarray_devices["sdp_subarray"],
+        subarray_node_low.subarray_node,
         "obsState",
         ObsState.READY,
     )

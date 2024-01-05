@@ -1,6 +1,7 @@
 import json
 import logging
 
+from ska_control_model import ObsState
 from ska_ser_logging import configure_logging
 from ska_tango_base.control_model import HealthState
 from tango import DeviceProxy, DevState
@@ -18,7 +19,10 @@ from tests.resources.test_harness.constant import (
     mccs_subarray_leaf_node,
     tmc_low_subarraynode1,
 )
-from tests.resources.test_harness.helpers import get_simulated_devices_info
+from tests.resources.test_harness.helpers import (
+    get_simulated_devices_info,
+    update_eb_pb_ids,
+)
 from tests.resources.test_harness.utils.constant import (
     ABORTED,
     IDLE,
@@ -34,6 +38,7 @@ from tests.resources.test_harness.utils.sync_decorators import (
     sync_assign_resources,
     sync_configure,
     sync_end,
+    sync_endscan,
     sync_release_resources,
     sync_restart,
 )
@@ -195,6 +200,12 @@ class SubarrayNodeWrapperLow:
         LOGGER.info("Invoked Release Resource on SubarrayNode")
         return result, message
 
+    @sync_endscan(device_dict=device_dict_low)
+    def remove_scan_data(self):
+        result, message = self.subarray_node.EndScan()
+        LOGGER.info("Invoked EndScan on SubarrayNode")
+        return result, message
+
     def store_scan_data(self, input_string):
         result, message = self.subarray_node.Scan(input_string)
         LOGGER.info("Invoked Scan on SubarrayNode")
@@ -281,6 +292,7 @@ class SubarrayNodeWrapperLow:
             dest_state_name, self
         )
         if assign_input_json:
+            assign_input_json = update_eb_pb_ids(assign_input_json)
             obs_state_resetter.assign_input = assign_input_json
         if configure_input_json:
             obs_state_resetter.configure_input = configure_input_json
@@ -354,12 +366,20 @@ class SubarrayNodeWrapperLow:
         LOGGER.info("Calling Tear down for subarray")
         self._reset_simulator_devices()
         self._clear_command_call_and_transition_data(clear_transition=True)
-        if self.obs_state in ("RESOURCING", "CONFIGURING", "SCANNING"):
+        if self.subarray_node.obsState in [
+            ObsState.SCANNING,
+            ObsState.CONFIGURING,
+            ObsState.RESOURCING,
+        ]:
             """Invoke Abort and Restart"""
             LOGGER.info("Invoking Abort on Subarray")
             self.abort_subarray()
             self.restart_subarray()
-        elif self.obs_state == "ABORTED":
+        if self.subarray_node.obsState == ObsState.READY:
+            """Invoke End command"""
+            LOGGER.info("Invoking End command on Subarray")
+            self.end_observation()
+        elif self.subarray_node.obsState == ObsState.ABORTED:
             """Invoke Restart"""
             LOGGER.info("Invoking Restart on Subarray")
             self.restart_subarray()
