@@ -166,7 +166,7 @@
         "script": {
           "kind": "realtime",
           "name": "test-receive-addresses",
-          "version": "0.5.0"
+          "version": "0.7.1"
         },
         "sbi_ids": [
           "sbi-mvp01-20210623-00000"

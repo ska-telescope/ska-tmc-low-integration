@@ -12,7 +12,6 @@ from tests.resources.test_harness.helpers import (
 )
 
 
-@pytest.mark.aki
 @pytest.mark.tmc_sdp
 @scenario(
     "../features/tmc_sdp/tmc_sdp_scan.feature",

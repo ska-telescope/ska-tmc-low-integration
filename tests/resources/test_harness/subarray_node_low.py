@@ -18,10 +18,7 @@ from tests.resources.test_harness.constant import (
     mccs_subarray_leaf_node,
     tmc_low_subarraynode1,
 )
-from tests.resources.test_harness.helpers import (
-    get_simulated_devices_info,
-    update_eb_pb_ids,
-)
+from tests.resources.test_harness.helpers import get_simulated_devices_info
 from tests.resources.test_harness.utils.constant import (
     ABORTED,
     IDLE,
@@ -188,13 +185,7 @@ class SubarrayNodeWrapperLow:
         Args:
             assign_json (str): Assign resource input json
         """
-        # This methods needs to change, with subsequent changes in the Tear
-        # Down of the fixtures. Will be done as an improvement later.
-        input_json = json.loads(assign_json)
-        update_eb_pb_ids(input_json)
-        result, message = self.central_node.AssignResources(
-            json.dumps(input_json)
-        )
+        result, message = self.central_node.AssignResources(assign_json)
         LOGGER.info("Invoked AssignResources on CentralNode")
         return result, message
 
@@ -273,14 +264,6 @@ class SubarrayNodeWrapperLow:
             device.SetDirectHealthState(HealthState.UNKNOWN)
             device.SetDefective(json.dumps({"enabled": False}))
 
-        # for sim_device_fqdn in [self.sdp_subarray1, self.csp_subarray1]:
-        #     device = DeviceProxy(sim_device_fqdn)
-        #     device.ResetDelay()
-        #     device.SetDirectHealthState(HealthState.UNKNOWN)
-        #     device.SetDefective(json.dumps({"enabled": False}))
-
-    # def force_change_of_obs_state(self, dest_state_name: str) -> None:
-
     def force_change_of_obs_state(
         self,
         dest_state_name: str,
@@ -305,18 +288,6 @@ class SubarrayNodeWrapperLow:
             obs_state_resetter.scan_input = scan_input_json
         obs_state_resetter.reset()
         self._clear_command_call_and_transition_data()
-
-        # """Force SubarrayNode obsState to provided obsState
-
-        # Args:
-        #     dest_state_name (str): Destination obsState
-        # """
-        # factory_obj = ObsStateResetterFactoryLow()
-        # obs_state_resetter = factory_obj.create_obs_state_resetter(
-        #     dest_state_name, self
-        # )
-        # obs_state_resetter.reset()
-        # self._clear_command_call_and_transition_data()
 
     def clear_all_data(self):
         """Method to clear the observations

@@ -31,7 +31,7 @@ def test_tmc_sdp_standby_telescope():
     """
     Test case to verify TMC-SDP Standby functionality
     Glossary:
-        - "central_node_mid": fixture for a TMC CentralNode under test
+        - "central_node_low": fixture for a TMC CentralNode under test
         - "simulator_factory": fixture for SimulatorFactory class,
         which provides simulated subarray and master devices
         - "event_recorder": fixture for EventRecorder class
