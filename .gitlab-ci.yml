@@ -105,6 +105,9 @@ on-demand-destroy:
   when: manual
   allow_failure: true
 
+k8s-test:
+  variables:
+    MARK: "test_on"
 
 k8s-test-tmc-with-csp:
   extends:

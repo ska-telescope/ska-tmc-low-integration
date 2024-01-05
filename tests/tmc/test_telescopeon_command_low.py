@@ -19,6 +19,7 @@ from tests.resources.test_support.constant_low import (
 )
 
 
+@pytest.mark.test_on
 @pytest.mark.SKA_low
 @pytest.mark.skip(reason="Unskip after repository setup")
 def test_telescope_on():
