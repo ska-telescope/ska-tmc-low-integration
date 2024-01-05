@@ -60,7 +60,7 @@ xray-publish:
     - exists:
         - tests/xray-config.json
   dependencies:
-    - k8s-test
+    - k8s-test-tmc-with-sdp
   allow_failure: true
 
 on-demand-deploy:
