@@ -1,7 +1,7 @@
 Feature: Default
 
 	#This BDD test performs TMC-SDP pairwise testing to verify Scan command flow.
-	@XTP-29384 @XTP-29381 @Team_SAHYADRI @tmc_sdp
+	@XTP-29456 @XTP-29227 @tmc_sdp
 	Scenario: TMC executes a scan on SDP subarray 
 		Given the subarray <subarray_id> obsState is READY
 		When I issue scan command with scan Id <scan_id> on subarray <subarray_id>
