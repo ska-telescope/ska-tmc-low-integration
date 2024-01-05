@@ -1,5 +1,4 @@
 import logging
-import os
 
 from ska_control_model import ObsState
 from ska_ser_logging import configure_logging
@@ -21,6 +20,7 @@ from tests.resources.test_harness.constant import (
     mccs_subarray1,
     tmc_low_subarraynode1,
 )
+from tests.resources.test_harness.helpers import SIMULATED_DEVICES_DICT
 from tests.resources.test_harness.utils.common_utils import JsonFactory
 from tests.resources.test_harness.utils.sync_decorators import (
     sync_abort,
@@ -30,9 +30,6 @@ from tests.resources.test_harness.utils.sync_decorators import (
 )
 from tests.resources.test_support.common_utils.common_helpers import Resource
 
-SDP_SIMULATION_ENABLED = os.getenv("SDP_SIMULATION_ENABLED")
-CSP_SIMULATION_ENABLED = os.getenv("CSP_SIMULATION_ENABLED")
-MCCS_SIMULATION_ENABLED = os.getenv("MCCS_SIMULATION_ENABLED")
 configure_logging(logging.DEBUG)
 LOGGER = logging.getLogger(__name__)
 
@@ -58,7 +55,6 @@ class CentralNodeWrapperLow(object):
         self.sdp_master = DeviceProxy(low_sdp_master)
         self.csp_master = DeviceProxy(low_csp_master)
         self.mccs_master = DeviceProxy(mccs_controller)
-        self.simulated_devices_dict = self.get_simulated_devices_info()
         self._state = DevState.OFF
         self.json_factory = JsonFactory()
         self.release_input = (
@@ -147,26 +143,26 @@ class CentralNodeWrapperLow(object):
         put telescope in OFF state
 
         """
-        if self.simulated_devices_dict["all_mocks"]:
+        if SIMULATED_DEVICES_DICT["all_mocks"]:
             LOGGER.info("Invoking TelescopeOff command with all Mocks")
             self.central_node.TelescopeOff()
             self.set_values_with_all_mocks(DevState.OFF)
 
-        elif self.simulated_devices_dict["csp_and_sdp"]:
+        elif SIMULATED_DEVICES_DICT["csp_and_sdp"]:
             LOGGER.info(
                 "Invoking TelescopeOff command with csp and sdp simulated"
             )
             self.central_node.TelescopeOff()
             self.set_value_with_csp_sdp_mocks(DevState.OFF)
 
-        elif self.simulated_devices_dict["csp_and_mccs"]:
+        elif SIMULATED_DEVICES_DICT["csp_and_mccs"]:
             LOGGER.info(
                 "Invoking TelescopeOff command with csp and mccs simulated"
             )
             self.central_node.TelescopeOff()
             self.set_values_with_csp_mccs_mocks(DevState.OFF)
 
-        elif self.simulated_devices_dict["sdp_and_mccs"]:
+        elif SIMULATED_DEVICES_DICT["sdp_and_mccs"]:
             LOGGER.info(
                 "Invoking TelescopeOff command with sdp and mccs simulated"
             )
@@ -202,29 +198,27 @@ class CentralNodeWrapperLow(object):
         put telescope in ON state
         """
         LOGGER.info("Starting up the Telescope")
-        LOGGER.info(
-            f"Received simulated devices: {self.simulated_devices_dict}"
-        )
-        if self.simulated_devices_dict["all_mocks"]:
+        LOGGER.info(f"Received simulated devices: {SIMULATED_DEVICES_DICT}")
+        if SIMULATED_DEVICES_DICT["all_mocks"]:
             LOGGER.info("Invoking TelescopeOn command with all Mocks")
             self.central_node.TelescopeOn()
             self.set_values_with_all_mocks(DevState.ON)
 
-        elif self.simulated_devices_dict["csp_and_sdp"]:
+        elif SIMULATED_DEVICES_DICT["csp_and_sdp"]:
             LOGGER.info(
                 "Invoking TelescopeOn command with csp and sdp simulated"
             )
             self.central_node.TelescopeOn()
             self.set_value_with_csp_sdp_mocks(DevState.ON)
 
-        elif self.simulated_devices_dict["csp_and_mccs"]:
+        elif SIMULATED_DEVICES_DICT["csp_and_mccs"]:
             LOGGER.info(
                 "Invoking TelescopeOn command with csp and MCCS simulated"
             )
             self.central_node.TelescopeOn()
             self.set_values_with_csp_mccs_mocks(DevState.ON)
 
-        elif self.simulated_devices_dict["sdp_and_mccs"]:
+        elif SIMULATED_DEVICES_DICT["sdp_and_mccs"]:
             LOGGER.info(
                 "Invoking TelescopeOn command with sdp and mccss simulated"
             )
@@ -241,26 +235,26 @@ class CentralNodeWrapperLow(object):
 
         """
         LOGGER.info("Putting Telescope in Standby state")
-        if self.simulated_devices_dict["all_mocks"]:
+        if SIMULATED_DEVICES_DICT["all_mocks"]:
             LOGGER.info("Invoking TelescopeStandby commands with all Mocks")
             self.central_node.TelescopeStandBy()
             self.set_values_with_all_mocks(DevState.STANDBY)
 
-        elif self.simulated_devices_dict["csp_and_sdp"]:
+        elif SIMULATED_DEVICES_DICT["csp_and_sdp"]:
             LOGGER.info(
                 "Invoking TelescopeStandby command with csp and sdp simulated"
             )
             self.central_node.TelescopeStandBy()
             self.set_value_with_csp_sdp_mocks(DevState.STANDBY)
 
-        elif self.simulated_devices_dict["csp_and_mccs"]:
+        elif SIMULATED_DEVICES_DICT["csp_and_mccs"]:
             LOGGER.info(
                 "Invoking TelescopeStandby command with csp and mccs simulated"
             )
             self.central_node.TelescopeStandBy()
             self.set_values_with_csp_mccs_mocks(DevState.STANDBY)
 
-        elif self.simulated_devices_dict["sdp_and_mccs"]:
+        elif SIMULATED_DEVICES_DICT["sdp_and_mccs"]:
             LOGGER.info(
                 "Invoking TelescopeStandby command with sdp and mccs simulated"
             )
@@ -307,8 +301,8 @@ class CentralNodeWrapperLow(object):
     def _reset_health_state_for_mock_devices(self):
         """Reset Mock devices"""
         if (
-            self.simulated_devices_dict["csp_and_sdp"]
-            or self.simulated_devices_dict["all_mocks"]
+            SIMULATED_DEVICES_DICT["csp_and_sdp"]
+            or SIMULATED_DEVICES_DICT["all_mocks"]
         ):
             for mock_device in [
                 self.sdp_master,
@@ -316,13 +310,13 @@ class CentralNodeWrapperLow(object):
             ]:
                 device = DeviceProxy(mock_device)
                 device.SetDirectHealthState(HealthState.UNKNOWN)
-        elif self.simulated_devices_dict["csp_and_mccs"]:
+        elif SIMULATED_DEVICES_DICT["csp_and_mccs"]:
             for mock_device in [
                 self.csp_master,
             ]:
                 device = DeviceProxy(mock_device)
                 device.SetDirectHealthState(HealthState.UNKNOWN)
-        elif self.simulated_devices_dict["sdp_and_mccs"]:
+        elif SIMULATED_DEVICES_DICT["sdp_and_mccs"]:
             for mock_device in [
                 self.sdp_master,
             ]:
@@ -404,36 +398,8 @@ class CentralNodeWrapperLow(object):
             device_proxy = DeviceProxy(device)
             device_proxy.SetDirectState(subarray_state)
 
-    def get_simulated_devices_info(self) -> dict:
-        """
-        A method to get simulated devices present in the deployement.
-
-        return: dict
-        """
-        self.is_csp_simulated = CSP_SIMULATION_ENABLED.lower() == "true"
-        self.is_sdp_simulated = SDP_SIMULATION_ENABLED.lower() == "true"
-        self.is_mccs_simulated = MCCS_SIMULATION_ENABLED.lower() == "true"
-        return {
-            "csp_and_sdp": all(
-                [self.is_csp_simulated, self.is_sdp_simulated]
-            ),  # real MCCS enabled
-            "csp_and_mccs": all(
-                [self.is_csp_simulated, self.is_mccs_simulated]
-            ),  # real SDP enabled
-            "sdp_and_mccs": all(
-                [self.is_sdp_simulated, self.is_mccs_simulated]
-            ),  # real CSP.LMC enabled
-            "all_mocks": all(
-                [
-                    self.is_csp_simulated,
-                    self.is_sdp_simulated,
-                    self.is_mccs_simulated,
-                ]
-            ),
-        }
-
     def reset_defects_for_devices(self):
         """Resets the defects for given devices."""
-        if self.simulated_devices_dict["all_mocks"]:
+        if SIMULATED_DEVICES_DICT["all_mocks"]:
             self.csp_subarray1.SetDefective(RESET_DEFECT)
             self.sdp_subarray1.SetDefective(RESET_DEFECT)

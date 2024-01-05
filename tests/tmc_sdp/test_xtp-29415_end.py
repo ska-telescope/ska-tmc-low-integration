@@ -11,12 +11,11 @@ from tests.resources.test_harness.helpers import (
 
 
 @pytest.mark.tmc_sdp
-@pytest.mark.end
 @scenario(
     "../features/tmc_sdp/xtp-29415_end.feature",
     "End configure from SDP Subarray using TMC",
 )
-def test_tmc_sdp_end():
+def test_tmc_sdp_end(central_node_low):
     """
     Test case to verify TMC-SDP End functionality
 
@@ -25,22 +24,27 @@ def test_tmc_sdp_end():
         - "simulator_factory": fixture for SimulatorFactory class,
         which provides simulated subarray and master devices
         - "event_recorder": fixture for EventRecorder class
-        - "subarray_node_low": fixture for a TMC SubarrayNode under test
+        - "subarray_node": fixture for a TMC SubarrayNode under test
     """
+    assert central_node_low.central_node.ping() > 0
+    assert central_node_low.subarray_devices["sdp_subarray"].ping() > 0
 
 
 @given("the Telescope is in ON state")
 def telescope_is_in_on_state(central_node_low, event_recorder):
+    """Move the telescope to the ON state and verify the state change.
+
+    Args:
+        central_node_low (CentralNodeLow): An instance of the CentralNodeLow
+        class representing the central node.
+        event_recorder (EventRecorder): An instance of the EventRecorder class
+        for recording events.
+
     """
-    Move the telescope to the ON state and verify the state change.
-    """
+    central_node_low.move_to_on()
     event_recorder.subscribe_event(
         central_node_low.central_node, "telescopeState"
     )
-
-    if central_node_low.telescope_state != "ON":
-        central_node_low.move_to_on()
-
     assert event_recorder.has_change_event_occurred(
         central_node_low.central_node,
         "telescopeState",
@@ -92,7 +96,7 @@ def check_subarray_obs_state(
 def invoke_end(central_node_low, subarray_node_low, subarray_id):
     """A method to invoke End command"""
     central_node_low.set_subarray_id(subarray_id)
-    subarray_node_low.execute_transition("End")
+    subarray_node_low.end_observation("End")
 
 
 @then(
@@ -104,9 +108,6 @@ def check_sdp_subarray_obs_state(
     central_node_low, subarray_node_low, event_recorder, subarray_id
 ):
     """A method to check SDP subarray obsstates"""
-    event_recorder.subscribe_event(
-        subarray_node_low.subarray_devices["sdp_subarray"], "obsState"
-    )
     central_node_low.set_subarray_id(subarray_id)
     assert event_recorder.has_change_event_occurred(
         subarray_node_low.subarray_devices["sdp_subarray"],
@@ -120,7 +121,7 @@ def check_tmc_subarray_obs_state(
     central_node_low, subarray_node_low, event_recorder, subarray_id
 ):
     """A method to check SDP subarray obsstates"""
-    event_recorder.subscribe_event(subarray_node_low.subarray_node, "obsState")
+
     central_node_low.set_subarray_id(subarray_id)
     assert event_recorder.has_change_event_occurred(
         subarray_node_low.subarray_node,
