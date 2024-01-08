@@ -57,6 +57,9 @@ def check_subarray_is_configured(
     event_recorder.subscribe_event(
         subarray_node_low.subarray_devices["sdp_subarray"], "obsState"
     )
+    event_recorder.subscribe_event(
+        subarray_node_low.subarray_devices["sdp_subarray"], "scanID"
+    )
     event_recorder.subscribe_event(subarray_node_low.subarray_node, "obsState")
 
     # check telescopeState is ON, and fire TelescopeOn() command
@@ -104,7 +107,11 @@ def check_subarray_is_configured(
     )
 )
 def invoke_scan(
-    subarray_node_low, command_input_factory, scan_id, subarray_id
+    subarray_node_low,
+    command_input_factory,
+    scan_id,
+    subarray_id,
+    event_recorder,
 ):
     """A method to invoke Scan command"""
     input_json = prepare_json_args_for_commands(
@@ -115,6 +122,12 @@ def invoke_scan(
 
     subarray_node_low.set_subarray_id(subarray_id)
     subarray_node_low.store_scan_data(json.dumps(scan_json))
+
+    assert event_recorder.has_change_event_occurred(
+        subarray_node_low.subarray_devices["sdp_subarray"],
+        "scanID",
+        int("123"),
+    )
 
 
 @then(
