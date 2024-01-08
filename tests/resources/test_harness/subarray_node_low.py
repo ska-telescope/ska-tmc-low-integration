@@ -384,6 +384,13 @@ class SubarrayNodeWrapperLow:
             """Invoke Restart"""
             LOGGER.info("Invoking Restart on Subarray")
             self.restart_subarray()
+        elif self.obs_state == "IDLE":
+            """Invoke Release"""
+            self.release_resources_subarray()
+        elif self.obs_state == "READY":
+            """Invoke End"""
+            self.end_observation()
+            self.release_resources_subarray()
         else:
             self.force_change_of_obs_state("EMPTY")
 
