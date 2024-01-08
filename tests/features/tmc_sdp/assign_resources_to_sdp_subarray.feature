@@ -1,5 +1,8 @@
-@XTP-29292 @XTP-29227 @tmc_sdp
-Scenario: Assign resources to SDP subarray using TMC
+Feature: Default
+
+	#This BDD test performs TMC-SDP pairwise testing to verify EndScan command flow.
+    @XTP-29292 @XTP-29227 @tmc_sdp
+    Scenario: Assign resources to SDP subarray using TMC
         Given the Telescope is in ON state
         And the subarray <subarray_id> obsState is EMPTY
         When I assign resources with the <receptors> to the subarray <subarray_id>
