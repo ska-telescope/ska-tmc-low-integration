@@ -18,6 +18,14 @@ COMMAND_FAILED_WITH_EXCEPTION_OBSSTATE_IDLE = {
     "target_obsstates": [ObsState.CONFIGURING, ObsState.IDLE],
 }
 
+INTERMEDIATE_CONFIGURING_OBS_STATE_DEFECT = {
+    "enabled": True,
+    "fault_type": FaultType.STUCK_IN_INTERMEDIATE_STATE,
+    "error_message": "Device stuck in intermediate state",
+    "result": ResultCode.FAILED,
+    "intermediate_state": ObsState.CONFIGURING,
+}
+
 OBS_STATE_CONFIGURING_STUCK_DEFECT = {
     "enabled": True,
     "fault_type": FaultType.STUCK_IN_OBSTATE,

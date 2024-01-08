@@ -399,23 +399,23 @@ class SubarrayNodeWrapperLow:
         self._reset_simulator_devices()
         self._clear_command_call_and_transition_data(clear_transition=True)
 
-        if self.obs_state in ("RESOURCING", "CONFIGURING", "SCANNING"):
+        if self.subarray_node.obsState in [
+            ObsState.SCANNING,
+            ObsState.CONFIGURING,
+            ObsState.RESOURCING,
+        ]:
             """Invoke Abort and Restart"""
             LOGGER.info("Invoking Abort on Subarray")
             self.abort_subarray()
             self.restart_subarray()
-        if self.subarray_node.obsState == ObsState.READY:
-            """Invoke End command"""
-            LOGGER.info("Invoking End command on Subarray")
-            self.end_observation()
         elif self.subarray_node.obsState == ObsState.ABORTED:
             """Invoke Restart"""
             LOGGER.info("Invoking Restart on Subarray")
             self.restart_subarray()
-        elif self.obs_state == "IDLE":
+        elif self.subarray_node.obsState == ObsState.IDLE:
             """Invoke Release"""
             self.release_resources(self.release_input)
-        elif self.obs_state == "READY":
+        elif self.subarray_node.obsState == ObsState.READY:
             """Invoke End"""
             self.end_observation()
             self.release_resources(self.release_input)
@@ -424,4 +424,4 @@ class SubarrayNodeWrapperLow:
 
         # Move Subarray to OFF state
         self.move_to_off()
-        check_subarray_obs_state("EMPTY")
+        assert check_subarray_obs_state("EMPTY")
