@@ -4,7 +4,6 @@ import json
 import pytest
 from pytest_bdd import given, parsers, scenario, then, when
 from ska_tango_base.control_model import ObsState
-from tango import DevState
 
 from tests.resources.test_harness.helpers import (
     prepare_json_args_for_centralnode_commands,
@@ -31,34 +30,20 @@ def test_tmc_sdp_configure(central_node_low):
     assert central_node_low.subarray_devices["sdp_subarray"].ping() > 0
 
 
-@given("the Telescope is in ON state")
-def telescope_is_in_on_state(central_node_low, event_recorder):
-    """Move the telescope to the ON state and verify the state change.
-
-    Args:
-        central_node_low (CentralNodeLow): An instance of the CentralNodeLow
-        class representing the central node.
-        event_recorder (EventRecorder): An instance of the EventRecorder class
-        for recording events.
-
-    """
-    central_node_low.move_to_on()
-    event_recorder.subscribe_event(
-        central_node_low.central_node, "telescopeState"
-    )
-    assert event_recorder.has_change_event_occurred(
-        central_node_low.central_node,
-        "telescopeState",
-        DevState.ON,
-    )
+# @given -> ../conftest.py
 
 
-@given(parsers.parse("TMC subarray in obsState IDLE"))
+@given(parsers.parse("the subarray {subarray_id} obsState is IDLE"))
 def check_subarray_obs_state(
-    subarray_node_low, central_node_low, event_recorder, command_input_factory
+    subarray_node_low,
+    central_node_low,
+    event_recorder,
+    command_input_factory,
+    subarray_id,
 ):
     """Method to check subarray is in IDLE obstate"""
     event_recorder.subscribe_event(subarray_node_low.subarray_node, "obsState")
+    central_node_low.set_subarray_id(subarray_id)
     event_recorder.subscribe_event(
         subarray_node_low.subarray_devices.get("sdp_subarray"), "obsState"
     )
@@ -95,7 +80,6 @@ def invoke_configure(
     )
     input_json = json.loads(input_json)
     input_json["sdp"]["scan_type"] = scan_type
-    central_node_low.set_subarray_id(subarray_id)
     subarray_node_low.store_configuration_data(
         input_json=json.dumps(input_json)
     )
@@ -103,8 +87,8 @@ def invoke_configure(
 
 @then(
     parsers.parse(
-        "the SDP subarray {subarray_id} obsState is"
-        "transitioned READY obsState"
+        "the SDP subarray {subarray_id} obsState is "
+        + "transitioned to READY obsState"
     )
 )
 def check_sdp_subarray_in_ready(
@@ -139,7 +123,7 @@ def check_sdp_subarray_scan_type(subarray_node_low, event_recorder, scan_type):
 @then(
     parsers.parse(
         "the TMC subarray {subarray_id} obsState is "
-        "transitioned to READY obsState"
+        + "transitioned to READY obsState"
     )
 )
 def check_tmc_subarray_obs_state(

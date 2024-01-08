@@ -1,9 +1,9 @@
 @XTP-29227 @XTP-29336 @tmc_sdp
 Scenario: Configure a SDP subarray for a scan using TMC
 		Given the Telescope is in ON state
-		And TMC subarray in obsState IDLE
+		And the subarray <subarray_id> obsState is IDLE
 		When I configure with <scan_type> to the subarray <subarray_id>
-		Then the SDP subarray <subarray_id> obsState is transitioned READY obsState
+		Then the SDP subarray <subarray_id> obsState is transitioned to READY obsState
 		And SDP subarray scanType reflects correctly configured <scan_type>
 		And the TMC subarray <subarray_id> obsState is transitioned to READY obsState
 		Examples:

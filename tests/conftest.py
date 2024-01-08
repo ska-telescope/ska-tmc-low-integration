@@ -7,10 +7,12 @@ from os.path import dirname, join
 
 import pytest
 import tango
+from pytest_bdd import given
 from ska_ser_logging import configure_logging
 from ska_tango_testing.mock.tango.event_callback import (
     MockTangoEventCallbackGroup,
 )
+from tango import DevState
 
 from tests.resources.test_harness.central_node_low import CentralNodeWrapperLow
 from tests.resources.test_harness.central_node_with_csp_low import (
@@ -198,3 +200,25 @@ def wait_for_obsstate_state_change(
         time.sleep(1)
 
     return False
+
+
+@given("the Telescope is in ON state")
+def telescope_is_in_on_state(central_node_low, event_recorder):
+    """Move the telescope to the ON state and verify the state change.
+
+    Args:
+        central_node_low (CentralNodeLow): An instance of the CentralNodeLow
+        class representing the central node.
+        event_recorder (EventRecorder): An instance of the EventRecorder class
+        for recording events.
+
+    """
+    central_node_low.move_to_on()
+    event_recorder.subscribe_event(
+        central_node_low.central_node, "telescopeState"
+    )
+    assert event_recorder.has_change_event_occurred(
+        central_node_low.central_node,
+        "telescopeState",
+        DevState.ON,
+    )
