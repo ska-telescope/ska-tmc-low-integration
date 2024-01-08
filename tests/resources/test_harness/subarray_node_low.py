@@ -424,4 +424,4 @@ class SubarrayNodeWrapperLow:
 
         # Move Subarray to OFF state
         self.move_to_off()
-        assert check_subarray_obs_state("EMPTY")
+        check_subarray_obs_state("EMPTY")
