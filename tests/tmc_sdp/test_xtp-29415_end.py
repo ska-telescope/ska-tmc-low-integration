@@ -73,9 +73,8 @@ def check_subarray_obs_state(
 
 
 @when(parsers.parse("I issue End command to the subarray {subarray_id}"))
-def invoke_end(central_node_low, subarray_node_low, subarray_id):
+def invoke_end(subarray_node_low):
     """A method to invoke End command"""
-    central_node_low.set_subarray_id(subarray_id)
     subarray_node_low.end_observation()
 
 
@@ -84,11 +83,8 @@ def invoke_end(central_node_low, subarray_node_low, subarray_id):
         "the SDP subarray {subarray_id} transitions to IDLE obsState"
     )
 )
-def check_sdp_subarray_obs_state(
-    central_node_low, subarray_node_low, event_recorder, subarray_id
-):
+def check_sdp_subarray_obs_state(subarray_node_low, event_recorder):
     """A method to check SDP subarray obsstates"""
-    central_node_low.set_subarray_id(subarray_id)
     assert event_recorder.has_change_event_occurred(
         subarray_node_low.subarray_devices["sdp_subarray"],
         "obsState",
@@ -97,12 +93,9 @@ def check_sdp_subarray_obs_state(
 
 
 @then(parsers.parse("TMC subarray {subarray_id} transitions to IDLE obsState"))
-def check_tmc_subarray_obs_state(
-    central_node_low, subarray_node_low, event_recorder, subarray_id
-):
+def check_tmc_subarray_obs_state(subarray_node_low, event_recorder):
     """A method to check SDP subarray obsstates"""
 
-    central_node_low.set_subarray_id(subarray_id)
     assert event_recorder.has_change_event_occurred(
         subarray_node_low.subarray_node,
         "obsState",
