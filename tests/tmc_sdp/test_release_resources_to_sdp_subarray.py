@@ -12,7 +12,6 @@ from tests.resources.test_support.common_utils.tmc_helpers import (
 )
 
 
-@pytest.mark.test
 @pytest.mark.tmc_sdp
 @scenario(
     "../features/tmc_sdp/release_resources_to_sdp_subarray.feature",

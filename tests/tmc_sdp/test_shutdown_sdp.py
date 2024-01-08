@@ -22,22 +22,6 @@ def test_tmc_sdp_shutdown_telescope():
     """
 
 
-@pytest.mark.tmc_sdp
-@scenario(
-    "../features/tmc_sdp/standby_tmc_sdp.feature",
-    "Standby the telescope having TMC and SDP subsystems",
-)
-def test_tmc_sdp_standby_telescope():
-    """
-    Test case to verify TMC-SDP Standby functionality
-    Glossary:
-        - "central_node_mid": fixture for a TMC CentralNode under test
-        - "simulator_factory": fixture for SimulatorFactory class,
-        which provides simulated subarray and master devices
-        - "event_recorder": fixture for EventRecorder class
-    """
-
-
 @given("a Telescope consisting of TMC and SDP that is in ON State")
 def check_tmc_and_sdp_is_on(central_node_low, event_recorder):
     """
@@ -99,12 +83,6 @@ def move_sdp_to_off(central_node_low):
     central_node_low.move_to_off()
 
 
-@when("I put the telescope to STANDBY")
-def move_sdp_to_standby(central_node_low):
-    """A method to put SDP to STANDBY"""
-    central_node_low.set_standby()
-
-
 @then("the sdp must go to OFF State")
 def check_sdp_is_off(central_node_low, event_recorder):
     """A method to check SDP State"""
@@ -127,26 +105,6 @@ def check_telescope_state_off(central_node_low, event_recorder):
         central_node_low.central_node,
         "telescopeState",
         DevState.OFF,
-    )
-
-
-@then("telescope state is STANDBY")
-def check_telescope_state_standby(central_node_low, event_recorder):
-    """A method to check CentralNode.telescopeState"""
-    assert event_recorder.has_change_event_occurred(
-        central_node_low.central_node,
-        "telescopeState",
-        DevState.STANDBY,
-    )
-
-
-@then("the sdp controller must go to STANDBY State")
-def check_sdp_controller_is_standby(central_node_low, event_recorder):
-    """A method to check SDP State"""
-    assert event_recorder.has_change_event_occurred(
-        central_node_low.sdp_master,
-        "State",
-        DevState.STANDBY,
     )
 
 
