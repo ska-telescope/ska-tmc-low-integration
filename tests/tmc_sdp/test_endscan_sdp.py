@@ -90,6 +90,12 @@ def check_subarray_is_configured(
         assign_input_json=assign_input_json,
         configure_input_json=configure_input_json,
     )
+    # scanID set from scan_low json
+    assert event_recorder.has_change_event_occurred(
+        subarray_node_low.subarray_devices["sdp_subarray"],
+        "scanID",
+        int("1"),
+    )
 
     assert event_recorder.has_change_event_occurred(
         subarray_node_low.subarray_devices["sdp_subarray"],
@@ -121,12 +127,6 @@ def check_sdp_subarray_obs_State(subarray_node_low, event_recorder):
         subarray_node_low.subarray_devices["sdp_subarray"],
         "obsState",
         ObsState.READY,
-    )
-
-    assert event_recorder.has_change_event_occurred(
-        subarray_node_low.subarray_devices["sdp_subarray"],
-        "scanID",
-        int("0"),
     )
 
 
