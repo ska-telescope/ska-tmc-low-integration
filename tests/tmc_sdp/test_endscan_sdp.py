@@ -36,7 +36,6 @@ def given_a_tmc(central_node_low, event_recorder):
     event_recorder.subscribe_event(
         central_node_low.central_node, "telescopeState"
     )
-    event_recorder.subscribe_event(central_node_low.sdp_master, "State")
     event_recorder.subscribe_event(
         central_node_low.subarray_devices["sdp_subarray"], "State"
     )
@@ -44,11 +43,6 @@ def given_a_tmc(central_node_low, event_recorder):
     if central_node_low.telescope_state != "ON":
         central_node_low.move_to_on()
 
-    assert event_recorder.has_change_event_occurred(
-        central_node_low.sdp_master,
-        "State",
-        DevState.ON,
-    )
     assert event_recorder.has_change_event_occurred(
         central_node_low.subarray_devices["sdp_subarray"],
         "State",

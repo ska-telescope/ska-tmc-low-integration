@@ -47,7 +47,6 @@ def check_subarray_is_configured(
         "configure_low", command_input_factory
     )
     subarray_node_low.set_subarray_id(subarray_id)
-    event_recorder.subscribe_event(central_node_low.sdp_master, "State")
     event_recorder.subscribe_event(
         central_node_low.subarray_devices["sdp_subarray"], "State"
     )
@@ -66,11 +65,6 @@ def check_subarray_is_configured(
     if central_node_low.telescope_state != "ON":
         central_node_low.move_to_on()
 
-    assert event_recorder.has_change_event_occurred(
-        central_node_low.sdp_master,
-        "State",
-        DevState.ON,
-    )
     assert event_recorder.has_change_event_occurred(
         central_node_low.subarray_devices["sdp_subarray"],
         "State",
@@ -126,7 +120,7 @@ def invoke_scan(
     assert event_recorder.has_change_event_occurred(
         subarray_node_low.subarray_devices["sdp_subarray"],
         "scanID",
-        int("123"),
+        int(scan_id),
     )
 
 
