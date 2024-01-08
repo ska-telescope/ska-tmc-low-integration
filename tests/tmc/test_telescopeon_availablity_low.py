@@ -6,6 +6,9 @@ are manually deleted.
 import pytest
 from tango import DeviceProxy
 
+from tests.resources.test_support.common_utils.tmc_helpers import (
+    prepare_json_args_for_centralnode_commands,
+)
 from tests.resources.test_support.constant_low import (
     centralnode,
     tmc_subarraynode1,
@@ -22,10 +25,12 @@ from tests.resources.test_support.constant_low import (
 
 @pytest.mark.skip(reason="Unskip after repository setup")
 @pytest.mark.SKA_low
-def test_assign(json_factory):
+def test_assign(command_input_factory):
     """AssignResources  is executed while pods are deleted."""
 
-    assign_json = json_factory("command_assign_resource_low")
+    assign_json = prepare_json_args_for_centralnode_commands(
+        "command_assign_resources_low", command_input_factory
+    )
     central_node = DeviceProxy(centralnode)
     _, message = central_node.AssignResources(assign_json)
     assert "Subarray ska_low/tm_subarray_node/1 is not available" in str(
@@ -35,10 +40,12 @@ def test_assign(json_factory):
 
 @pytest.mark.skip(reason="Unskip after repository setup")
 @pytest.mark.SKA_low
-def test_release(json_factory):
+def test_release(command_input_factory):
     """ReleaseResources is executed while pods are deleted."""
 
-    release_json = json_factory("command_release_resource_low")
+    release_json = prepare_json_args_for_centralnode_commands(
+        "command_release_resources_low", command_input_factory
+    )
     central_node = DeviceProxy(centralnode)
     _, message = central_node.ReleaseResources(release_json)
 
@@ -63,9 +70,11 @@ def test_telescope_on():
 
 @pytest.mark.skip(reason="Unskip after repository setup")
 @pytest.mark.SKA_low
-def test_assign_sn_entrypoint_low(json_factory):
+def test_assign_sn_entrypoint_low(command_input_factory):
     """AssignResources is executed while pods are deleted."""
-    assign_json = json_factory("command_assign_resource_low")
+    assign_json = prepare_json_args_for_centralnode_commands(
+        "command_release_resources_low", command_input_factory
+    )
 
     tmcsubarraynode1 = DeviceProxy(tmc_subarraynode1)
     with pytest.raises(Exception) as info:

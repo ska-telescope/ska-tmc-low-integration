@@ -17,6 +17,7 @@ from tests.resources.test_support.common_utils.telescope_controls import (
 )
 from tests.resources.test_support.common_utils.tmc_helpers import (
     TmcHelper,
+    prepare_json_args_for_centralnode_commands,
     tear_down,
 )
 from tests.resources.test_support.constant_low import (
@@ -39,11 +40,15 @@ from tests.resources.test_support.constant_low import (
 @pytest.mark.skip(reason="Unskip after repository setup")
 @pytest.mark.SKA_low
 def test_recover_subarray_stuck_in_resourcing_low(
-    json_factory, change_event_callbacks
+    command_input_factory, change_event_callbacks
 ):
     """AssignResources and ReleaseResources is executed."""
-    assign_json = json_factory("command_assign_resource_low")
-    release_json = json_factory("command_release_resource_low")
+    assign_json = prepare_json_args_for_centralnode_commands(
+        "command_assign_resources_low", command_input_factory
+    )
+    release_json = prepare_json_args_for_centralnode_commands(
+        "command_release_resources_low", command_input_factory
+    )
     try:
         telescope_control = BaseTelescopeControl()
         tmc_helper = TmcHelper(centralnode, tmc_subarraynode1)
@@ -140,11 +145,15 @@ def test_recover_subarray_stuck_in_resourcing_low(
 )
 @pytest.mark.SKA_low
 def test_recover_subarray_stuck_in_resourcing_with_sdp_empty_with_abort(
-    json_factory, change_event_callbacks
+    command_input_factory, change_event_callbacks
 ):
     """AssignResources and ReleaseResources is executed."""
-    assign_json = json_factory("command_assign_resource_low")
-    release_json = json_factory("command_release_resource_low")
+    assign_json = prepare_json_args_for_centralnode_commands(
+        "command_assign_resources_low", command_input_factory
+    )
+    release_json = prepare_json_args_for_centralnode_commands(
+        "command_release_resources_low", command_input_factory
+    )
     try:
         telescope_control = BaseTelescopeControl()
         tmc_helper = TmcHelper(centralnode, tmc_subarraynode1)
@@ -262,11 +271,15 @@ def test_recover_subarray_stuck_in_resourcing_with_sdp_empty_with_abort(
 )
 @pytest.mark.SKA_low
 def test_recover_subarray_stuck_in_resourcing_with_csp_empty_with_abort(
-    json_factory, change_event_callbacks
+    command_input_factory, change_event_callbacks
 ):
     """AssignResources and ReleaseResources is executed."""
-    assign_json = json_factory("command_assign_resource_low")
-    release_json = json_factory("command_release_resource_low")
+    assign_json = prepare_json_args_for_centralnode_commands(
+        "command_assign_resources_low", command_input_factory
+    )
+    release_json = prepare_json_args_for_centralnode_commands(
+        "command_release_resources_low", command_input_factory
+    )
     try:
         telescope_control = BaseTelescopeControl()
         tmc_helper = TmcHelper(centralnode, tmc_subarraynode1)
@@ -384,11 +397,15 @@ def test_recover_subarray_stuck_in_resourcing_with_csp_empty_with_abort(
 )
 @pytest.mark.SKA_low
 def test_recover_subarray_stuck_in_resourcing_with_abort_low(
-    json_factory, change_event_callbacks
+    command_input_factory, change_event_callbacks
 ):
     """AssignResources and ReleaseResources is executed."""
-    assign_json = json_factory("command_assign_resource_low")
-    release_json = json_factory("command_release_resource_low")
+    assign_json = prepare_json_args_for_centralnode_commands(
+        "command_assign_resources_low", command_input_factory
+    )
+    release_json = prepare_json_args_for_centralnode_commands(
+        "command_release_resources_low", command_input_factory
+    )
     try:
         telescope_control = BaseTelescopeControl()
         tmc_helper = TmcHelper(centralnode, tmc_subarraynode1)
