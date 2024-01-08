@@ -10,6 +10,7 @@ from tests.resources.test_harness.helpers import (
 )
 
 
+@pytest.mark.aki
 @pytest.mark.tmc_sdp
 @scenario(
     "../features/tmc_sdp/tmc_sdp_end_scan.feature",
@@ -87,6 +88,9 @@ def check_subarray_is_configured(
     )
     event_recorder.subscribe_event(subarray_node_low.subarray_node, "obsState")
 
+    event_recorder.subscribe_event(
+        subarray_node_low.subarray_devices["sdp_subarray"], "scanID"
+    )
     # execute set of commands and bring SubarrayNode to SCANNING obsState
     subarray_node_low.force_change_of_obs_state(
         "SCANNING",
@@ -124,6 +128,12 @@ def check_sdp_subarray_obs_State(subarray_node_low, event_recorder):
         subarray_node_low.subarray_devices["sdp_subarray"],
         "obsState",
         ObsState.READY,
+    )
+
+    assert event_recorder.has_change_event_occurred(
+        subarray_node_low.subarray_devices["sdp_subarray"],
+        "scanID",
+        int("0"),
     )
 
 
