@@ -151,14 +151,14 @@ class SubarrayNodeWrapperLow:
         self._obs_state = value
 
     @sync_configure(device_dict=device_dict_low)
-    def store_configuration_data(self, input_string: str):
+    def store_configuration_data(self, input_json: str):
         """Invoke configure command on subarray Node
         Args:
             input_string (str): config input json
         Returns:
             (result, message): result, message tuple
         """
-        result, message = self.subarray_node.Configure(input_string)
+        result, message = self.subarray_node.Configure(input_json)
         LOGGER.info("Invoked Configure on SubarrayNode")
         return result, message
 
