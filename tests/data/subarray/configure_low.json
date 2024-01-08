@@ -40,7 +40,7 @@
   },
   "sdp": {
     "interface": "https://schema.skao.int/ska-sdp-configure/0.4",
-    "scan_type": "science_A"
+    "scan_type": "target:a"
   },
   "csp": {
     "interface": "https://schema.skao.int/ska-low-csp-configurescan/0.0",

@@ -17,7 +17,7 @@ and Telescope Data Management (Historical data and Real time data).
 These high level functions are again divided into lower level functions to perform the specific functionalities.
 
 The TMC has a hierarchy of control nodes for Low-
-Central Node, Subarray Node, SDP Leaf Nodes, CSP Leaf Nodes, MCCS Leaf Nodes, Dish Leaf Nodes.
+Central Node, Subarray Node, SDP Leaf Nodes, CSP Leaf Nodes, MCCS Leaf Nodes
 
 The components(CentralNode, SubarrayNode, Leaf Nodes) of the TMC system are integrated in the `TMC integration repository
 <https://gitlab.com/ska-telescope/ska-tmc/ska-tmc-low-integration>`_, which contains

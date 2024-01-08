@@ -23,5 +23,8 @@ To test with tmc_sdp execute the command `make k8s-test MARK=tmc_sdp SDP_SIMULAT
 
 * ``Standby`` -  Testing StandBy command on TMC with Real-SDP in place.
     
+* ``Scan`` - Testing Scan command on TMC with Real-SDP in place.
+
+* ``EndScan`` - Testing EndScan command on TMC with Real-SDP in place.
 
 
