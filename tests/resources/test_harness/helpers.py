@@ -39,6 +39,9 @@ configure_logging(logging.DEBUG)
 LOGGER = logging.getLogger(__name__)
 TIMEOUT = 20
 EB_PB_ID_LENGTH = 16
+SDP_SIMULATION_ENABLED = os.getenv("SDP_SIMULATION_ENABLED")
+CSP_SIMULATION_ENABLED = os.getenv("CSP_SIMULATION_ENABLED")
+MCCS_SIMULATION_ENABLED = os.getenv("MCCS_SIMULATION_ENABLED")
 
 
 def check_subarray_obs_state(obs_state=None, timeout=50):
@@ -424,3 +427,35 @@ def update_eb_pb_ids(input_json: str) -> str:
         pb["pb_id"] = generate_id("pb-test")
     input_json = json.dumps(input_json)
     return input_json
+
+
+def get_simulated_devices_info() -> dict:
+    """
+    A method to get simulated devices present in the deployement.
+
+    return: dict
+    """
+    is_csp_simulated = CSP_SIMULATION_ENABLED.lower() == "true"
+    is_sdp_simulated = SDP_SIMULATION_ENABLED.lower() == "true"
+    is_mccs_simulated = MCCS_SIMULATION_ENABLED.lower() == "true"
+    return {
+        "csp_and_sdp": all(
+            [is_csp_simulated, is_sdp_simulated]
+        ),  # real MCCS enabled
+        "csp_and_mccs": all(
+            [is_csp_simulated, is_mccs_simulated]
+        ),  # real SDP enabled
+        "sdp_and_mccs": all(
+            [is_sdp_simulated, is_mccs_simulated]
+        ),  # real CSP.LMC enabled
+        "all_mocks": all(
+            [
+                is_csp_simulated,
+                is_sdp_simulated,
+                is_mccs_simulated,
+            ]
+        ),
+    }
+
+
+SIMULATED_DEVICES_DICT = get_simulated_devices_info()

@@ -175,22 +175,37 @@ class CentralNodeWrapperLow(object):
             )
             self.central_node.TelescopeOff()
 
+    def _clear_command_call_and_transition_data(self, clear_transition=False):
+        """Clears the command call data"""
+        if SIMULATED_DEVICES_DICT["all_mocks"]:
+            for sim_device in [
+                low_csp_subarray1,
+                low_sdp_subarray1,
+            ]:
+                device = DeviceProxy(sim_device)
+                device.ClearCommandCallInfo()
+                if clear_transition:
+                    device.ResetTransitions()
+
     def tear_down(self):
         """Handle Tear down of central Node"""
+        LOGGER.info("Calling Tear down for Central node.")
         # reset HealthState.UNKNOWN for mock devices
-        LOGGER.info("Calling Tear down for central node.")
         self._reset_health_state_for_mock_devices()
         self.reset_defects_for_devices()
-        if self.subarray_node.obsState == ObsState.IDLE:
-            LOGGER.info("Calling ReleaseResources on CentralNode")
-            self.invoke_release_resources(self.release_input)
-        elif self.subarray_node.obsState == ObsState.RESOURCING:
+        if self.subarray_node.obsState in [
+            ObsState.RESOURCING,
+        ]:
             LOGGER.info("Calling Abort and Restart on SubarrayNode")
             self.subarray_abort()
             self.subarray_restart()
         elif self.subarray_node.obsState == ObsState.ABORTED:
             self.subarray_restart()
+        elif self.subarray_node.obsState == ObsState.IDLE:
+            LOGGER.info("Calling Release Resource on centralnode")
+            self.invoke_release_resources(self.release_input)
         self.move_to_off()
+        self._clear_command_call_and_transition_data(clear_transition=True)
 
     def move_to_on(self):
         """

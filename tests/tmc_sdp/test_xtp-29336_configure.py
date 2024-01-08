@@ -103,7 +103,8 @@ def invoke_configure(
 
 @then(
     parsers.parse(
-        "the SDP subarray {subarray_id} obsState is transitioned READY"
+        "the SDP subarray {subarray_id} obsState is"
+        "transitioned READY obsState"
     )
 )
 def check_sdp_subarray_in_ready(
@@ -137,7 +138,8 @@ def check_sdp_subarray_scan_type(subarray_node_low, event_recorder, scan_type):
 
 @then(
     parsers.parse(
-        "the TMC subarray {subarray_id} obsState is transitioned to READY"
+        "the TMC subarray {subarray_id} obsState is "
+        "transitioned to READY obsState"
     )
 )
 def check_tmc_subarray_obs_state(

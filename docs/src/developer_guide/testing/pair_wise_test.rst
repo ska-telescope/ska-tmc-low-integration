@@ -13,7 +13,7 @@ Commands implemented
 ^^^^^^^^^^^^^^^^^^^^
 To test with tmc_sdp execute the command `make k8s-test MARK=tmc_sdp SDP_SIMULATION_ENABLED=false`.
 
-* ``ON`` -               Testing On command on TMC with Real-SDP in place.
+* ``ON`` - Testing On command on TMC with Real-SDP in place.
     
 * ``Off`` - Testing Off command on TMC  with Real-SDP in place.
 
@@ -22,6 +22,13 @@ To test with tmc_sdp execute the command `make k8s-test MARK=tmc_sdp SDP_SIMULAT
 * ``ReleaseResources`` - Testing ReleaseResources command on TMC with Real-SDP in place.
 
 * ``Standby`` -  Testing StandBy command on TMC with Real-SDP in place.
+
+* ``Configure``  -  Testing Configure command on TMC with real SDP controller and SDP Subarrays and mocked/simulated CSP and Mccs subsystems.
+
+* ``End`` -  Testing End command on TMC with real SDP controller and SDP Subarrays and mocked/simulated CSP and Mccs subsystems.
     
+* ``Scan`` - Testing Scan command on TMC with Real-SDP in place.
+
+* ``EndScan`` - Testing EndScan command on TMC with Real-SDP in place.
 
 
