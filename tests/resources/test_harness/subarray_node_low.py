@@ -31,7 +31,7 @@ from tests.resources.test_harness.utils.constant import (
 )
 from tests.resources.test_harness.utils.enums import SubarrayObsState
 from tests.resources.test_harness.utils.obs_state_resetter_low import (
-    ObsStateResetterFactoryLow,
+    ObsStateResetterFactory,
 )
 from tests.resources.test_harness.utils.sync_decorators import (
     sync_abort,
@@ -286,7 +286,7 @@ class SubarrayNodeWrapperLow:
         Args:
             dest_state_name (str): Destination obsState
         """
-        factory_obj = ObsStateResetterFactoryLow()
+        factory_obj = ObsStateResetterFactory()
         obs_state_resetter = factory_obj.create_obs_state_resetter(
             dest_state_name, self
         )
@@ -350,14 +350,6 @@ class SubarrayNodeWrapperLow:
                     device.ResetTransitions()
         else:
             LOGGER.info("Devices deployed are real")
-
-        # for sim_device in [
-        #     low_sdp_subarray1,
-        # ]:
-        #     device = DeviceProxy(sim_device)
-        #     device.ClearCommandCallInfo()
-        #     if clear_transition:
-        #         device.ResetTransitions()
 
     def tear_down(self):
         """Tear down after each test run"""
