@@ -18,7 +18,7 @@ from tests.resources.test_support.common_utils.tmc_helpers import (
 # done
 
 
-@pytest.mark.skip(reason="Unskip after repository setup")
+
 @pytest.mark.SKA_low
 def test_assign(command_input_factory, central_node_low):
     """AssignResources  is executed while pods are deleted."""
@@ -32,7 +32,7 @@ def test_assign(command_input_factory, central_node_low):
     )
 
 
-@pytest.mark.skip(reason="Unskip after repository setup")
+
 @pytest.mark.SKA_low
 def test_release(command_input_factory, central_node_low):
     """ReleaseResources is executed while pods are deleted."""
@@ -47,7 +47,7 @@ def test_release(command_input_factory, central_node_low):
     )
 
 
-@pytest.mark.skip(reason="Unskip after repository setup")
+
 @pytest.mark.SKA_low
 def test_telescope_on(central_node_low):
     """On Command  is executed while pods are deleted."""
@@ -59,7 +59,7 @@ def test_telescope_on(central_node_low):
     assert "not available" in str(info.value)
 
 
-@pytest.mark.skip(reason="Unskip after repository setup")
+
 @pytest.mark.SKA_low
 def test_assign_sn_entrypoint_low(command_input_factory, central_node_low):
     """AssignResources is executed while pods are deleted."""
@@ -72,7 +72,6 @@ def test_assign_sn_entrypoint_low(command_input_factory, central_node_low):
     assert "Tmc Subarray is not available" in str(info.value)
 
 
-@pytest.mark.skip(reason="Unskip after repository setup")
 @pytest.mark.SKA_low
 def test_release_sn_entrypoint_low(central_node_low):
     """ReleaseResources is executed while pods are deleted."""
