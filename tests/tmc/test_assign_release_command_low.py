@@ -67,10 +67,10 @@ def test_assign_release_timeout_csp(
         )
 
         # Invoke TelescopeOn() command on TMC
-        central_node_low.TelescopeOn()
+        central_node_low.move_to_on()
 
         # Verify State transitions after TelescopeOn
-        assert telescope_control.is_in_valid_state(
+        assert central_node_low.is_in_valid_state(
             DEVICE_STATE_ON_INFO, "State"
         )
 

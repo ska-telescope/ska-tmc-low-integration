@@ -178,11 +178,11 @@ def invalid_command_rejection(invalid_json):
 
 
 @then("TMC subarray remains in IDLE obsState")
-def tmc_status():
+def tmc_status(central_node_low):
     """Ensure that the TMC subarray remains in the 'IDLE' observation state
     after rejection."""
     # Verify obsState transitions
-    assert telescope_control.is_in_valid_state(
+    assert central_node_low.is_in_valid_state(
         DEVICE_OBS_STATE_IDLE_INFO, "obsState"
     )
 
@@ -206,7 +206,7 @@ def tmc_accepts_next_commands(central_node_low, command_input_factory):
         # Invoke Configure() Command on TMC
         LOGGER.info("Invoking Configure command on TMC SubarrayNode")
         central_node_low.perform_action("configure", configure_json)
-        assert telescope_control.is_in_valid_state(
+        assert central_node_low.is_in_valid_state(
             DEVICE_OBS_STATE_READY_INFO, "obsState"
         )
         assert central_node_low.is_in_valid_state(
@@ -218,23 +218,21 @@ def tmc_accepts_next_commands(central_node_low, command_input_factory):
         tmc_helper.end(**ON_OFF_DEVICE_COMMAND_DICT)
 
         #  Verify obsState is IDLE
-        assert telescope_control.is_in_valid_state(
+        assert central_node_low.is_in_valid_state(
             DEVICE_OBS_STATE_IDLE_INFO, "obsState"
         )
 
         LOGGER.info("Invoking ReleaseResources on TMC")
-        tmc_helper.invoke_releaseResources(
-            release_json, **ON_OFF_DEVICE_COMMAND_DICT
-        )
+        central_node_low.invoke_release_resources(release_json)
 
-        assert telescope_control.is_in_valid_state(
+        assert central_node_low.is_in_valid_state(
             DEVICE_OBS_STATE_EMPTY_INFO, "obsState"
         )
 
         LOGGER.info("Invoking Telescope Standby on TMC")
         tmc_helper.set_to_standby(**ON_OFF_DEVICE_COMMAND_DICT)
 
-        assert telescope_control.is_in_valid_state(
+        assert central_node_low.is_in_valid_state(
             DEVICE_STATE_STANDBY_INFO, "State"
         )
         LOGGER.info("Tear Down complete. Telescope is in Standby State")
