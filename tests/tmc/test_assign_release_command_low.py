@@ -148,7 +148,7 @@ def test_assign_release_timeout_sdp(
         central_node_low.TelescopeOn()
 
         # Verify State transitions after TelescopeOn
-        assert telescope_control.is_in_valid_state(
+        assert central_node_low.is_in_valid_state(
             DEVICE_STATE_ON_INFO, "State"
         )
         # Invoke AssignResources() Command on TMC
@@ -234,7 +234,7 @@ def test_release_exception_propagation(
         central_node_low.TelescopeOn()
 
         # Verify State transitions after TelescopeOn
-        assert telescope_control.is_in_valid_state(
+        assert central_node_low.is_in_valid_state(
             DEVICE_STATE_ON_INFO, "State"
         )
 
@@ -249,10 +249,10 @@ def test_release_exception_propagation(
         )
 
         central_node_low.store_resources(assign_json)
-        assert telescope_control.is_in_valid_state(
+        assert central_node_low.is_in_valid_state(
             DEVICE_OBS_STATE_IDLE_INFO, "obsState"
         )
-        assert telescope_control.is_in_valid_state(
+        assert central_node_low.is_in_valid_state(
             DEVICE_STATE_ON_INFO, "State"
         )
         # Invoke AssignResources() Command on TMC
@@ -310,7 +310,7 @@ def test_release_exception_propagation(
         central_node_low.central_node.set_to_standby(
             **ON_OFF_DEVICE_COMMAND_DICT
         )
-        assert telescope_control.is_in_valid_state(
+        assert central_node_low.is_in_valid_state(
             DEVICE_STATE_STANDBY_INFO, "State"
         )
 
@@ -320,8 +320,8 @@ def test_release_exception_propagation(
 
 
 @pytest.mark.SKA_low
-def test_health_check_low():
+def test_health_check_low(central_node_low):
     """Test health state check for low"""
-    assert telescope_control.is_in_valid_state(
+    assert central_node_low.is_in_valid_state(
         DEVICE_HEALTH_STATE_OK_INFO, "healthState"
     )
