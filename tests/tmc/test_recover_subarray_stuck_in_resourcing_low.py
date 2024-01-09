@@ -40,7 +40,7 @@ from tests.resources.test_support.constant_low import (
 @pytest.mark.skip(reason="Unskip after repository setup")
 @pytest.mark.SKA_low
 def test_recover_subarray_stuck_in_resourcing_low(
-    command_input_factory, change_event_callbacks
+    command_input_factory, change_event_callbacks, central_node_low
 ):
     """AssignResources and ReleaseResources is executed."""
     assign_json = prepare_json_args_for_centralnode_commands(
@@ -54,12 +54,10 @@ def test_recover_subarray_stuck_in_resourcing_low(
         tmc_helper = TmcHelper(centralnode, tmc_subarraynode1)
 
         # Verify Telescope is Off/Standby
-        assert telescope_control.is_in_valid_state(
-            DEVICE_STATE_STANDBY_INFO, "State"
-        )
+        assert central_node_low.state(DEVICE_STATE_STANDBY_INFO, "State")
 
         # Invoke TelescopeOn() command on TMC
-        tmc_helper.set_to_on(**ON_OFF_DEVICE_COMMAND_DICT)
+        central_node_low.move_to_on(**ON_OFF_DEVICE_COMMAND_DICT)
         LOGGER.info("TelescopeOn command is invoked successfully")
 
         # Verify State transitions after TelescopeOn#

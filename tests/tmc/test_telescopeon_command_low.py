@@ -21,14 +21,14 @@ from tests.resources.test_support.constant_low import (
 
 @pytest.mark.SKA_low
 @pytest.mark.skip(reason="Unskip after repository setup")
-def test_telescope_on():
+def test_telescope_on(central_node_low):
     """TelescopeOn() is executed."""
     try:
         telescope_control = BaseTelescopeControl()
         tmc_helper = TmcHelper(centralnode, tmc_subarraynode1)
 
         # Verify Telescope is Off/Standby
-        assert telescope_control.is_in_valid_state(
+        assert central_node_low.is_in_valid_state(
             DEVICE_STATE_STANDBY_INFO, "State"
         )
         LOGGER.info("Starting up the Telescope")
