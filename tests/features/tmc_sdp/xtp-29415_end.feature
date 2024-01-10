@@ -1,6 +1,6 @@
 Feature: Default
 
-	#This BDD test performs TMC-SDP pairwise testing to verify EndScan command flow.
+	#This BDD test performs TMC-SDP pairwise testing to verify End command flow.
 	@XTP-29227 @XTP-29415 @tmc_sdp
 		Scenario: End configure from SDP Subarray using TMC
 		Given the Telescope is in ON state

@@ -1,6 +1,6 @@
 Feature: Default
 
-	#This BDD test performs TMC-SDP pairwise testing to verify EndScan command flow.
+	#This BDD test performs TMC-SDP pairwise testing to verify Assign Resources command flow.
     @XTP-29292 @XTP-29227 @tmc_sdp
     Scenario: Assign resources to SDP subarray using TMC
         Given the Telescope is in ON state

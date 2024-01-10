@@ -1,6 +1,6 @@
 Feature: Default
 
-	#This BDD test performs TMC-SDP pairwise testing to verify EndScan command flow.
+	#This BDD test performs TMC-SDP pairwise testing to verify Release Resources command flow.
     @XTP-29291 @XTP-29227 @tmc_sdp
     Scenario: Release resources from SDP Subarray using TMC
         Given a TMC and SDP

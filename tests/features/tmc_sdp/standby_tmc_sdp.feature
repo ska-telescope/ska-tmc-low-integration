@@ -1,6 +1,6 @@
 Feature: Default
 
-	#This BDD test performs TMC-SDP pairwise testing to verify EndScan command flow.
+	#This BDD test performs TMC-SDP pairwise testing to verify Standby command flow.
     @XTP-29234 @XTP-29227
     Scenario: Standby the telescope having TMC and SDP subsystems
         Given a Telescope consisting of TMC and SDP that is in ON State
