@@ -1,15 +1,16 @@
 """Test TMC-SDP Abort functionality in RESOURCING obsState"""
+
 import pytest
 from pytest_bdd import given, parsers, scenario, then, when
 from ska_control_model import ObsState
 from tango import DevState
-import json
+
 from tests.resources.test_harness.helpers import (
-    update_eb_pb_ids,
     prepare_json_args_for_centralnode_commands,
+    update_eb_pb_ids,
 )
 
-@pytest.mark.test1
+
 @pytest.mark.tmc_sdp
 @scenario(
     "../features/tmc_sdp/abort_resourcing.feature",
@@ -23,11 +24,7 @@ def test_tmc_sdp_abort_stuck_in_resourcing(central_node_low):
     assert central_node_low.subarray_devices["sdp_subarray"].ping() > 0
 
 
-@given(
-    parsers.parse(
-        "TMC and SDP subarray busy assigning resources"
-    )
-)
+@given(parsers.parse("TMC and SDP subarray busy assigning resources"))
 def telescope_is_in_resourcing_obsstate(
     central_node_low, event_recorder, command_input_factory
 ):
@@ -44,7 +41,7 @@ def telescope_is_in_resourcing_obsstate(
     assign_input_json = prepare_json_args_for_centralnode_commands(
         "assign_resources_low", command_input_factory
     )
-    input_json=update_eb_pb_ids(assign_input_json)
+    input_json = update_eb_pb_ids(assign_input_json)
     central_node_low.perform_action("AssignResources", input_json)
 
     event_recorder.subscribe_event(
@@ -71,14 +68,8 @@ def abort_is_invoked(central_node_low):
     central_node_low.subarray_abort()
 
 
-@then(
-    parsers.parse(
-        "the SDP subarray should go into an aborted obsstate"
-    )
-)
-def sdp_subarray_is_in_aborted_obsstate(
-    central_node_low, event_recorder
-):
+@then(parsers.parse("the SDP subarray should go into an aborted obsstate"))
+def sdp_subarray_is_in_aborted_obsstate(central_node_low, event_recorder):
     """
     Method to check SDP subarray is in ABORTED obsstate
     """
@@ -89,12 +80,8 @@ def sdp_subarray_is_in_aborted_obsstate(
     )
 
 
-@then(
-    "the TMC subarray obsState transitions to ABORTED"
-)
-def tmc_subarray_is_in_aborted_obsstate(
-    central_node_low, event_recorder
-):
+@then("the TMC subarray obsState transitions to ABORTED")
+def tmc_subarray_is_in_aborted_obsstate(central_node_low, event_recorder):
     """
     Method to check if TMC subarray is in ABORTED obsstate
     """
