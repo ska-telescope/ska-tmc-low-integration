@@ -11,7 +11,6 @@ from tests.resources.test_harness.helpers import (
 )
 
 
-@pytest.mark.test1
 @pytest.mark.tmc_sdp
 @scenario(
     "../features/tmc_sdp/abort_resourcing_tmc_sdp.feature",
