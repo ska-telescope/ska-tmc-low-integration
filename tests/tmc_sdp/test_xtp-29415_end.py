@@ -10,7 +10,6 @@ from tests.resources.test_harness.helpers import (
 
 
 @pytest.mark.tmc_sdp
-@pytest.mark.test
 @scenario(
     "../features/tmc_sdp/xtp-29415_end.feature",
     "End configure from SDP Subarray using TMC",
