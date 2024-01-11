@@ -1,7 +1,7 @@
 """Test TMC-SDP Abort functionality in RESOURCING obsState"""
 
 import pytest
-from pytest_bdd import given, parsers, scenario, then, when
+from pytest_bdd import given, scenario, then, when
 from ska_control_model import ObsState
 from tango import DevState
 
@@ -11,10 +11,11 @@ from tests.resources.test_harness.helpers import (
 )
 
 
+@pytest.mark.test1
 @pytest.mark.tmc_sdp
 @scenario(
-    "../features/tmc_sdp/abort_resourcing.feature",
-    "Abort configuring SDP using TMC",
+    "../features/tmc_sdp/abort_resourcing_tmc_sdp.feature",
+    "Abort assigning using TMC",
 )
 def test_tmc_sdp_abort_stuck_in_resourcing(central_node_low):
     """
@@ -24,7 +25,7 @@ def test_tmc_sdp_abort_stuck_in_resourcing(central_node_low):
     assert central_node_low.subarray_devices["sdp_subarray"].ping() > 0
 
 
-@given(parsers.parse("TMC and SDP subarray busy assigning resources"))
+@given("TMC and SDP subarray busy assigning resources")
 def telescope_is_in_resourcing_obsstate(
     central_node_low, event_recorder, command_input_factory
 ):
@@ -68,7 +69,7 @@ def abort_is_invoked(central_node_low):
     central_node_low.subarray_abort()
 
 
-@then(parsers.parse("the SDP subarray should go into an aborted obsstate"))
+@then("the SDP subarray should go into an aborted obsstate")
 def sdp_subarray_is_in_aborted_obsstate(central_node_low, event_recorder):
     """
     Method to check SDP subarray is in ABORTED obsstate
