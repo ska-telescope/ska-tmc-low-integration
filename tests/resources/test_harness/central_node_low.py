@@ -1,5 +1,6 @@
 import logging
 import os
+import time
 
 from ska_control_model import ObsState
 from ska_ser_logging import configure_logging
@@ -28,6 +29,7 @@ from tests.resources.test_harness.utils.sync_decorators import (
     sync_release_resources,
     sync_restart,
     sync_set_to_off,
+    sync_set_to_on,
 )
 from tests.resources.test_support.common_utils.common_helpers import Resource
 
@@ -171,6 +173,7 @@ class CentralNodeWrapperLow(object):
                 "Invoking TelescopeOff command with sdp and mccs simulated"
             )
             self.central_node.TelescopeOff()
+            time.sleep(10)
             self.set_values_with_sdp_mccs_mocks(DevState.OFF)
 
         else:
@@ -211,6 +214,7 @@ class CentralNodeWrapperLow(object):
         self.move_to_off()
         self._clear_command_call_and_transition_data(clear_transition=True)
 
+    @sync_set_to_on(device_dict=device_dict_low)
     def move_to_on(self):
         """
         A method to invoke TelescopeOn command to

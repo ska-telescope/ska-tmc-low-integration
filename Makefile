@@ -7,7 +7,7 @@ TANGO_HOST ?= tango-databaseds:10000## TANGO_HOST connection to the Tango DS
 TELESCOPE ?= SKA-low
 KUBE_NAMESPACE ?= ska-tmc-low-integration
 KUBE_NAMESPACE_SDP ?= ska-tmc-integration-sdp
-CSP_SIMULATION_ENABLED ?= true
+CSP_SIMULATION_ENABLED ?= false
 SDP_SIMULATION_ENABLED ?= true
 MCCS_SIMULATION_ENABLED ?= true
 
@@ -46,6 +46,8 @@ PORT ?= 10000
 SUBARRAY_COUNT ?= 2
 SDP_MASTER ?= tango://$(TANGO_HOST).$(KUBE_NAMESPACE).$(CLUSTER_DOMAIN):$(PORT)/low-sdp/control/0
 SDP_SUBARRAY_PREFIX ?= tango://$(TANGO_HOST).$(KUBE_NAMESPACE).$(CLUSTER_DOMAIN):$(PORT)/low-sdp/subarray
+CSP_MASTER ?= tango://$(TANGO_HOST).$(KUBE_NAMESPACE).$(CLUSTER_DOMAIN):$(PORT)/low-csp/control/0
+CSP_SUBARRAY_PREFIX ?= tango://$(TANGO_HOST).$(KUBE_NAMESPACE).$(CLUSTER_DOMAIN):$(PORT)/low-csp/subarray
 CI_REGISTRY ?= gitlab.com
 
 K8S_TEST_IMAGE_TO_TEST ?= artefact.skao.int/ska-tango-images-tango-itango:9.3.12## docker image that will be run for testing purpose
@@ -82,9 +84,9 @@ PYTHON_VARS_AFTER_PYTEST ?= -m '$(MARK)' $(ADD_ARGS) $(FILE)
 
 ifeq ($(CSP_SIMULATION_ENABLED),false)
 CUSTOM_VALUES =	--set global.csp.isSimulated.enabled=$(CSP_SIMULATION_ENABLED)\
-	--set tmc-low.ska-csp-lmc-low.enabled=true\
-	--set tmc-low.ska-low-cbf.enabled=true\
-	--set tmc-low.ska-low-cbf.ska-low-cbf-proc.enabled=true
+	--set ska-csp-lmc-low.enabled=true\
+	--set ska-low-cbf.enabled=true\
+	--set ska-low-cbf.ska-low-cbf-proc.enabled=true
 endif
 
 

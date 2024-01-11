@@ -100,6 +100,33 @@ ska-sdp:
   ska-tango-base:
     enabled: false
 
+ska-low-cbf:
+  enabled: false
+  minikube: true
+  ska-low-cbf-conn:
+    enabled: false
+  ska-low-cbf-proc:
+    enabled: false
+    deviceServers:
+      processor:
+        instances: ["0","1","2"]  # 2x CNIC, 1x SUT
+        # TODO - check if the resources section is needed - in principle, it should be set in -proc chart
+        resources:
+          limits:
+            xilinx.com/fpga-xilinx_u55c_gen3x16_xdma_base_3-0: 0  # no FPGA hardware
+            memory: 512Mi  # reduced
+
+ska-csp-lmc-low:
+  legacy_compatibility: true
+  enabled: false
+  deviceServers:
+    cspcontroller:
+      instances: ["controller"]
+      file: "data/controller_cbf_only.yaml"
+    cspsubarray:
+      instances: ["subarray1"]
+      file: "data/subarray_cbf_only.yaml"
+
 # SKUID
 ska-ser-skuid:
   labels:
