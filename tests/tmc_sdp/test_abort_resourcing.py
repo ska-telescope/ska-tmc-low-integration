@@ -17,7 +17,7 @@ from tests.resources.test_harness.helpers import (
     "../features/tmc_sdp/abort_resourcing_tmc_sdp.feature",
     "Abort invocation using TMC",
 )
-def test_tmc_sdp_abort_stuck_in_resourcing(central_node_low):
+def test_tmc_sdp_abort_in_resourcing(central_node_low):
     """
     Test case to verify TMC-SDP Abort functionality in RESOURCING obsState
     """
