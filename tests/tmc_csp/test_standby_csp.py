@@ -20,9 +20,7 @@ def test_tmc_sdp_standby_telescope():
     """
 
 
-@given(
-    "Given a Telescope consisting of TMC,CSP,simulated SDP and simulated MCCS "
-)
+@given("a Telescope consisting of TMC,CSP,simulated SDP and simulated MCCS")
 def check_tmc_and_sdp_is_on(central_node_low, event_recorder):
     """
     Given a TMC and CSP in ON state
