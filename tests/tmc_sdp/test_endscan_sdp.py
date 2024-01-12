@@ -2,7 +2,6 @@
 import pytest
 from pytest_bdd import given, parsers, scenario, then, when
 from ska_tango_base.control_model import ObsState
-from tango import DevState
 
 from tests.resources.test_harness.helpers import (
     prepare_json_args_for_centralnode_commands,
@@ -28,31 +27,7 @@ def test_tmc_sdp_endscan():
     """
 
 
-@given("the telescope is in ON state")
-def given_a_tmc(central_node_low, event_recorder):
-    """
-    Given a TMC
-    """
-    event_recorder.subscribe_event(
-        central_node_low.central_node, "telescopeState"
-    )
-    event_recorder.subscribe_event(
-        central_node_low.subarray_devices["sdp_subarray"], "State"
-    )
-
-    if central_node_low.telescope_state != "ON":
-        central_node_low.move_to_on()
-
-    assert event_recorder.has_change_event_occurred(
-        central_node_low.subarray_devices["sdp_subarray"],
-        "State",
-        DevState.ON,
-    )
-    assert event_recorder.has_change_event_occurred(
-        central_node_low.central_node,
-        "telescopeState",
-        DevState.ON,
-    )
+# @given -> ../conftest.py
 
 
 @given(parsers.parse("TMC subarray {subarray_id} is in Scanning ObsState"))
