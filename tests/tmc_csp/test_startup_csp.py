@@ -3,7 +3,6 @@ import pytest
 from pytest_bdd import given, scenario, then, when
 from tango import DevState
 
-# import time
 from tests.resources.test_harness.helpers import get_master_device_simulators
 
 
@@ -36,14 +35,14 @@ def given_the_sut(central_node_low, simulator_factory):
     assert central_node_low.sdp_master.ping() > 0
     assert central_node_low.subarray_devices["sdp_subarray"].ping() > 0
     assert sdp_master_sim.ping() > 0
+    central_node_low.csp_master.adminMode = 0
+    central_node_low.csp_subarray1.adminMode = 0
 
 
 @when("I start up the telescope")
 def move_telescope_to_on(central_node_low):
     """A method to turn on the telescope."""
     central_node_low.move_to_on()
-    central_node_low.csp_master.adminMode = 0
-    central_node_low.csp_subarray1.adminMode = 0
 
 
 @then("the CSP must go to ON state")

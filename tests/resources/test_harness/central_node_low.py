@@ -1,6 +1,5 @@
 import logging
 import os
-import time
 
 from ska_control_model import ObsState
 from ska_ser_logging import configure_logging
@@ -28,9 +27,11 @@ from tests.resources.test_harness.utils.sync_decorators import (
     sync_abort,
     sync_release_resources,
     sync_restart,
-    sync_set_to_off,
     sync_set_to_on,
 )
+
+# sync_set_to_off,
+from tests.resources.test_harness.utils.wait_helpers import Waiter
 from tests.resources.test_support.common_utils.common_helpers import Resource
 
 SDP_SIMULATION_ENABLED = os.getenv("SDP_SIMULATION_ENABLED")
@@ -71,6 +72,7 @@ class CentralNodeWrapperLow(object):
         self.assign_input = self.json_factory.create_centralnode_configuration(
             "assign_resources_low"
         )
+        self.wait = Waiter(**device_dict_low)
 
     def set_subarray_id(self, subarray_id):
         self.subarray_node = DeviceProxy(
@@ -142,7 +144,7 @@ class CentralNodeWrapperLow(object):
         """
         self._telescope_state = value
 
-    @sync_set_to_off(device_dict=device_dict_low)
+    # @sync_set_to_off(device_dict=device_dict_low)
     def move_to_off(self):
         """
         A method to invoke TelescopeOff command to
@@ -173,7 +175,6 @@ class CentralNodeWrapperLow(object):
                 "Invoking TelescopeOff command with sdp and mccs simulated"
             )
             self.central_node.TelescopeOff()
-            time.sleep(10)
             self.set_values_with_sdp_mccs_mocks(DevState.OFF)
 
         else:
@@ -247,6 +248,8 @@ class CentralNodeWrapperLow(object):
             )
             self.central_node.TelescopeOn()
             self.set_values_with_sdp_mccs_mocks(DevState.ON)
+            self.wait.set_wait_for_telescope_on()
+            self.wait.wait(30)
         else:
             LOGGER.info("Invoke TelescopeOn command with all real sub-systems")
             self.central_node.TelescopeOn()
