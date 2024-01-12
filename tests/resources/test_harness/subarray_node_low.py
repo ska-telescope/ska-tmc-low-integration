@@ -21,8 +21,10 @@ from tests.resources.test_harness.constant import (
 )
 from tests.resources.test_harness.helpers import (
     SIMULATED_DEVICES_DICT,
+    check_subarray_obs_state,
     update_eb_pb_ids,
 )
+from tests.resources.test_harness.utils.common_utils import JsonFactory
 from tests.resources.test_harness.utils.constant import (
     ABORTED,
     IDLE,
@@ -55,6 +57,7 @@ device_dict = {
     "tmc_subarraynode": tmc_low_subarraynode1,
     "sdp_master": low_sdp_master,
     "centralnode": low_centralnode,
+    "mccs_subarray1": mccs_subarray1,
     "csp_subarray_leaf_node": low_csp_subarray_leaf_node,
     "sdp_subarray_leaf_node": low_sdp_subarray_leaf_node,
     "mccs_subarray_leaf_node": mccs_subarray_leaf_node,
@@ -84,7 +87,12 @@ class SubarrayNodeWrapperLow:
             "sdp_subarray": DeviceProxy(low_sdp_subarray1),
             "mccs_subarray": DeviceProxy(mccs_subarray1),
         }
-
+        self.json_factory = JsonFactory()
+        self.release_input = (
+            self.json_factory.create_centralnode_configuration(
+                "release_resources_low"
+            )
+        )
         # Subarray state
         self.ON_STATE = ON
         self.IDLE_OBS_STATE = IDLE
@@ -154,14 +162,14 @@ class SubarrayNodeWrapperLow:
         self._obs_state = value
 
     @sync_configure(device_dict=device_dict_low)
-    def store_configuration_data(self, input_string: str):
+    def store_configuration_data(self, input_json: str):
         """Invoke configure command on subarray Node
         Args:
             input_string (str): config input json
         Returns:
             (result, message): result, message tuple
         """
-        result, message = self.subarray_node.Configure(input_string)
+        result, message = self.subarray_node.Configure(input_json)
         LOGGER.info("Invoked Configure on SubarrayNode")
         return result, message
 
@@ -197,6 +205,15 @@ class SubarrayNodeWrapperLow:
     def release_resources_subarray(self):
         result, message = self.subarray_node.ReleaseAllResources()
         LOGGER.info("Invoked Release Resource on SubarrayNode")
+        return result, message
+
+    @sync_release_resources(device_dict=device_dict_low)
+    def release_resources(self, input_string):
+        """Invoke Release Resource command on central Node
+        Args:
+            input_string (str): Release resource input json
+        """
+        result, message = self.central_node.ReleaseResources(input_string)
         return result, message
 
     @sync_endscan(device_dict=device_dict_low)
@@ -281,10 +298,27 @@ class SubarrayNodeWrapperLow:
         configure_input_json: str = "",
         scan_input_json: str = "",
     ) -> None:
-        """Force SubarrayNode obsState to provided obsState
-
+        """Forces a change in the SubarrayNode's obsState to the provided
+          obsState.
+        This method creates an ObsStateResetter object using the provided
+        destination obsState name and resets the SubarrayNode's state
+        accordingly.
         Args:
-            dest_state_name (str): Destination obsState
+            dest_state_name (str): The destination obsState to set for the
+              SubarrayNode.
+            assign_input_json (str, optional): JSON input for assignment
+            configuration.
+            Defaults to an empty string.
+            configure_input_json (str, optional): JSON input for configuration
+             settings.
+            Defaults to an empty string.
+            scan_input_json (str, optional): JSON input for scan configuration.
+                Defaults to an empty string.
+        Returns:
+            None: This method does not return any value.
+        Raises:
+            Any specific exceptions that might be raised during the reset
+            process.
         """
         factory_obj = ObsStateResetterFactory()
         obs_state_resetter = factory_obj.create_obs_state_resetter(
@@ -321,19 +355,26 @@ class SubarrayNodeWrapperLow:
             for sim_device in [
                 self.sdp_subarray1,
                 self.csp_subarray1,
+                self.mccs_subarray1,
             ]:
                 device = DeviceProxy(sim_device)
                 device.ClearCommandCallInfo()
                 if clear_transition:
                     device.ResetTransitions()
         elif SIMULATED_DEVICES_DICT["csp_and_mccs"]:
-            for sim_device in [self.csp_subarray1, self.mccs_subarray1]:
+            for sim_device in [
+                self.csp_subarray1,
+                mccs_subarray1,
+            ]:
                 device = DeviceProxy(sim_device)
                 device.ClearCommandCallInfo()
                 if clear_transition:
                     device.ResetTransitions()
         elif SIMULATED_DEVICES_DICT["sdp_and_mccs"]:
-            for sim_device in [self.sdp_subarray1, mccs_subarray1]:
+            for sim_device in [
+                self.sdp_subarray1,
+                mccs_subarray1,
+            ]:
                 device = DeviceProxy(sim_device)
                 device.ClearCommandCallInfo()
                 if clear_transition:
@@ -357,6 +398,7 @@ class SubarrayNodeWrapperLow:
         LOGGER.info("Calling Tear down for subarray")
         self._reset_simulator_devices()
         self._clear_command_call_and_transition_data(clear_transition=True)
+
         if self.subarray_node.obsState in [
             ObsState.SCANNING,
             ObsState.CONFIGURING,
@@ -366,16 +408,22 @@ class SubarrayNodeWrapperLow:
             LOGGER.info("Invoking Abort on Subarray")
             self.abort_subarray()
             self.restart_subarray()
-        if self.subarray_node.obsState == ObsState.READY:
-            """Invoke End command"""
-            LOGGER.info("Invoking End command on Subarray")
-            self.end_observation()
         elif self.subarray_node.obsState == ObsState.ABORTED:
             """Invoke Restart"""
             LOGGER.info("Invoking Restart on Subarray")
             self.restart_subarray()
+        elif self.subarray_node.obsState == ObsState.IDLE:
+            """Invoke Release"""
+            LOGGER.info("Invoking Release Resources on Subarray")
+            self.release_resources(self.release_input)
+        elif self.subarray_node.obsState == ObsState.READY:
+            """Invoke End"""
+            LOGGER.info("Invoking End command on Subarray")
+            self.end_observation()
+            self.release_resources(self.release_input)
         else:
             self.force_change_of_obs_state("EMPTY")
 
         # Move Subarray to OFF state
         self.move_to_off()
+        assert check_subarray_obs_state("EMPTY")

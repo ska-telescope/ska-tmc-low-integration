@@ -13,27 +13,21 @@ from ska_tango_base.control_model import HealthState
 from ska_tango_testing.mock.placeholders import Anything
 from tango import DeviceProxy
 
+from tests.resources.test_harness.constant import (
+    INTERMEDIATE_CONFIGURING_OBS_STATE_DEFECT,
+    INTERMEDIATE_STATE_DEFECT,
+    low_csp_subarray1,
+    low_csp_subarray_leaf_node,
+    low_sdp_subarray1,
+    low_sdp_subarray_leaf_node,
+    mccs_subarray1,
+    mccs_subarray_leaf_node,
+    tmc_low_subarraynode1,
+)
 from tests.resources.test_harness.utils.common_utils import JsonFactory
 from tests.resources.test_harness.utils.enums import SimulatorDeviceType
 from tests.resources.test_harness.utils.wait_helpers import Waiter, watch
 from tests.resources.test_support.common_utils.common_helpers import Resource
-from tests.resources.test_support.constant_low import (
-    INTERMEDIATE_CONFIGURING_OBS_STATE_DEFECT,
-    INTERMEDIATE_STATE_DEFECT,
-)
-from tests.resources.test_support.constant_low import csp_subarray1
-from tests.resources.test_support.constant_low import (
-    csp_subarray1 as csp_subarray1_low,
-)
-from tests.resources.test_support.constant_low import sdp_subarray1
-from tests.resources.test_support.constant_low import (
-    sdp_subarray1 as sdp_subarray1_low,
-)
-from tests.resources.test_support.constant_low import (
-    tmc_csp_subarray_leaf_node,
-    tmc_sdp_subarray_leaf_node,
-    tmc_subarraynode1,
-)
 
 configure_logging(logging.DEBUG)
 LOGGER = logging.getLogger(__name__)
@@ -46,24 +40,30 @@ MCCS_SIMULATION_ENABLED = os.getenv("MCCS_SIMULATION_ENABLED")
 
 def check_subarray_obs_state(obs_state=None, timeout=50):
     device_dict = {
-        "sdp_subarray": sdp_subarray1,
-        "csp_subarray": csp_subarray1,
-        "tmc_subarraynode": tmc_subarraynode1,
-        "csp_subarray_leaf_node": tmc_csp_subarray_leaf_node,
-        "sdp_subarray_leaf_node": tmc_sdp_subarray_leaf_node,
+        "sdp_subarray": low_sdp_subarray1,
+        "csp_subarray": low_csp_subarray1,
+        "mccs_subarray": mccs_subarray1,
+        "tmc_subarraynode": tmc_low_subarraynode1,
+        "csp_subarray_leaf_node": low_csp_subarray_leaf_node,
+        "sdp_subarray_leaf_node": low_sdp_subarray_leaf_node,
+        "mccs_subarray_leaf_node": mccs_subarray_leaf_node,
     }
 
     LOGGER.info(
-        f"{tmc_subarraynode1}.obsState : "
-        + str(Resource(tmc_subarraynode1).get("obsState"))
+        f"{tmc_low_subarraynode1}.obsState : "
+        + str(Resource(tmc_low_subarraynode1).get("obsState"))
     )
     LOGGER.info(
-        f"{sdp_subarray1}.obsState : "
-        + str(Resource(sdp_subarray1).get("obsState"))
+        f"{low_sdp_subarray1}.obsState : "
+        + str(Resource(low_sdp_subarray1).get("obsState"))
     )
     LOGGER.info(
-        f"{csp_subarray1}.obsState : "
-        + str(Resource(csp_subarray1).get("obsState"))
+        f"{low_csp_subarray1}.obsState : "
+        + str(Resource(low_csp_subarray1).get("obsState"))
+    )
+    LOGGER.info(
+        f"{mccs_subarray1}.obsState : "
+        + str(Resource(mccs_subarray1).get("obsState"))
     )
     the_waiter = Waiter(**device_dict)
     the_waiter.set_wait_for_obs_state(obs_state=obs_state)
@@ -71,9 +71,10 @@ def check_subarray_obs_state(obs_state=None, timeout=50):
 
     return all(
         [
-            Resource(sdp_subarray1).get("obsState") == obs_state,
-            Resource(tmc_subarraynode1).get("obsState") == obs_state,
-            Resource(csp_subarray1).get("obsState") == obs_state,
+            Resource(low_sdp_subarray1).get("obsState") == obs_state,
+            Resource(mccs_subarray1).get("obsState") == obs_state,
+            Resource(tmc_low_subarraynode1).get("obsState") == obs_state,
+            Resource(low_csp_subarray1).get("obsState") == obs_state,
         ]
     )
 
@@ -201,13 +202,13 @@ def set_subarray_to_given_obs_state(
     match obs_state:
         case "RESOURCING":
             # Setting the device defective
-            csp_subarray = DeviceProxy(csp_subarray1_low)
+            csp_subarray = DeviceProxy(low_csp_subarray1)
             csp_subarray.SetDefective(json.dumps(INTERMEDIATE_STATE_DEFECT))
 
             subarray_node.force_change_of_obs_state(obs_state)
 
             # Waiting for SDP Subarray to go to ObsState.IDLE
-            sdp_subarray = DeviceProxy(sdp_subarray1_low)
+            sdp_subarray = DeviceProxy(low_sdp_subarray1)
             event_recorder.subscribe_event(sdp_subarray, "obsState")
             assert event_recorder.has_change_event_occurred(
                 sdp_subarray,
@@ -220,7 +221,7 @@ def set_subarray_to_given_obs_state(
         case "CONFIGURING":
             subarray_node.force_change_of_obs_state("IDLE")
             # Setting the device defective
-            csp_subarray = DeviceProxy(csp_subarray1_low)
+            csp_subarray = DeviceProxy(low_csp_subarray1)
             csp_subarray.SetDefective(
                 json.dumps(INTERMEDIATE_CONFIGURING_OBS_STATE_DEFECT)
             )
@@ -231,7 +232,7 @@ def set_subarray_to_given_obs_state(
             subarray_node.execute_transition("Configure", configure_input)
 
             # Waiting for SDP Subarray to go to ObsState.READY
-            sdp_subarray = DeviceProxy(sdp_subarray1_low)
+            sdp_subarray = DeviceProxy(low_sdp_subarray1)
             event_recorder.subscribe_event(sdp_subarray, "obsState")
             assert event_recorder.has_change_event_occurred(
                 sdp_subarray,
@@ -334,6 +335,39 @@ def wait_for_attribute_update(
         time.sleep(1)
         elapsed_time = time.time() - start_time
     return False
+
+
+def get_simulated_devices_info() -> dict:
+    """
+    A method to get simulated devices present in low deployment.
+
+    return: dict
+    """
+
+    is_csp_simulated = CSP_SIMULATION_ENABLED.lower() == "true"
+    is_sdp_simulated = SDP_SIMULATION_ENABLED.lower() == "true"
+    is_mccs_simulated = MCCS_SIMULATION_ENABLED.lower() == "true"
+    return {
+        "csp_and_sdp": all(
+            [is_csp_simulated, is_sdp_simulated]
+        ),  # real MCCS enabled
+        "csp_and_mccs": all(
+            [is_csp_simulated, is_mccs_simulated]
+        ),  # real SDP enabled
+        "sdp_and_mccs": all(
+            [is_sdp_simulated, is_mccs_simulated]
+        ),  # real CSP.LMC enabled
+        "all_mocks": all(
+            [
+                is_csp_simulated,
+                is_sdp_simulated,
+                is_mccs_simulated,
+            ]
+        ),
+    }
+
+
+SIMULATED_DEVICES_DICT = get_simulated_devices_info()
 
 
 def check_lrcr_events(
