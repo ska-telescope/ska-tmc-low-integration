@@ -211,10 +211,11 @@ class CentralNodeWrapperLow(object):
         elif self.subarray_node.obsState == ObsState.IDLE:
             LOGGER.info("Calling Release Resource on centralnode")
             self.invoke_release_resources(self.release_input)
-        if SIMULATED_DEVICES_DICT["sdp_and_mccs"]:
-            self.set_standby()
         else:
-            self.move_to_off()
+            if SIMULATED_DEVICES_DICT["sdp_and_mccs"]:
+                self.set_standby()
+            else:
+                self.move_to_off()
         self._clear_command_call_and_transition_data(clear_transition=True)
 
     @sync_set_to_on(device_dict=device_dict_low)
