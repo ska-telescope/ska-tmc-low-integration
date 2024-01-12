@@ -27,10 +27,9 @@ from tests.resources.test_harness.utils.sync_decorators import (
     sync_abort,
     sync_release_resources,
     sync_restart,
+    sync_set_to_off,
     sync_set_to_on,
 )
-
-# sync_set_to_off,
 from tests.resources.test_harness.utils.wait_helpers import Waiter
 from tests.resources.test_support.common_utils.common_helpers import Resource
 
@@ -144,7 +143,7 @@ class CentralNodeWrapperLow(object):
         """
         self._telescope_state = value
 
-    # @sync_set_to_off(device_dict=device_dict_low)
+    @sync_set_to_off(device_dict=device_dict_low)
     def move_to_off(self):
         """
         A method to invoke TelescopeOff command to
