@@ -11,10 +11,11 @@ from tests.resources.test_harness.helpers import (
 )
 
 
+@pytest.mark.test1
 @pytest.mark.tmc_sdp
 @scenario(
     "../features/tmc_sdp/abort_resourcing_tmc_sdp.feature",
-    "Abort assigning using TMC",
+    "Abort invocation using TMC",
 )
 def test_tmc_sdp_abort_stuck_in_resourcing(central_node_low):
     """
@@ -26,7 +27,7 @@ def test_tmc_sdp_abort_stuck_in_resourcing(central_node_low):
 
 @given("TMC and SDP subarray busy assigning resources")
 def telescope_is_in_resourcing_obsstate(
-    central_node_low, event_recorder, command_input_factory
+    central_node_low, event_recorder, command_input_factory, sub
 ):
     """A method to check if telescope in is resourcing obsSstate."""
     central_node_low.move_to_on()
@@ -61,11 +62,11 @@ def telescope_is_in_resourcing_obsstate(
 
 
 @when("I command it to Abort")
-def abort_is_invoked(central_node_low):
+def abort_is_invoked(subarray_node_low):
     """
     This method invokes abort command on tmc subarray
     """
-    central_node_low.subarray_abort()
+    subarray_node_low.subarray_abort()
 
 
 @then("the SDP subarray should go into an aborted obsstate")
