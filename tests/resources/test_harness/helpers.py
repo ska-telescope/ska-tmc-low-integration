@@ -38,7 +38,6 @@ CSP_SIMULATION_ENABLED = os.getenv("CSP_SIMULATION_ENABLED")
 MCCS_SIMULATION_ENABLED = os.getenv("MCCS_SIMULATION_ENABLED")
 
 
-
 device_dict = {
     "sdp_subarray": low_sdp_subarray1,
     "csp_subarray": low_csp_subarray1,
