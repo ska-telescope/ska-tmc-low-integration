@@ -1,5 +1,4 @@
 import logging
-import os
 
 from ska_control_model import ObsState
 from ska_ser_logging import configure_logging
@@ -33,9 +32,6 @@ from tests.resources.test_harness.utils.sync_decorators import (
 from tests.resources.test_harness.utils.wait_helpers import Waiter
 from tests.resources.test_support.common_utils.common_helpers import Resource
 
-SDP_SIMULATION_ENABLED = os.getenv("SDP_SIMULATION_ENABLED")
-CSP_SIMULATION_ENABLED = os.getenv("CSP_SIMULATION_ENABLED")
-MCCS_SIMULATION_ENABLED = os.getenv("MCCS_SIMULATION_ENABLED")
 configure_logging(logging.DEBUG)
 LOGGER = logging.getLogger(__name__)
 
