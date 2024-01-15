@@ -6,7 +6,6 @@ from tango import DevState
 from tests.resources.test_harness.helpers import get_master_device_simulators
 
 
-@pytest.mark.aki
 @pytest.mark.tmc_csp
 @scenario(
     "../features/tmc_csp/tmc_csp_standby.feature",
@@ -76,23 +75,8 @@ def check_telescope_state_is_on(central_node_low, event_recorder):
 
 @when("I put the telescope to STANDBY")
 def move_sdp_to_standby(central_node_low):
-    """A method to put SDP to STANDBY"""
+    """A method to put CSP to STANDBY"""
     central_node_low.set_standby()
-
-
-@then("the csp controller and subarray stays in ON state")
-def check_sdp_subarray_is_off(central_node_low, event_recorder):
-    """A method to check SDP State"""
-    assert event_recorder.has_change_event_occurred(
-        central_node_low.csp_master,
-        "State",
-        DevState.ON,
-    )
-    assert event_recorder.has_change_event_occurred(
-        central_node_low.subarray_devices["csp_subarray"],
-        "State",
-        DevState.ON,
-    )
 
 
 @then("telescope state is STANDBY")
@@ -103,3 +87,13 @@ def check_telescope_state_standby(central_node_low, event_recorder):
         "telescopeState",
         DevState.STANDBY,
     )
+
+
+@then("the csp subarray and controller stays in ON state")
+def check_csp_subarray_is_on(central_node_low, event_recorder):
+    """A method to check CSP State"""
+    assert (
+        central_node_low.subarray_devices["csp_subarray"].State()
+        == DevState.ON
+    )
+    assert central_node_low.csp_master.State() == DevState.ON
