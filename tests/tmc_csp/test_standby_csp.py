@@ -90,7 +90,7 @@ def check_telescope_state_standby(central_node_low, event_recorder):
 
 
 @then("the csp subarray and controller stays in ON state")
-def check_csp_subarray_is_on(central_node_low, event_recorder):
+def check_csp_subarray_is_on(central_node_low):
     """A method to check CSP State"""
     assert (
         central_node_low.subarray_devices["csp_subarray"].State()

@@ -1,3 +1,4 @@
+@XTP-29686 @XTP-29682
 Scenario: Standby the telescope having TMC and CSP subsystems 
     Given a Telescope consisting of TMC,CSP,simulated SDP and simulated MCCS 
     And telescope state is ON
