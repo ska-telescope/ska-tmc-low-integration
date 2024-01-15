@@ -80,6 +80,21 @@ def move_sdp_to_standby(central_node_low):
     central_node_low.set_standby()
 
 
+@then("the csp controller and subarray stays in ON state")
+def check_sdp_subarray_is_off(central_node_low, event_recorder):
+    """A method to check SDP State"""
+    assert event_recorder.has_change_event_occurred(
+        central_node_low.csp_master,
+        "State",
+        DevState.ON,
+    )
+    assert event_recorder.has_change_event_occurred(
+        central_node_low.subarray_devices["csp_subarray"],
+        "State",
+        DevState.ON,
+    )
+
+
 @then("telescope state is STANDBY")
 def check_telescope_state_standby(central_node_low, event_recorder):
     """A method to check CentralNode.telescopeState"""
