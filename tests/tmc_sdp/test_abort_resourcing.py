@@ -49,23 +49,23 @@ def telescope_is_in_resourcing_obsstate(
     )
     event_recorder.subscribe_event(subarray_node_low.subarray_node, "obsState")
     assert event_recorder.has_change_event_occurred(
-        subarray_node_low.subarray_node,
+        subarray_node_low.subarray_devices.get("sdp_subarray"),
         "obsState",
         ObsState.RESOURCING,
     )
     assert event_recorder.has_change_event_occurred(
-        subarray_node_low.subarray_devices.get("sdp_subarray"),
+        subarray_node_low.subarray_node,
         "obsState",
         ObsState.RESOURCING,
     )
 
 
 @when("I command it to Abort")
-def abort_is_invoked(central_node_low):
+def abort_is_invoked(subarray_node_low):
     """
     This method invokes abort command on tmc subarray
     """
-    central_node_low.subarray_abort()
+    subarray_node_low.abort_subarray()
 
 
 @then("the SDP subarray should go into an aborted obsstate")
