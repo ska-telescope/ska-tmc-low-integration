@@ -42,11 +42,16 @@ include:
   - project: 'ska-telescope/templates-repository'
     file: 'gitlab-ci/includes/finaliser.gitlab-ci.yml'
 
+python-lint:
+  stage: lint
+  tags:
+    - k8srunner-large
+
 xray-publish:
   stage: publish
   image: $SKA_K8S_TOOLS_BUILD_DEPLOY
   tags:
-    - k8srunner
+    - k8srunner-large
   before_script:
     - '[ -f .make/xray.mk ] || (echo "File xray.mk not included in Makefile; exit 1")'
     - "make help | grep xray-publish"
@@ -68,7 +73,7 @@ xray-publish:
 on-demand-deploy:
   stage: on-demand
   tags:
-    - k8srunner
+    - k8srunner-large
   variables:
     SERVICE_ACCOUNT: "ci-svc-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA"
     KUBE_NAMESPACE: "ci-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-on-demand"
@@ -91,7 +96,7 @@ on-demand-deploy:
 on-demand-destroy:
   stage: on-demand
   tags:
-    - k8srunner
+    - k8srunner-large
   variables:
     SERVICE_ACCOUNT: "ci-svc-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA"
     KUBE_NAMESPACE: "ci-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-on-demand"
