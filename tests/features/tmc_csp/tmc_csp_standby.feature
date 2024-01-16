@@ -1,4 +1,4 @@
-Feature: Default
+Feature: Standby the telescope having TMC and CSP subsystems
 
 	
 	@XTP-29686 @XTP-29682

@@ -1,4 +1,4 @@
-Feature: Default
+Feature: Start up the telescope having TMC and CSP subsystems
 
 	
 	@XTP-29685 @XTP-29682

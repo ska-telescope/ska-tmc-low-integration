@@ -23,9 +23,7 @@ def test_tmc_sdp_standby_telescope():
 
 
 @given("a Telescope consisting of TMC,CSP,simulated SDP and simulated MCCS")
-def check_tmc_and_csp_is_on(
-    central_node_low, event_recorder, simulator_factory
-):
+def check_tmc_and_csp_is_on(central_node_low, simulator_factory):
     """
     Given a TMC and CSP in ON state
     """
@@ -38,6 +36,11 @@ def check_tmc_and_csp_is_on(
     assert central_node_low.sdp_master.ping() > 0
     assert central_node_low.subarray_devices["sdp_subarray"].ping() > 0
     assert sdp_master_sim.ping() > 0
+
+
+@given("telescope state is ON")
+def check_telescope_state_is_on(central_node_low, event_recorder):
+    """A method to check CentralNode.telescopeState"""
     central_node_low.csp_master.adminMode = 0
     central_node_low.csp_subarray1.adminMode = 0
     event_recorder.subscribe_event(
@@ -61,11 +64,6 @@ def check_tmc_and_csp_is_on(
         "State",
         DevState.ON,
     )
-
-
-@given("telescope state is ON")
-def check_telescope_state_is_on(central_node_low, event_recorder):
-    """A method to check CentralNode.telescopeState"""
     assert event_recorder.has_change_event_occurred(
         central_node_low.central_node,
         "telescopeState",
