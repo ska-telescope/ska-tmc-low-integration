@@ -74,7 +74,6 @@ xray-publish:
   image: $SKA_K8S_TOOLS_BUILD_DEPLOY
   tags:
     - k8srunner
-  when: manual
   before_script:
     - '[ -f .make/xray.mk ] || (echo "File xray.mk not included in Makefile; exit 1")'
     - 'make help | grep xray-publish'
@@ -83,9 +82,7 @@ xray-publish:
   rules:
     - exists:
         - tests/xray-config.json # needs to be configurable as per XRAY_EXECUTION_CONFIG in make
-      if: $CI_PIPELINE_SOURCE == "push"
-      when: manual
-    - when: never
+  allow_failure: true
 
 
 on-demand-deploy:
