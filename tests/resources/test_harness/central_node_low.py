@@ -29,7 +29,6 @@ from tests.resources.test_harness.utils.sync_decorators import (
     sync_set_to_off,
     sync_set_to_on,
 )
-from tests.resources.test_harness.utils.wait_helpers import Waiter
 from tests.resources.test_support.common_utils.common_helpers import Resource
 
 configure_logging(logging.DEBUG)
@@ -67,7 +66,6 @@ class CentralNodeWrapperLow(object):
         self.assign_input = self.json_factory.create_centralnode_configuration(
             "assign_resources_low"
         )
-        self.wait = Waiter(**device_dict_low)
 
     def set_subarray_id(self, subarray_id):
         self.subarray_node = DeviceProxy(
@@ -247,8 +245,6 @@ class CentralNodeWrapperLow(object):
             )
             self.central_node.TelescopeOn()
             self.set_values_with_sdp_mccs_mocks(DevState.ON)
-            self.wait.set_wait_for_telescope_on()
-            self.wait.wait(30)
         else:
             LOGGER.info("Invoke TelescopeOn command with all real sub-systems")
             self.central_node.TelescopeOn()
