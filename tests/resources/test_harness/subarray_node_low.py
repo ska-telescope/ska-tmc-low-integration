@@ -79,9 +79,9 @@ class SubarrayNodeWrapperLow:
         self.mccs_subarray_leaf_node = DeviceProxy(mccs_subarray_leaf_node)
         self._state = DevState.OFF
         self._obs_state = SubarrayObsState.EMPTY
-        self.csp_subarray1 = low_csp_subarray1
-        self.sdp_subarray1 = low_sdp_subarray1
-        self.mccs_subarray1 = mccs_subarray1
+        self.csp_subarray1 = DeviceProxy(low_csp_subarray1)
+        self.sdp_subarray1 = DeviceProxy(low_sdp_subarray1)
+        self.mccs_subarray1 = DeviceProxy(mccs_subarray1)
         self.subarray_devices = {
             "csp_subarray": DeviceProxy(low_csp_subarray1),
             "sdp_subarray": DeviceProxy(low_sdp_subarray1),

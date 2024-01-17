@@ -73,7 +73,7 @@ def check_tmc_csp_state_is_on(
     )
 
 
-@when("I invoke STANDBY command")
+@when("I invoke TelescopeStandby command")
 def move_sdp_to_standby(central_node_low):
     """A method to put CSP to STANDBY"""
     central_node_low.set_standby()
