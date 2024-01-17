@@ -65,7 +65,6 @@ xray-publish:
     - k8s-test-tmc-with-sdp
   allow_failure: true
 
-
 on-demand-deploy:
   stage: on-demand
   tags:

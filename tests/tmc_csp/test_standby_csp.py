@@ -8,7 +8,7 @@ from tests.resources.test_harness.helpers import get_master_device_simulators
 
 @pytest.mark.tmc_csp
 @scenario(
-    "../features/tmc_csp/tmc_csp_standby.feature",
+    "../features/tmc_csp/xtp-29686_standby.feature",
     "Standby the telescope having TMC and CSP subsystems",
 )
 def test_tmc_sdp_standby_telescope():
@@ -23,7 +23,7 @@ def test_tmc_sdp_standby_telescope():
 
 
 @given("a Telescope consisting of TMC,CSP,simulated SDP and simulated MCCS")
-def check_tmc_and_csp_is_on(central_node_low, simulator_factory):
+def given_the_sut(central_node_low, subarray_node_low, simulator_factory):
     """
     Given a TMC and CSP in ON state
     """
@@ -34,21 +34,21 @@ def check_tmc_and_csp_is_on(central_node_low, simulator_factory):
 
     assert central_node_low.central_node.ping() > 0
     assert central_node_low.sdp_master.ping() > 0
-    assert central_node_low.subarray_devices["sdp_subarray"].ping() > 0
+    assert subarray_node_low.subarray_devices["sdp_subarray"].ping() > 0
     assert sdp_master_sim.ping() > 0
 
 
 @given("telescope state is ON")
-def check_telescope_state_is_on(central_node_low, event_recorder):
+def check_tmc_csp_state_is_on(central_node_low, subarray_node_low, event_recorder):
     """A method to check CentralNode.telescopeState"""
     central_node_low.csp_master.adminMode = 0
-    central_node_low.csp_subarray1.adminMode = 0
+    subarray_node_low.csp_subarray1.adminMode = 0
     event_recorder.subscribe_event(
         central_node_low.central_node, "telescopeState"
     )
     event_recorder.subscribe_event(central_node_low.csp_master, "State")
     event_recorder.subscribe_event(
-        central_node_low.subarray_devices["csp_subarray"], "State"
+        subarray_node_low.subarray_devices["csp_subarray"], "State"
     )
 
     if central_node_low.telescope_state != "ON":
@@ -60,7 +60,7 @@ def check_telescope_state_is_on(central_node_low, event_recorder):
         DevState.ON,
     )
     assert event_recorder.has_change_event_occurred(
-        central_node_low.subarray_devices["csp_subarray"],
+        subarray_node_low.subarray_devices["csp_subarray"],
         "State",
         DevState.ON,
     )
@@ -88,10 +88,10 @@ def check_telescope_state_standby(central_node_low, event_recorder):
 
 
 @then("the csp subarray and controller stays in ON state")
-def check_csp_subarray_is_on(central_node_low):
+def check_csp_subarray_is_on(central_node_low, subarray_node_low):
     """A method to check CSP State"""
     assert (
-        central_node_low.subarray_devices["csp_subarray"].State()
+        subarray_node_low.subarray_devices["csp_subarray"].State()
         == DevState.ON
     )
     assert central_node_low.csp_master.State() == DevState.ON
