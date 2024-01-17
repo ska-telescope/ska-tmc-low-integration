@@ -11,7 +11,7 @@ from tests.resources.test_harness.helpers import get_master_device_simulators
     "../features/tmc_csp/xtp-29686_standby.feature",
     "Standby the telescope having TMC and CSP subsystems",
 )
-def test_tmc_sdp_standby_telescope():
+def test_tmc_csp_standby_telescope():
     """
     Test case to verify TMC-CSP Standby functionality
     Glossary:
@@ -74,7 +74,7 @@ def check_tmc_csp_state_is_on(
 
 
 @when("I invoke TelescopeStandby command")
-def move_sdp_to_standby(central_node_low):
+def move_csp_to_standby(central_node_low):
     """A method to put CSP to STANDBY"""
     central_node_low.set_standby()
 
