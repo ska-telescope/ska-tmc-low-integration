@@ -39,7 +39,9 @@ def given_the_sut(central_node_low, subarray_node_low, simulator_factory):
 
 
 @given("telescope state is ON")
-def check_tmc_csp_state_is_on(central_node_low, subarray_node_low, event_recorder):
+def check_tmc_csp_state_is_on(
+    central_node_low, subarray_node_low, event_recorder
+):
     """A method to check CentralNode.telescopeState"""
     central_node_low.csp_master.adminMode = 0
     subarray_node_low.csp_subarray1.adminMode = 0
