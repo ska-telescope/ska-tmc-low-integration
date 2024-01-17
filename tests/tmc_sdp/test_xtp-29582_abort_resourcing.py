@@ -12,7 +12,7 @@ from tests.resources.test_harness.helpers import (
 
 @pytest.mark.tmc_sdp
 @scenario(
-    "../features/tmc_sdp/xtp-29583_abort_resourcing_tmc_sdp.feature",
+    "../features/tmc_sdp/xtp-29582_abort_resourcing_tmc_sdp.feature",
     "Abort invocation using TMC",
 )
 def test_tmc_sdp_abort_in_resourcing(subarray_node_low):
