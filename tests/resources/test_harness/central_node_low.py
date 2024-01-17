@@ -27,6 +27,7 @@ from tests.resources.test_harness.utils.sync_decorators import (
     sync_release_resources,
     sync_restart,
     sync_set_to_off,
+    sync_set_to_on,
 )
 from tests.resources.test_support.common_utils.common_helpers import Resource
 
@@ -204,9 +205,14 @@ class CentralNodeWrapperLow(object):
         elif self.subarray_node.obsState == ObsState.IDLE:
             LOGGER.info("Calling Release Resource on centralnode")
             self.invoke_release_resources(self.release_input)
-        self.move_to_off()
+        else:
+            if SIMULATED_DEVICES_DICT["sdp_and_mccs"]:
+                self.set_standby()
+            else:
+                self.move_to_off()
         self._clear_command_call_and_transition_data(clear_transition=True)
 
+    @sync_set_to_on(device_dict=device_dict_low)
     def move_to_on(self):
         """
         A method to invoke TelescopeOn command to
