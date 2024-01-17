@@ -15,7 +15,7 @@ from tests.resources.test_support.common_utils.tmc_helpers import (
 class TestSubarrayConfigure:
     """This class implement test cases to validate obsState of sub array"""
 
-    @pytest.mark.real_csp
+    @pytest.mark.tmc_csp
     @pytest.mark.parametrize(
         "source_obs_state, trigger, args_for_command,\
         intermediate_obs_state, destination_obs_state",
@@ -29,7 +29,7 @@ class TestSubarrayConfigure:
             ),
         ],
     )
-    @pytest.mark.real_csp
+    @pytest.mark.tmc_csp
     def test_subarray_low_configure(
         self,
         subarray_node_real_csp_low,
