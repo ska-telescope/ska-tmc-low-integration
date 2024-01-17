@@ -38,17 +38,18 @@ CSP_SIMULATION_ENABLED = os.getenv("CSP_SIMULATION_ENABLED")
 MCCS_SIMULATION_ENABLED = os.getenv("MCCS_SIMULATION_ENABLED")
 
 
-def check_subarray_obs_state(obs_state=None, timeout=50):
-    device_dict = {
-        "sdp_subarray": low_sdp_subarray1,
-        "csp_subarray": low_csp_subarray1,
-        "mccs_subarray": mccs_subarray1,
-        "tmc_subarraynode": tmc_low_subarraynode1,
-        "csp_subarray_leaf_node": low_csp_subarray_leaf_node,
-        "sdp_subarray_leaf_node": low_sdp_subarray_leaf_node,
-        "mccs_subarray_leaf_node": mccs_subarray_leaf_node,
-    }
+device_dict = {
+    "sdp_subarray": low_sdp_subarray1,
+    "csp_subarray": low_csp_subarray1,
+    "mccs_subarray": mccs_subarray1,
+    "tmc_subarraynode": tmc_low_subarraynode1,
+    "csp_subarray_leaf_node": low_csp_subarray_leaf_node,
+    "sdp_subarray_leaf_node": low_sdp_subarray_leaf_node,
+    "mccs_subarray_leaf_node": mccs_subarray_leaf_node,
+}
 
+
+def check_subarray_obs_state(obs_state=None, timeout=50):
     LOGGER.info(
         f"{tmc_low_subarraynode1}.obsState : "
         + str(Resource(tmc_low_subarraynode1).get("obsState"))
