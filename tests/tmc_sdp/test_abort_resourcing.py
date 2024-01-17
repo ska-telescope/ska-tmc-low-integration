@@ -23,7 +23,7 @@ def test_tmc_sdp_abort_in_resourcing(subarray_node_low):
     assert subarray_node_low.subarray_devices["sdp_subarray"].ping() > 0
 
 
-@given("TMC and SDP subarray busy assigning resources")
+@given("TMC and SDP subarray are busy assigning resources")
 def telescope_is_in_resourcing_obsstate(
     subarray_node_low, event_recorder, command_input_factory, central_node_low
 ):

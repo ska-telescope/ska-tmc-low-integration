@@ -37,7 +37,7 @@ def telescope_is_in_on_state(central_node_low, event_recorder):
     )
 
 
-@given("TMC and SDP subarray is in ABORTED ObsState")
+@given("TMC and SDP subarray are in ABORTED ObsState")
 def telescope_is_in_aborted_obsstate(
     central_node_low, event_recorder, command_input_factory
 ):
