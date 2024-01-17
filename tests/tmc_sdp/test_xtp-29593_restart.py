@@ -12,7 +12,7 @@ from tests.resources.test_harness.helpers import (
 
 @pytest.mark.tmc_sdp
 @scenario(
-    "../features/tmc_sdp/restart_tmc_sdp.feature",
+    "../features/tmc_sdp/xtp-29593_restart_tmc_sdp.feature",
     "TMC executes a Restart on SDP subarray when subarray completes Abort",
 )
 def test_tmc_sdp_restart(central_node_low):
