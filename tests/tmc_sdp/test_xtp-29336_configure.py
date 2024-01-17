@@ -51,8 +51,8 @@ def check_subarray_obs_state(
     assign_input_json = prepare_json_args_for_centralnode_commands(
         "assign_resources_low", command_input_factory
     )
-    assign_input_json = update_eb_pb_ids(assign_input_json)
-    central_node_low.store_resources(assign_input_json)
+    input_json = update_eb_pb_ids(assign_input_json)
+    central_node_low.store_resources(input_json)
 
     assert event_recorder.has_change_event_occurred(
         subarray_node_low.subarray_devices.get("sdp_subarray"),
