@@ -8,5 +8,5 @@ Feature: Release resources from CSP Subarray using TMC
         Then the CSP subarray must be in EMPTY obsState
         And TMC subarray obsState transitions to EMPTY
         Examples :
-        | subarray_id   |
-        |  1            |
+            | subarray_id   |   
+            |  1            |

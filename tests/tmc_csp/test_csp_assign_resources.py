@@ -11,7 +11,6 @@ from tests.resources.test_support.common_utils.tmc_helpers import (
 
 
 @pytest.mark.tmc_csp
-@pytest.mark.test
 @scenario(
     "../features/tmc_csp/assign_resources_to_csp.feature",
     "Assign resources to CSP subarray using TMC",
