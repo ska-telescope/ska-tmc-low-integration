@@ -44,7 +44,7 @@ def given_a_telescope_in_on_state(
         DevState.ON,
     )
     assert event_recorder.has_change_event_occurred(
-        central_node_low.subarray_devices["csp_subarray"],
+        subarray_node_low.subarray_devices["csp_subarray"],
         "State",
         DevState.ON,
     )
@@ -63,9 +63,7 @@ def subarray_in_empty_obsstate(central_node_low, event_recorder, subarray_id):
     assert central_node_low.subarray_node.obsState == ObsState.EMPTY
 
 
-@when(
-    parsers.parse("I assign resources with {subarray_id} the to the subarray")
-)
+@when(parsers.parse("I assign resources to the subarray"))
 def invoke_assignresources(
     central_node_low,
     command_input_factory,
@@ -78,27 +76,27 @@ def invoke_assignresources(
 
 
 @then(parsers.parse("the CSP subarray must be in IDLE obsState"))
-def csp_subarray_idle(central_node_low, event_recorder):
+def csp_subarray_idle(subarray_node_low, event_recorder):
     """Checks if Csp Subarray's obsState attribute value is IDLE"""
     event_recorder.subscribe_event(
-        central_node_low.subarray_devices.get("csp_subarray"), "obsState"
+        subarray_node_low.subarray_devices.get("csp_subarray"), "obsState"
     )
     assert event_recorder.has_change_event_occurred(
-        central_node_low.subarray_devices.get("csp_subarray"),
+        subarray_node_low.subarray_devices.get("csp_subarray"),
         "obsState",
         ObsState.IDLE,
     )
 
 
 @then(parsers.parse("the TMC subarray obsState is transitioned to IDLE"))
-def tmc_subarray_idle(central_node_low, event_recorder):
+def tmc_subarray_idle(subarray_node_low, event_recorder):
     """Checks if SubarrayNode's obsState attribute value is IDLE"""
     assert event_recorder.has_change_event_occurred(
-        central_node_low.subarray_node,
+        subarray_node_low.subarray_node,
         "obsState",
         ObsState.RESOURCING,
         lookahead=15,
     )
     assert event_recorder.has_change_event_occurred(
-        central_node_low.subarray_node, "obsState", ObsState.IDLE
+        subarray_node_low.subarray_node, "obsState", ObsState.IDLE
     )
