@@ -80,6 +80,12 @@ def check_subarray_obs_state(obs_state=None, timeout=50):
     )
 
 
+def wait_for_telescope_on():
+    the_waiter = Waiter(**device_dict)
+    the_waiter.set_wait_for_telescope_on()
+    the_waiter.wait(30)
+
+
 def get_device_simulators(simulator_factory):
     """A method to get simulators for Subsystem devices
 
