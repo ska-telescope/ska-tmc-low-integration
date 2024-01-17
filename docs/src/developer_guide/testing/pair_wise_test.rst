@@ -40,8 +40,8 @@ using latest `test harness` implemented.
 
 Commands implemented
 ^^^^^^^^^^^^^^^^^^^^
-To test with tmc_sdp execute the command `make k8s-test MARK=tmc_csp CSP_SIMULATION_ENABLED=false`.
+To test with tmc_csp execute the command `make k8s-test MARK=tmc_csp CSP_SIMULATION_ENABLED=false`.
 
 * ``ON`` - Testing On command on TMC with Real-CSP in place.
     
-* ``Standby`` - Testing Standby command on TMC  with Real-CSP in place.
+* ``Standby`` - Testing Standby command on TMC with Real-CSP in place.
