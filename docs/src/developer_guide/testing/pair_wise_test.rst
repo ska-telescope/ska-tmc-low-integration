@@ -31,3 +31,17 @@ To test with tmc_sdp execute the command `make k8s-test MARK=tmc_sdp SDP_SIMULAT
 
 * ``EndScan`` - Testing EndScan command on TMC with Real-SDP in place.
 
+****************************
+Pair wise testing / Real-CSP
+****************************
+
+Pair wise testing is way of testing the TMC code with real CSP subsystem in place. 
+using latest `test harness` implemented. 
+
+Commands implemented
+^^^^^^^^^^^^^^^^^^^^
+To test with tmc_sdp execute the command `make k8s-test MARK=tmc_csp CSP_SIMULATION_ENABLED=false`.
+
+* ``ON`` - Testing On command on TMC with Real-CSP in place.
+    
+* ``Standby`` - Testing Standby command on TMC  with Real-CSP in place.
