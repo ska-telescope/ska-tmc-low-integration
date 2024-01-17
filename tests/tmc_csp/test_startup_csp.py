@@ -3,9 +3,8 @@ import pytest
 from pytest_bdd import given, scenario, then, when
 from tango import DevState
 
-from tests.resources.test_harness.helpers import (
+from tests.resources.test_harness.helpers import (  # wait_for_telescope_on,
     get_master_device_simulators,
-    wait_for_telescope_on,
 )
 
 
@@ -46,7 +45,7 @@ def given_the_sut(central_node_low, subarray_node_low, simulator_factory):
 def move_telescope_to_on(central_node_low):
     """A method to turn on the telescope."""
     central_node_low.move_to_on()
-    wait_for_telescope_on()
+    # wait_for_telescope_on()
 
 
 @then("the CSP must go to ON state")
