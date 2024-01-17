@@ -46,6 +46,6 @@ To test with tmc_csp execute the command `make k8s-test MARK=tmc_csp CSP_SIMULAT
     
 * ``Standby`` - Testing Standby command on TMC with Real-CSP in place.
 
-* ``AssignResources`` -  Testing AssignResources command on TMC with Real-CSP in place.
+* ``AssignResources`` - Testing AssignResources command on TMC with Real-CSP in place.
     
 * ``ReleaseResources``- Testing ReleaseResources command on TMC with Real-CSP in place.
