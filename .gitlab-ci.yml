@@ -42,33 +42,6 @@ include:
   - project: 'ska-telescope/templates-repository'
     file: 'gitlab-ci/includes/finaliser.gitlab-ci.yml'
 
-  - project: 'ska-telescope/templates-repository'
-    file: 'gitlab-ci/includes/xray-publish.gitlab-ci.yml'
-
-
-# xray-publish:
-#   stage: publish
-#   image: $SKA_K8S_TOOLS_BUILD_DEPLOY
-#   tags:
-#     - k8srunner
-#   before_script:
-#     - '[ -f .make/xray.mk ] || (echo "File xray.mk not included in Makefile; exit 1")'
-#     - "make help | grep xray-publish"
-#   script:
-#     - ls -al
-#     - ls -al build
-#     - ls -al tests
-#     - pip3 install -U ska-ser-xray
-#     - XRAY_TEST_RESULT_FILE="build/cucumber.json" make xray-publish
-#   rules:
-#     - exists:
-#         - tests/xray-config.json
-#   dependencies:
-#     - k8s-test
-#     - k8s-test-tmc-with-csp
-#     - k8s-test-tmc-with-sdp
-#   allow_failure: true
-
 xray-publish:
   stage: publish
   image: $SKA_K8S_TOOLS_BUILD_DEPLOY
@@ -76,12 +49,20 @@ xray-publish:
     - k8srunner
   before_script:
     - '[ -f .make/xray.mk ] || (echo "File xray.mk not included in Makefile; exit 1")'
-    - 'make help | grep xray-publish'
+    - "make help | grep xray-publish"
   script:
-    - make xray-publish
+    - ls -al
+    - ls -al build
+    - ls -al tests
+    - pip3 install -U ska-ser-xray
+    - XRAY_TEST_RESULT_FILE="build/cucumber.json" make xray-publish
   rules:
     - exists:
-        - tests/xray-config.json # needs to be configurable as per XRAY_EXECUTION_CONFIG in make
+        - tests/xray-config.json
+  dependencies:
+    - k8s-test
+    - k8s-test-tmc-with-csp
+    - k8s-test-tmc-with-sdp
   allow_failure: true
 
 
