@@ -105,4 +105,3 @@ def tmc_subarray_is_in_empty_obsstate(central_node_low, event_recorder):
         "obsState",
         ObsState.EMPTY,
     )
-    central_node_low.tear_down()
