@@ -12,7 +12,7 @@ from tests.resources.test_support.common_utils.tmc_helpers import (
 
 @pytest.mark.tmc_csp
 @scenario(
-    "../features/tmc_csp/release_resources_to_csp.feature",
+    "../features/tmc_csp/xtp-29735_release_resources_csp.feature",
     "Release resources from CSP Subarray using TMC",
 )
 def test_releaseresources_command(central_node_low):
@@ -28,8 +28,6 @@ def given_a_telescope_in_on_state(
     central_node_low, subarray_node_low, event_recorder
 ):
     """Checks if CentralNode's telescopeState attribute value is on."""
-    central_node_low.csp_master.adminMode = 0
-    subarray_node_low.csp_subarray1.adminMode = 0
     central_node_low.move_to_on()
     event_recorder.subscribe_event(
         central_node_low.central_node, "telescopeState"
