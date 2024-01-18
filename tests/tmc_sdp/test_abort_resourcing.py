@@ -10,7 +10,6 @@ from tests.resources.test_harness.helpers import (
 )
 
 
-@pytest.mark.skip("unstable test")
 @pytest.mark.tmc_sdp
 @scenario(
     "../features/tmc_sdp/xtp-29582_abort_resourcing_tmc_sdp.feature",
