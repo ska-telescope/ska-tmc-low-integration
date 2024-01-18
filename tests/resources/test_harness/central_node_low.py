@@ -5,7 +5,6 @@ from ska_ser_logging import configure_logging
 from ska_tango_base.control_model import HealthState
 from tango import DeviceProxy, DevState
 
-from tests.conftest import central_node_low, subarray_node_low
 from tests.resources.test_harness.constant import (
     RESET_DEFECT,
     device_dict_low,
@@ -223,10 +222,10 @@ class CentralNodeWrapperLow(object):
         LOGGER.info(f"Received simulated devices: {SIMULATED_DEVICES_DICT}")
 
         # Set adminMode to 0 for central_node_low.csp_master
-        central_node_low.csp_master.adminMode = 0
+        self.csp_master.adminMode = 0
 
         # Set adminMode to 0 for subarray_node_low.csp_subarray1
-        subarray_node_low.csp_subarray1.adminMode = 0
+        self.csp_subarray1.adminMode = 0
 
         if SIMULATED_DEVICES_DICT["all_mocks"]:
             LOGGER.info("Invoking TelescopeOn command with all Mocks")
