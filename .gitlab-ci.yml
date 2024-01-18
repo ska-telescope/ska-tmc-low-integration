@@ -107,6 +107,15 @@ on-demand-destroy:
   when: manual
   allow_failure: true
 
+k8s-test:
+  variables:
+    KUBE_NAMESPACE: 'ci-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA'
+    SERVICE_ACCOUNT: "ci-svc-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA"
+  before_script:
+    - make cred SERVICE_ACCOUNT=$SERVICE_ACCOUNT
+    - '[ -f .make/k8s.mk ] || (echo "File k8s.mk not included in Makefile; exit 1")'
+    - 'make help | grep k8s-test'
+    - make k8s-install-chart
 
 k8s-test-tmc-with-csp:
   extends:
