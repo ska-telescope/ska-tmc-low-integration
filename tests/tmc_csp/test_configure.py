@@ -19,7 +19,7 @@ from tests.resources.test_harness.subarray_node_low import (
 
 @pytest.mark.tmc_csp
 @scenario(
-    "../features/tmc_csp/xtp_29854_configure.feature",
+    "../features/tmc_csp/xtp-29854_configure.feature",
     "Configure a CSP subarray for a scan using TMC",
 )
 def test_tmc_csp_configure_functionality(central_node_low) -> None:

@@ -23,7 +23,7 @@ LOGGER = logging.getLogger(__name__)
 
 @pytest.mark.tmc_csp
 @scenario(
-    "../features/tmc_csp/xtp_29855_end.feature",
+    "../features/tmc_csp/xtp-29855_end.feature",
     "End from CSP Subarray using TMC",
 )
 def test_tmc_csp_end_functionality(central_node_low) -> None:
