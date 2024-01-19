@@ -47,6 +47,9 @@ def telescope_is_in_resourcing_obsstate(
         subarray_node_low.subarray_devices.get("sdp_subarray"), "obsState"
     )
     event_recorder.subscribe_event(subarray_node_low.subarray_node, "obsState")
+    event_recorder.subscribe_event(
+        subarray_node_low.sdp_subarray_leaf_node, "sdpSubarrayObsState"
+    )
     assert event_recorder.has_change_event_occurred(
         subarray_node_low.subarray_devices.get("sdp_subarray"),
         "obsState",
@@ -55,6 +58,11 @@ def telescope_is_in_resourcing_obsstate(
     assert event_recorder.has_change_event_occurred(
         subarray_node_low.subarray_node,
         "obsState",
+        ObsState.RESOURCING,
+    )
+    assert event_recorder.has_change_event_occurred(
+        subarray_node_low.sdp_subarray_leaf_node,
+        "sdpSubarrayObsState",
         ObsState.RESOURCING,
     )
 
