@@ -6,6 +6,7 @@ from ska_tango_base.control_model import ObsState
 from tests.resources.test_harness.helpers import (
     prepare_json_args_for_centralnode_commands,
     prepare_json_args_for_commands,
+    update_eb_pb_ids,
 )
 
 
@@ -52,7 +53,7 @@ def check_subarray_obs_state(
     event_recorder.subscribe_event(
         subarray_node_low.subarray_devices.get("sdp_subarray"), "obsState"
     )
-
+    assign_input_json = update_eb_pb_ids(assign_input_json)
     central_node_low.set_subarray_id(subarray_id)
     subarray_node_low.force_change_of_obs_state(
         "READY",
