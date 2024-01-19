@@ -20,7 +20,10 @@ from tests.resources.test_harness.constant import (
     mccs_subarray1,
     tmc_low_subarraynode1,
 )
-from tests.resources.test_harness.helpers import SIMULATED_DEVICES_DICT
+from tests.resources.test_harness.helpers import (
+    SIMULATED_DEVICES_DICT,
+    wait_csp_master_off,
+)
 from tests.resources.test_harness.utils.common_utils import JsonFactory
 from tests.resources.test_harness.utils.sync_decorators import (
     sync_abort,
@@ -221,12 +224,6 @@ class CentralNodeWrapperLow(object):
         LOGGER.info("Starting up the Telescope")
         LOGGER.info(f"Received simulated devices: {SIMULATED_DEVICES_DICT}")
 
-        # Set adminMode to 0 for central_node_low.csp_master
-        self.csp_master.adminMode = 0
-
-        # Set adminMode to 0 for subarray_node_low.csp_subarray1
-        self.csp_subarray1.adminMode = 0
-
         if SIMULATED_DEVICES_DICT["all_mocks"]:
             LOGGER.info("Invoking TelescopeOn command with all Mocks")
             self.central_node.TelescopeOn()
@@ -250,6 +247,10 @@ class CentralNodeWrapperLow(object):
             LOGGER.info(
                 "Invoking TelescopeOn command with sdp and mccss simulated"
             )
+            # Set adminMode to Online for csp_master
+            if self.csp_master.adminMode != 0:
+                self.csp_master.adminMode = 0
+            wait_csp_master_off()
             self.central_node.TelescopeOn()
             self.set_values_with_sdp_mccs_mocks(DevState.ON)
         else:
