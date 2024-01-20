@@ -3,7 +3,11 @@ import pytest
 from pytest_bdd import given, scenario, then, when
 from tango import DevState
 
-from tests.resources.test_harness.helpers import get_master_device_simulators
+from tests.resources.test_harness.helpers import (
+    get_master_device_simulators,
+    wait_csp_master_off,
+    wait_csp_subarray_off,
+)
 
 
 @pytest.mark.tmc_csp
@@ -35,6 +39,10 @@ def given_the_sut(central_node_low, subarray_node_low, simulator_factory):
     assert central_node_low.sdp_master.ping() > 0
     assert subarray_node_low.subarray_devices["sdp_subarray"].ping() > 0
     assert sdp_master_sim.ping() > 0
+    central_node_low.csp_master.adminMode = 0
+    wait_csp_master_off()
+    central_node_low.csp_subarray1.adminMode = 0
+    wait_csp_subarray_off()
 
 
 @when("I start up the telescope")
