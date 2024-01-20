@@ -3,11 +3,7 @@ import pytest
 from pytest_bdd import given, scenario, then, when
 from tango import DevState
 
-from tests.resources.test_harness.helpers import (
-    get_master_device_simulators,
-    wait_csp_master_off,
-    wait_csp_subarray_off,
-)
+from tests.resources.test_harness.helpers import get_master_device_simulators
 
 
 @pytest.mark.tmc_csp
@@ -47,10 +43,6 @@ def check_tmc_csp_state_is_on(
     central_node_low, subarray_node_low, event_recorder
 ):
     """A method to check CentralNode.telescopeState"""
-    central_node_low.csp_master.adminMode = 0
-    wait_csp_master_off()
-    central_node_low.csp_subarray1.adminMode = 0
-    wait_csp_subarray_off()
     event_recorder.subscribe_event(
         central_node_low.central_node, "telescopeState"
     )

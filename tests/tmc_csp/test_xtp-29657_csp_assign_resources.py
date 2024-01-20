@@ -5,10 +5,6 @@ from pytest_bdd import given, parsers, scenario, then, when
 from ska_control_model import ObsState
 from tango import DevState
 
-from tests.resources.test_harness.helpers import (
-    wait_csp_master_off,
-    wait_csp_subarray_off,
-)
 from tests.resources.test_support.common_utils.tmc_helpers import (
     prepare_json_args_for_centralnode_commands,
 )
@@ -32,10 +28,6 @@ def given_a_telescope_in_on_state(
     central_node_low, subarray_node_low, event_recorder
 ):
     """Checks if CentralNode's telescopeState attribute value is on."""
-    central_node_low.csp_master.adminMode = 0
-    wait_csp_master_off()
-    central_node_low.csp_subarray1.adminMode = 0
-    wait_csp_subarray_off()
     central_node_low.move_to_on()
     event_recorder.subscribe_event(
         central_node_low.central_node, "telescopeState"

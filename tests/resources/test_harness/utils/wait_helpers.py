@@ -342,20 +342,6 @@ class Waiter:
                 )
             )
 
-    def set_wait_for_csp_master_to_become_off(self):
-        self.waits.append(
-            watch(Resource(self.csp_master)).to_become(
-                "State", changed_to="OFF"
-            )
-        )
-
-    def set_wait_for_csp_subarray_to_become_off(self):
-        self.waits.append(
-            watch(Resource(self.csp_subarray1)).to_become(
-                "State", changed_to="OFF"
-            )
-        )
-
     def set_wait_for_scanning(self):
         self.waits.append(
             watch(Resource(self.tmc_csp_subarray_leaf_node)).to_become(

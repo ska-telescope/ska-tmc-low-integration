@@ -458,15 +458,3 @@ def get_simulated_devices_info() -> dict:
 
 
 SIMULATED_DEVICES_DICT = get_simulated_devices_info()
-
-
-def wait_csp_master_off():
-    wait = Waiter(**device_dict)
-    wait.set_wait_for_csp_master_to_become_off()
-    wait.wait(500)
-
-
-def wait_csp_subarray_off():
-    wait = Waiter(**device_dict)
-    wait.set_wait_for_csp_subarray_to_become_off()
-    wait.wait(500)
