@@ -35,8 +35,6 @@ def given_the_sut(central_node_low, subarray_node_low, simulator_factory):
     assert central_node_low.sdp_master.ping() > 0
     assert subarray_node_low.subarray_devices["sdp_subarray"].ping() > 0
     assert sdp_master_sim.ping() > 0
-    central_node_low.csp_master.adminMode = 0
-    subarray_node_low.csp_subarray1.adminMode = 0
 
 
 @when("I start up the telescope")

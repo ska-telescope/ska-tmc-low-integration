@@ -23,6 +23,7 @@ from tests.resources.test_harness.constant import (
 from tests.resources.test_harness.helpers import (
     SIMULATED_DEVICES_DICT,
     wait_csp_master_off,
+    wait_csp_subarray_off,
 )
 from tests.resources.test_harness.utils.common_utils import JsonFactory
 from tests.resources.test_harness.utils.sync_decorators import (
@@ -251,6 +252,10 @@ class CentralNodeWrapperLow(object):
             if self.csp_master.adminMode != 0:
                 self.csp_master.adminMode = 0
             wait_csp_master_off()
+            # Set adminMode to Online for csp_subarray
+            if self.csp_subarray1 != 0:
+                self.csp_subarray1.adminMode = 0
+            wait_csp_subarray_off()
             self.central_node.TelescopeOn()
             self.set_values_with_sdp_mccs_mocks(DevState.ON)
         else:
