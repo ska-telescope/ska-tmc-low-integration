@@ -248,7 +248,7 @@ class CentralNodeWrapperLow(object):
             if self.csp_master.adminMode != 0:
                 self.csp_master.adminMode = 0
             # Set adminMode to Online for csp_subarray
-            if self.csp_subarray1 != 0:
+            if self.csp_subarray1.adminMode != 0:
                 self.csp_subarray1.adminMode = 0
             self.central_node.TelescopeOn()
             self.set_values_with_sdp_mccs_mocks(DevState.ON)
