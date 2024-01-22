@@ -43,8 +43,6 @@ def check_tmc_csp_state_is_on(
     central_node_low, subarray_node_low, event_recorder
 ):
     """A method to check CentralNode.telescopeState"""
-    central_node_low.csp_master.adminMode = 0
-    subarray_node_low.csp_subarray1.adminMode = 0
     event_recorder.subscribe_event(
         central_node_low.central_node, "telescopeState"
     )
@@ -52,10 +50,7 @@ def check_tmc_csp_state_is_on(
     event_recorder.subscribe_event(
         subarray_node_low.subarray_devices["csp_subarray"], "State"
     )
-
-    if central_node_low.telescope_state != "ON":
-        central_node_low.move_to_on()
-
+    central_node_low.move_to_on()
     assert event_recorder.has_change_event_occurred(
         central_node_low.csp_master,
         "State",

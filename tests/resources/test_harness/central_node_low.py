@@ -220,6 +220,7 @@ class CentralNodeWrapperLow(object):
         """
         LOGGER.info("Starting up the Telescope")
         LOGGER.info(f"Received simulated devices: {SIMULATED_DEVICES_DICT}")
+
         if SIMULATED_DEVICES_DICT["all_mocks"]:
             LOGGER.info("Invoking TelescopeOn command with all Mocks")
             self.central_node.TelescopeOn()
@@ -243,6 +244,12 @@ class CentralNodeWrapperLow(object):
             LOGGER.info(
                 "Invoking TelescopeOn command with sdp and mccss simulated"
             )
+            # Set adminMode to Online for csp_master
+            if self.csp_master.adminMode != 0:
+                self.csp_master.adminMode = 0
+            # Set adminMode to Online for csp_subarray
+            if self.csp_subarray1.adminMode != 0:
+                self.csp_subarray1.adminMode = 0
             self.central_node.TelescopeOn()
             self.set_values_with_sdp_mccs_mocks(DevState.ON)
         else:
