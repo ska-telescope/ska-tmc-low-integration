@@ -75,7 +75,7 @@ def move_subarray_node_to_ready_obsstate(
 
     event_recorder.subscribe_event(central_node_low.subarray_node, "obsState")
     assert event_recorder.has_change_event_occurred(
-        central_node_low.subarray_node,
+        subarray_node_class.subarray_node,
         "obsState",
         ObsState.IDLE,
         lookahead=20,
@@ -85,7 +85,7 @@ def move_subarray_node_to_ready_obsstate(
     )
     subarray_node.execute_transition("Configure", argin=configure_input_json)
     assert event_recorder.has_change_event_occurred(
-        subarray_node.subarray_node,
+        subarray_node_low.subarray_node,
         "obsState",
         ObsState.READY,
         lookahead=20,
