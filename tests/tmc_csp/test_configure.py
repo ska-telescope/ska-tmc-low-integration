@@ -20,7 +20,7 @@ from tests.resources.test_harness.subarray_node_low import (
 @pytest.mark.tmc_csp
 @scenario(
     "../features/tmc_csp/xtp-29854_configure.feature",
-    "Configure a CSP subarray for a scan using TMC",
+    "Configure CSP subarray using TMC",
 )
 def test_tmc_csp_configure_functionality(central_node_low) -> None:
     """
@@ -30,7 +30,7 @@ def test_tmc_csp_configure_functionality(central_node_low) -> None:
     assert central_node_low.subarray_devices["sdp_subarray"].ping() > 0
 
 
-@given("the telescope is in ON state")
+@given("the Telescope is in ON state")
 def check_telescope_is_in_on_state(
     central_node_low: CentralNodeWrapperLow, event_recorder: EventRecorder
 ) -> None:
@@ -73,7 +73,7 @@ def move_subarray_node_to_idle_obsstate(
     )
 
 
-@when(parsers.parse("I configure with {config_id} to the subarray"))
+@when("I configure the subarray")
 def invoke_configure_command(
     subarray_node_low: SubarrayNodeWrapperLow, command_input_factory
 ) -> None:
@@ -101,11 +101,7 @@ def check_if_csp_subarray_moved_to_ready_obsstate(
     )
 
 
-@then(
-    parsers.parse(
-        "the TMC subarray {subarray_id} transitions to ObsState READY"
-    )
-)
+@then("the TMC subarray transitions to READY obsState")
 def check_if_tmc_subarray_moved_to_ready_obsstate(
     subarray_node_low: SubarrayNodeWrapperLow, event_recorder: EventRecorder
 ) -> None:

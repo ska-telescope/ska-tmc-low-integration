@@ -1,6 +1,5 @@
 """Test module to test TMC-CSP End functionality."""
 import json
-import logging
 
 import pytest
 from pytest_bdd import given, parsers, scenario, then, when
@@ -18,13 +17,11 @@ from tests.resources.test_harness.subarray_node_low import (
 )
 from tests.resources.test_harness.utils.common_utils import JsonFactory
 
-LOGGER = logging.getLogger(__name__)
-
 
 @pytest.mark.tmc_csp
 @scenario(
     "../features/tmc_csp/xtp-29855_end.feature",
-    "End from CSP Subarray using TMC",
+    "End Command to CSP subarray using TMC",
 )
 def test_tmc_csp_end_functionality(central_node_low) -> None:
     """
