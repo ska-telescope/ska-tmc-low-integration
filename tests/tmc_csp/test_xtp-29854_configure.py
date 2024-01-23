@@ -58,7 +58,6 @@ def move_subarray_node_to_idle_obsstate(
     assign_input_json = prepare_json_args_for_centralnode_commands(
         "assign_resources_low", command_input_factory
     )
-    # Create json for AssignResources commands with requested subarray_id
     assign_input = json.loads(assign_input_json)
     assign_input["subarray_id"] = int(subarray_id)
     central_node_low.store_resources(json.dumps(assign_input))

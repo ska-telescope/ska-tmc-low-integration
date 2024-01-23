@@ -6,14 +6,10 @@ from pytest_bdd import given, parsers, scenario, then, when
 from ska_control_model import ObsState
 from tango import DevState
 
-from tests.resources.test_harness.central_node_low import CentralNodeWrapperLow
 from tests.resources.test_harness.event_recorder import EventRecorder
 from tests.resources.test_harness.helpers import (
     prepare_json_args_for_centralnode_commands,
     prepare_json_args_for_commands,
-)
-from tests.resources.test_harness.subarray_node_low import (
-    SubarrayNodeWrapperLow,
 )
 from tests.resources.test_harness.utils.common_utils import JsonFactory
 
@@ -33,10 +29,9 @@ def test_tmc_csp_end_functionality(central_node_low) -> None:
 
 @given("the Telescope is in ON state")
 def check_telescope_is_in_on_state(
-    central_node_low: CentralNodeWrapperLow, event_recorder: EventRecorder
+    central_node_low, event_recorder: EventRecorder
 ) -> None:
     """Ensure telescope is in ON state."""
-    central_node_low.csp_master.adminMode = 0
     central_node_low.move_to_on()
     event_recorder.subscribe_event(
         central_node_low.central_node, "telescopeState"
@@ -51,8 +46,8 @@ def check_telescope_is_in_on_state(
 
 @given(parsers.parse("a subarray {subarray_id} in the READY obsState"))
 def move_subarray_node_to_ready_obsstate(
-    central_node_low: CentralNodeWrapperLow,
-    subarray_node_low: SubarrayNodeWrapperLow,
+    central_node_low,
+    subarray_node_low,
     event_recorder: EventRecorder,
     command_input_factory: JsonFactory,
     subarray_id: str,
@@ -62,7 +57,6 @@ def move_subarray_node_to_ready_obsstate(
     assign_input_json = prepare_json_args_for_centralnode_commands(
         "assign_resources_low", command_input_factory
     )
-    # Create json for AssignResources commands with requested subarray_id
     assign_input = json.loads(assign_input_json)
     assign_input["subarray_id"] = int(subarray_id)
     central_node_low.perform_action(
@@ -89,14 +83,14 @@ def move_subarray_node_to_ready_obsstate(
 
 
 @when("I issue End command to the subarray")
-def invoke_end_command(subarray_node_low: SubarrayNodeWrapperLow) -> None:
+def invoke_end_command(subarray_node_low) -> None:
     """Invoke End command."""
     subarray_node_low.execute_transition("End")
 
 
 @then("the CSP subarray transitions to IDLE obsState")
 def check_if_csp_subarray_moved_to_idle_obsstate(
-    subarray_node_low: SubarrayNodeWrapperLow, event_recorder
+    subarray_node_low, event_recorder
 ):
     """Ensure CSP subarray is moved to IDLE obsstate"""
     event_recorder.subscribe_event(
@@ -111,7 +105,7 @@ def check_if_csp_subarray_moved_to_idle_obsstate(
 
 @then("TMC subarray transitions to IDLE obsState")
 def check_if_tmc_subarray_moved_to_idle_obsstate(
-    subarray_node_low: SubarrayNodeWrapperLow, event_recorder: EventRecorder
+    subarray_node_low, event_recorder: EventRecorder
 ) -> None:
     """Ensure TMC Subarray is moved to IDLE obsstate"""
     assert event_recorder.has_change_event_occurred(
