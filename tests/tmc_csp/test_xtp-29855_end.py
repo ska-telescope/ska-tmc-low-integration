@@ -36,9 +36,8 @@ def check_telescope_is_in_on_state(
     central_node_low: CentralNodeWrapperLow, event_recorder: EventRecorder
 ) -> None:
     """Ensure telescope is in ON state."""
-    if central_node_low.telescope_state != "ON":
-        central_node_low.csp_master.adminMode = 0
-        central_node_low.move_to_on()
+    central_node_low.csp_master.adminMode = 0
+    central_node_low.move_to_on()
     event_recorder.subscribe_event(
         central_node_low.central_node, "telescopeState"
     )
