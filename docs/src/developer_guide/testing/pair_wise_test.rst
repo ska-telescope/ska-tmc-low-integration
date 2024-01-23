@@ -55,7 +55,7 @@ To test with tmc_csp execute the command `make k8s-test MARK=tmc_csp CSP_SIMULAT
     
 * ``ReleaseResources``- Testing ReleaseResources command on TMC with Real-CSP in place.
 
-* ``Configure``- Testing Configure command on TMC with real CSP controller and SDP Subarrays and mocked/simulated CSP and Mccs subsystems.
+* ``Configure``- Testing Configure command on TMC with real CSP controller and CSP Subarrays and mocked/simulated SDP and Mccs subsystems.
 
-* ``End`` - Testing End command on TMC with real CSP controller and SDP Subarrays and mocked/simulated CSP and Mccs subsystems.
+* ``End`` - Testing End command on TMC with real CSP controller and CSP Subarrays and mocked/simulated SDP and Mccs subsystems.
     
