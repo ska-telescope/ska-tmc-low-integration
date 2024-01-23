@@ -17,6 +17,7 @@ from tests.resources.test_harness.subarray_node_low import (
 )
 from tests.resources.test_harness.utils.common_utils import JsonFactory
 
+
 @pytest.mark.tmc_csp
 @scenario(
     "../features/tmc_csp/xtp-29855_end.feature",
@@ -78,7 +79,9 @@ def move_subarray_node_to_ready_obsstate(
     configure_input_json = prepare_json_args_for_commands(
         "configure_low", command_input_factory
     )
-    subarray_node_low.execute_transition("Configure", argin=configure_input_json)
+    subarray_node_low.execute_transition(
+        "Configure", argin=configure_input_json
+    )
     assert event_recorder.has_change_event_occurred(
         central_node_low.subarray_node,
         "obsState",
