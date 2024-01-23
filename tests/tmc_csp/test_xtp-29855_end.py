@@ -1,6 +1,4 @@
 """Test module to test TMC-CSP End functionality."""
-import json
-
 import pytest
 from pytest_bdd import given, parsers, scenario, then, when
 from ska_control_model import ObsState
@@ -11,7 +9,6 @@ from tests.resources.test_harness.helpers import (
     prepare_json_args_for_centralnode_commands,
     prepare_json_args_for_commands,
 )
-from tests.resources.test_harness.utils.common_utils import JsonFactory
 
 
 @pytest.mark.tmc_csp
@@ -48,8 +45,8 @@ def check_telescope_is_in_on_state(
 def move_subarray_node_to_ready_obsstate(
     central_node_low,
     subarray_node_low,
-    event_recorder: EventRecorder,
-    command_input_factory: JsonFactory,
+    event_recorder,
+    command_input_factory,
     subarray_id: str,
 ) -> None:
     """Move TMC Subarray to READY obsstate."""
@@ -57,9 +54,7 @@ def move_subarray_node_to_ready_obsstate(
     assign_input_json = prepare_json_args_for_centralnode_commands(
         "assign_resources_low", command_input_factory
     )
-    assign_input = json.loads(assign_input_json)
-    assign_input["subarray_id"] = int(subarray_id)
-    central_node_low.store_resources(json.dumps(assign_input))
+    central_node_low.store_resources(assign_input_json)
 
     event_recorder.subscribe_event(central_node_low.subarray_node, "obsState")
     assert event_recorder.has_change_event_occurred(
@@ -70,9 +65,7 @@ def move_subarray_node_to_ready_obsstate(
     configure_input_json = prepare_json_args_for_commands(
         "configure_low", command_input_factory
     )
-    subarray_node_low.execute_transition(
-        "Configure", argin=configure_input_json
-    )
+    subarray_node_low.store_configuration_data(configure_input_json)
     assert event_recorder.has_change_event_occurred(
         central_node_low.subarray_node,
         "obsState",
