@@ -35,6 +35,10 @@ To test with tmc_sdp execute the command `make k8s-test MARK=tmc_sdp SDP_SIMULAT
 
 * ``Restart`` - Testing Restart command TMC with Real-SDP in place.
 
+* ``Configure``- Testing Configure command on TMC with real CSP controller and SDP Subarrays and mocked/simulated CSP and Mccs subsystems.
+
+* ``End`` - Testing End command on TMC with real CSP controller and SDP Subarrays and mocked/simulated CSP and Mccs subsystems.
+    
 ****************************
 Pair wise testing / Real-CSP
 ****************************
