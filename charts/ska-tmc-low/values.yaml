@@ -33,9 +33,6 @@ global:
     - "subarraynode"
     - "mccssubarrayleafnode"
   subarray_count: 2
-  csp:
-    isSimulated:
-      enabled: true
 
   # fqdn for low devices
   tmc_subarray_prefix: "ska_low/tm_subarray_node"
@@ -171,6 +168,8 @@ deviceServers:
     file: "data/mocks.yaml"
     is_simulated:
       sdp: false
+      csp: false
+      mccs: false
 
 
 

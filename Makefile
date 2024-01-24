@@ -9,7 +9,7 @@ KUBE_NAMESPACE ?= ska-tmc-low-integration
 KUBE_NAMESPACE_SDP ?= ska-tmc-integration-sdp
 CSP_SIMULATION_ENABLED ?= true
 SDP_SIMULATION_ENABLED ?= true
-MCCS_SIMULATION_ENABLED ?= true
+MCCS_SIMULATION_ENABLED ?= false
 
 
 PYTHON_LINT_TARGET ?= tests/
@@ -89,6 +89,10 @@ CUSTOM_VALUES =	--set global.csp.isSimulated.enabled=$(CSP_SIMULATION_ENABLED)\
 	--set ska-low-cbf.ska-low-cbf-proc.enabled=true
 endif
 
+ifeq ($(MCCS_SIMULATION_ENABLED),false)
+CUSTOM_VALUES =	--set tmc-low.deviceServers.mocks.is_simulated.mccs=$(MCCS_SIMULATION_ENABLED)\
+	--set ska-low-mccs.enabled=true
+endif
 
 ifeq ($(SDP_SIMULATION_ENABLED),false)
 CUSTOM_VALUES =	--set tmc-low.deviceServers.mocks.is_simulated.sdp=$(SDP_SIMULATION_ENABLED)\

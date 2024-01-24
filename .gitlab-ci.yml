@@ -160,6 +160,21 @@ stop-k8s-test-tmc-with-sdp:
   variables:
     KUBE_NAMESPACE: 'ci-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-tmc-sdp'
 
+k8s-test-tmc-with-mccs:
+  extends:
+  - k8s-test
+  variables:
+    KUBE_NAMESPACE: 'ci-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-mccs-low'
+    SERVICE_ACCOUNT: "ci-svc-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-mccs-low"
+    MARK: 'tmc_mccs'
+    MCCS_SIMULATION_ENABLED: 'false'
+  retry: 1
+
+stop-k8s-test-tmc-with-mccs:
+  extends:
+    - stop-k8s-test
+  variables:
+    KUBE_NAMESPACE: 'ci-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-mccs-low'
 
 deploy-integration:
   rules:

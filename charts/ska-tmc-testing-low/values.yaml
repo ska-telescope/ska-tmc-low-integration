@@ -66,6 +66,7 @@ tmc-low:
       enabled: true
       is_simulated:
         sdp: true
+        mccs: true
 
  
 ska-sdp:
@@ -126,6 +127,10 @@ ska-csp-lmc-low:
     cspsubarray:
       instances: ["subarray1", "subarray2", "subarray3", "subarray4"]
       file: "data/subarray_cbf_only.yaml"
+
+ska-low-mccs:
+  legacy_compatibility: true
+  enabled: false
 
 # SKUID
 ska-ser-skuid:
