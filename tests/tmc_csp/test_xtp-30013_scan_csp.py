@@ -105,9 +105,7 @@ def subarray_in_ready_obsstate(
     )
 
 
-@when(
-    parsers.parse("I issue the scan command to the TMC subarray {subarray_id}")
-)
+@when(parsers.parse("I issue scan command with scan Id {scan_id} on subarray"))
 def invoke_scan(
     subarray_node_low: SubarrayNodeWrapperLow,
     event_recorder: EventRecorder,
@@ -132,24 +130,7 @@ def invoke_scan(
     )
 
 
-@then(parsers.parse("the CSP subarray transitions to ObsState SCANNING"))
-def csp_subarray_scanning(subarray_node_low, event_recorder):
-    """Checks if Csp Subarray's obsState attribute value is SCANNING"""
-    event_recorder.subscribe_event(
-        subarray_node_low.subarray_devices["csp_subarray"], "obsState"
-    )
-    assert event_recorder.has_change_event_occurred(
-        subarray_node_low.subarray_devices["csp_subarray"],
-        "obsState",
-        ObsState.SCANNING,
-    )
-
-
-@then(
-    parsers.parse(
-        "the TMC subarray {subarray_id} transitions to ObsState SCANNING"
-    )
-)
+@then("the subarray obsState transitions to SCANNING")
 def tmc_subarray_scanning(
     central_node_low, subarray_node_low, event_recorder, subarray_id
 ):
@@ -160,6 +141,19 @@ def tmc_subarray_scanning(
         "obsState",
         ObsState.SCANNING,
         lookahead=15,
+    )
+
+
+@then(parsers.parse("the CSP subarray transitions to ObsState SCANNING"))
+def csp_subarray_scanning(subarray_node_low, event_recorder):
+    """Checks if Csp Subarray's obsState attribute value is SCANNING"""
+    event_recorder.subscribe_event(
+        subarray_node_low.subarray_devices["csp_subarray"], "obsState"
+    )
+    assert event_recorder.has_change_event_occurred(
+        subarray_node_low.subarray_devices["csp_subarray"],
+        "obsState",
+        ObsState.SCANNING,
     )
 
 
