@@ -132,7 +132,10 @@ def invoke_scan(
 
 @then("the subarray obsState transitions to SCANNING")
 def tmc_subarray_scanning(
-    central_node_low, subarray_node_low, event_recorder, subarray_id
+    central_node_low: CentralNodeWrapperLow,
+    subarray_node_low: SubarrayNodeWrapperLow,
+    event_recorder: EventRecorder,
+    subarray_id: str,
 ):
     """Checks if SubarrayNode's obsState attribute value is SCANNING"""
     central_node_low.set_subarray_id(int(subarray_id))
@@ -145,7 +148,9 @@ def tmc_subarray_scanning(
 
 
 @then(parsers.parse("the CSP subarray transitions to ObsState SCANNING"))
-def csp_subarray_scanning(subarray_node_low, event_recorder):
+def csp_subarray_scanning(
+    subarray_node_low: CentralNodeWrapperLow, event_recorder: EventRecorder
+):
     """Checks if Csp Subarray's obsState attribute value is SCANNING"""
     event_recorder.subscribe_event(
         subarray_node_low.subarray_devices["csp_subarray"], "obsState"
@@ -158,33 +163,25 @@ def csp_subarray_scanning(subarray_node_low, event_recorder):
 
 
 @then(
-    parsers.parse(
-        "the CSP subarray ObsState transitions to READY after the"
-        + " scan duration elapsed"
-    )
+    "the CSP subarray obsState transitions to READY after the"
+    + "scan duration elapsed"
 )
 def csp_subarray_ObsState(
-    central_node_mid, subarray_node, event_recorder, subarray_id
+    subarray_node_low: SubarrayNodeWrapperLow, event_recorder: EventRecorder
 ):
     """Checks if SubarrayNode's obsState attribute value is READY"""
-    central_node_mid.set_subarray_id(int(subarray_id))
     assert event_recorder.has_change_event_occurred(
-        subarray_node.subarray_devices["csp_subarray"],
+        subarray_node_low.subarray_devices["csp_subarray"],
         "obsState",
         ObsState.READY,
     )
 
 
-@then(
-    parsers.parse(
-        "the TMC subarray {subarray_id} ObsState transitions back to READY"
-    )
-)
+@then(parsers.parse("the TMC subarray obsState transitions back to READY"))
 def tmc_subarray_ready(
-    central_node_mid, subarray_node, event_recorder, subarray_id
+    subarray_node_low: SubarrayNodeWrapperLow, event_recorder: EventRecorder
 ):
     """Checks if SubarrayNode's obsState attribute value is EMPTY"""
-    central_node_mid.set_subarray_id(int(subarray_id))
     assert event_recorder.has_change_event_occurred(
-        subarray_node.subarray_node, "obsState", ObsState.READY
+        subarray_node_low.subarray_node, "obsState", ObsState.READY
     )
