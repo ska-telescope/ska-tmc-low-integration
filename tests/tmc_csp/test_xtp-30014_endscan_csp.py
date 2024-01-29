@@ -19,7 +19,7 @@ from tests.resources.test_harness.utils.common_utils import JsonFactory
 
 @pytest.mark.tmc_csp
 @scenario(
-    "../features/tmc_csp/xtp-30014_endscan_csp.feature",
+    "../features/tmc_csp/xtp-30014_end_scan_csp.feature",
     "TMC executes a EndScan command on CSP subarray.",
 )
 def test_tmc_csp_endscan_functionality():
