@@ -27,10 +27,6 @@ def test_scan_command():
     """BDD test scenario for verifying successful execution of
     the Scan command with TMC and CSP devices for pairwise
     testing.
-    Glossary:
-        - "central_node_low": fixture for a TMC CentralNode under test
-        - "event_recorder": fixture for EventRecorder class
-        - "subarray_node_low": fixture for a TMC SubarrayNode under test
     """
 
 
@@ -40,7 +36,17 @@ def given_a_telescope_in_on_state(
     subarray_node_low: SubarrayNodeWrapperLow,
     event_recorder: EventRecorder,
 ):
-    """Checks if CentralNode's telescopeState attribute value is on."""
+    """Ensure that the telescope is in the ON state for the test.
+
+    Args:
+        central_node_low (CentralNodeWrapperLow): Fixture for TMC CentralNode.
+        subarray_node_low (SubarrayNodeWrapperLow): Fixture for TMC
+        SubarrayNode.
+        event_recorder (EventRecorder): Fixture for recording events.
+
+    Raises:
+        AssertionError: If the telescope is not in the ON state.
+    """
     central_node_low.move_to_on()
     event_recorder.subscribe_event(
         central_node_low.central_node, "telescopeState"
@@ -74,7 +80,19 @@ def subarray_in_ready_obsstate(
     subarray_node_low: SubarrayNodeWrapperLow,
     subarray_id: str,
 ) -> None:
-    """Move TMC Subarray to READY obsstate."""
+    """Move TMC Subarray to the READY obsstate.
+
+    Args:
+        central_node_low (CentralNodeWrapperLow): Fixture for TMC CentralNode.
+        event_recorder (EventRecorder): Fixture for recording events.
+        command_input_factory (JsonFactory): Factory for creating JSON input.
+        subarray_node_low (SubarrayNodeWrapperLow): Fixture for TMC
+        SubarrayNode.
+        subarray_id (str): Identifier for the TMC subarray.
+
+    Raises:
+        AssertionError: If the subarray is not in the READY ObsState.
+    """
     central_node_low.set_subarray_id(subarray_id)
     assign_input_json = prepare_json_args_for_centralnode_commands(
         "assign_resources_low", command_input_factory
@@ -109,11 +127,27 @@ def subarray_in_ready_obsstate(
 def invoke_scan(
     subarray_node_low: SubarrayNodeWrapperLow,
     event_recorder: EventRecorder,
-    command_input_factory,
+    command_input_factory: JsonFactory,
     scan_id,
     subarray_id,
 ):
-    """Invokes Scan command on TMC"""
+    """Invoke the Scan command on TMC.
+
+    Args:
+        subarray_node_low (SubarrayNodeWrapperLow): Fixture for TMC
+          SubarrayNode.
+        event_recorder (EventRecorder): Fixture for recording events.
+        command_input_factory (JsonFactory): Factory for creating JSON input.
+        scan_id: Identifier for the scan.
+        subarray_id: Identifier for the TMC subarray.
+
+    Raises:
+        AssertionError: If the scan command is not successful.
+    """
+
+    event_recorder.subscribe_event(
+        subarray_node_low.subarray_devices["csp_subarray"], "scanID"
+    )
     input_json = prepare_json_args_for_commands(
         "scan_low", command_input_factory
     )
@@ -124,7 +158,7 @@ def invoke_scan(
     subarray_node_low.store_scan_data(json.dumps(scan_json))
 
     assert event_recorder.has_change_event_occurred(
-        subarray_node_low.subarray_devices["sdp_subarray"],
+        subarray_node_low.subarray_devices["csp_subarray"],
         "scanID",
         int(scan_id),
     )
@@ -137,7 +171,18 @@ def tmc_subarray_scanning(
     event_recorder: EventRecorder,
     subarray_id: str,
 ):
-    """Checks if SubarrayNode's obsState attribute value is SCANNING"""
+    """Check if the SubarrayNode's obsState transitions to SCANNING.
+
+    Args:
+        central_node_low (CentralNodeWrapperLow): Fixture for TMC CentralNode.
+        subarray_node_low (SubarrayNodeWrapperLow): Fixture for TMC
+        SubarrayNode.
+        event_recorder (EventRecorder): Fixture for recording events.
+        subarray_id (str): Identifier for the TMC subarray.
+
+    Raises:
+        AssertionError: If the obsState does not transition to SCANNING.
+    """
     central_node_low.set_subarray_id(int(subarray_id))
     assert event_recorder.has_change_event_occurred(
         subarray_node_low.subarray_node,
@@ -151,7 +196,16 @@ def tmc_subarray_scanning(
 def csp_subarray_scanning(
     subarray_node_low: CentralNodeWrapperLow, event_recorder: EventRecorder
 ):
-    """Checks if Csp Subarray's obsState attribute value is SCANNING"""
+    """Check if the CSP Subarray's obsState transitions to SCANNING.
+
+    Args:
+        subarray_node_low (CentralNodeWrapperLow): Fixture for TMC CentralNode.
+        event_recorder (EventRecorder): Fixture for recording events.
+
+    Raises:
+        AssertionError: If the CSP subarray obsState does not transition
+          to SCANNING.
+    """
     event_recorder.subscribe_event(
         subarray_node_low.subarray_devices["csp_subarray"], "obsState"
     )
@@ -169,7 +223,17 @@ def csp_subarray_scanning(
 def csp_subarray_ObsState(
     subarray_node_low: SubarrayNodeWrapperLow, event_recorder: EventRecorder
 ):
-    """Checks if SubarrayNode's obsState attribute value is READY"""
+    """Check if the CSP Subarray's obsState transitions to READY.
+
+    Args:
+        subarray_node_low (SubarrayNodeWrapperLow): Fixture for TMC
+          SubarrayNode.
+        event_recorder (EventRecorder): Fixture for recording events.
+
+    Raises:
+        AssertionError: If the CSP subarray obsState does not transition to
+          READY.
+    """
     assert event_recorder.has_change_event_occurred(
         subarray_node_low.subarray_devices["csp_subarray"],
         "obsState",
@@ -181,7 +245,17 @@ def csp_subarray_ObsState(
 def tmc_subarray_ready(
     subarray_node_low: SubarrayNodeWrapperLow, event_recorder: EventRecorder
 ):
-    """Checks if SubarrayNode's obsState attribute value is EMPTY"""
+    """Check if the TMC Subarray's obsState transitions back to READY.
+
+    Args:
+        subarray_node_low (SubarrayNodeWrapperLow): Fixture for TMC
+          SubarrayNode.
+        event_recorder (EventRecorder): Fixture for recording events.
+
+    Raises:
+        AssertionError: If the TMC subarray obsState does not transition
+        back to READY.
+    """
     assert event_recorder.has_change_event_occurred(
         subarray_node_low.subarray_node, "obsState", ObsState.READY
     )
