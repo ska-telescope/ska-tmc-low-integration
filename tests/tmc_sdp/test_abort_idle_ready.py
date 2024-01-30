@@ -91,11 +91,7 @@ def subarray_is_in_given_obsstate(
         )
 
 
-@when(
-    parsers.parse(
-        "I issued the Abort command to the TMC subarray {subarray_id}"
-    )
-)
+@when(parsers.parse("I issued the Abort command to the TMC subarray "))
 def invoke_abort(subarray_node_low, subarray_id):
     """
     This method invokes abort command on tmc subarray
@@ -104,11 +100,7 @@ def invoke_abort(subarray_node_low, subarray_id):
     subarray_node_low.abort_subarray()
 
 
-@then(
-    parsers.parse(
-        "the SDP subarray {subarray_id} transitions to ObsState ABORTED"
-    )
-)
+@then(parsers.parse("the SDP subarray transitions to ObsState ABORTED"))
 def sdp_subarray_is_in_aborted_obsstate(
     subarray_node_low, event_recorder, subarray_id
 ):
@@ -123,11 +115,7 @@ def sdp_subarray_is_in_aborted_obsstate(
     )
 
 
-@then(
-    parsers.parse(
-        "the TMC subarray {subarray_id} transitions to ObsState ABORTED"
-    )
-)
+@then(parsers.parse("the TMC subarray transitions to ObsState ABORTED"))
 def tmc_subarray_is_in_aborted_obsstate(
     subarray_node_low, event_recorder, subarray_id
 ):
