@@ -174,7 +174,7 @@ def tmc_subarray_scanning(
 
 @then(parsers.parse("the CSP subarray transitions to ObsState SCANNING"))
 def csp_subarray_scanning(
-    subarray_node_low: CentralNodeWrapperLow, event_recorder: EventRecorder
+    subarray_node_low: SubarrayNodeWrapperLow, event_recorder: EventRecorder
 ):
     """Check if the CSP Subarray's obsState transitions to SCANNING.
 
