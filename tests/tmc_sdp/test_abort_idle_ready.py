@@ -93,7 +93,7 @@ def subarray_is_in_given_obsstate(
         )
 
 
-@when("I issued the Abort command to the TMC subarray ")
+@when("I issued the Abort command to the TMC subarray")
 def invoke_abort(subarray_node_low, subarray_id):
     """
     This method invokes abort command on tmc subarray
