@@ -58,27 +58,21 @@ def subarray_is_in_configuring_obsstate(
     # Subarray
     assign_str["sdp"]["processing_blocks"][0]["parameters"][
         "time-to-ready"
-    ] = 2
-    input_json = update_eb_pb_ids(json.dumps(assign_str))
-    central_node_low.store_resources(input_json)
+    ] = 1
+    assign_input_json = update_eb_pb_ids(json.dumps(assign_str))
     event_recorder.subscribe_event(
         subarray_node_low.subarray_devices.get("sdp_subarray"), "obsState"
     )
     event_recorder.subscribe_event(subarray_node_low.subarray_node, "obsState")
-    assert event_recorder.has_change_event_occurred(
-        subarray_node_low.subarray_devices.get("sdp_subarray"),
-        "obsState",
-        ObsState.IDLE,
-    )
-    assert event_recorder.has_change_event_occurred(
-        subarray_node_low.subarray_node,
-        "obsState",
-        ObsState.IDLE,
-    )
-    input_json = prepare_json_args_for_commands(
+    
+    configure_input_json = prepare_json_args_for_commands(
         "configure_low", command_input_factory
     )
-    subarray_node_low.execute_transition("Configure", input_json)
+    subarray_node_low.force_change_of_obs_state(
+        "CONFIGURING",
+        assign_input_json=assign_input_json,
+        configure_input_json=configure_input_json,
+    )
     assert event_recorder.has_change_event_occurred(
         subarray_node_low.subarray_devices["sdp_subarray"],
         "obsState",
