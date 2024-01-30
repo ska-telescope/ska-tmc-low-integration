@@ -38,7 +38,7 @@ def subarray_is_in_configuring_obsstate(
     subarray_node_low,
     subarray_id,
 ):
-    """ "A method to check if telescope in is CONFIGURING obsSstate."""
+    """A method to check if telescope is in CONFIGURING obsState."""
     central_node_low.set_subarray_id(subarray_id)
     central_node_low.move_to_on()
     event_recorder.subscribe_event(
