@@ -58,7 +58,7 @@ def subarray_is_in_configuring_obsstate(
     # Subarray
     assign_str["sdp"]["processing_blocks"][0]["parameters"][
         "time-to-ready"
-    ] = 1
+    ] = 2
     assign_input_json = update_eb_pb_ids(json.dumps(assign_str))
     event_recorder.subscribe_event(
         subarray_node_low.subarray_devices.get("sdp_subarray"), "obsState"
