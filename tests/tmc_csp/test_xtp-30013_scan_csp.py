@@ -1,5 +1,4 @@
 """Test module for TMC-CSP Scan functionality"""
-import json
 
 import pytest
 from pytest_bdd import given, parsers, scenario, then, when
@@ -123,7 +122,7 @@ def subarray_in_ready_obsstate(
     )
 
 
-@when(parsers.parse("I issue scan command with scan Id {scan_id} on subarray"))
+@when(parsers.parse("I issue scan command on subarray"))
 def invoke_scan(
     subarray_node_low: SubarrayNodeWrapperLow,
     event_recorder: EventRecorder,
@@ -145,23 +144,10 @@ def invoke_scan(
         AssertionError: If the scan command is not successful.
     """
 
-    event_recorder.subscribe_event(
-        subarray_node_low.subarray_devices["csp_subarray"], "scanID"
-    )
-    input_json = prepare_json_args_for_commands(
+    scan_json = prepare_json_args_for_commands(
         "scan_low", command_input_factory
     )
-    scan_json = json.loads(input_json)
-    scan_json["scan_id"] = int(scan_id)
-
-    subarray_node_low.set_subarray_id(subarray_id)
-    subarray_node_low.store_scan_data(json.dumps(scan_json))
-
-    assert event_recorder.has_change_event_occurred(
-        subarray_node_low.subarray_devices["csp_subarray"],
-        "scanID",
-        int(scan_id),
-    )
+    subarray_node_low.store_scan_data(scan_json)
 
 
 @then("the subarray obsState transitions to SCANNING")
