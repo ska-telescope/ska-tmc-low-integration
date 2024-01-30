@@ -7,5 +7,5 @@ Scenario: TMC executes a scan on CSP subarray
     And the CSP subarray obsState transitions to READY after the scan duration elapsed
     And the TMC subarray obsState transitions back to READY
     Examples:
-        | subarray_id   | scan_id  |
-        |  1            | 1        |
+        | subarray_id   | 
+        |    1          |

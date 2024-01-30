@@ -125,10 +125,7 @@ def subarray_in_ready_obsstate(
 @when(parsers.parse("I issue scan command on subarray"))
 def invoke_scan(
     subarray_node_low: SubarrayNodeWrapperLow,
-    event_recorder: EventRecorder,
     command_input_factory: JsonFactory,
-    scan_id,
-    subarray_id,
 ):
     """Invoke the Scan command on TMC.
 
@@ -136,12 +133,9 @@ def invoke_scan(
         subarray_node_low (SubarrayNodeWrapperLow): Fixture for TMC
           SubarrayNode.
         event_recorder (EventRecorder): Fixture for recording events.
-        command_input_factory (JsonFactory): Factory for creating JSON input.
-        scan_id: Identifier for the scan.
-        subarray_id: Identifier for the TMC subarray.
-
+        command_input_factory (JsonFactory): Factory for creating JSON input
     Raises:
-        AssertionError: If the scan command is not successful.
+        AssertionError: Scan Command is not Successful.
     """
 
     scan_json = prepare_json_args_for_commands(
