@@ -130,3 +130,4 @@ def tmc_subarray_is_in_aborted_obsstate(
         "obsState",
         ObsState.ABORTED,
     )
+    subarray_node_low.tear_down()
