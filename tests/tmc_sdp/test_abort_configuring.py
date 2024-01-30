@@ -9,6 +9,7 @@ from tango import DevState
 from tests.resources.test_harness.helpers import (
     prepare_json_args_for_centralnode_commands,
     prepare_json_args_for_commands,
+    update_eb_pb_ids,
 )
 
 
@@ -38,7 +39,7 @@ def subarray_is_in_configuring_obsstate(
     subarray_node_low,
     subarray_id,
 ):
-    """ "A method to check if telescope in is CONFIGURING obsSstate."""
+    """A method to check if telescope is in CONFIGURING obsState."""
     central_node_low.set_subarray_id(subarray_id)
     central_node_low.move_to_on()
     event_recorder.subscribe_event(
@@ -58,8 +59,8 @@ def subarray_is_in_configuring_obsstate(
     assign_str["sdp"]["processing_blocks"][0]["parameters"][
         "time-to-ready"
     ] = 2
-
-    central_node_low.store_resources(json.dumps(assign_str))
+    input_json = update_eb_pb_ids(json.dumps(assign_str))
+    central_node_low.store_resources(input_json)
     event_recorder.subscribe_event(
         subarray_node_low.subarray_devices.get("sdp_subarray"), "obsState"
     )
@@ -98,7 +99,7 @@ def invoke_abort(subarray_node_low):
     subarray_node_low.abort_subarray()
 
 
-@then(parsers.parse("the SDP subarray transitions to ObsState ABORTED"))
+@then("the SDP subarray transitions to ObsState ABORTED")
 def sdp_subarray_is_in_aborted_obsstate(
     subarray_node_low, event_recorder, subarray_id
 ):
@@ -113,7 +114,7 @@ def sdp_subarray_is_in_aborted_obsstate(
     )
 
 
-@then(parsers.parse("the TMC subarray transitions to ObsState ABORTED"))
+@then("the TMC subarray transitions to ObsState ABORTED")
 def tmc_subarray_is_in_aborted_obsstate(
     subarray_node_low, event_recorder, subarray_id
 ):

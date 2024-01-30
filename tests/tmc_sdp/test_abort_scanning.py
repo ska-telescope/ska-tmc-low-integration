@@ -7,6 +7,7 @@ from tango import DevState
 from tests.resources.test_harness.helpers import (
     prepare_json_args_for_centralnode_commands,
     prepare_json_args_for_commands,
+    update_eb_pb_ids,
 )
 
 
@@ -48,7 +49,8 @@ def subarray_is_in_scanning_obsstate(
     assign_input_json = prepare_json_args_for_centralnode_commands(
         "assign_resources_low", command_input_factory
     )
-    central_node_low.store_resources(assign_input_json)
+    input_json = update_eb_pb_ids(assign_input_json)
+    central_node_low.store_resources(input_json)
     event_recorder.subscribe_event(
         subarray_node_low.subarray_devices.get("sdp_subarray"), "obsState"
     )
@@ -102,7 +104,7 @@ def invoke_abort(subarray_node_low):
     subarray_node_low.abort_subarray()
 
 
-@then(parsers.parse("the SDP subarray transitions to ObsState ABORTED"))
+@then("the SDP subarray transitions to ObsState ABORTED")
 def sdp_subarray_is_in_aborted_obsstate(
     subarray_node_low, event_recorder, subarray_id
 ):
@@ -117,7 +119,7 @@ def sdp_subarray_is_in_aborted_obsstate(
     )
 
 
-@then(parsers.parse("the TMC subarray transitions to ObsState ABORTED"))
+@then("the TMC subarray transitions to ObsState ABORTED")
 def tmc_subarray_is_in_aborted_obsstate(
     subarray_node_low, event_recorder, subarray_id
 ):
