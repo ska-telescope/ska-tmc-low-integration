@@ -197,22 +197,24 @@ def csp_subarray_scanning(
 
 
 @then(
-    "the CSP subarray obsState transitions to READY after the"
-    + "scan duration elapsed"
+    parsers.parse(
+        "the CSP subarray obsState transitions to READY after"
+        + "the scan duration elapsed"
+    )
 )
-def csp_subarray_ObsState(
-    subarray_node_low: SubarrayNodeWrapperLow, event_recorder: EventRecorder
+def csp_subarray_obsState(
+    subarray_node_low: SubarrayNodeWrapperLow,
+    event_recorder: EventRecorder,
 ):
-    """Check if the CSP Subarray's obsState transitions to READY.
-
+    """Checks if SubarrayNode's obsState attribute value is READY
     Args:
         subarray_node_low (SubarrayNodeWrapperLow): Fixture for TMC
           SubarrayNode.
         event_recorder (EventRecorder): Fixture for recording events.
 
     Raises:
-        AssertionError: If the CSP subarray obsState does not transition to
-          READY.
+        AssertionError: If the CSP subarray obsState does not transition
+        back to READY.
     """
     assert event_recorder.has_change_event_occurred(
         subarray_node_low.subarray_devices["csp_subarray"],
