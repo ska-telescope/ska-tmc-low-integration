@@ -49,48 +49,31 @@ def subarray_is_in_scanning_obsstate(
     assign_input_json = prepare_json_args_for_centralnode_commands(
         "assign_resources_low", command_input_factory
     )
-    input_json = update_eb_pb_ids(assign_input_json)
-    central_node_low.store_resources(input_json)
-    event_recorder.subscribe_event(
-        subarray_node_low.subarray_devices.get("sdp_subarray"), "obsState"
-    )
-    event_recorder.subscribe_event(central_node_low.subarray_node, "obsState")
-    assert event_recorder.has_change_event_occurred(
-        subarray_node_low.subarray_devices.get("sdp_subarray"),
-        "obsState",
-        ObsState.IDLE,
-    )
-    assert event_recorder.has_change_event_occurred(
-        subarray_node_low.subarray_node,
-        "obsState",
-        ObsState.IDLE,
-    )
-    configure_json = prepare_json_args_for_commands(
+    assign_input_json = update_eb_pb_ids(assign_input_json)
+
+    configure_input_json = prepare_json_args_for_commands(
         "configure_low", command_input_factory
-    )
-    subarray_node_low.execute_transition("Configure", configure_json)
-    assert event_recorder.has_change_event_occurred(
-        subarray_node_low.subarray_devices["sdp_subarray"],
-        "obsState",
-        ObsState.READY,
-    )
-    assert event_recorder.has_change_event_occurred(
-        subarray_node_low.subarray_node,
-        "obsState",
-        ObsState.READY,
     )
     scan_json = prepare_json_args_for_commands(
         "scan_low", command_input_factory
     )
-    subarray_node_low.execute_transition("Scan", scan_json)
-
+    event_recorder.subscribe_event(
+        subarray_node_low.subarray_devices.get("sdp_subarray"), "obsState"
+    )
+    event_recorder.subscribe_event(central_node_low.subarray_node, "obsState")
+    subarray_node_low.force_change_of_obs_state(
+        "SCANNNIG",
+        assign_input_json=assign_input_json,
+        configure_input_json=configure_input_json,
+        scan_input_json=scan_json,
+    )
     assert event_recorder.has_change_event_occurred(
-        subarray_node_low.subarray_node,
+        subarray_node_low.subarray_devices["sdp_subarray"],
         "obsState",
         ObsState.SCANNING,
     )
     assert event_recorder.has_change_event_occurred(
-        subarray_node_low.subarray_devices["sdp_subarray"],
+        subarray_node_low.subarray_node,
         "obsState",
         ObsState.SCANNING,
     )
