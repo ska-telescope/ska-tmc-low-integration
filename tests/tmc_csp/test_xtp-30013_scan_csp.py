@@ -197,10 +197,8 @@ def csp_subarray_scanning(
 
 
 @then(
-    parsers.parse(
-        "the CSP subarray obsState transitions to READY after"
-        + "the scan duration elapsed"
-    )
+    "the CSP subarray obsState transitions to READY after"
+    + " scan duration elapsed"
 )
 def csp_subarray_obsState(
     subarray_node_low: SubarrayNodeWrapperLow,
@@ -223,7 +221,7 @@ def csp_subarray_obsState(
     )
 
 
-@then(parsers.parse("the TMC subarray obsState transitions back to READY"))
+@then("the TMC subarray obsState transitions back to READY")
 def tmc_subarray_ready(
     subarray_node_low: SubarrayNodeWrapperLow, event_recorder: EventRecorder
 ):
