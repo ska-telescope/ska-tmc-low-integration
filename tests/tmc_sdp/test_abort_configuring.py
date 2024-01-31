@@ -54,7 +54,8 @@ def subarray_is_in_configuring_obsstate(
         "assign_resources_low", command_input_factory
     )
     assign_str = json.loads(assign_input_json)
-    # Adding this to get an event of ObsState CONFIGURING from SDP
+    # "time-to-ready" is added in AssignResources input JSON to
+    # receive an event of ObsState CONFIGURING from SDP Subarray
     assign_str["sdp"]["processing_blocks"][0]["parameters"][
         "time-to-ready"
     ] = 2
