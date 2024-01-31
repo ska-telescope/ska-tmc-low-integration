@@ -122,8 +122,6 @@ k8s-test:
 
 stop-k8s-test:
   when: on_success
-  extends:
-    - stop-k8s-test
 
 k8s-test-tmc-with-csp:
   extends:
