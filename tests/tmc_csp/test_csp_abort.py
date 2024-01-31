@@ -89,6 +89,15 @@ def subarray_busy_assigning_resources(
     event_recorder.subscribe_event(
         central_node_real_csp_low.subarray_node, "obsState"
     )
+    event_recorder.subscribe_event(
+        central_node_real_csp_low.subarray_devices.get("csp_subarray"),
+        "obsState",
+    )
+    assert event_recorder.has_change_event_occurred(
+        central_node_real_csp_low.subarray_devices.get("csp_subarray"),
+        "obsState",
+        ObsState.RESOURCING,
+    )
     assert event_recorder.has_change_event_occurred(
         central_node_real_csp_low.subarray_node,
         "obsState",
@@ -107,14 +116,10 @@ def csp_subarray_in_aborted_obs_state(
     subarray_node_real_csp_low, event_recorder
 ):
     """Subarray Node in ABORTED obsState."""
-    event_recorder.subscribe_event(
-        subarray_node_real_csp_low.subarray_devices.get("csp_subarray"),
-        "obsState",
-    )
     assert event_recorder.has_change_event_occurred(
         subarray_node_real_csp_low.subarray_devices.get("csp_subarray"),
         "obsState",
-        ObsState.IDLE,
+        ObsState.ABORTED,
     )
 
 
