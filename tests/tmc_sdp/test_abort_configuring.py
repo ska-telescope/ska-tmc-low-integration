@@ -21,7 +21,7 @@ from tests.resources.test_harness.helpers import (
 )
 def test_tmc_sdp_abort_in_configuring(central_node_low):
     """
-    Test case to verify TMC-SDP Abort functionality in CONFIGURING obsstate
+    Test case to verify TMC-SDP Abort functionality in obsstate CONFIGURING
     """
     assert central_node_low.subarray_devices["sdp_subarray"].ping() > 0
 
