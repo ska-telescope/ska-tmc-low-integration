@@ -16,7 +16,8 @@ from tests.resources.test_harness.helpers import (
 @pytest.mark.tmc_sdp
 @scenario(
     "../features/tmc_sdp/xtp-30127_abort_configuring.feature",
-    "Abort configuring SDP using TMC",
+    "Use TMC command Abort to trigger SDP subarray transition from"
+      +" ObsState CONFIGURING to ObsState ABORTED",
 )
 def test_tmc_sdp_abort_in_configuring(central_node_low):
     """
