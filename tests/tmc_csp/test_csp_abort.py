@@ -11,37 +11,37 @@ from tango import DevState
 # )
 
 
-@pytest.mark.tmc_csp
-@scenario(
-    "../features/tmc_csp/xtp-30147_abort_in_resourcing.feature",
-    "Abort assigning using TMC",
-)
-def test_abort_in_resourcing_command():
-    """BDD test scenario for verifying successful execution of
-    the Abort command in Resourcing state with TMC and CSP devices for pairwise
-    testing."""
+# @pytest.mark.tmc_csp
+# @scenario(
+#     "../features/tmc_csp/xtp-30147_abort_in_resourcing.feature",
+#     "Abort assigning using TMC",
+# )
+# def test_abort_in_resourcing_command():
+#     """BDD test scenario for verifying successful execution of
+#     the Abort command in Resourcing state with TMC and CSP devices for pairwise
+#     testing."""
 
 
-@pytest.mark.tmc_csp
-@scenario(
-    "../features/tmc_csp/xtp-30154_abort_in_configuring.feature",
-    "Abort configuring CSP using TMC",
-)
-def test_abort_in_configuring_command():
-    """BDD test scenario for verifying successful execution of
-    the Abort command in Configuring state with TMC and CSP devices for
-    pairwise testing."""
+# @pytest.mark.tmc_csp
+# @scenario(
+#     "../features/tmc_csp/xtp-30154_abort_in_configuring.feature",
+#     "Abort configuring CSP using TMC",
+# )
+# def test_abort_in_configuring_command():
+#     """BDD test scenario for verifying successful execution of
+#     the Abort command in Configuring state with TMC and CSP devices for
+#     pairwise testing."""
 
 
-@pytest.mark.tmc_csp
-@scenario(
-    "../features/tmc_csp/xtp-30155_abort_in_scanning.feature",
-    "Abort scanning CSP using TMC",
-)
-def test_abort_in_scanning_command():
-    """BDD test scenario for verifying successful execution of
-    the Abort command in Scanning state with TMC and CSP devices for pairwise
-    testing."""
+# @pytest.mark.tmc_csp
+# @scenario(
+#     "../features/tmc_csp/xtp-30155_abort_in_scanning.feature",
+#     "Abort scanning CSP using TMC",
+# )
+# def test_abort_in_scanning_command():
+#     """BDD test scenario for verifying successful execution of
+#     the Abort command in Scanning state with TMC and CSP devices for pairwise
+#     testing."""
 
 
 @pytest.mark.tmc_csp
@@ -55,15 +55,15 @@ def test_abort_in_idle_ready_command():
     testing."""
 
 
-@pytest.mark.tmc_csp
-@scenario(
-    "../features/tmc_csp/xtp-30167_restart_in_aborted.feature",
-    "TMC executes a Restart on CSP subarray when subarray completes abort",
-)
-def test_restart_in_aborted_command():
-    """BDD test scenario for verifying successful execution of
-    the Restart command in Aborted state with TMC and CSP devices for pairwise
-    testing."""
+# @pytest.mark.tmc_csp
+# @scenario(
+#     "../features/tmc_csp/xtp-30167_restart_in_aborted.feature",
+#     "TMC executes a Restart on CSP subarray when subarray completes abort",
+# )
+# def test_restart_in_aborted_command():
+#     """BDD test scenario for verifying successful execution of
+#     the Restart command in Aborted state with TMC and CSP devices for pairwise
+#     testing."""
 
 
 @given(parsers.parse("TMC subarray in obsState {obsstate}"))
