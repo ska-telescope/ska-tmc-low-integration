@@ -58,7 +58,6 @@ def subarray_is_in_given_obsstate(
         "assign_resources_low", command_input_factory
     )
     central_node_low.set_subarray_id(subarray_id)
-    subarray_node_low.set_subarray_id(subarray_id)
     input_json = update_eb_pb_ids(assign_input_json)
     central_node_low.store_resources(input_json)
     event_recorder.subscribe_event(
