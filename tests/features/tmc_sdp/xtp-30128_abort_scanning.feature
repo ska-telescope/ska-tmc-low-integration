@@ -1,4 +1,4 @@
-@XTP-30128 @XTP-29227 @Team_HIMALAYA @tmc_sdp
+@XTP-30128 @XTP-29227 @tmc_sdp
 Scenario: Abort scanning SDP using TMC
     Given TMC subarray <subarray_id> and SDP subarray busy scanning
     When I command it to Abort
