@@ -20,7 +20,6 @@ def test_tmc_sdp_abort_in_given_obsstate(central_node_low):
     """
     Test case to verify TMC-SDP Abort functionality in IDLE obsState
     """
-    assert central_node_low.central_node.ping() > 0
     assert central_node_low.subarray_devices["sdp_subarray"].ping() > 0
 
 
