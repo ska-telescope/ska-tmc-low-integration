@@ -24,8 +24,10 @@ def test_tmc_sdp_abort_in_scanning(central_node_low):
 
 
 @given(
-    parsers.parse("TMC subarray {subarray_id} and SDP subarray {subarray_id}" 
-                  +" ObsState is SCANNING")
+    parsers.parse(
+        "TMC subarray {subarray_id} and SDP subarray {subarray_id}"
+        + " ObsState is SCANNING"
+    )
 )
 def subarray_is_in_scanning_obsstate(
     central_node_low,

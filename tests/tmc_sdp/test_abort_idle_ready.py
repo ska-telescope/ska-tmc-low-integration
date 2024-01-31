@@ -14,8 +14,8 @@ from tests.resources.test_harness.helpers import (
 @pytest.mark.tmc_sdp
 @scenario(
     "../features/tmc_sdp/xtp-30129_abort_idle_ready.feature",
-    "TMC executes an Abort on SDP subarray where ObsState = IDLE" 
-    +" and ObsState = READY",
+    "TMC executes an Abort on SDP subarray where ObsState = IDLE"
+    + " and ObsState = READY",
 )
 def test_tmc_sdp_abort_in_given_obsstate(central_node_low):
     """
