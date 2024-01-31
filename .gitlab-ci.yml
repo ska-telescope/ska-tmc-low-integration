@@ -120,6 +120,11 @@ k8s-test:
     - make k8s-install-chart
     - make k8s-wait
 
+stop-k8s-test:
+  when: on_success
+  extends:
+    - stop-k8s-test
+
 k8s-test-tmc-with-csp:
   extends:
     - k8s-test
@@ -131,6 +136,7 @@ k8s-test-tmc-with-csp:
   retry: 1
 
 stop-k8s-test-tmc-with-csp:
+  when: on_success
   extends:
     - stop-k8s-test
   variables:
@@ -155,6 +161,7 @@ k8s-test-tmc-with-sdp:
 
 
 stop-k8s-test-tmc-with-sdp:
+  when: on_success
   extends:
     - stop-k8s-test
   variables:

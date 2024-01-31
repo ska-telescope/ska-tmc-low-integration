@@ -1,4 +1,4 @@
-@XTP-30154 @tmc_csp
+@XTP-30154 @XTP-29682 @tmc_csp
 Scenario: Abort configuring CSP using TMC
     Given TMC and CSP subarray busy configuring
     When I command it to Abort

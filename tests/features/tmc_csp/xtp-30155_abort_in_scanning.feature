@@ -1,4 +1,4 @@
-@XTP-30155 @tmc_csp
+@XTP-30155 @XTP-29682 @tmc_csp
 Scenario: Abort scanning CSP using TMC
     Given TMC and CSP subarray busy scanning
     When I command it to Abort

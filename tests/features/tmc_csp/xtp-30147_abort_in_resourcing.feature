@@ -1,4 +1,4 @@
-@XTP-30147 @tmc_csp
+@XTP-30147 @XTP-29682 @tmc_csp
 Scenario: Abort assigning using TMC
     Given TMC and CSP subarray busy assigning resources
     When I command it to Abort
