@@ -18,12 +18,12 @@ from tests.resources.test_harness.helpers import (
     "../features/tmc_sdp/xtp-30127_abort_configuring.feature",
     "Abort configuring SDP using TMC",
 )
-def test_tmc_sdp_abort_in_configuring(subarray_node_low):
+def test_tmc_sdp_abort_in_configuring(central_node_low):
     """
     Test case to verify TMC-SDP Abort functionality in CONFIGURING obsState
     """
-    assert subarray_node_low.central_node.ping() > 0
-    assert subarray_node_low.subarray_devices["sdp_subarray"].ping() > 0
+    assert central_node_low.central_node.ping() > 0
+    assert central_node_low.subarray_devices["sdp_subarray"].ping() > 0
 
 
 @given(
@@ -92,13 +92,10 @@ def invoke_abort(subarray_node_low):
 
 
 @then("the SDP subarray transitions to ObsState ABORTED")
-def sdp_subarray_is_in_aborted_obsstate(
-    subarray_node_low, event_recorder, subarray_id
-):
+def sdp_subarray_is_in_aborted_obsstate(subarray_node_low, event_recorder):
     """
     Method to check SDP subarray is in ABORTED obsstate
     """
-    subarray_node_low.set_subarray_id(subarray_id)
     assert event_recorder.has_change_event_occurred(
         subarray_node_low.subarray_devices.get("sdp_subarray"),
         "obsState",
@@ -107,13 +104,10 @@ def sdp_subarray_is_in_aborted_obsstate(
 
 
 @then("the TMC subarray transitions to ObsState ABORTED")
-def tmc_subarray_is_in_aborted_obsstate(
-    subarray_node_low, event_recorder, subarray_id
-):
+def tmc_subarray_is_in_aborted_obsstate(subarray_node_low, event_recorder):
     """
     Method to check if TMC subarray is in ABORTED obsstate
     """
-    subarray_node_low.set_subarray_id(subarray_id)
     assert event_recorder.has_change_event_occurred(
         subarray_node_low.subarray_node,
         "obsState",

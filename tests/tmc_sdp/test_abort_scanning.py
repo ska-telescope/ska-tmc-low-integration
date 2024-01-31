@@ -88,13 +88,10 @@ def invoke_abort(subarray_node_low):
 
 
 @then("the SDP subarray transitions to ObsState ABORTED")
-def sdp_subarray_is_in_aborted_obsstate(
-    subarray_node_low, event_recorder, subarray_id
-):
+def sdp_subarray_is_in_aborted_obsstate(subarray_node_low, event_recorder):
     """
     Method to check SDP subarray is in ABORTED obsstate
     """
-    subarray_node_low.set_subarray_id(subarray_id)
     assert event_recorder.has_change_event_occurred(
         subarray_node_low.subarray_devices.get("sdp_subarray"),
         "obsState",
@@ -103,13 +100,10 @@ def sdp_subarray_is_in_aborted_obsstate(
 
 
 @then("the TMC subarray transitions to ObsState ABORTED")
-def tmc_subarray_is_in_aborted_obsstate(
-    subarray_node_low, event_recorder, subarray_id
-):
+def tmc_subarray_is_in_aborted_obsstate(subarray_node_low, event_recorder):
     """
     Method to check if TMC subarray is in ABORTED obsstate
     """
-    subarray_node_low.set_subarray_id(subarray_id)
     assert event_recorder.has_change_event_occurred(
         subarray_node_low.subarray_node,
         "obsState",
