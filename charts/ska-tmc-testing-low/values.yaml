@@ -116,6 +116,16 @@ ska-low-cbf:
             xilinx.com/fpga-xilinx_u55c_gen3x16_xdma_base_3-0: 0  # no FPGA hardware
             memory: 512Mi  # reduced
 
+ska-low-cbf-proc:
+  deviceServers:
+    processor:
+      instances: ["0", "1"] 
+      resources:
+        limits:
+          xilinx.com/fpga-xilinx_u55c_gen3x16_xdma_base_3-0: 0  # no FPGA hardware
+          memory: 512Mi  # reduced
+
+
 ska-csp-lmc-low:
   legacy_compatibility: true
   enabled: false
