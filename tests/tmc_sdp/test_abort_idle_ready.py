@@ -84,12 +84,12 @@ def subarray_is_in_given_obsstate(
         assert event_recorder.has_change_event_occurred(
             subarray_node_low.subarray_devices["sdp_subarray"],
             "obsState",
-            ObsState[obsstate],
+            ObsState.READY,
         )
         assert event_recorder.has_change_event_occurred(
             subarray_node_low.subarray_node,
             "obsState",
-            ObsState[obsstate],
+            ObsState.READY,
         )
 
 
