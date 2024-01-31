@@ -99,7 +99,7 @@ def sdp_subarray_is_in_aborted_obsstate(subarray_node_low, event_recorder):
     )
 
 
-@then("the TMC subarray transitions to ObsState ABORTED")
+@then("the subarray transitions to ObsState ABORTED")
 def tmc_subarray_is_in_aborted_obsstate(subarray_node_low, event_recorder):
     """
     Method to check if TMC subarray is in ABORTED obsstate

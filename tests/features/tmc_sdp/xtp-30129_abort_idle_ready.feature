@@ -4,7 +4,7 @@ Scenario: TMC executes an Abort on SDP subarray
     And TMC and SDP subarray <subarray_id> is in <obsstate> ObsState
     When I issued the Abort command to the TMC subarray
     Then the SDP subarray transitions to ObsState ABORTED
-    And the TMC subarray transitions to ObsState ABORTED
+    And the subarray transitions to ObsState ABORTED
     Examples:
     | subarray_id | obsstate |
     | 1           | IDLE     |
