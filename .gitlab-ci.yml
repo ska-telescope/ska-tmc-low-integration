@@ -122,6 +122,8 @@ k8s-test:
 
 stop-k8s-test:
   when: on_success
+  needs:
+    - k8s-test
 
 k8s-test-tmc-with-csp:
   extends:
@@ -135,6 +137,8 @@ k8s-test-tmc-with-csp:
 
 stop-k8s-test-tmc-with-csp:
   when: on_success
+  needs:
+    - k8s-test-tmc-with-csp
   extends:
     - stop-k8s-test
   variables:
@@ -160,6 +164,8 @@ k8s-test-tmc-with-sdp:
 
 stop-k8s-test-tmc-with-sdp:
   when: on_success
+  needs:
+    - k8s-test-tmc-with-sdp
   extends:
     - stop-k8s-test
   variables:
