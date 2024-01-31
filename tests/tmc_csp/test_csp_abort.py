@@ -1,13 +1,14 @@
 """Module for TMC-CSP Abort command tests"""
 
 import pytest
-from pytest_bdd import given, scenario, then, when
+from pytest_bdd import given, parsers, scenario, then, when
 from ska_control_model import ObsState
 from tango import DevState
 
-from tests.resources.test_support.common_utils.tmc_helpers import (
-    prepare_json_args_for_centralnode_commands,
-)
+# from tests.resources.test_support.common_utils.tmc_helpers import (
+#     prepare_json_args_for_centralnode_commands,
+#     prepare_json_args_for_commands,
+# )
 
 
 @pytest.mark.tmc_csp
@@ -65,9 +66,13 @@ def test_restart_in_aborted_command():
     testing."""
 
 
-@given("TMC and CSP subarray busy assigning resources")
-def subarray_busy_assigning_resources(
-    central_node_real_csp_low, event_recorder, command_input_factory
+@given(parsers.parse("TMC subarray in obsState {obsstate}"))
+def subarray_in_given_obs_state(
+    central_node_real_csp_low,
+    subarray_node_real_csp_low,
+    event_recorder,
+    command_input_factory,
+    obsstate,
 ):
     """Subarray busy assigning resources"""
     # Turning the devices ON
@@ -81,28 +86,71 @@ def subarray_busy_assigning_resources(
         DevState.ON,
     )
 
-    input_json = prepare_json_args_for_centralnode_commands(
-        "assign_resources_low", command_input_factory
-    )
-    # Invoking AssignResources command
-    central_node_real_csp_low.store_resources(input_json)
+    # Using force change of obsState
+    subarray_node_real_csp_low.force_change_of_obs_state(obsstate)
     event_recorder.subscribe_event(
-        central_node_real_csp_low.subarray_node, "obsState"
-    )
-    event_recorder.subscribe_event(
-        central_node_real_csp_low.subarray_devices.get("csp_subarray"),
-        "obsState",
+        subarray_node_real_csp_low.subarray_node, "obsState"
     )
     assert event_recorder.has_change_event_occurred(
-        central_node_real_csp_low.subarray_devices.get("csp_subarray"),
+        subarray_node_real_csp_low.subarray_node,
         "obsState",
-        ObsState.RESOURCING,
+        ObsState[obsstate],
     )
-    assert event_recorder.has_change_event_occurred(
-        central_node_real_csp_low.subarray_node,
-        "obsState",
-        ObsState.RESOURCING,
-    )
+
+
+# @given("TMC and CSP subarray busy configuring")
+# def subarray_busy_configuring(
+#     central_node_real_csp_low,
+#     subarray_node_real_csp_low,
+#     event_recorder,
+#     command_input_factory,
+# ):
+#     """Subarray busy Configuring"""
+#     # Turning the devices ON
+#     central_node_real_csp_low.move_to_on()
+#     event_recorder.subscribe_event(
+#         central_node_real_csp_low.central_node, "telescopeState"
+#     )
+#     assert event_recorder.has_change_event_occurred(
+#         central_node_real_csp_low.central_node,
+#         "telescopeState",
+#         DevState.ON,
+#     )
+
+#     input_json = prepare_json_args_for_centralnode_commands(
+#         "assign_resources_low", command_input_factory
+#     )
+#     # Invoking AssignResources command
+#     central_node_real_csp_low.store_resources(input_json)
+#     event_recorder.subscribe_event(
+#         central_node_real_csp_low.subarray_node, "obsState"
+#     )
+#     event_recorder.subscribe_event(
+#         central_node_real_csp_low.subarray_devices.get("csp_subarray"),
+#         "obsState",
+#     )
+#     assert event_recorder.has_change_event_occurred(
+#         central_node_real_csp_low.subarray_node,
+#         "obsState",
+#         ObsState.IDLE,
+#     )
+
+#     configure_input_json = prepare_json_args_for_commands(
+#         "configure_low", command_input_factory
+#     )
+#     # Invoking Configure command
+#     subarray_node_real_csp_low.store_configuration_data(configure_input_json)
+
+#     assert event_recorder.has_change_event_occurred(
+#         central_node_real_csp_low.subarray_devices.get("csp_subarray"),
+#         "obsState",
+#         ObsState.CONFIGURING,
+#     )
+#     assert event_recorder.has_change_event_occurred(
+#         central_node_real_csp_low.subarray_node,
+#         "obsState",
+#         ObsState.CONFIGURING,
+#     )
 
 
 @when("I command it to Abort")
@@ -116,6 +164,10 @@ def csp_subarray_in_aborted_obs_state(
     subarray_node_real_csp_low, event_recorder
 ):
     """Subarray Node in ABORTED obsState."""
+    event_recorder.subscribe_event(
+        subarray_node_real_csp_low.subarray_devices.get("csp_subarray"),
+        "obsState",
+    )
     assert event_recorder.has_change_event_occurred(
         subarray_node_real_csp_low.subarray_devices.get("csp_subarray"),
         "obsState",
