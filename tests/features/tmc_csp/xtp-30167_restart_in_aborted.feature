@@ -7,3 +7,4 @@ Scenario: TMC executes a Restart on CSP subarray when subarray completes abort
     And the TMC subarray transitions to obsState EMPTY
     Examples:
         | subarray_id |
+        | 1           |
