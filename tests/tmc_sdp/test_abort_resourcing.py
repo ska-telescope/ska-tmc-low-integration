@@ -97,3 +97,4 @@ def tmc_subarray_is_in_aborted_obsstate(subarray_node_low, event_recorder):
         "obsState",
         ObsState.ABORTED,
     )
+    subarray_node_low.restart_subarray()
