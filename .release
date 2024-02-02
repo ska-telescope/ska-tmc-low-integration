@@ -1,6 +1,6 @@
-release=0.12.0
-tag=0.12.0
+release=0.13.0
+tag=0.13.0
 tag_description=
 **Charts:**
-**1. ska-tmc-integration 0.12.0**
-        a. TMC low version with MCCS Master Leaf Nodes to support Assign and Release commands- SPO-2772 feature(REL-929)
+**1. ska-tmc-low-integration 0.13.0**
+        a. TMC low version with Pairwise testing for sdp for all the commands
