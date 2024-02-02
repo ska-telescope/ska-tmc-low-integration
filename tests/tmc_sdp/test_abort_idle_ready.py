@@ -14,8 +14,8 @@ from tests.resources.test_harness.helpers import (
 @pytest.mark.tmc_sdp
 @scenario(
     "../features/tmc_sdp/xtp-30129_abort_idle_ready.feature",
-    "TMC executes an Abort on SDP subarray where ObsState = IDLE"
-    + " and ObsState = READY",
+    "Use TMC command Abort to trigger SDP subarray transition"
+    + "from ObsStates IDLE and READY to ObsState ABORTED",
 )
 def test_tmc_sdp_abort_in_given_obsstate(central_node_low):
     """
@@ -24,25 +24,10 @@ def test_tmc_sdp_abort_in_given_obsstate(central_node_low):
     assert central_node_low.subarray_devices["sdp_subarray"].ping() > 0
 
 
-@given("the telescope is in ON state")
-def telescope_is_in_on_state(central_node_low, event_recorder):
-    """
-    This method checks if the telescope is in ON state
-    """
-    central_node_low.move_to_on()
-    event_recorder.subscribe_event(
-        central_node_low.central_node, "telescopeState"
-    )
-    assert event_recorder.has_change_event_occurred(
-        central_node_low.central_node,
-        "telescopeState",
-        DevState.ON,
-    )
-
-
 @given(
     parsers.parse(
-        "TMC and SDP subarray {subarray_id} is in {obsstate} ObsState"
+        "TMC subarray {subarray_id} and SDP subarray {subarray_id} in"
+        + "ObsState <obsstate>"
     )
 )
 def subarray_is_in_given_obsstate(
@@ -53,7 +38,16 @@ def subarray_is_in_given_obsstate(
     subarray_node_low,
     subarray_id,
 ):
-    """ "A method to check if telescope in is given obsSstate."""
+    """A method to check if telescope in is given obsSstate."""
+    central_node_low.move_to_on()
+    event_recorder.subscribe_event(
+        central_node_low.central_node, "telescopeState"
+    )
+    assert event_recorder.has_change_event_occurred(
+        central_node_low.central_node,
+        "telescopeState",
+        DevState.ON,
+    )
     assign_input_json = prepare_json_args_for_centralnode_commands(
         "assign_resources_low", command_input_factory
     )
@@ -92,7 +86,7 @@ def subarray_is_in_given_obsstate(
         )
 
 
-@when("I issued the Abort command to the TMC subarray")
+@when("I command it to Abort")
 def invoke_abort(subarray_node_low):
     """
     This method invokes abort command on tmc subarray

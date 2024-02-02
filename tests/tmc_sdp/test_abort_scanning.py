@@ -14,7 +14,8 @@ from tests.resources.test_harness.helpers import (
 @pytest.mark.tmc_sdp
 @scenario(
     "../features/tmc_sdp/xtp-30128_abort_scanning.feature",
-    "TMC executes an Abort on SDP subarray where ObsState is Scanning",
+    "Use TMC command Abort to trigger SDP subarray transition from"
+    + " ObsState SCANNING to ObsState ABORTED",
 )
 def test_tmc_sdp_abort_in_scanning(central_node_low):
     """
@@ -25,8 +26,8 @@ def test_tmc_sdp_abort_in_scanning(central_node_low):
 
 @given(
     parsers.parse(
-        "TMC subarray {subarray_id} and SDP subarray {subarray_id}"
-        + " ObsState is SCANNING"
+        "TMC subarray <subarray_id> and SDP subarray <subarray_id>"
+        + " busy SCANNING"
     )
 )
 def subarray_is_in_scanning_obsstate(

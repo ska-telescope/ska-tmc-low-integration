@@ -1,8 +1,7 @@
 @XTP-30129 @XTP-29227 @tmc_sdp
-Scenario: TMC executes an Abort on SDP subarray where ObsState = IDLE and ObsState = READY
-    Given the telescope is in ON state
-    And TMC and SDP subarray <subarray_id> is in <obsstate> ObsState
-    When I issued the Abort command to the TMC subarray
+Scenario: Use TMC command Abort to trigger SDP subarray transition from ObsStates IDLE and READY to ObsState ABORTED
+    Given TMC subarray <subarray_id> and SDP subarray <subarray_id> in ObsState <obsstate>
+    When I command it to Abort
     Then the SDP subarray transitions to ObsState ABORTED
     And the subarray transitions to ObsState ABORTED
     Examples:
