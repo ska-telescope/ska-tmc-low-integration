@@ -46,10 +46,16 @@ def subarray_is_in_configuring_obsstate(
         central_node_low.central_node, "telescopeState"
     )
     assert event_recorder.has_change_event_occurred(
+        subarray_node_low.subarray_devices["sdp_subarray"],
+        "State",
+        DevState.ON,
+    )
+    assert event_recorder.has_change_event_occurred(
         central_node_low.central_node,
         "telescopeState",
         DevState.ON,
     )
+
     assign_input_json = prepare_json_args_for_centralnode_commands(
         "assign_resources_low", command_input_factory
     )
