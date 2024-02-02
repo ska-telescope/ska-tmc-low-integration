@@ -109,7 +109,7 @@ on-demand-destroy:
 
 k8s-test:
   tags:
-    - k8srunner-large
+    - k8srunner
   variables:
     KUBE_NAMESPACE: 'ci-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA'
     SERVICE_ACCOUNT: "ci-svc-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA"
@@ -122,7 +122,7 @@ k8s-test:
 
 k8s-test-tmc-with-csp:
   tags:
-    - k8srunner-large
+    - k8srunner
   extends:
     - k8s-test
   variables:
@@ -140,7 +140,7 @@ stop-k8s-test-tmc-with-csp:
 
 k8s-test-tmc-with-sdp:
   tags:
-    - k8srunner-large
+    - k8srunner
   extends:
     - k8s-test
   variables:
