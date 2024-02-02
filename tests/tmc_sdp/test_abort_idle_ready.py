@@ -15,7 +15,7 @@ from tests.resources.test_harness.helpers import (
 @scenario(
     "../features/tmc_sdp/xtp-30129_abort_idle_ready.feature",
     "Use TMC command Abort to trigger SDP subarray transition"
-    + "from ObsStates IDLE and READY to ObsState ABORTED",
+    + " from ObsStates IDLE and READY to ObsState ABORTED",
 )
 def test_tmc_sdp_abort_in_given_obsstate(central_node_low):
     """
@@ -27,7 +27,7 @@ def test_tmc_sdp_abort_in_given_obsstate(central_node_low):
 @given(
     parsers.parse(
         "TMC subarray {subarray_id} and SDP subarray {subarray_id} in"
-        + "ObsState <obsstate>"
+        + " ObsState {obsstate}"
     )
 )
 def subarray_is_in_given_obsstate(
