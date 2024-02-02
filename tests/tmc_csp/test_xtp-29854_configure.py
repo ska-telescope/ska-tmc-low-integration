@@ -66,25 +66,25 @@ def move_subarray_node_to_idle_obsstate(
 
 @when("I configure the subarray")
 def invoke_configure_command(
-    central_node_real_csp_low, command_input_factory
+    subarray_node_real_csp_low, command_input_factory
 ) -> None:
     """Invoke Configure command."""
     configure_input_json = prepare_json_args_for_commands(
         "configure_low", command_input_factory
     )
-    central_node_real_csp_low.store_configuration_data(configure_input_json)
+    subarray_node_real_csp_low.store_configuration_data(configure_input_json)
 
 
 @then("the CSP subarray transitions to READY obsState")
 def check_if_csp_subarray_moved_to_ready_obsstate(
-    central_node_real_csp_low, event_recorder
+    subarray_node_real_csp_low, event_recorder
 ) -> None:
     """Ensure CSP subarray is moved to READY obsstate"""
     event_recorder.subscribe_event(
-        central_node_real_csp_low.subarray_devices["csp_subarray"], "obsState"
+        subarray_node_real_csp_low.subarray_devices["csp_subarray"], "obsState"
     )
     assert event_recorder.has_change_event_occurred(
-        central_node_real_csp_low.subarray_devices["csp_subarray"],
+        subarray_node_real_csp_low.subarray_devices["csp_subarray"],
         "obsState",
         ObsState.READY,
     )
@@ -92,11 +92,11 @@ def check_if_csp_subarray_moved_to_ready_obsstate(
 
 @then("the TMC subarray transitions to READY obsState")
 def check_if_tmc_subarray_moved_to_ready_obsstate(
-    central_node_real_csp_low, event_recorder
+    subarray_node_real_csp_low, event_recorder
 ) -> None:
     """Ensure TMC Subarray is moved to READY obsstate"""
     assert event_recorder.has_change_event_occurred(
-        central_node_real_csp_low.subarray_node,
+        subarray_node_real_csp_low.subarray_node,
         "obsState",
         ObsState.READY,
     )
