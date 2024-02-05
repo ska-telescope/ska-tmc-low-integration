@@ -33,15 +33,15 @@ def test_abort_in_configuring_command():
     pairwise testing."""
 
 
-# @pytest.mark.tmc_csp
-# @scenario(
-#     "../features/tmc_csp/xtp-30155_abort_in_scanning.feature",
-#     "Abort scanning CSP using TMC",
-# )
-# def test_abort_in_scanning_command():
-#     """BDD test scenario for verifying successful execution of
-#     the Abort command in Scanning state with TMC and CSP devices for pairwise
-#     testing."""
+@pytest.mark.tmc_csp
+@scenario(
+    "../features/tmc_csp/xtp-30155_abort_in_scanning.feature",
+    "Abort scanning CSP using TMC",
+)
+def test_abort_in_scanning_command():
+    """BDD test scenario for verifying successful execution of
+    the Abort command in Scanning state with TMC and CSP devices for pairwise
+    testing."""
 
 
 @pytest.mark.tmc_csp
@@ -108,7 +108,7 @@ def subarray_in_given_obs_state(
     event_recorder,
     obsstate,
 ):
-    """Subarray busy assigning resources"""
+    """Subarray in given obsState"""
     # Turning the devices ON
     central_node_real_csp_low.move_to_on()
     event_recorder.subscribe_event(
@@ -139,7 +139,7 @@ def subarray_busy_assigning(
     event_recorder,
     command_input_factory,
 ):
-    """Subarray busy Configuring"""
+    """Subarray busy Assigning"""
     # Turning the devices ON
     central_node_real_csp_low.move_to_on()
     event_recorder.subscribe_event(
@@ -229,6 +229,74 @@ def subarray_busy_configuring(
         central_node_real_csp_low.subarray_node,
         "obsState",
         ObsState.CONFIGURING,
+    )
+
+
+@given("TMC and CSP subarray busy scanning")
+def subarray_busy_scanning(
+    central_node_real_csp_low,
+    subarray_node_real_csp_low,
+    event_recorder,
+    command_input_factory,
+):
+    """Subarray busy Scanning"""
+    # Turning the devices ON
+    central_node_real_csp_low.move_to_on()
+    event_recorder.subscribe_event(
+        central_node_real_csp_low.central_node, "telescopeState"
+    )
+    assert event_recorder.has_change_event_occurred(
+        central_node_real_csp_low.central_node,
+        "telescopeState",
+        DevState.ON,
+    )
+    central_node_real_csp_low.set_serial_number_of_cbf_processor()
+
+    input_json = prepare_json_args_for_centralnode_commands(
+        "assign_resources_low", command_input_factory
+    )
+    # Invoking AssignResources command
+    central_node_real_csp_low.store_resources(input_json)
+    event_recorder.subscribe_event(
+        central_node_real_csp_low.subarray_node, "obsState"
+    )
+    event_recorder.subscribe_event(
+        central_node_real_csp_low.subarray_devices.get("csp_subarray"),
+        "obsState",
+    )
+    assert event_recorder.has_change_event_occurred(
+        central_node_real_csp_low.subarray_node,
+        "obsState",
+        ObsState.IDLE,
+    )
+
+    configure_input_json = prepare_json_args_for_commands(
+        "configure_low", command_input_factory
+    )
+    # Invoking Configure command
+    subarray_node_real_csp_low.store_configuration_data(configure_input_json)
+
+    assert event_recorder.has_change_event_occurred(
+        central_node_real_csp_low.subarray_node,
+        "obsState",
+        ObsState.READY,
+    )
+
+    scan_input_json = prepare_json_args_for_commands(
+        "scan_low", command_input_factory
+    )
+    # Invoking Scan command
+    subarray_node_real_csp_low.store_scan_data(scan_input_json)
+
+    assert event_recorder.has_change_event_occurred(
+        central_node_real_csp_low.subarray_devices.get("csp_subarray"),
+        "obsState",
+        ObsState.SCANNING,
+    )
+    assert event_recorder.has_change_event_occurred(
+        central_node_real_csp_low.subarray_node,
+        "obsState",
+        ObsState.SCANNING,
     )
 
 
