@@ -18,7 +18,6 @@ from tests.resources.test_harness.constant import (
     mccs_controller,
     mccs_master_leaf_node,
     mccs_subarray1,
-    processor1,
     tmc_low_subarraynode1,
 )
 from tests.resources.test_harness.helpers import SIMULATED_DEVICES_DICT
@@ -42,9 +41,6 @@ class CentralNodeWrapperLow(object):
     defined by the SKA Control Model."""
 
     def __init__(self) -> None:
-        self.processor1 = DeviceProxy(processor1)
-        device_dict_low["cbf_subarray1"] = "low-cbf/subarray/01"
-        device_dict_low["cbf_controller"] = "low-cbf/control/0"
         self.central_node = DeviceProxy(low_centralnode)
         self.subarray_node = DeviceProxy(tmc_low_subarraynode1)
         self.csp_master_leaf_node = DeviceProxy(low_csp_master_leaf_node)
@@ -435,9 +431,3 @@ class CentralNodeWrapperLow(object):
         if SIMULATED_DEVICES_DICT["all_mocks"]:
             self.csp_subarray1.SetDefective(RESET_DEFECT)
             self.sdp_subarray1.SetDefective(RESET_DEFECT)
-
-    def set_serial_number_of_cbf_processor(self):
-        """Sets serial number for cbf processor"""
-        self.processor1.serialnumber = "XFL14SLO1LIF"
-        self.processor1.subscribetoallocator("low-cbf/allocator/0")
-        self.processor1.register()

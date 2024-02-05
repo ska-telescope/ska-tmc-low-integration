@@ -73,6 +73,7 @@ def given_a_telescope_in_on_state(
 
 @given(parsers.parse("TMC subarray {subarray_id} is in READY ObsState"))
 def subarray_in_ready_obsstate(
+    central_node_real_csp_low,
     central_node_low: CentralNodeWrapperLow,
     event_recorder: EventRecorder,
     command_input_factory: JsonFactory,
@@ -104,7 +105,7 @@ def subarray_in_ready_obsstate(
     )
     event_recorder.subscribe_event(subarray_node_low.subarray_node, "obsState")
 
-    central_node_low.set_serial_number_of_cbf_processor()
+    central_node_real_csp_low.set_serial_number_of_cbf_processor()
 
     subarray_node_low.force_change_of_obs_state(
         "READY",
