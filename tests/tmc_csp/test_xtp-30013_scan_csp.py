@@ -104,6 +104,8 @@ def subarray_in_ready_obsstate(
     )
     event_recorder.subscribe_event(subarray_node_low.subarray_node, "obsState")
 
+    central_node_low.set_serial_number_of_cbf_processor()
+
     subarray_node_low.force_change_of_obs_state(
         "READY",
         assign_input_json=assign_input_json,

@@ -127,6 +127,16 @@ ska-csp-lmc-low:
       instances: ["subarray1", "subarray2", "subarray3", "subarray4"]
       file: "data/subarray_cbf_only.yaml"
 
+ska-low-cbf-proc:
+  deviceServers:
+    processor:
+      instances: ["0", "1"] 
+      resources:
+        limits:
+          xilinx.com/fpga-xilinx_u55c_gen3x16_xdma_base_3-0: 0  # no FPGA hardware
+          memory: 512Mi  # reduced
+
+
 # SKUID
 ska-ser-skuid:
   labels:
