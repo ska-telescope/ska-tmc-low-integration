@@ -141,6 +141,7 @@ def subarray_busy_assigning(
 ):
     """Subarray busy Assigning"""
     # Turning the devices ON
+    central_node_real_csp_low.set_subarray_id(1)
     central_node_real_csp_low.move_to_on()
     event_recorder.subscribe_event(
         central_node_real_csp_low.central_node, "telescopeState"
@@ -160,6 +161,9 @@ def subarray_busy_assigning(
         central_node_real_csp_low.subarray_node, "obsState"
     )
     event_recorder.subscribe_event(
+        central_node_real_csp_low.csp_subarray_leaf_node, "cspSubarrayObsState"
+    )
+    event_recorder.subscribe_event(
         central_node_real_csp_low.subarray_devices.get("csp_subarray"),
         "obsState",
     )
@@ -167,6 +171,11 @@ def subarray_busy_assigning(
     assert event_recorder.has_change_event_occurred(
         central_node_real_csp_low.subarray_devices.get("csp_subarray"),
         "obsState",
+        ObsState.RESOURCING,
+    )
+    assert event_recorder.has_change_event_occurred(
+        central_node_real_csp_low.csp_subarray_leaf_node,
+        "cspSubarrayObsState",
         ObsState.RESOURCING,
     )
     assert event_recorder.has_change_event_occurred(
@@ -325,6 +334,7 @@ def csp_subarray_in_aborted_obs_state(
         subarray_node_real_csp_low.subarray_devices.get("csp_subarray"),
         "obsState",
         ObsState.ABORTED,
+        lookahead=10,
     )
 
 
@@ -341,6 +351,7 @@ def csp_subarray_in_empty_obs_state(
         subarray_node_real_csp_low.subarray_devices.get("csp_subarray"),
         "obsState",
         ObsState.EMPTY,
+        lookahead=10,
     )
 
 
@@ -351,7 +362,9 @@ def subarray_in_aborted_obs_state(subarray_node_real_csp_low, event_recorder):
         subarray_node_real_csp_low.subarray_node,
         "obsState",
         ObsState.ABORTED,
+        lookahead=10,
     )
+    event_recorder.clear_events()
 
 
 @then("the TMC subarray transitions to obsState EMPTY")
@@ -361,4 +374,6 @@ def subarray_in_empty_obs_state(subarray_node_real_csp_low, event_recorder):
         subarray_node_real_csp_low.subarray_node,
         "obsState",
         ObsState.EMPTY,
+        lookahead=10,
     )
+    event_recorder.clear_events()
