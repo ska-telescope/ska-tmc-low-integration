@@ -42,6 +42,9 @@ class CentralNodeWrapperLow(object):
     defined by the SKA Control Model."""
 
     def __init__(self) -> None:
+        self.processor1 = DeviceProxy(processor1)
+        device_dict_low["cbf_subarray1"] = "low-cbf/subarray/01"
+        device_dict_low["cbf_controller"] = "low-cbf/control/0"
         self.central_node = DeviceProxy(low_centralnode)
         self.subarray_node = DeviceProxy(tmc_low_subarraynode1)
         self.csp_master_leaf_node = DeviceProxy(low_csp_master_leaf_node)
@@ -53,9 +56,6 @@ class CentralNodeWrapperLow(object):
             "mccs_subarray": DeviceProxy(mccs_subarray1),
         }
         self.csp_subarray1 = DeviceProxy(low_csp_subarray1)
-        self.processor1 = DeviceProxy(processor1)
-        device_dict_low["cbf_subarray1"] = "low-cbf/subarray/01"
-        device_dict_low["cbf_controller"] = "low-cbf/control/0"
         self.sdp_subarray1 = DeviceProxy(low_sdp_subarray1)
         self.sdp_master = DeviceProxy(low_sdp_master)
         self.csp_master = DeviceProxy(low_csp_master)

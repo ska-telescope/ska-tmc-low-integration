@@ -148,10 +148,8 @@ def invoke_scan(
 
 @then("the subarray obsState transitions to SCANNING")
 def tmc_subarray_scanning(
-    central_node_low: CentralNodeWrapperLow,
     subarray_node_low: SubarrayNodeWrapperLow,
     event_recorder: EventRecorder,
-    subarray_id: str,
 ):
     """Check if the SubarrayNode's obsState transitions to SCANNING.
 
