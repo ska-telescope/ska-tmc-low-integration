@@ -1,6 +1,6 @@
-release=0.13.0
-tag=0.13.0
+release=0.13.1
+tag=0.13.1
 tag_description=
 **Charts:**
-**1. ska-tmc-low-integration 0.13.0**
+**1. ska-tmc-low-integration 0.13.1**
         a. TMC low version with Pairwise testing for sdp for all the commands
