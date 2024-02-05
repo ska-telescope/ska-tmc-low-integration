@@ -17,7 +17,7 @@ from tests.resources.test_harness.subarray_node_low import (
 from tests.resources.test_harness.utils.common_utils import JsonFactory
 
 
-@pytest.mark.tmc_csp1
+@pytest.mark.tmc_csp
 @scenario(
     "../features/tmc_csp/xtp-30013_scan_csp.feature",
     "TMC executes a scan on CSP subarray",
