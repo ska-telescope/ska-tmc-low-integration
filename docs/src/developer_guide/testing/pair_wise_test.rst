@@ -31,7 +31,7 @@ To test with tmc_sdp execute the command `make k8s-test MARK=tmc_sdp SDP_SIMULAT
 
 * ``EndScan`` - Testing EndScan command on TMC with Real-SDP in place.
 
-* ``Abort`` - Testing Abort command on Resourcing Obsstate on TMC with Real-SDP in place.
+* ``Abort`` - Testing Abort command on TMC with Real-SDP in place.
 
 * ``Restart`` - Testing Restart command TMC with Real-SDP in place.
 

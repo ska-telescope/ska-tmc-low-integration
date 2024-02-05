@@ -121,6 +121,8 @@ k8s-test:
     - make k8s-wait
 
 k8s-test-tmc-with-csp:
+  tags:
+    - k8srunner
   extends:
     - k8s-test
   variables:

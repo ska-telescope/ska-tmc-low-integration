@@ -65,14 +65,15 @@ def subarray_in_empty_obsstate(
 
 @when("I assign resources to the subarray")
 def invoke_assignresources(
-    central_node_low,
+    central_node_real_csp_low,
     command_input_factory,
 ):
     """Invokes AssignResources command on TMC"""
     input_json = prepare_json_args_for_centralnode_commands(
         "assign_resources_low", command_input_factory
     )
-    central_node_low.store_resources(input_json)
+    central_node_real_csp_low.set_serial_number_of_cbf_processor()
+    central_node_real_csp_low.store_resources(input_json)
 
 
 @then("the CSP subarray must be in IDLE obsState")
