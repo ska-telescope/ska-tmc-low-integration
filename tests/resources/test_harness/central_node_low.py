@@ -18,6 +18,7 @@ from tests.resources.test_harness.constant import (
     mccs_controller,
     mccs_master_leaf_node,
     mccs_subarray1,
+    processor1,
     tmc_low_subarraynode1,
 )
 from tests.resources.test_harness.helpers import SIMULATED_DEVICES_DICT
@@ -52,6 +53,9 @@ class CentralNodeWrapperLow(object):
             "mccs_subarray": DeviceProxy(mccs_subarray1),
         }
         self.csp_subarray1 = DeviceProxy(low_csp_subarray1)
+        self.processor1 = DeviceProxy(processor1)
+        device_dict_low["cbf_subarray1"] = "low-cbf/subarray/01"
+        device_dict_low["cbf_controller"] = "low-cbf/control/0"
         self.sdp_subarray1 = DeviceProxy(low_sdp_subarray1)
         self.sdp_master = DeviceProxy(low_sdp_master)
         self.csp_master = DeviceProxy(low_csp_master)

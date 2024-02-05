@@ -120,11 +120,11 @@ def subarray_in_ready_obsstate(
         central_node_low.subarray_node,
         "obsState",
         ObsState.READY,
-        lookahead=20,
+        lookahead=10,
     )
 
 
-@when(parsers.parse("I issue scan command on subarray"))
+@when("I issue scan command on subarray")
 def invoke_scan(
     subarray_node_low: SubarrayNodeWrapperLow,
     command_input_factory: JsonFactory,
@@ -165,12 +165,10 @@ def tmc_subarray_scanning(
     Raises:
         AssertionError: If the obsState does not transition to SCANNING.
     """
-    central_node_low.set_subarray_id(int(subarray_id))
     assert event_recorder.has_change_event_occurred(
         subarray_node_low.subarray_node,
         "obsState",
         ObsState.SCANNING,
-        lookahead=15,
     )
 
 

@@ -1,4 +1,4 @@
-"""Test module to test TMC-CSP End functionality."""
+"""Test module to test TMC-CSP EndScan functionality."""
 
 import pytest
 from pytest_bdd import given, parsers, scenario, then, when
