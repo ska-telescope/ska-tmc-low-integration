@@ -15,10 +15,16 @@ from ska_tango_testing.mock.tango.event_callback import (
 from tango import DevState
 
 from tests.resources.test_harness.central_node_low import CentralNodeWrapperLow
+from tests.resources.test_harness.central_node_with_csp_low import (
+    CentralNodeCspWrapperLow,
+)
 from tests.resources.test_harness.event_recorder import EventRecorder
 from tests.resources.test_harness.simulator_factory import SimulatorFactory
 from tests.resources.test_harness.subarray_node_low import (
     SubarrayNodeWrapperLow,
+)
+from tests.resources.test_harness.subarray_node_with_csp_low import (
+    SubarrayNodeCspWrapperLow,
 )
 from tests.resources.test_harness.utils.common_utils import JsonFactory
 
@@ -142,6 +148,24 @@ def subarray_node_low() -> SubarrayNodeWrapperLow:
     yield subarray
     # this will call after test complete
     subarray.tear_down()
+
+
+@pytest.fixture()
+def subarray_node_real_csp_low() -> SubarrayNodeCspWrapperLow:
+    """Return SubarrayNode and calls tear down"""
+    subarray = SubarrayNodeCspWrapperLow()
+    yield subarray
+    # this will call after test complete
+    subarray.tear_down()
+
+
+@pytest.fixture()
+def central_node_real_csp_low() -> CentralNodeCspWrapperLow:
+    """Return CentralNode for Low Telescope and calls tear down"""
+    central_node_low = CentralNodeCspWrapperLow()
+    yield central_node_low
+    # this will call after test complete
+    central_node_low.tear_down()
 
 
 @pytest.fixture()

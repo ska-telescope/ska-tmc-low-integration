@@ -24,14 +24,16 @@ def test_tmc_csp_configure_functionality(central_node_low) -> None:
 
 
 @given("the Telescope is in ON state")
-def check_telescope_is_in_on_state(central_node_low, event_recorder) -> None:
+def check_telescope_is_in_on_state(
+    central_node_real_csp_low, event_recorder
+) -> None:
     """Ensure telescope is in ON state."""
-    central_node_low.move_to_on()
+    central_node_real_csp_low.move_to_on()
     event_recorder.subscribe_event(
-        central_node_low.central_node, "telescopeState"
+        central_node_real_csp_low.central_node, "telescopeState"
     )
     assert event_recorder.has_change_event_occurred(
-        central_node_low.central_node,
+        central_node_real_csp_low.central_node,
         "telescopeState",
         DevState.ON,
     )
@@ -39,46 +41,50 @@ def check_telescope_is_in_on_state(central_node_low, event_recorder) -> None:
 
 @given(parsers.parse("the subarray {subarray_id} obsState is IDLE"))
 def move_subarray_node_to_idle_obsstate(
-    central_node_low,
+    central_node_real_csp_low,
     event_recorder,
     command_input_factory,
     subarray_id: str,
 ) -> None:
     """Move TMC Subarray to IDLE obsstate."""
-    central_node_low.set_subarray_id(subarray_id)
+    central_node_real_csp_low.set_subarray_id(subarray_id)
     assign_input_json = prepare_json_args_for_centralnode_commands(
         "assign_resources_low", command_input_factory
     )
-    central_node_low.set_serial_number_of_cbf_processor()
-    central_node_low.store_resources(assign_input_json)
+    central_node_real_csp_low.set_serial_number_of_cbf_processor()
+    central_node_real_csp_low.store_resources(assign_input_json)
 
-    event_recorder.subscribe_event(central_node_low.subarray_node, "obsState")
+    event_recorder.subscribe_event(
+        central_node_real_csp_low.subarray_node, "obsState"
+    )
     assert event_recorder.has_change_event_occurred(
-        central_node_low.subarray_node,
+        central_node_real_csp_low.subarray_node,
         "obsState",
         ObsState.IDLE,
     )
 
 
 @when("I configure the subarray")
-def invoke_configure_command(subarray_node_low, command_input_factory) -> None:
+def invoke_configure_command(
+    subarray_node_real_csp_low, command_input_factory
+) -> None:
     """Invoke Configure command."""
     configure_input_json = prepare_json_args_for_commands(
         "configure_low", command_input_factory
     )
-    subarray_node_low.store_configuration_data(configure_input_json)
+    subarray_node_real_csp_low.store_configuration_data(configure_input_json)
 
 
 @then("the CSP subarray transitions to READY obsState")
 def check_if_csp_subarray_moved_to_ready_obsstate(
-    subarray_node_low, event_recorder
+    subarray_node_real_csp_low, event_recorder
 ) -> None:
     """Ensure CSP subarray is moved to READY obsstate"""
     event_recorder.subscribe_event(
-        subarray_node_low.subarray_devices["csp_subarray"], "obsState"
+        subarray_node_real_csp_low.subarray_devices["csp_subarray"], "obsState"
     )
     assert event_recorder.has_change_event_occurred(
-        subarray_node_low.subarray_devices["csp_subarray"],
+        subarray_node_real_csp_low.subarray_devices["csp_subarray"],
         "obsState",
         ObsState.READY,
     )
@@ -86,11 +92,11 @@ def check_if_csp_subarray_moved_to_ready_obsstate(
 
 @then("the TMC subarray transitions to READY obsState")
 def check_if_tmc_subarray_moved_to_ready_obsstate(
-    subarray_node_low, event_recorder
+    subarray_node_real_csp_low, event_recorder
 ) -> None:
     """Ensure TMC Subarray is moved to READY obsstate"""
     assert event_recorder.has_change_event_occurred(
-        subarray_node_low.subarray_node,
+        subarray_node_real_csp_low.subarray_node,
         "obsState",
         ObsState.READY,
     )
