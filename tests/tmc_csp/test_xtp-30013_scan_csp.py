@@ -168,6 +168,7 @@ def tmc_subarray_scanning(
         subarray_node_low.subarray_node,
         "obsState",
         ObsState.SCANNING,
+        lookahead=10,
     )
 
 
@@ -192,6 +193,7 @@ def csp_subarray_scanning(
         subarray_node_low.subarray_devices["csp_subarray"],
         "obsState",
         ObsState.SCANNING,
+        lookahead=10,
     )
 
 
@@ -217,6 +219,7 @@ def csp_subarray_obsState(
         subarray_node_low.subarray_devices["csp_subarray"],
         "obsState",
         ObsState.READY,
+        lookahead=10,
     )
 
 
@@ -236,5 +239,8 @@ def tmc_subarray_ready(
         back to READY.
     """
     assert event_recorder.has_change_event_occurred(
-        subarray_node_low.subarray_node, "obsState", ObsState.READY
+        subarray_node_low.subarray_node,
+        "obsState",
+        ObsState.READY,
+        lookahead=10,
     )
