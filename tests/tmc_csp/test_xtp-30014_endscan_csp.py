@@ -73,6 +73,7 @@ def given_a_telescope_on_state(
 
 @given(parsers.parse("TMC subarray {subarray_id} is in SCANNING obsState"))
 def move_subarray_node_to_scanning_obsstate(
+    central_node_real_csp_low,
     event_recorder: EventRecorder,
     command_input_factory: JsonFactory,
     subarray_node_low: SubarrayNodeWrapperLow,
@@ -101,6 +102,7 @@ def move_subarray_node_to_scanning_obsstate(
         subarray_node_low.subarray_devices["csp_subarray"], "obsState"
     )
     event_recorder.subscribe_event(subarray_node_low.subarray_node, "obsState")
+    central_node_real_csp_low.set_serial_number_of_cbf_processor()
 
     # execute set of commands and bring SubarrayNode to SCANNING obsState
     subarray_node_low.force_change_of_obs_state(
@@ -113,16 +115,18 @@ def move_subarray_node_to_scanning_obsstate(
         subarray_node_low.subarray_devices["csp_subarray"],
         "obsState",
         ObsState.SCANNING,
+        lookahead=10,
     )
     assert event_recorder.has_change_event_occurred(
         subarray_node_low.subarray_node,
         "obsState",
         ObsState.SCANNING,
+        lookahead=10,
     )
 
 
 @when("I issue the Endscan command to the TMC subarray")
-def invoke_endscan_command(subarray_node_low):
+def invoke_endscan_command(subarray_node_low: SubarrayNodeWrapperLow):
     """Invoke the EndScan command on TMC.
 
     Args:
@@ -150,6 +154,7 @@ def check_if_csp_subarray_moved_to_idle_obsstate(
         subarray_node_low.subarray_devices["csp_subarray"],
         "obsState",
         ObsState.READY,
+        lookahead=10,
     )
 
 
@@ -172,4 +177,5 @@ def check_if_tmc_subarray_moved_to_ready_obsstate(
         subarray_node_low.subarray_devices["csp_subarray"],
         "obsState",
         ObsState.READY,
+        lookahead=10,
     )
