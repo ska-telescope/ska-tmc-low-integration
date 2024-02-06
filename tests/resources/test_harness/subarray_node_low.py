@@ -1,5 +1,6 @@
 import json
 import logging
+from time import sleep
 
 from ska_control_model import ObsState
 from ska_ser_logging import configure_logging
@@ -427,3 +428,5 @@ class SubarrayNodeWrapperLow:
         # Move Subarray to OFF state
         self.move_to_off()
         assert check_subarray_obs_state("EMPTY")
+        # Adding a small sleep to allow the systems to clean up processes
+        sleep(1)

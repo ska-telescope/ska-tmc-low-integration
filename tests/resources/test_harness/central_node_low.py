@@ -1,4 +1,5 @@
 import logging
+from time import sleep
 
 from ska_control_model import ObsState
 from ska_ser_logging import configure_logging
@@ -206,11 +207,16 @@ class CentralNodeWrapperLow(object):
             LOGGER.info("Calling Release Resource on centralnode")
             self.invoke_release_resources(self.release_input)
         else:
-            if SIMULATED_DEVICES_DICT["sdp_and_mccs"]:
+            if (
+                SIMULATED_DEVICES_DICT["sdp_and_mccs"]
+                and not SIMULATED_DEVICES_DICT["all_mocks"]
+            ):
                 self.set_standby()
             else:
                 self.move_to_off()
         self._clear_command_call_and_transition_data(clear_transition=True)
+        # Adding a small sleep to allow the systems to clean up processes
+        sleep(1)
 
     @sync_set_to_on(device_dict=device_dict_low)
     def move_to_on(self):
