@@ -1,4 +1,4 @@
-@XTP-29735 @XTP-29227 @tmc_csp
+@XTP-29735 @XTP-29682 @tmc_csp
 Scenario: Release resources from CSP Subarray using TMC
     Given the Telescope is in ON state
     And TMC subarray <subarray_id> in the IDLE obsState
