@@ -12,7 +12,9 @@ from tests.resources.test_support.common_utils.tmc_helpers import (
 
 
 @pytest.mark.tmc_csp
-@pytest.mark.skip(reason="Bug in csp subarray leaf node")
+@pytest.mark.skip(
+    reason="Bug in csp subarray leaf node, will be fixed under HM-415"
+)
 @scenario(
     "../features/tmc_csp/xtp-30155_abort_in_scanning.feature",
     "Abort scanning CSP using TMC",
