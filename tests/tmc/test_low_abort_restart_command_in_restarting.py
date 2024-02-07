@@ -14,7 +14,6 @@ from tests.resources.test_support.common_utils.telescope_controls import (
 )
 from tests.resources.test_support.common_utils.tmc_helpers import (
     TmcHelper,
-    prepare_json_args_for_centralnode_commands,
     tear_down,
 )
 from tests.resources.test_support.constant_low import (
@@ -37,15 +36,11 @@ from tests.resources.test_support.constant_low import (
     " implemented on mccs master leaf node."
 )
 @pytest.mark.SKA_low
-def test_low_abort_restart_in_restarting(json_factory, command_input_factory):
+def test_low_abort_restart_in_restarting(json_factory):
     """Abort and Restart is executed."""
     telescope_control = BaseTelescopeControl()
-    assign_json = prepare_json_args_for_centralnode_commands(
-        "command_assign_resources_low", command_input_factory
-    )
-    release_json = prepare_json_args_for_centralnode_commands(
-        "command_release_resources_low", command_input_factory
-    )
+    assign_json = json_factory("command_assign_resource_low")
+    release_json = json_factory("command_release_resource_low")
     tmc_helper = TmcHelper(centralnode, tmc_subarraynode1)
 
     try:

@@ -19,7 +19,6 @@ from tests.resources.test_support.common_utils.telescope_controls import (
 )
 from tests.resources.test_support.common_utils.tmc_helpers import (
     TmcHelper,
-    prepare_json_args_for_centralnode_commands,
     tear_down,
 )
 from tests.resources.test_support.constant_low import (
@@ -37,11 +36,7 @@ tmc_helper = TmcHelper(centralnode, tmc_subarraynode1)
 telescope_control = BaseTelescopeControl()
 
 
-@pytest.mark.skip(
-    reason="AssignResources and ReleaseResources"
-    " functionalities are not yet"
-    " implemented on mccs master leaf node."
-)
+@pytest.mark.unskipped
 @pytest.mark.SKA_low
 @scenario(
     "../features/tmc/check_invalid_json_not_allowed.feature",
@@ -54,23 +49,21 @@ def test_invalid_json_in_configure_obsState():
 
 
 @given("the TMC is On")
-def given_tmc(command_input_factory, central_node_low):
+def given_tmc(json_factory):
     """Ensure the TMC is in the 'On' state."""
-    release_json = prepare_json_args_for_centralnode_commands(
-        "command_release_resource_low", command_input_factory
-    )
+    release_json = json_factory("command_release_resource_low")
     try:
         # Verify Telescope is Off/Standby
-        assert central_node_low.is_in_valid_state(
+        assert telescope_control.is_in_valid_state(
             DEVICE_STATE_STANDBY_INFO, "State"
         )
 
         # Invoke TelescopeOn() command on TMC CentralNode
         LOGGER.info("Invoking TelescopeOn command on TMC CentralNode")
-        central_node_low.set_to_on(**ON_OFF_DEVICE_COMMAND_DICT)
+        tmc_helper.set_to_on(**ON_OFF_DEVICE_COMMAND_DICT)
 
         # Verify State transitions after TelescopeOn
-        assert central_node_low.is_in_valid_state(
+        assert telescope_control.is_in_valid_state(
             DEVICE_STATE_ON_INFO, "State"
         )
 
@@ -79,35 +72,31 @@ def given_tmc(command_input_factory, central_node_low):
 
 
 @given("the subarray is in IDLE obsState")
-def tmc_check_status(central_node_low, command_input_factory):
+def tmc_check_status(json_factory):
     """Set the subarray to 'IDLE' observation state."""
-    assert central_node_low.is_in_valid_state(
-        DEVICE_OBS_STATE_EMPTY_INFO, "State"
+    assert telescope_control.is_in_valid_state(
+        DEVICE_OBS_STATE_EMPTY_INFO, "obsState"
     )
-    assign_json = prepare_json_args_for_centralnode_commands(
-        "command_assign_resources_low", command_input_factory
-    )
+    assign_json = json_factory("command_assign_resource_low")
     LOGGER.info("Invoking AssignResources command on TMC CentralNode")
-    central_node_low.store_resources(assign_json)
+    tmc_helper.compose_sub(assign_json, **ON_OFF_DEVICE_COMMAND_DICT)
 
     # Verify ObsState is IDLE
-    assert central_node_low.is_in_valid_state(
-        DEVICE_OBS_STATE_IDLE_INFO, "State"
+    assert telescope_control.is_in_valid_state(
+        DEVICE_OBS_STATE_IDLE_INFO, "obsState"
     )
 
 
 @when(
     parsers.parse("the command Configure is invoked with {invalid_json} input")
 )
-def send(json_factory, invalid_json, command_input_factory):
+def send(json_factory, invalid_json):
     """Invoke the Configure command with different invalid JSON inputs."""
     device_params = deepcopy(ON_OFF_DEVICE_COMMAND_DICT)
     device_params["set_wait_for_obsstate"] = False
     release_json = json_factory("command_release_resource_low")
     try:
-        configure_json = prepare_json_args_for_centralnode_commands(
-            "command_assign_resources_low", command_input_factory
-        )
+        configure_json = json_factory("command_Configure_low")
         if invalid_json == "csp_key_missing":
             invalid_configure_json = json.loads(configure_json)
             del invalid_configure_json["csp"]
@@ -178,11 +167,11 @@ def invalid_command_rejection(invalid_json):
 
 
 @then("TMC subarray remains in IDLE obsState")
-def tmc_status(central_node_low):
+def tmc_status():
     """Ensure that the TMC subarray remains in the 'IDLE' observation state
     after rejection."""
     # Verify obsState transitions
-    assert central_node_low.is_in_valid_state(
+    assert telescope_control.is_in_valid_state(
         DEVICE_OBS_STATE_IDLE_INFO, "obsState"
     )
 
@@ -191,26 +180,21 @@ def tmc_status(central_node_low):
     "TMC successfully executes the Configure \
 command for the subarray with a valid json"
 )
-def tmc_accepts_next_commands(central_node_low, command_input_factory):
+def tmc_accepts_next_commands(json_factory):
     """Execute the Configure command with a valid JSON and verify successful
     execution."""
-    release_json = prepare_json_args_for_centralnode_commands(
-        "command_release_resource_low", command_input_factory
-    )
+    release_json = json_factory("command_release_resource_low")
     try:
-        configure_json = prepare_json_args_for_centralnode_commands(
-            "command_Configure_low", command_input_factory
-        )
+        configure_json = json_factory("command_Configure_low")
         LOGGER.info(f"Input argin for Configure: {configure_json}")
 
         # Invoke Configure() Command on TMC
         LOGGER.info("Invoking Configure command on TMC SubarrayNode")
-        central_node_low.perform_action("configure", configure_json)
-        assert central_node_low.is_in_valid_state(
-            DEVICE_OBS_STATE_READY_INFO, "obsState"
+        tmc_helper.configure_subarray(
+            configure_json, **ON_OFF_DEVICE_COMMAND_DICT
         )
-        assert central_node_low.is_in_valid_state(
-            DEVICE_OBS_STATE_EMPTY_INFO, "State"
+        assert telescope_control.is_in_valid_state(
+            DEVICE_OBS_STATE_READY_INFO, "obsState"
         )
 
         # teardown
@@ -218,21 +202,23 @@ def tmc_accepts_next_commands(central_node_low, command_input_factory):
         tmc_helper.end(**ON_OFF_DEVICE_COMMAND_DICT)
 
         #  Verify obsState is IDLE
-        assert central_node_low.is_in_valid_state(
+        assert telescope_control.is_in_valid_state(
             DEVICE_OBS_STATE_IDLE_INFO, "obsState"
         )
 
         LOGGER.info("Invoking ReleaseResources on TMC")
-        central_node_low.invoke_release_resources(release_json)
+        tmc_helper.invoke_releaseResources(
+            release_json, **ON_OFF_DEVICE_COMMAND_DICT
+        )
 
-        assert central_node_low.is_in_valid_state(
+        assert telescope_control.is_in_valid_state(
             DEVICE_OBS_STATE_EMPTY_INFO, "obsState"
         )
 
         LOGGER.info("Invoking Telescope Standby on TMC")
         tmc_helper.set_to_standby(**ON_OFF_DEVICE_COMMAND_DICT)
 
-        assert central_node_low.is_in_valid_state(
+        assert telescope_control.is_in_valid_state(
             DEVICE_STATE_STANDBY_INFO, "State"
         )
         LOGGER.info("Tear Down complete. Telescope is in Standby State")

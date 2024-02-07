@@ -1,5 +1,5 @@
 import logging
-from typing import List
+from time import sleep
 
 from ska_control_model import ObsState
 from ska_ser_logging import configure_logging
@@ -87,26 +87,6 @@ class CentralNodeWrapperLow(object):
         self.mccs_subarray_leaf_node = DeviceProxy(
             f"ska_low/tm_leaf_node/mccs_subarray{subarray_id}"
         )
-
-    def is_in_valid_state(
-        self, device_state_info: dict, state_str: str
-    ) -> List:
-        """Validate device state is in desired state as per device state info
-        Args:
-            device_state_info (dict): device name and it's expected state info
-        """
-        state_result_list: List = []
-        for device in device_state_info:
-            state_list = device_state_info.get(device)
-            device_state = Resource(device).get(state_str)
-            LOGGER.info(
-                f"Resource({device}).get('{state_str}') : {device_state}"
-            )
-            state_result_list.append(
-                Resource(device).get(state_str) in state_list
-            )
-
-        return all(state_result_list)
 
     @property
     def state(self) -> DevState:
