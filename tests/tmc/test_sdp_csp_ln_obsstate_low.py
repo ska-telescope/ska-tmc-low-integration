@@ -8,6 +8,7 @@ from tests.resources.test_support.common_utils.telescope_controls import (
 )
 from tests.resources.test_support.common_utils.tmc_helpers import (
     TmcHelper,
+    prepare_json_args_for_centralnode_commands,
     tear_down,
 )
 from tests.resources.test_support.constant_low import (
@@ -25,10 +26,14 @@ from tests.resources.test_support.constant_low import (
 
 @pytest.mark.skip(reason="Unskip after repository setup")
 @pytest.mark.SKA_low
-def test_csp_sdp_ln_obstate_low(json_factory, change_event_callbacks):
+def test_csp_sdp_ln_obstate_low(command_input_factory, change_event_callbacks):
     """Verify timeout exception raised when csp set to defective."""
-    assign_json = json_factory("command_assign_resource_low")
-    release_json = json_factory("command_release_resource_low")
+    assign_json = prepare_json_args_for_centralnode_commands(
+        "command_assign_resources_low", command_input_factory
+    )
+    release_json = prepare_json_args_for_centralnode_commands(
+        "command_release_resources_low", command_input_factory
+    )
     try:
         telescope_control = BaseTelescopeControl()
         tmc_helper = TmcHelper(centralnode, tmc_subarraynode1)
