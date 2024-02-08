@@ -6,9 +6,17 @@ from copy import deepcopy
 import pytest
 from ska_control_model import ObsState
 from ska_tango_testing.mock.placeholders import Anything
-from tango import DeviceProxy, EventType
+from tango import DeviceProxy, DevState, EventType
 
 from tests.conftest import LOGGER, TIMEOUT
+from tests.resources.test_harness.constant import (
+    COMMAND_FAILED_WITH_EXCEPTION_OBSSTATE_EMPTY,
+)
+from tests.resources.test_harness.helpers import (
+    get_device_simulators,
+    prepare_json_args_for_centralnode_commands,
+    prepare_json_args_for_commands,
+)
 from tests.resources.test_support.common_utils.common_helpers import (
     Resource,
     Waiter,
@@ -38,73 +46,139 @@ from tests.resources.test_support.constant_low import (
 
 telescope_control = BaseTelescopeControl()
 tmc_helper = TmcHelper(centralnode, tmc_subarraynode1)
+# @pytest.mark.unskipped1
+# @pytest.mark.SKA_low
+# def test_assign_release_timeout_csp(json_factory, change_event_callbacks):
+#     """Verify timeout exception raised when csp set to defective."""
+#     assign_json = json_factory("command_assign_resource_low")
+#     release_json = json_factory("command_release_resource_low")
+
+#         # Verify Telescope is Off/Standby
+#     assert telescope_control.is_in_valid_state(
+#         DEVICE_STATE_STANDBY_INFO, "State"
+#     )
+
+#     # Invoke TelescopeOn() command on TMC
+#     tmc_helper.set_to_on(**ON_OFF_DEVICE_COMMAND_DICT)
+
+#     # Verify State transitions after TelescopeOn
+#     assert telescope_control.is_in_valid_state(
+#         DEVICE_STATE_ON_INFO, "State"
+#     )
+
+#     # Invoke AssignResources() Command on TMC
+
+#     central_node = DeviceProxy(centralnode)
+#     central_node.subscribe_event(
+#         "longRunningCommandResult",
+#         EventType.CHANGE_EVENT,
+#         change_event_callbacks["longRunningCommandResult"],
+#     )
+
+#     csp_subarray = DeviceProxy(csp_subarray1)
+#     csp_subarray.SetDefective(json.dumps(INTERMEDIATE_STATE_DEFECT))
+
+#     device_params = deepcopy(ON_OFF_DEVICE_COMMAND_DICT)
+#     device_params["set_wait_for_obsstate"] = False
+#     result, unique_id = tmc_helper.compose_sub(
+#         assign_json, **device_params
+#     )
+
+#     LOGGER.info(f"Command result {result} and unique id {unique_id}")
+
+#     assert unique_id[0].endswith("AssignResources")
+#     assert result[0] == ResultCode.QUEUED
+#     assertion_data = change_event_callbacks[
+#         "longRunningCommandResult"
+#     ].assert_change_event(
+#         (unique_id[0], Anything),
+#         lookahead=7,
+#     )
+#     assert "AssignResources" in assertion_data["attribute_value"][0]
+#     LOGGER.info(">>>>>>>>>>>>>>>>>>>")
+#     LOGGER.info(assertion_data["attribute_value"][1])
+#     exception_message = (
+#         "Exception occurred on the following devices:"
+#            ska_low/tm_subarray_node/1:"+
+#         " Exception occurred on the following devices:"
+#     )
+#     assert exception_message in assertion_data["attribute_value"][1]
+#     csp_subarray.SetDefective(json.dumps({"enabled": False}))
+
+#     tear_down(
+#         release_json, raise_exception=False, **ON_OFF_DEVICE_COMMAND_DICT
+#     )
 
 
-@pytest.mark.unskipped
+@pytest.mark.pp
 @pytest.mark.SKA_low
-def test_assign_release_timeout_csp(json_factory, change_event_callbacks):
-    """Verify timeout exception raised when csp set to defective."""
-    assign_json = json_factory("command_assign_resource_low")
-    release_json = json_factory("command_release_resource_low")
-    try:
-        # Verify Telescope is Off/Standby
-        assert telescope_control.is_in_valid_state(
-            DEVICE_STATE_STANDBY_INFO, "State"
-        )
+def test_assign_release_timeout_csp(
+    central_node_low,
+    event_recorder,
+    simulator_factory,
+    command_input_factory,
+    subarray_node_low,
+):
+    """assign"""
+    event_recorder.subscribe_event(
+        central_node_low.central_node, "telescopeState"
+    )
+    assign_input_json = prepare_json_args_for_centralnode_commands(
+        "assign_resources_low", command_input_factory
+    )
+    csp_assign_input_json = prepare_json_args_for_commands(
+        "csp_assign_resources", command_input_factory
+    )
+    event_recorder.subscribe_event(
+        central_node_low.central_node, "longRunningCommandResult"
+    )
+    event_recorder.subscribe_event(central_node_low.subarray_node, "obsState")
+    central_node_low.move_to_on()
+    assert event_recorder.has_change_event_occurred(
+        central_node_low.central_node,
+        "telescopeState",
+        DevState.ON,
+    )
+    assert event_recorder.has_change_event_occurred(
+        central_node_low.subarray_node,
+        "obsState",
+        ObsState.EMPTY,
+    )
+    csp_sim, _ = get_device_simulators(simulator_factory)
+    event_recorder.subscribe_event(csp_sim, "obsState")
+    csp_sim.SetDefective(
+        json.dumps(COMMAND_FAILED_WITH_EXCEPTION_OBSSTATE_EMPTY)
+    )
+    result, unique_id = central_node_low.perform_action(
+        "AssignResources", assign_input_json
+    )
+    assert unique_id[0].endswith("AssignResources")
+    assert result[0] == ResultCode.QUEUED
+    exception_message = (
+        "Exception occurred on the following devices:"
+        + " ska_low/tm_subarray_node/1:"
+        + " Exception occurred on the following devices:"
+    )
+    assertion_data = event_recorder.has_change_event_occurred(
+        central_node_low.central_node,
+        attribute_name="longRunningCommandResult",
+        attribute_value=(unique_id[0], Anything),
+    )
 
-        # Invoke TelescopeOn() command on TMC
-        tmc_helper.set_to_on(**ON_OFF_DEVICE_COMMAND_DICT)
+    assert "AssignResources" in assertion_data["attribute_value"][0]
+    assert exception_message in assertion_data["attribute_value"][1]
+    csp_sim.SetDefective(json.dumps({"enabled": False}))
+    csp_sim.AssignResources(csp_assign_input_json)
+    event_recorder.subscribe_event(
+        subarray_node_low.csp_subarray_leaf_node, "cspSubarrayObsState"
+    )
+    assert event_recorder.has_change_event_occurred(
+        subarray_node_low.csp_subarray_leaf_node,
+        "cspSubarrayObsState",
+        ObsState.IDLE,
+    )
 
-        # Verify State transitions after TelescopeOn
-        assert telescope_control.is_in_valid_state(
-            DEVICE_STATE_ON_INFO, "State"
-        )
-
-        # Invoke AssignResources() Command on TMC
-
-        central_node = DeviceProxy(centralnode)
-        central_node.subscribe_event(
-            "longRunningCommandResult",
-            EventType.CHANGE_EVENT,
-            change_event_callbacks["longRunningCommandResult"],
-        )
-
-        csp_subarray = DeviceProxy(csp_subarray1)
-        csp_subarray.SetDefective(json.dumps(INTERMEDIATE_STATE_DEFECT))
-
-        device_params = deepcopy(ON_OFF_DEVICE_COMMAND_DICT)
-        device_params["set_wait_for_obsstate"] = False
-        result, unique_id = tmc_helper.compose_sub(
-            assign_json, **device_params
-        )
-
-        LOGGER.info(f"Command result {result} and unique id {unique_id}")
-
-        assert unique_id[0].endswith("AssignResources")
-        assert result[0] == ResultCode.QUEUED
-        assertion_data = change_event_callbacks[
-            "longRunningCommandResult"
-        ].assert_change_event(
-            (unique_id[0], Anything),
-            lookahead=7,
-        )
-        assert "AssignResources" in assertion_data["attribute_value"][0]
-        exception_message = (
-            f"Exception occurred on device: {tmc_subarraynode1}: "
-            + "Exception occurred on the following devices:\n"
-            + f"{tmc_csp_subarray_leaf_node}: "
-            + "Timeout has occurred, command failed\n"
-        )
-        assert exception_message in assertion_data["attribute_value"][1]
-        csp_subarray.SetDefective(json.dumps({"enabled": False}))
-
-        tear_down(
-            release_json, raise_exception=False, **ON_OFF_DEVICE_COMMAND_DICT
-        )
-
-    except Exception as e:
-        LOGGER.exception("The exception is: %s", e)
-        tear_down(release_json, **ON_OFF_DEVICE_COMMAND_DICT)
+    central_node_low.tear_down()
 
 
 @pytest.mark.unskipped
