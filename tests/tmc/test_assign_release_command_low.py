@@ -46,68 +46,6 @@ from tests.resources.test_support.constant_low import (
 
 telescope_control = BaseTelescopeControl()
 tmc_helper = TmcHelper(centralnode, tmc_subarraynode1)
-# @pytest.mark.unskipped1
-# @pytest.mark.SKA_low
-# def test_assign_release_timeout_csp(json_factory, change_event_callbacks):
-#     """Verify timeout exception raised when csp set to defective."""
-#     assign_json = json_factory("command_assign_resource_low")
-#     release_json = json_factory("command_release_resource_low")
-
-#         # Verify Telescope is Off/Standby
-#     assert telescope_control.is_in_valid_state(
-#         DEVICE_STATE_STANDBY_INFO, "State"
-#     )
-
-#     # Invoke TelescopeOn() command on TMC
-#     tmc_helper.set_to_on(**ON_OFF_DEVICE_COMMAND_DICT)
-
-#     # Verify State transitions after TelescopeOn
-#     assert telescope_control.is_in_valid_state(
-#         DEVICE_STATE_ON_INFO, "State"
-#     )
-
-#     # Invoke AssignResources() Command on TMC
-
-#     central_node = DeviceProxy(centralnode)
-#     central_node.subscribe_event(
-#         "longRunningCommandResult",
-#         EventType.CHANGE_EVENT,
-#         change_event_callbacks["longRunningCommandResult"],
-#     )
-
-#     csp_subarray = DeviceProxy(csp_subarray1)
-#     csp_subarray.SetDefective(json.dumps(INTERMEDIATE_STATE_DEFECT))
-
-#     device_params = deepcopy(ON_OFF_DEVICE_COMMAND_DICT)
-#     device_params["set_wait_for_obsstate"] = False
-#     result, unique_id = tmc_helper.compose_sub(
-#         assign_json, **device_params
-#     )
-
-#     LOGGER.info(f"Command result {result} and unique id {unique_id}")
-
-#     assert unique_id[0].endswith("AssignResources")
-#     assert result[0] == ResultCode.QUEUED
-#     assertion_data = change_event_callbacks[
-#         "longRunningCommandResult"
-#     ].assert_change_event(
-#         (unique_id[0], Anything),
-#         lookahead=7,
-#     )
-#     assert "AssignResources" in assertion_data["attribute_value"][0]
-#     LOGGER.info(">>>>>>>>>>>>>>>>>>>")
-#     LOGGER.info(assertion_data["attribute_value"][1])
-#     exception_message = (
-#         "Exception occurred on the following devices:"
-#            ska_low/tm_subarray_node/1:"+
-#         " Exception occurred on the following devices:"
-#     )
-#     assert exception_message in assertion_data["attribute_value"][1]
-#     csp_subarray.SetDefective(json.dumps({"enabled": False}))
-
-#     tear_down(
-#         release_json, raise_exception=False, **ON_OFF_DEVICE_COMMAND_DICT
-#     )
 
 
 @pytest.mark.pp
