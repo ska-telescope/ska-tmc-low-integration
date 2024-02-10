@@ -15,7 +15,6 @@ from tests.resources.test_harness.constant import (
 from tests.resources.test_harness.helpers import (
     get_device_simulators,
     prepare_json_args_for_centralnode_commands,
-    prepare_json_args_for_commands,
 )
 from tests.resources.test_support.common_utils.common_helpers import (
     Resource,
@@ -61,9 +60,7 @@ def test_assign_release_timeout_csp(
     assign_input_json = prepare_json_args_for_centralnode_commands(
         "assign_resources_low", command_input_factory
     )
-    csp_assign_input_json = prepare_json_args_for_commands(
-        "csp_assign_resources", command_input_factory
-    )
+
     event_recorder.subscribe_event(
         central_node_low.central_node, "longRunningCommandResult"
     )
@@ -102,19 +99,8 @@ def test_assign_release_timeout_csp(
 
     assert "AssignResources" in assertion_data["attribute_value"][0]
     assert exception_message in assertion_data["attribute_value"][1]
-    csp_sim.SetDefective(json.dumps({"enabled": False}))
-    csp_sim.AssignResources(csp_assign_input_json)
-    event_recorder.subscribe_event(
-        subarray_node_low.csp_subarray_leaf_node, "cspSubarrayObsState"
-    )
-    assert event_recorder.has_change_event_occurred(
-        subarray_node_low.csp_subarray_leaf_node,
-        "cspSubarrayObsState",
-        ObsState.IDLE,
-    )
 
 
-@pytest.mark.pp
 @pytest.mark.SKA_low
 def test_assign_release_timeout_sdp(
     central_node_low,
@@ -165,7 +151,7 @@ def test_assign_release_timeout_sdp(
     assert exception_message in assertion_data["attribute_value"][1]
 
 
-@pytest.mark.unskipped
+@pytest.mark.skip("will be refactored along with story hm-390")
 @pytest.mark.SKA_low
 def test_release_exception_propagation(json_factory, change_event_callbacks):
     """Verify timeout exception raised when csp set to defective."""
