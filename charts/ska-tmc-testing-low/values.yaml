@@ -4,7 +4,7 @@ xauthority: "~/.Xauthority"
 legacy_compatibility: true
 
 global:
-  retry: 
+  retry:
   - "--sleep=1"
   - "--tries=100"
   sub-system:
@@ -69,7 +69,7 @@ tmc-low:
         mccs: true
         csp: true
 
- 
+
 ska-sdp:
   legacy_compatibility: true
   enabled: false
@@ -474,11 +474,18 @@ ska-low-mccs:
           logging_level_default: 5
           skuid_url: http://ska-ser-skuid-ska-ser-skuid-svc:9870/
           subarray_id: 1
-  global:
-    cluster_domain: cluster.local
-    minikube: true
-    tango_host: databaseds-tango-base:10000
-
+global:
+  cluster_domain: cluster.local
+  minikube: true
+  tango_host: databaseds-tango-base:10000
+ska-low-cbf-proc:
+  deviceServers:
+    processor:
+      instances: ["0", "1"]
+      resources:
+        limits:
+          xilinx.com/fpga-xilinx_u55c_gen3x16_xdma_base_3-0: 0  # no FPGA hardware
+          memory: 512Mi  # reduced
 
 # SKUID
 ska-ser-skuid:
