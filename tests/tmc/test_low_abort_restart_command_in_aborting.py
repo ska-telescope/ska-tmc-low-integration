@@ -132,7 +132,7 @@ def test_low_abort_restart_in_aborting(
     assert event_recorder.has_change_event_occurred(
         central_node_low.subarray_node,
         "obsState",
-        ObsState.ABORTING,
+        ObsState.ABORTED,
     )
 
     subarray_node_low.restart_subarray()
