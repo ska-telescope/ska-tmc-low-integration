@@ -42,28 +42,28 @@ include:
   - project: 'ska-telescope/templates-repository'
     file: 'gitlab-ci/includes/finaliser.gitlab-ci.yml'
 
-xray-publish:
-  stage: publish
-  image: $SKA_K8S_TOOLS_BUILD_DEPLOY
-  tags:
-    - k8srunner
-  before_script:
-    - '[ -f .make/xray.mk ] || (echo "File xray.mk not included in Makefile; exit 1")'
-    - "make help | grep xray-publish"
-  script:
-    - ls -al
-    - ls -al build
-    - ls -al tests
-    - pip3 install -U ska-ser-xray
-    - XRAY_TEST_RESULT_FILE="build/cucumber.json" make xray-publish
-  rules:
-    - exists:
-        - tests/xray-config.json
-  dependencies:
-    - k8s-test
-    - k8s-test-tmc-with-csp
-    - k8s-test-tmc-with-sdp
-  allow_failure: true
+# xray-publish:
+#   stage: publish
+#   image: $SKA_K8S_TOOLS_BUILD_DEPLOY
+#   tags:
+#     - k8srunner
+#   before_script:
+#     - '[ -f .make/xray.mk ] || (echo "File xray.mk not included in Makefile; exit 1")'
+#     - "make help | grep xray-publish"
+#   script:
+#     - ls -al
+#     - ls -al build
+#     - ls -al tests
+#     - pip3 install -U ska-ser-xray
+#     - XRAY_TEST_RESULT_FILE="build/cucumber.json" make xray-publish
+#   rules:
+#     - exists:
+#         - tests/xray-config.json
+#   dependencies:
+#     - k8s-test
+#     - k8s-test-tmc-with-csp
+#     - k8s-test-tmc-with-sdp
+#   allow_failure: true
 
 on-demand-deploy:
   stage: on-demand
@@ -113,13 +113,18 @@ k8s-test:
   variables:
     KUBE_NAMESPACE: 'ci-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA'
     SERVICE_ACCOUNT: "ci-svc-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA"
-    MARK: "SKA_low_try"
   before_script:
     - make cred SERVICE_ACCOUNT=$SERVICE_ACCOUNT
     - '[ -f .make/k8s.mk ] || (echo "File k8s.mk not included in Makefile; exit 1")'
     - 'make help | grep k8s-test'
     - make k8s-install-chart
     - make k8s-wait
+  after_script:
+    - ls -al
+    - ls -al build
+    - ls -al tests
+    - pip3 install -U ska-ser-xray
+    - XRAY_TEST_RESULT_FILE="build/cucumber.json" make xray-publish
 
 k8s-test-tmc-with-csp:
   tags:
@@ -157,9 +162,16 @@ k8s-test-tmc-with-sdp:
     KUBE_NAMESPACE: 'ci-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-tmc-sdp'
     KUBE_NAMESPACE_SDP: 'ci-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-sdp'
     SERVICE_ACCOUNT: "ci-svc-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-tmc-sdp"
-    MARK: 'tmc_sdp_try'
+    MARK: 'tmc_sdp'
     SDP_SIMULATION_ENABLED: 'false'
-    TARANTA_ENABLED: 'true'
+    TARANTA_ENABLED: 'true'  
+  after_script:
+    - ls -al
+    - ls -al build
+    - ls -al tests
+    - pip3 install -U ska-ser-xray
+    - XRAY_TEST_RESULT_FILE="build/cucumber.json" make xray-publish
+
   retry: 1
 
 
