@@ -13,11 +13,12 @@ entrypoints:
 server:
   name: "mocks"
   instances:
-    {{- $isCspSimulated := .Values.global.csp.isSimulated.enabled }}
+    {{- $isSimulatedCsp := .Values.deviceServers.mocks.is_simulated.csp }}
     {{- $isSimulatedSdp := .Values.deviceServers.mocks.is_simulated.sdp }}
+    {{- $isSimulatedMccs := .Values.deviceServers.mocks.is_simulated.mccs }}
     - name: "01"
       classes:
-        {{- if eq $isCspSimulated true }}
+        {{- if eq $isSimulatedCsp true }}
         - name: "HelperCspMasterDevice"
           devices:
           - name: "low-csp/control/0"
@@ -35,6 +36,7 @@ server:
           - name: "low-sdp/subarray/01"
           - name: "low-sdp/subarray/02"
         {{- end }}
+        {{- if eq $isSimulatedMccs true }}
         - name: "HelperMCCSController"
           devices:
           - name: "low-mccs/control/control"
@@ -42,6 +44,7 @@ server:
           devices:
           - name: "low-mccs/subarray/01"
           - name: "low-mccs/subarray/02"
+        {{- end }} 
 depends_on:
   - device: sys/database/2
 image:
