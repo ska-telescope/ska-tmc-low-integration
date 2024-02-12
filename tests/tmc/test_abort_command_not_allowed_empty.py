@@ -20,7 +20,7 @@ result, message = "", ""
 telescope_control = BaseTelescopeControl()
 
 
-@pytest.mark.SKA_low
+@pytest.mark.SKA_low_try
 @scenario(
     "../features/tmc/check_abort_command.feature",
     "TMC executes Abort Command in EMPTY obsState.",

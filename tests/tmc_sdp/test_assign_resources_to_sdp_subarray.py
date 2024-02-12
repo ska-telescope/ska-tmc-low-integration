@@ -16,7 +16,7 @@ from tests.resources.test_support.common_utils.tmc_helpers import (
 )
 
 
-@pytest.mark.tmc_sdp
+@pytest.mark.tmc_sdp_try
 @scenario(
     "../features/tmc_sdp/assign_resources_to_sdp_subarray.feature",
     """Assign resources to SDP subarray using TMC""",
