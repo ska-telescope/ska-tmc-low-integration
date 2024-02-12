@@ -356,7 +356,6 @@ class SubarrayNodeWrapperLow:
             for sim_device in [
                 self.sdp_subarray1,
                 self.csp_subarray1,
-                self.mccs_subarray1,
             ]:
                 device = DeviceProxy(sim_device)
                 device.ClearCommandCallInfo()
