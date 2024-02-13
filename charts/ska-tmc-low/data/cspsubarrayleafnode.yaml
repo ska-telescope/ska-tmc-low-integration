@@ -8,16 +8,16 @@ server:
   name: "csp_subarray_leaf_node_low"
   instances:
   {{ $csp_sa_fqdn_prefix:= .Values.global.csp_subarray_prefix}}
-  {{- range  .Values.deviceServers.cspsubarrayleafnode.instances }}
-    - name: "{{ . }}"
+  {{- range  ( regexSplit " " ((.Values.global.subarray_count | int) | seq ) -1 ) }}
+    - name: "{{ printf "%02s" . }}"
       classes:
       - name: "CspSubarrayLeafNodeLow"
         devices:
-          - name: "ska_low/tm_leaf_node/csp_subarray{{ . }}"
+          - name: "ska_low/tm_leaf_node/csp_subarray{{ printf "%02s" . }}"
             properties:
               - name: "CspSubarrayFQDN"
                 values:
-                - "{{ $csp_sa_fqdn_prefix }}/{{ . }}"
+                - "{{ $csp_sa_fqdn_prefix }}/{{ printf "%02s" . }}"
               - name: "SkaLevel"
                 values:
                 - "3"
