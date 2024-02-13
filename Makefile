@@ -9,7 +9,7 @@ KUBE_NAMESPACE ?= ska-tmc-low-integration
 KUBE_NAMESPACE_SDP ?= ska-tmc-integration-sdp
 CSP_SIMULATION_ENABLED ?= true
 SDP_SIMULATION_ENABLED ?= true
-MCCS_SIMULATION_ENABLED ?= false
+MCCS_SIMULATION_ENABLED ?= true
 
 
 PYTHON_LINT_TARGET ?= tests/
