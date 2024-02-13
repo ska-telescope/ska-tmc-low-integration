@@ -11,19 +11,15 @@ from tests.resources.test_support.common_utils.tmc_helpers import (
 )
 
 
-@pytest.mark.aki
 @pytest.mark.tmc_mccs
 @scenario(
     "../features/tmc_mccs/xtp-30490_assign_resources_mccs.feature",
     "Assigning Resources to MCCS Subarray",
 )
-def test_assignresources_command(central_node_low):
+def test_assignresources_command():
     """BDD test scenario for verifying successful execution of
     the AssignResources command with TMC and mccs devices for pairwise
     testing."""
-    central_node_low.set_admin_mode_values_mccs()
-    assert central_node_low.central_node.ping() > 0
-    assert central_node_low.subarray_devices["mccs_subarray"].ping() > 0
 
 
 @given("the Telescope is in the ON state")
@@ -31,6 +27,9 @@ def given_a_telescope_in_on_state(
     central_node_low, subarray_node_low, event_recorder
 ):
     """Checks if CentralNode's telescopeState attribute value is on."""
+    central_node_low.set_admin_mode_values_mccs()
+    assert central_node_low.central_node.ping() > 0
+    assert central_node_low.subarray_devices["mccs_subarray"].ping() > 0
     central_node_low.move_to_on()
     event_recorder.subscribe_event(
         central_node_low.central_node, "telescopeState"

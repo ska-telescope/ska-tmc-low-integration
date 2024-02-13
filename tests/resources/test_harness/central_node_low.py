@@ -477,5 +477,5 @@ class CentralNodeWrapperLow(object):
                 device.adminMode = 0
                 subarray_beams.append(device)
 
-            controller = tango.DeviceProxy("low-mccs/control/control")
-            controller.adminmode = 0
+            controller = tango.DeviceProxy(mccs_controller)
+            controller.adminMode = 0
