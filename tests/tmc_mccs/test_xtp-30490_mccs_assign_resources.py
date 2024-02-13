@@ -2,7 +2,6 @@
 import time
 
 import pytest
-import tango
 from pytest_bdd import given, parsers, scenario, then, when
 from ska_control_model import ObsState
 from tango import DevState
@@ -10,41 +9,6 @@ from tango import DevState
 from tests.resources.test_support.common_utils.tmc_helpers import (
     prepare_json_args_for_centralnode_commands,
 )
-
-db = tango.Database()
-
-beam_device_strings = db.get_device_exported("low-mccs/beam/*")
-station_beams = []
-for device_str in beam_device_strings:
-    device = tango.DeviceProxy(device_str)
-    device.adminMode = 0
-    station_beams.append(device)
-
-station_device_strings = db.get_device_exported("low-mccs/station/*")
-stations = []
-for device_str in station_device_strings:
-    device = tango.DeviceProxy(device_str)
-    device.adminMode = 0
-    stations.append(device)
-
-subarray_device_strings = db.get_device_exported("low-mccs/subarray/*")
-subarrays = []
-for device_str in subarray_device_strings:
-    device = tango.DeviceProxy(device_str)
-    device.adminMode = 0
-    subarrays.append(device)
-
-subarray_beam_device_strings = db.get_device_exported(
-    "low-mccs/subarraybeam/*"
-)
-subarray_beams = []
-for device_str in subarray_beam_device_strings:
-    device = tango.DeviceProxy(device_str)
-    device.adminMode = 0
-    subarray_beams.append(device)
-
-controller = tango.DeviceProxy("low-mccs/control/control")
-controller.adminmode = 0
 
 
 @pytest.mark.aki
@@ -57,6 +21,7 @@ def test_assignresources_command(central_node_low):
     """BDD test scenario for verifying successful execution of
     the AssignResources command with TMC and mccs devices for pairwise
     testing."""
+    central_node_low.set_admin_mode_values_mccs()
     assert central_node_low.central_node.ping() > 0
     assert central_node_low.subarray_devices["mccs_subarray"].ping() > 0
 
