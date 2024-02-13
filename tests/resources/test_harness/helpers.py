@@ -338,6 +338,26 @@ def wait_for_attribute_update(
     return False
 
 
+def wait_till_delay_values_are_populated(csp_subarray_leaf_node) -> None:
+    start_time = time.time()
+    time_elapsed = 0
+    while (
+        csp_subarray_leaf_node.delayModel == "no_value"
+        and time_elapsed <= TIMEOUT
+    ):
+        time.sleep(1)
+        time_elapsed = time.time() - start_time
+    if (
+        csp_subarray_leaf_node.delayModel == "no_value"
+        and time_elapsed > TIMEOUT
+    ):
+        raise Exception(
+            "Timeout while waiting for CspSubarrayLeafNode to generate \
+                delay values."
+        )
+    LOGGER.info(f"Delay Value:{csp_subarray_leaf_node.delayModel}")
+
+
 def get_simulated_devices_info() -> dict:
     """
     A method to get simulated devices present in low deployment.
