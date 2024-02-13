@@ -133,12 +133,12 @@ deviceServers:
 
   subarraynode:
     enabled: true
-    instances: ["01","02"]
+    instances: 
     file: "data/subarraynode.yaml"
 
   sdpsubarrayleafnode:
     enabled: true
-    instances: ["01","02"]
+    instances:
     file: "data/sdpsubarrayleafnode.yaml"
 
   sdpmasterleafnode:
@@ -153,7 +153,7 @@ deviceServers:
 
   cspsubarrayleafnode:
     enabled: true
-    instances: ["01","02"]
+    instances:
     file: "data/cspsubarrayleafnode.yaml"
 
   mccsmasterleafnode:
@@ -163,7 +163,7 @@ deviceServers:
 
   mccssubarrayleafnode:
     enabled: true
-    instances: ["01", "02"]
+    instances:
     file: "data/mccssubarrayleafnode.yaml"
 
   mocks:
