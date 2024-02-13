@@ -156,7 +156,11 @@ k8s-test-tmc-with-mccs:
     MARK: 'tmc_mccs'
     MCCS_SIMULATION_ENABLED: 'false'
   before_script:
+    - make cred SERVICE_ACCOUNT=$SERVICE_ACCOUNT
+    - '[ -f .make/k8s.mk ] || (echo "File k8s.mk not included in Makefile; exit 1")'
+    - 'make help | grep k8s-test'
     - make k8s-install-chart K8S_HELMFILE_ENV=tmc-integration
+    - make k8s-wait
   retry: 1
 
 stop-k8s-test-tmc-with-mccs:
