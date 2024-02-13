@@ -12,7 +12,7 @@ from tests.resources.test_support.common_utils.tmc_helpers import (
 
 @pytest.mark.tmc_mccs
 @scenario(
-    "../features/tmc_mccs/xtp-xxxxx_release_resources_mccs.feature",
+    "../features/tmc_mccs/xtp-30608_release_resources_mccs.feature",
     "Release resources from MCCS Subarray using TMC",
 )
 def test_releaseresources_command():
