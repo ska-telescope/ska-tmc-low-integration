@@ -18,7 +18,6 @@ from tests.resources.test_support.common_utils.result_code import ResultCode
 from tests.resources.test_support.common_utils.telescope_controls import (
     BaseTelescopeControl,
 )
-from tests.resources.test_support.common_utils.tmc_helpers import TmcHelper
 from tests.resources.test_support.constant_low import (
     DEVICE_HEALTH_STATE_OK_INFO,
     INTERMEDIATE_STATE_DEFECT,
@@ -26,8 +25,6 @@ from tests.resources.test_support.constant_low import (
     tmc_subarraynode1,
 )
 
-telescope_control = BaseTelescopeControl()
-tmc_helper = TmcHelper(centralnode, tmc_subarraynode1)
 
 
 @pytest.mark.SKA_low
