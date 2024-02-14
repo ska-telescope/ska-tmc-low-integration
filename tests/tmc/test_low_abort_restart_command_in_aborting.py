@@ -11,7 +11,6 @@ from tests.resources.test_harness.helpers import (
 )
 
 
-@pytest.mark.at
 @pytest.mark.SKA_low
 def test_low_abort_restart_in_aborting(
     event_recorder, central_node_low, command_input_factory, subarray_node_low

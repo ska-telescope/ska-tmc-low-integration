@@ -13,7 +13,6 @@ from tests.resources.test_harness.helpers import (
 )
 
 
-@pytest.mark.pp
 @pytest.mark.SKA_low
 def test_recover_subarray_stuck_in_resourcing_low(
     event_recorder, central_node_low, command_input_factory, simulator_factory
