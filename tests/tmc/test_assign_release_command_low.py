@@ -137,7 +137,7 @@ def test_assign_release_timeout_sdp(
     assert exception_message in assertion_data["attribute_value"][1]
 
 
-@pytest.mark.skip("will be refactored along with story hm-390")
+@pytest.mark.pp
 @pytest.mark.SKA_low
 def test_release_exception_propagation(
     event_recorder, central_node_low, command_input_factory, simulator_factory
@@ -149,9 +149,10 @@ def test_release_exception_propagation(
     assign_input_json = prepare_json_args_for_centralnode_commands(
         "assign_resources_low", command_input_factory
     )
-    updated_input_json = json.loads(assign_input_json)
-    updated_input_json["sdp"]["execution_block"]["eb_id"] = "eb-xxx"
-    updated_input_json = json.dumps(updated_input_json)
+    release_input_json = prepare_json_args_for_centralnode_commands(
+        "assign_resources_low", command_input_factory
+    )
+
     event_recorder.subscribe_event(
         central_node_low.central_node, "longRunningCommandResult"
     )
@@ -167,22 +168,39 @@ def test_release_exception_propagation(
         "obsState",
         ObsState.EMPTY,
     )
-    _, sdp_sim = get_device_simulators(simulator_factory)
-    event_recorder.subscribe_event(sdp_sim, "obsState")
-    sdp_sim.SetDefective(json.dumps(INTERMEDIATE_STATE_DEFECT))
+    csp_sim, _ = get_device_simulators(simulator_factory)
+    event_recorder.subscribe_event(csp_sim, "obsState")
+
     result, unique_id = central_node_low.perform_action(
-        "AssignResources", updated_input_json
+        "AssignResources", assign_input_json
     )
     assert unique_id[0].endswith("AssignResources")
     assert result[0] == ResultCode.QUEUED
-    exception_message = "Exception occurred on the following devices:"
+    csp_sim.SetDefective(
+        json.dumps(COMMAND_FAILED_WITH_EXCEPTION_OBSSTATE_EMPTY)
+    )
+    result, unique_id = central_node_low.central_node.ReleaseResources(
+        release_input_json
+    )
+    assert unique_id[0].endswith("ReleaseResources")
+    assert result[0] == ResultCode.QUEUED
+
+    exception_message = (
+        "Exception occurred on the following devices:"
+        + " ska_low/tm_subarray_node/1:"
+        + " Exception occurred on the following devices:"
+    )
     assertion_data = event_recorder.has_change_event_occurred(
         central_node_low.central_node,
         attribute_name="longRunningCommandResult",
         attribute_value=(unique_id[0], Anything),
     )
-    assert "AssignResources" in assertion_data["attribute_value"][0]
+    assert "ReleaseResources" in assertion_data["attribute_value"][0]
     assert exception_message in assertion_data["attribute_value"][1]
+
+    csp_sim.SetDefective(json.dumps({"enabled": False}))
+    csp_sim.SetDirectObstate(2)
+    central_node_low.invoke_release_resources(release_input_json)
 
 
 @pytest.mark.SKA_low
