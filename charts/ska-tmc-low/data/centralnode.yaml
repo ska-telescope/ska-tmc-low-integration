@@ -36,17 +36,17 @@ server:
             - "{{.Values.global.mccs_master}}"
         - name: "TMCSubarrayNodes"
           values:
-          {{- range  ( regexSplit " " ((.Values.global.subarray_count | int) | seq ) -1 )  }}
+          {{- range  ( regexSplit " " ((.Values.subarray_count | int) | seq ) -1 )  }}
           - "{{ $tmc_sa_fqdn_prefix }}/{{ . }}"
           {{- end }}
         - name: "CspSubarrayLeafNodes"
           values:
-          {{- range  ( regexSplit " " ((.Values.global.subarray_count | int) | seq ) -1 )  }}
+          {{- range  ( regexSplit " " ((.Values.subarray_count | int) | seq ) -1 )  }}
           - "{{ $csp_sa_ln_fqdn_prefix }}{{ printf "%02s" . }}"
           {{- end }}
         - name: "SdpSubarrayLeafNodes"
           values:
-          {{- range  ( regexSplit " " ((.Values.global.subarray_count | int) | seq ) -1 )  }}
+          {{- range  ( regexSplit " " ((.Values.subarray_count | int) | seq ) -1 )  }}
           - "{{ $sdp_sa_ln_fqdn_prefix }}{{ printf "%02s" . }}"
           {{- end }}
         - name: "SkaLevel"

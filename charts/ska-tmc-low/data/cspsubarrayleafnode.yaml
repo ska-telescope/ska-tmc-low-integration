@@ -8,7 +8,7 @@ server:
   name: "csp_subarray_leaf_node_low"
   instances:
   {{ $csp_sa_fqdn_prefix:= .Values.global.csp_subarray_prefix}}
-  {{- range  ( regexSplit " " ((.Values.global.subarray_count | int) | seq ) -1 ) }}
+  {{- range  ( regexSplit " " ((.Values.subarray_count | int) | seq ) -1 ) }}
     - name: "{{ printf "%02s" . }}"
       classes:
       - name: "CspSubarrayLeafNodeLow"
