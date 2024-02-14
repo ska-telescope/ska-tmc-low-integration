@@ -27,7 +27,6 @@ def given_a_telescope_in_on_state(
     central_node_low, subarray_node_low, event_recorder
 ):
     """Checks if CentralNode's telescopeState attribute value is on."""
-    central_node_low.set_admin_mode_values_mccs()
     assert central_node_low.central_node.ping() > 0
     assert central_node_low.subarray_devices["mccs_subarray"].ping() > 0
     central_node_low.move_to_on()

@@ -6,6 +6,7 @@ import uuid
 from typing import Any
 
 import pytest
+import tango
 from ska_control_model import ObsState
 from ska_ser_logging import configure_logging
 from ska_tango_base.commands import ResultCode
@@ -20,6 +21,7 @@ from tests.resources.test_harness.constant import (
     low_csp_subarray_leaf_node,
     low_sdp_subarray1,
     low_sdp_subarray_leaf_node,
+    mccs_controller,
     mccs_subarray1,
     mccs_subarray_leaf_node,
     tmc_low_subarraynode1,
@@ -458,3 +460,42 @@ def get_simulated_devices_info() -> dict:
 
 
 SIMULATED_DEVICES_DICT = get_simulated_devices_info()
+
+
+def set_admin_mode_values_mccs():
+    """Set the adminMode values of MCCS devices."""
+    controller = tango.DeviceProxy(mccs_controller)
+    if SIMULATED_DEVICES_DICT["csp_and_sdp"] and controller.adminMode != 0:
+        db = tango.Database()
+        beam_device_strings = db.get_device_exported("low-mccs/beam/*")
+        station_beams = []
+        for device_str in beam_device_strings:
+            device = tango.DeviceProxy(device_str)
+            device.adminMode = 0
+            station_beams.append(device)
+
+        station_device_strings = db.get_device_exported("low-mccs/station/*")
+        stations = []
+        for device_str in station_device_strings:
+            device = tango.DeviceProxy(device_str)
+            device.adminMode = 0
+            stations.append(device)
+
+        subarray_device_strings = db.get_device_exported("low-mccs/subarray/*")
+        subarrays = []
+        for device_str in subarray_device_strings:
+            device = tango.DeviceProxy(device_str)
+            device.adminMode = 0
+            subarrays.append(device)
+
+        subarray_beam_device_strings = db.get_device_exported(
+            "low-mccs/subarraybeam/*"
+        )
+        subarray_beams = []
+        for device_str in subarray_beam_device_strings:
+            device = tango.DeviceProxy(device_str)
+            device.adminMode = 0
+            subarray_beams.append(device)
+
+        controller = tango.DeviceProxy(mccs_controller)
+        controller.adminMode = 0
