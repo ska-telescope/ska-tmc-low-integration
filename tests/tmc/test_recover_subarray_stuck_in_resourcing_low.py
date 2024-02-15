@@ -11,6 +11,7 @@ from tests.resources.test_harness.helpers import (
     get_device_simulators,
     prepare_json_args_for_centralnode_commands,
 )
+from tests.resources.test_support.constant_low import INTERMEDIATE_STATE_DEFECT
 
 
 @pytest.mark.SKA_low
@@ -24,10 +25,6 @@ def test_recover_subarray_stuck_in_resourcing_low(
     assign_input_json = prepare_json_args_for_centralnode_commands(
         "assign_resources_low", command_input_factory
     )
-    release_input_json = prepare_json_args_for_centralnode_commands(
-        "release_resources_low", command_input_factory
-    )
-
     event_recorder.subscribe_event(
         central_node_low.central_node, "longRunningCommandResult"
     )
@@ -47,23 +44,13 @@ def test_recover_subarray_stuck_in_resourcing_low(
         "telescopeState",
         DevState.ON,
     )
-    assert event_recorder.has_change_event_occurred(
-        central_node_low.subarray_node,
-        "obsState",
-        ObsState.EMPTY,
-    )
-    csp_sim, _ = get_device_simulators(simulator_factory)
-    csp_sim.SetDefective(json.dumps({"enabled": False}))
+    _, sdp_sim = get_device_simulators(simulator_factory)
+    sdp_sim.SetDefective(json.dumps(INTERMEDIATE_STATE_DEFECT))
     central_node_low.perform_action("AssignResources", assign_input_json)
     assert event_recorder.has_change_event_occurred(
         central_node_low.subarray_node,
         "obsState",
         ObsState.RESOURCING,
-    )
-    assert event_recorder.has_change_event_occurred(
-        central_node_low.subarray_devices["mccs_subarray"],
-        "obsState",
-        ObsState.IDLE,
     )
     assert event_recorder.has_change_event_occurred(
         central_node_low.subarray_devices["sdp_subarray"],
@@ -75,14 +62,8 @@ def test_recover_subarray_stuck_in_resourcing_low(
         "obsState",
         ObsState.IDLE,
     )
-    csp_sim.SetDefective(json.dumps({"enabled": False}))
-    csp_sim.SetDirectObsstate(ObsState.IDLE)
-    assert event_recorder.has_change_event_occurred(
-        central_node_low.subarray_node,
-        "obsState",
-        ObsState.IDLE,
-    )
-    central_node_low.perform_action("ReleaseResources", release_input_json)
+    sdp_sim.SetDefective(json.dumps({"enabled": False}))
+    sdp_sim.SetDirectObsstate(ObsState.EMPTY)
     assert event_recorder.has_change_event_occurred(
         central_node_low.subarray_node,
         "obsState",
