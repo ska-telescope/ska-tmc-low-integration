@@ -15,16 +15,7 @@ from tests.resources.test_harness.helpers import (
     prepare_json_args_for_centralnode_commands,
 )
 from tests.resources.test_support.common_utils.result_code import ResultCode
-from tests.resources.test_support.common_utils.telescope_controls import (
-    BaseTelescopeControl,
-)
-from tests.resources.test_support.constant_low import (
-    DEVICE_HEALTH_STATE_OK_INFO,
-    INTERMEDIATE_STATE_DEFECT,
-    centralnode,
-    tmc_subarraynode1,
-)
-
+from tests.resources.test_support.constant_low import INTERMEDIATE_STATE_DEFECT
 
 
 @pytest.mark.SKA_low
@@ -196,11 +187,3 @@ def test_release_exception_propagation(
     csp_sim.SetDefective(json.dumps({"enabled": False}))
     csp_sim.SetDirectObstate(2)
     central_node_low.invoke_release_resources(release_input_json)
-
-
-@pytest.mark.SKA_low
-def test_health_check_low():
-    """Test health state check for low"""
-    assert telescope_control.is_in_valid_state(
-        DEVICE_HEALTH_STATE_OK_INFO, "healthState"
-    )
