@@ -124,7 +124,6 @@ def test_assign_release_timeout_sdp(
     assert exception_message in assertion_data["attribute_value"][1]
 
 
-@pytest.mark.pp
 @pytest.mark.SKA_low
 def test_release_exception_propagation(
     event_recorder, central_node_low, command_input_factory, simulator_factory
