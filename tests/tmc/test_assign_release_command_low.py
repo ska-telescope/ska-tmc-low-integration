@@ -185,5 +185,5 @@ def test_release_exception_propagation(
     assert exception_message in assertion_data["attribute_value"][1]
 
     csp_sim.SetDefective(json.dumps({"enabled": False}))
-    csp_sim.SetDirectObstate(2)
+    csp_sim.SetDirectObstate(ObsState.IDLE)
     central_node_low.invoke_release_resources(release_input_json)
