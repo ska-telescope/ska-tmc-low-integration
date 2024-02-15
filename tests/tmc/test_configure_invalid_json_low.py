@@ -21,7 +21,7 @@ from tests.resources.test_support.common_utils.tmc_helpers import (
 )
 
 
-@pytest.mark.skip("unstable test")
+@pytest.mark.stuck
 @pytest.mark.SKA_low
 @scenario(
     "../features/tmc/check_invalid_json_not_allowed.feature",
@@ -40,6 +40,7 @@ def given_tmc(central_node_low, event_recorder):
     event_recorder.subscribe_event(
         central_node_low.central_node, "telescopeState"
     )
+    event_recorder.subscribe_event(central_node_low.subarray_node, "obsstate")
     assert event_recorder.has_change_event_occurred(
         central_node_low.central_node,
         "telescopeState",
