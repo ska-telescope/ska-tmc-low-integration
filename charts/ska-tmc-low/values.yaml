@@ -15,16 +15,16 @@ annotations:
   app.gitlab.com/app: CI_PROJECT_PATH_SLUG
   app.gitlab.com/env: CI_ENVIRONMENT_SLUG
 
+#  .Values.subarray_count
+# subarray_count, this will be expanded (1 to N inclusive)
+subarray_count: 2
 global:
   minikube: false
   tango_host: databaseds-tango-base-test:10000
 
   ##  Order of instances resolution ##
-  #  .Values.global.subarray_count
   # .Values.deviceServers.<device>.instances
   # File, data/<device>.yaml, instances
-
-  # subarray_count, this will be expanded (1 to N inclusive) and applied to instances of:
   # deviceServers.cspsubarrayleafnode, deviceServers.sdpsubarrayleafnode,
   # deviceServers.subarraynode , deviceServers.mccssubarrayleafnode
   subarray_devices:
@@ -32,7 +32,7 @@ global:
     - "sdpsubarrayleafnode"
     - "subarraynode"
     - "mccssubarrayleafnode"
-  subarray_count: 2
+ 
   csp:
     isSimulated:
       enabled: true
@@ -128,17 +128,14 @@ deviceServers:
   centralnode:
     enabled: true
     instances: ["01"]
-    subarray_count: 2
     file: "data/centralnode.yaml"
 
   subarraynode:
-    enabled: true
-    instances: ["01","02"]
+    enabled: true 
     file: "data/subarraynode.yaml"
 
   sdpsubarrayleafnode:
     enabled: true
-    instances: ["01","02"]
     file: "data/sdpsubarrayleafnode.yaml"
 
   sdpmasterleafnode:
@@ -153,7 +150,6 @@ deviceServers:
 
   cspsubarrayleafnode:
     enabled: true
-    instances: ["01","02"]
     file: "data/cspsubarrayleafnode.yaml"
 
   mccsmasterleafnode:
@@ -163,7 +159,6 @@ deviceServers:
 
   mccssubarrayleafnode:
     enabled: true
-    instances: ["01", "02"]
     file: "data/mccssubarrayleafnode.yaml"
 
   mocks:

@@ -62,3 +62,7 @@ To test with tmc_csp execute the command `make k8s-test MARK=tmc_csp CSP_SIMULAT
 * ``Scan``- Testing Scan command on TMC with real CSP controller and CSP Subarrays and mocked/simulated SDP and Mccs subsystems.
 
 * ``EndScan`` - Testing EndScan command on TMC with real CSP controller and CSP Subarrays and mocked/simulated SDP and Mccs subsystems.
+
+* ``Abort`` - Testing Abort command on TMC with real CSP controller and CSP Subarrays and mocked/simulated SDP and Mccs subsystems.
+
+* ``Restart`` - Testing Restart command on TMC with real CSP controller and CSP Subarrays and mocked/simulated SDP and Mccs subsystems.
