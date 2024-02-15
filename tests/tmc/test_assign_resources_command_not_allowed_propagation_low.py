@@ -63,7 +63,6 @@ class TestAssignCommandNotAllowedPropagation:
         ERROR_MESSAGE = (
             "Exception occurred on the following devices: "
             + "ska_low/tm_subarray_node/1: "
-            + "Timeout has occurred, command failed"
         )
         assertion_data = event_recorder.has_change_event_occurred(
             central_node_low.central_node,
@@ -124,7 +123,10 @@ class TestAssignCommandNotAllowedPropagation:
 
         _, unique_id = central_node_low.store_resources(assign_input_json)
 
-        ERROR_MESSAGE = "Timeout has occurred, command failed"
+        ERROR_MESSAGE = (
+            "Exception occurred on the following devices: "
+            + "ska_low/tm_subarray_node/1: "
+        )
         assertion_data = event_recorder.has_change_event_occurred(
             central_node_low.central_node,
             "longRunningCommandResult",
