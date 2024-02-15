@@ -60,9 +60,7 @@ class TestAssignCommandNotAllowedPropagation:
 
         _, unique_id = central_node_low.store_resources(assign_input_json)
 
-        ERROR_MESSAGE = (
-            "Timeout has occurred, command failed"
-        )
+        ERROR_MESSAGE = "Timeout has occurred, command failed"
         assertion_data = event_recorder.has_change_event_occurred(
             central_node_low.central_node,
             "longRunningCommandResult",
@@ -122,9 +120,7 @@ class TestAssignCommandNotAllowedPropagation:
 
         _, unique_id = central_node_low.store_resources(assign_input_json)
 
-        ERROR_MESSAGE = (
-            "Timeout has occurred, command failed"
-        )
+        ERROR_MESSAGE = "Timeout has occurred, command failed"
         assertion_data = event_recorder.has_change_event_occurred(
             central_node_low.central_node,
             "longRunningCommandResult",
