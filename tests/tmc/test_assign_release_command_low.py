@@ -19,13 +19,13 @@ from tests.resources.test_support.constant_low import INTERMEDIATE_STATE_DEFECT
 
 
 @pytest.mark.SKA_low
-def test_assign_release_timeout_csp(
+def test_assign_release_defective_csp(
     central_node_low,
     event_recorder,
     simulator_factory,
     command_input_factory,
 ):
-    """Verify timeout exception raised when csp set to defective."""
+    """Verify defective exception raised when csp set to defective."""
     event_recorder.subscribe_event(
         central_node_low.central_node, "telescopeState"
     )
@@ -75,13 +75,13 @@ def test_assign_release_timeout_csp(
 
 
 @pytest.mark.SKA_low
-def test_assign_release_timeout_sdp(
+def test_assign_release_defective_sdp(
     central_node_low,
     event_recorder,
     simulator_factory,
     command_input_factory,
 ):
-    """Verify timeout exception raised when csp set to defective."""
+    """Verify defective exception raised when csp set to defective."""
     event_recorder.subscribe_event(
         central_node_low.central_node, "telescopeState"
     )
