@@ -1,6 +1,4 @@
 """Test module for TMC-mccs AssignResources functionality"""
-import time
-
 import pytest
 from pytest_bdd import given, parsers, scenario, then, when
 from ska_control_model import ObsState
@@ -77,7 +75,6 @@ def invoke_assignresources(
         "assign_resources_low", command_input_factory
     )
     central_node_low.store_resources(input_json)
-    time.sleep(3)
 
 
 @then("the MCCS subarray obsState must transition to IDLE")
