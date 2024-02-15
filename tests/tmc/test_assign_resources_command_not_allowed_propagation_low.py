@@ -61,8 +61,9 @@ class TestAssignCommandNotAllowedPropagation:
         _, unique_id = central_node_low.store_resources(assign_input_json)
 
         ERROR_MESSAGE = (
-            "The invocation of the AssignResources command is "
-            + "failed on Csp Subarray Device low-csp/subarray/01"
+            "Exception occurred on the following devices: "
+            + "ska_low/tm_subarray_node/1: "
+            + "Timeout has occurred, command failed"
         )
         assertion_data = event_recorder.has_change_event_occurred(
             central_node_low.central_node,
