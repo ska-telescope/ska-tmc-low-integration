@@ -128,17 +128,14 @@ deviceServers:
   centralnode:
     enabled: true
     instances: ["01"]
-    subarray_count: 2
     file: "data/centralnode.yaml"
 
   subarraynode:
-    enabled: true
-    instances: 
+    enabled: true 
     file: "data/subarraynode.yaml"
 
   sdpsubarrayleafnode:
     enabled: true
-    instances:
     file: "data/sdpsubarrayleafnode.yaml"
 
   sdpmasterleafnode:
@@ -153,7 +150,6 @@ deviceServers:
 
   cspsubarrayleafnode:
     enabled: true
-    instances:
     file: "data/cspsubarrayleafnode.yaml"
 
   mccsmasterleafnode:
@@ -163,7 +159,6 @@ deviceServers:
 
   mccssubarrayleafnode:
     enabled: true
-    instances:
     file: "data/mccssubarrayleafnode.yaml"
 
   mocks:
