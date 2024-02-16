@@ -97,7 +97,6 @@ class TestAssignCommandNotAllowedPropagation:
         )
         event_recorder.subscribe_event(mccs_subarray_sim, "obsState")
 
-        # Preparing input arguments
         assign_input_json = prepare_json_args_for_centralnode_commands(
             "assign_resources_low", command_input_factory
         )
@@ -109,7 +108,6 @@ class TestAssignCommandNotAllowedPropagation:
             DevState.ON,
         )
 
-        # Setting Defects on Devices
         sdp_subarray_sim.SetDirectObsState(ObsState.RESOURCING)
 
         _, unique_id = central_node_low.store_resources(assign_input_json)
