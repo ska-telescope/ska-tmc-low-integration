@@ -56,12 +56,7 @@ def test_low_abort_restart_in_aborting(
     assert event_recorder.has_change_event_occurred(
         central_node_low.subarray_node,
         "obsState",
-        ObsState.ABORTED,
+        ObsState.ABORTING,
     )
-
-    subarray_node_low.restart_subarray()
-    assert event_recorder.has_change_event_occurred(
-        central_node_low.subarray_node,
-        "obsState",
-        ObsState.EMPTY,
-    )
+    with pytest.raises(Exception):
+        subarray_node_low.restart_subarray()
