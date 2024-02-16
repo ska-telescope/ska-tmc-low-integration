@@ -464,7 +464,7 @@ SIMULATED_DEVICES_DICT = get_simulated_devices_info()
 
 def set_admin_mode_values_mccs():
     """Set the adminMode values of MCCS devices."""
-    if SIMULATED_DEVICES_DICT["csp_and_sdp"]:
+    if MCCS_SIMULATION_ENABLED.lower() == "false":
         controller = tango.DeviceProxy(mccs_controller)
         if controller.adminMode != 0:
             db = tango.Database()
