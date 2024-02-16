@@ -3,7 +3,7 @@ This module defines a Pytest BDD test scenario for checking the
 delay value generation during the Configure command execution on a
 Telescope Monitoring and Control (TMC) system
 The scenario includes steps to set up the TMC, configure the subarray,
-and checks whether Cspleafnode starts generating delay value.
+and checks whether CspSubarrayLeafNode starts generating delay value.
 """
 import pytest
 from pytest_bdd import given, scenario, then, when
@@ -14,12 +14,10 @@ from tests.resources.test_harness.helpers import (
     prepare_json_args_for_centralnode_commands,
     prepare_json_args_for_commands,
     wait_till_delay_values_are_populated,
+    wait_till_delay_values_are_stop_populated,
 )
 
-TIMEOUT = 15
 
-
-@pytest.mark.ms
 @pytest.mark.SKA_low
 @scenario(
     "../features/tmc/check_low_delay_model.feature",
@@ -47,7 +45,7 @@ def check_tmc_csp_state_is_on(central_node_low, event_recorder):
 
 @given("subarray is in obsState IDLE")
 def check_subarray_is_in_idle_obsstate(
-    central_node_low, command_input_factory, event_recorder
+    central_node_low, subarray_node_low, command_input_factory, event_recorder
 ) -> None:
     """Checks subarray is in obsState IDLE."""
     assign_input_json = prepare_json_args_for_centralnode_commands(
@@ -55,18 +53,16 @@ def check_subarray_is_in_idle_obsstate(
     )
     central_node_low.store_resources(assign_input_json)
 
-    event_recorder.subscribe_event(central_node_low.subarray_node, "obsState")
+    event_recorder.subscribe_event(subarray_node_low.subarray_node, "obsState")
     assert event_recorder.has_change_event_occurred(
-        central_node_low.subarray_node,
+        subarray_node_low.subarray_node,
         "obsState",
         ObsState.IDLE,
     )
 
 
 @when("I configure the subarray")
-def invoke_configure_command(
-    subarray_node_low, command_input_factory, event_recorder
-) -> None:
+def invoke_configure_command(subarray_node_low, command_input_factory) -> None:
     """Invoke Configure command."""
     configure_input_json = prepare_json_args_for_commands(
         "configure_low", command_input_factory
@@ -75,14 +71,36 @@ def invoke_configure_command(
 
 
 @then("CSP subarray leaf node starts generating delay values")
-def check_if_delay_values_are_generating(
-    subarray_node_low,
-) -> None:
+def check_if_delay_values_are_generating(subarray_node_low) -> None:
     """Check if delay values are generating."""
     wait_till_delay_values_are_populated(
         subarray_node_low.csp_subarray_leaf_node
     )
     assert subarray_node_low.csp_subarray_leaf_node.delayModel not in [
+        "",
+        "no_value",
+    ]
+
+
+@when("I end the store_configuration")
+def invoke_end_command(subarray_node_low, event_recorder) -> None:
+    """Invoke End command."""
+    subarray_node_low.end_observation()
+    event_recorder.subscribe_event(subarray_node_low.subarray_node, "obsState")
+    assert event_recorder.has_change_event_occurred(
+        subarray_node_low.subarray_node,
+        "obsState",
+        ObsState.IDLE,
+    )
+
+
+@then("CSP subarray leaf node stops generating delay values")
+def check_if_delay_values_are_not_generating(subarray_node_low) -> None:
+    """Check if delay values are generating."""
+    wait_till_delay_values_are_stop_populated(
+        subarray_node_low.csp_subarray_leaf_node
+    )
+    assert subarray_node_low.csp_subarray_leaf_node.delayModel in [
         "",
         "no_value",
     ]
