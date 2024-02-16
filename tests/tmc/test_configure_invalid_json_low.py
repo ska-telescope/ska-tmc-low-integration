@@ -21,6 +21,7 @@ from tests.resources.test_support.common_utils.tmc_helpers import (
 )
 
 
+@pytest.mark.kk
 @pytest.mark.SKA_low
 @scenario(
     "../features/tmc/check_invalid_json_not_allowed.feature",
@@ -54,7 +55,7 @@ def tmc_check_status(
     input_json = prepare_json_args_for_centralnode_commands(
         "assign_resources_low", command_input_factory
     )
-    event_recorder.subscribe_event(subarray_node_low.subarray_node, "obsstate")
+    event_recorder.subscribe_event(subarray_node_low.subarray_node, "obsState")
     central_node_low.store_resources(input_json)
     assert event_recorder.has_change_event_occurred(
         subarray_node_low.subarray_node,
