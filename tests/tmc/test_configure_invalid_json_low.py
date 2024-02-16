@@ -60,7 +60,7 @@ def tmc_check_status(
     assert event_recorder.has_change_event_occurred(
         subarray_node_low.subarray_node,
         "obsState",
-        ObsState.READY,
+        ObsState.IDLE,
     )
 
 
