@@ -467,35 +467,9 @@ def set_admin_mode_values_mccs():
     controller = tango.DeviceProxy(mccs_controller)
     if SIMULATED_DEVICES_DICT["csp_and_sdp"] and controller.adminMode != 0:
         db = tango.Database()
-        beam_device_strings = db.get_device_exported("low-mccs/beam/*")
-        station_beams = []
-        for device_str in beam_device_strings:
+        device_strings = db.get_device_exported("low-mccs/*")
+        devices = []
+        for device_str in device_strings:
             device = tango.DeviceProxy(device_str)
             device.adminMode = 0
-            station_beams.append(device)
-
-        station_device_strings = db.get_device_exported("low-mccs/station/*")
-        stations = []
-        for device_str in station_device_strings:
-            device = tango.DeviceProxy(device_str)
-            device.adminMode = 0
-            stations.append(device)
-
-        subarray_device_strings = db.get_device_exported("low-mccs/subarray/*")
-        subarrays = []
-        for device_str in subarray_device_strings:
-            device = tango.DeviceProxy(device_str)
-            device.adminMode = 0
-            subarrays.append(device)
-
-        subarray_beam_device_strings = db.get_device_exported(
-            "low-mccs/subarraybeam/*"
-        )
-        subarray_beams = []
-        for device_str in subarray_beam_device_strings:
-            device = tango.DeviceProxy(device_str)
-            device.adminMode = 0
-            subarray_beams.append(device)
-
-        controller = tango.DeviceProxy(mccs_controller)
-        controller.adminMode = 0
+            devices.append(device)
