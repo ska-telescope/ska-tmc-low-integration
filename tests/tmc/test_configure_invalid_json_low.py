@@ -96,7 +96,7 @@ def send(subarray_node_low, invalid_json, command_input_factory):
             json.dumps(invalid_configure_json)
         )
     elif invalid_json == "empty_string":
-        invalid_configure_json = "{}"
+        invalid_configure_json = {}
         pytest.command_result = subarray_node_low.subarray_node.Configure(
             json.dumps(invalid_configure_json)
         )
