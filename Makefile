@@ -82,7 +82,7 @@ endif
 PYTHON_VARS_AFTER_PYTEST ?= -m '$(MARK)' $(ADD_ARGS) $(FILE) -x
 
 ifeq ($(CSP_SIMULATION_ENABLED),false)
-CUSTOM_VALUES =	--set global.csp.isSimulated.enabled=$(CSP_SIMULATION_ENABLED)\
+CUSTOM_VALUES =	--set tmc-low.deviceServers.mocks.is_simulated.csp=$(CSP_SIMULATION_ENABLED)\
 	--set ska-csp-lmc-low.enabled=true\
 	--set ska-low-cbf.enabled=true\
 	--set ska-low-cbf.ska-low-cbf-proc.enabled=true

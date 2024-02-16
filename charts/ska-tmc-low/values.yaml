@@ -32,11 +32,6 @@ global:
     - "sdpsubarrayleafnode"
     - "subarraynode"
     - "mccssubarrayleafnode"
-  subarray_count: 2
-
-  csp:
-    isSimulated:
-      enabled: true
 
   # fqdn for low devices
   tmc_subarray_prefix: "ska_low/tm_subarray_node"
@@ -52,6 +47,7 @@ global:
   mccs_master: "low-mccs/control/control"
   mccs_subarray_ln_prefix: "ska_low/tm_leaf_node/mccs_subarray"
   mccs_subarray_prefix: "low-mccs/subarray"
+
 dsconfig:
   configuration_file: data/tmc-low-config.json
   image:
