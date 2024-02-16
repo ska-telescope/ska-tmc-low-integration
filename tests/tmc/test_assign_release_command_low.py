@@ -9,11 +9,13 @@ from tango import DevState
 
 from tests.resources.test_harness.constant import (
     COMMAND_FAILED_WITH_EXCEPTION_OBSSTATE_EMPTY,
+    COMMAND_NOT_ALLOWED_DEFECT,
 )
 from tests.resources.test_harness.helpers import (
     get_device_simulators,
     prepare_json_args_for_centralnode_commands,
 )
+from tests.resources.test_harness.utils.enums import SimulatorDeviceType
 from tests.resources.test_support.common_utils.result_code import ResultCode
 from tests.resources.test_support.constant_low import INTERMEDIATE_STATE_DEFECT
 
@@ -185,3 +187,48 @@ def test_release_exception_propagation(
         (unique_id[0], str(ResultCode.FAILED.value)),
     )
     csp_sim.SetDefective(json.dumps({"enabled": False}))
+
+
+@pytest.mark.SKA_low
+def test_assign_release_timeout_csp(
+    self,
+    central_node_low,
+    event_recorder,
+    command_input_factory,
+    simulator_factory,
+):
+    """Verify command not allowed exception propagation from CSPLeafNodes
+    ."""
+    csp_subarray_sim = simulator_factory.get_or_create_simulator_device(
+        SimulatorDeviceType.LOW_CSP_DEVICE
+    )
+
+    event_recorder.subscribe_event(
+        central_node_low.central_node, "telescopeState"
+    )
+    event_recorder.subscribe_event(
+        central_node_low.central_node, "longRunningCommandResult"
+    )
+
+    assign_input_json = prepare_json_args_for_centralnode_commands(
+        "assign_resources_low", command_input_factory
+    )
+
+    central_node_low.move_to_on()
+    assert event_recorder.has_change_event_occurred(
+        central_node_low.central_node,
+        "telescopeState",
+        DevState.ON,
+    )
+
+    csp_subarray_sim.SetDefective(COMMAND_NOT_ALLOWED_DEFECT)
+
+    _, unique_id = central_node_low.store_resources(assign_input_json)
+
+    ERROR_MESSAGE = "Timeout has occurred, command failed"
+    assertion_data = event_recorder.has_change_event_occurred(
+        central_node_low.central_node,
+        "longRunningCommandResult",
+        (unique_id[0], Anything),
+    )
+    assert ERROR_MESSAGE in assertion_data["attribute_value"][1]

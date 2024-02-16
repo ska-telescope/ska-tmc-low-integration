@@ -68,15 +68,6 @@ class TestAssignCommandNotAllowedPropagation:
         )
         assert ERROR_MESSAGE in assertion_data["attribute_value"][1]
 
-        # Manually setting the obsState to EMPTY to circumvent the Restart
-        # command bug. Will be removed once the Bug is fixed under HM-371
-        mccs_subarray_sim.SetDirectObsState(ObsState.EMPTY)
-        assert event_recorder.has_change_event_occurred(
-            mccs_subarray_sim,
-            "obsState",
-            ObsState.EMPTY,
-        )
-
     @pytest.mark.SKA_low
     def test_assign_command_not_allowed_propagation_sdp_ln_low(
         self,
@@ -127,12 +118,3 @@ class TestAssignCommandNotAllowedPropagation:
             (unique_id[0], Anything),
         )
         assert ERROR_MESSAGE in assertion_data["attribute_value"][1]
-
-        # Manually setting the obsState to EMPTY to circumvent the Restart
-        # command bug. Will be removed once the Bug is fixed under HM-371
-        mccs_subarray_sim.SetDirectObsState(ObsState.EMPTY)
-        assert event_recorder.has_change_event_occurred(
-            mccs_subarray_sim,
-            "obsState",
-            ObsState.EMPTY,
-        )
