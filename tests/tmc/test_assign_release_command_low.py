@@ -192,7 +192,6 @@ def test_release_exception_propagation(
 
 @pytest.mark.SKA_low
 def test_assign_release_timeout_csp(
-    self,
     central_node_low,
     event_recorder,
     command_input_factory,
