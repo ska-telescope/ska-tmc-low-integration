@@ -75,30 +75,30 @@ def send(subarray_node_low, invalid_json, command_input_factory):
         invalid_configure_json = json.loads(configure_json)
         del invalid_configure_json["csp"]
         pytest.command_result = subarray_node_low.subarray_node.Configure(
-            input_json=json.dumps(invalid_configure_json)
+            json.dumps(invalid_configure_json)
         )
     elif invalid_json == "sdp_key_missing":
         invalid_configure_json = json.loads(configure_json)
         del invalid_configure_json["sdp"]
         pytest.command_result = subarray_node_low.subarray_node.Configure(
-            input_json=json.dumps(invalid_configure_json)
+            json.dumps(invalid_configure_json)
         )
     elif invalid_json == "tmc_key_missing":
         invalid_configure_json = json.loads(configure_json)
         del invalid_configure_json["tmc"]
         pytest.command_result = subarray_node_low.subarray_node.Configure(
-            input_json=json.dumps(invalid_configure_json)
+            json.dumps(invalid_configure_json)
         )
     elif invalid_json == "scan_duration_key_missing":
         invalid_configure_json = json.loads(configure_json)
         del invalid_configure_json["tmc"]["scan_duration"]
         pytest.command_result = subarray_node_low.subarray_node.Configure(
-            input_json=json.dumps(invalid_configure_json)
+            json.dumps(invalid_configure_json)
         )
     elif invalid_json == "empty_string":
         invalid_configure_json = ""
         pytest.command_result = subarray_node_low.subarray_node.Configure(
-            input_json=json.dumps(invalid_configure_json)
+            json.dumps(invalid_configure_json)
         )
 
 
@@ -142,11 +142,12 @@ def tmc_status(event_recorder, subarray_node_low):
     """Ensure that the TMC subarray remains in the 'IDLE' observation state
     after rejection."""
     # Verify obsState transitions
-    assert event_recorder.has_change_event_occurred(
-        subarray_node_low.subarray_node,
-        "obsState",
-        ObsState.IDLE,
-    )
+    # assert event_recorder.has_change_event_occurred(
+    #     subarray_node_low.subarray_node,
+    #     "obsState",
+    #     ObsState.IDLE,
+    # )
+    assert subarray_node_low.subarray_node.obsState == ObsState.IDLE
 
 
 @then(
