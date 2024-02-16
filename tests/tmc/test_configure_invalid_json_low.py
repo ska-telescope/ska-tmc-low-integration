@@ -58,9 +58,7 @@ def tmc_check_status(
     event_recorder.subscribe_event(subarray_node_low.subarray_node, "obsState")
     central_node_low.store_resources(input_json)
     assert event_recorder.has_change_event_occurred(
-        subarray_node_low.subarray_node,
-        "obsState",
-        ObsState.IDLE,
+        subarray_node_low.subarray_node, "obsState", ObsState.IDLE
     )
 
 
@@ -76,30 +74,30 @@ def send(subarray_node_low, invalid_json, command_input_factory):
     if invalid_json == "csp_key_missing":
         invalid_configure_json = json.loads(configure_json)
         del invalid_configure_json["csp"]
-        pytest.command_result = subarray_node_low.store_configuration_data(
+        pytest.command_result = subarray_node_low.subarray_node.Configure(
             input_json=json.dumps(invalid_configure_json)
         )
     elif invalid_json == "sdp_key_missing":
         invalid_configure_json = json.loads(configure_json)
         del invalid_configure_json["sdp"]
-        pytest.command_result = subarray_node_low.store_configuration_data(
+        pytest.command_result = subarray_node_low.subarray_node.Configure(
             input_json=json.dumps(invalid_configure_json)
         )
     elif invalid_json == "tmc_key_missing":
         invalid_configure_json = json.loads(configure_json)
         del invalid_configure_json["tmc"]
-        pytest.command_result = subarray_node_low.store_configuration_data(
+        pytest.command_result = subarray_node_low.subarray_node.Configure(
             input_json=json.dumps(invalid_configure_json)
         )
     elif invalid_json == "scan_duration_key_missing":
         invalid_configure_json = json.loads(configure_json)
         del invalid_configure_json["tmc"]["scan_duration"]
-        pytest.command_result = subarray_node_low.store_configuration_data(
+        pytest.command_result = subarray_node_low.subarray_node.Configure(
             input_json=json.dumps(invalid_configure_json)
         )
     elif invalid_json == "empty_string":
         invalid_configure_json = ""
-        pytest.command_result = subarray_node_low.store_configuration_data(
+        pytest.command_result = subarray_node_low.subarray_node.Configure(
             input_json=json.dumps(invalid_configure_json)
         )
 
