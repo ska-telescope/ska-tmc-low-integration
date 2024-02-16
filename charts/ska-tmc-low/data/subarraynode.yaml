@@ -14,31 +14,31 @@ server:
   {{ $mccs_sa_ln_fqdn_prefix:= .Values.global.mccs_subarray_ln_prefix}}
   {{ $mccs_sa_fqdn_prefix:= .Values.global.mccs_subarray_prefix}}
 
-  {{- range  .Values.coalesced_subarray_devices }}
-    - name: "{{ . }}"
+  {{- range  ( regexSplit " " ((.Values.subarray_count | int) | seq ) -1 ) }}
+    - name: "{{ printf "%02s" . }}"
       classes:
       - name: "SubarrayNodeLow"
         devices:
-        - name: "ska_low/tm_subarray_node/{{ (split "0" .)._1}}"
+        - name: "ska_low/tm_subarray_node/{{ . }}"
           properties:
           - name: "CspSubarrayLNFQDN"
             values:
-            - "{{ $csp_sa_ln_fqdn_prefix}}{{ . }}"
+            - "{{ $csp_sa_ln_fqdn_prefix}}{{ printf "%02s" . }}"
           - name: "SdpSubarrayLNFQDN"
             values:
-            - "{{ $sdp_sa_ln_fqdn_prefix}}{{ . }}"
+            - "{{ $sdp_sa_ln_fqdn_prefix}}{{ printf "%02s" . }}"
           - name: "MccsSubarrayLNFQDN"
             values:
-              - "{{ $mccs_sa_ln_fqdn_prefix}}{{ . }}"
+              - "{{ $mccs_sa_ln_fqdn_prefix}}{{ printf "%02s" . }}"
           - name: "CspSubarrayFQDN"
             values:
-            - "{{ $csp_sa_fqdn_prefix}}/{{ . }}"
+            - "{{ $csp_sa_fqdn_prefix}}/{{ printf "%02s" . }}"
           - name: "SdpSubarrayFQDN"
             values:
-            - "{{ $sdp_sa_fqdn_prefix}}/{{ . }}"
+            - "{{ $sdp_sa_fqdn_prefix}}/{{ printf "%02s" . }}"
           - name: "MccsSubarrayFQDN"
             values:
-              - "{{ $mccs_sa_fqdn_prefix}}/{{ . }}"
+              - "{{ $mccs_sa_fqdn_prefix}}/{{ printf "%02s" . }}"
           - name: "SkaLevel"
             values:
               - "2"

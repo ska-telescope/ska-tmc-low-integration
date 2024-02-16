@@ -9,16 +9,16 @@ server:
   instances:
   {{ $mccs_sa_fqdn_prefix:= .Values.global.mccs_subarray_prefix}} 
   {{$mccs_master_fqdn := .Values.global.mccs_master }}
-  {{- range  .Values.deviceServers.mccssubarrayleafnode.instances }}
-    - name: "{{ . }}"
+  {{- range  ( regexSplit " " ((.Values.subarray_count | int) | seq ) -1 ) }}
+    - name: "{{ printf "%02s" . }}"
       classes:
       - name: "MccsSubarrayLeafNode"
         devices:
-          - name: "ska_low/tm_leaf_node/mccs_subarray{{ . }}"
+          - name: "ska_low/tm_leaf_node/mccs_subarray{{ printf "%02s" . }}"
             properties:
               - name: "MccsSubarrayFQDN"
                 values:
-                - "{{ $mccs_sa_fqdn_prefix }}/{{ . }}"
+                - "{{ $mccs_sa_fqdn_prefix }}/{{ printf "%02s" . }}"
               - name: "MccsMasterFQDN"
                 values:
                 - "{{$mccs_master_fqdn}}"
