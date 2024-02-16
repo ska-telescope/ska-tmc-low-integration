@@ -59,4 +59,4 @@ def test_low_abort_restart_in_aborting(
         ObsState.ABORTING,
     )
     with pytest.raises(Exception):
-        subarray_node_low.restart_subarray()
+        subarray_node_low.subarray_node.Restart()

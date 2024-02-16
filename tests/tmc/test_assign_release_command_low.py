@@ -77,7 +77,7 @@ def test_assign_release_defective_csp(
 
 
 @pytest.mark.SKA_low
-def test_assign_release_defective_sdp(
+def test_assign_release_timeout_sdp(
     central_node_low,
     event_recorder,
     simulator_factory,
@@ -116,12 +116,13 @@ def test_assign_release_defective_sdp(
     )
     assert unique_id[0].endswith("AssignResources")
     assert result[0] == ResultCode.QUEUED
-    exception_message = "Exception occurred on the following devices:"
+    exception_message = "Timeout has occurred, command failed"
     assertion_data = event_recorder.has_change_event_occurred(
         central_node_low.central_node,
         attribute_name="longRunningCommandResult",
         attribute_value=(unique_id[0], Anything),
     )
+    sdp_sim.SetDefective(json.dumps({"enabled": False}))
     assert "AssignResources" in assertion_data["attribute_value"][0]
     assert exception_message in assertion_data["attribute_value"][1]
 
