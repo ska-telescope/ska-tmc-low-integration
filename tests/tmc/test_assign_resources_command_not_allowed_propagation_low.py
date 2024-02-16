@@ -1,4 +1,6 @@
 """Test cases for AssignResources Command not allowed for LOW."""
+import json
+
 import pytest
 from ska_control_model import ObsState
 from ska_tango_testing.mock.placeholders import Anything
@@ -67,6 +69,7 @@ class TestAssignCommandNotAllowedPropagation:
             (unique_id[0], Anything),
         )
         assert ERROR_MESSAGE in assertion_data["attribute_value"][1]
+        csp_subarray_sim.SetDefective(json.dumps({"enabled": False}))
 
     @pytest.mark.SKA_low
     def test_assign_command_not_allowed_propagation_sdp_ln_low(
@@ -118,3 +121,4 @@ class TestAssignCommandNotAllowedPropagation:
             (unique_id[0], Anything),
         )
         assert ERROR_MESSAGE in assertion_data["attribute_value"][1]
+        sdp_subarray_sim.SetDefective(json.dumps({"enabled": False}))

@@ -224,7 +224,6 @@ def test_assign_release_timeout_csp(
     csp_subarray_sim.SetDefective(COMMAND_NOT_ALLOWED_DEFECT)
 
     _, unique_id = central_node_low.store_resources(assign_input_json)
-
     ERROR_MESSAGE = "Timeout has occurred, command failed"
     assertion_data = event_recorder.has_change_event_occurred(
         central_node_low.central_node,
@@ -232,3 +231,4 @@ def test_assign_release_timeout_csp(
         (unique_id[0], Anything),
     )
     assert ERROR_MESSAGE in assertion_data["attribute_value"][1]
+    csp_subarray_sim.SetDefective(json.dumps({"enabled": False}))
