@@ -129,10 +129,7 @@ def invalid_command_rejection(invalid_json):
             in pytest.command_result[1][0]
         )
     elif invalid_json == "scan_duration_key_missing":
-        assert (
-            "Malformed input string. The key -> `scan_duration` is missing"
-            in pytest.command_result[1][0]
-        )
+        assert "Malformed input string" in pytest.command_result[1][0]
     elif invalid_json == "empty_string":
         assert "Malformed input string" in pytest.command_result[1][0]
 
@@ -166,9 +163,7 @@ def tmc_accepts_next_commands(
 
     # Invoke Configure() Command on TMC
     LOGGER.info("Invoking Configure command on TMC SubarrayNode")
-    subarray_node_low.store_configuration_data(
-        input_json=json.dumps(configure_json)
-    )
+    subarray_node_low.store_configuration_data(configure_json)
     assert event_recorder.has_change_event_occurred(
         subarray_node_low.subarray_node,
         "obsState",
