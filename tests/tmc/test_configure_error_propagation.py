@@ -26,6 +26,7 @@ class TestConfigureErrorPropagation:
         event_recorder,
         simulator_factory,
         command_input_factory,
+        central_node_low,
     ):
         """Test timeout on CSP Leaf Nodes for Configure command by inducing
         fault into the system."""
@@ -33,9 +34,7 @@ class TestConfigureErrorPropagation:
             SimulatorDeviceType.LOW_CSP_DEVICE
         )
         # Event Subscriptions
-        event_recorder.subscribe_event(
-            subarray_node_low.subarray_node, "State"
-        )
+
         event_recorder.subscribe_event(
             subarray_node_low.subarray_node, "obsState"
         )
@@ -48,11 +47,15 @@ class TestConfigureErrorPropagation:
             "configure_low", command_input_factory
         )
 
-        subarray_node_low.move_to_on()
-        assert event_recorder.has_change_event_occurred(
-            subarray_node_low.subarray_node, "State", DevState.ON
+        central_node_low.move_to_on()
+        event_recorder.subscribe_event(
+            central_node_low.central_node, "telescopeState"
         )
-
+        assert event_recorder.has_change_event_occurred(
+            central_node_low.central_node,
+            "telescopeState",
+            DevState.ON,
+        )
         subarray_node_low.force_change_of_obs_state("IDLE")
         assert event_recorder.has_change_event_occurred(
             subarray_node_low.subarray_node, "obsState", ObsState.IDLE
@@ -96,9 +99,7 @@ class TestConfigureErrorPropagation:
             SimulatorDeviceType.LOW_SDP_DEVICE
         )
         # Event Subscriptions
-        event_recorder.subscribe_event(
-            central_node_low.central_node, "telescopeState"
-        )
+
         event_recorder.subscribe_event(
             subarray_node_low.subarray_node, "obsState"
         )
@@ -111,9 +112,14 @@ class TestConfigureErrorPropagation:
             "configure_low", command_input_factory
         )
 
-        subarray_node_low.move_to_on()
+        central_node_low.move_to_on()
+        event_recorder.subscribe_event(
+            central_node_low.central_node, "telescopeState"
+        )
         assert event_recorder.has_change_event_occurred(
-            subarray_node_low.central_node, "telescopeState", DevState.ON
+            central_node_low.central_node,
+            "telescopeState",
+            DevState.ON,
         )
 
         subarray_node_low.force_change_of_obs_state("IDLE")
