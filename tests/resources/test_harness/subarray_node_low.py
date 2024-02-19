@@ -429,3 +429,13 @@ class SubarrayNodeWrapperLow:
         assert check_subarray_obs_state("EMPTY")
         # Adding a small sleep to allow the systems to clean up processes
         sleep(1)
+
+    def set_scan_id(self, scan_id: int, input_str: str) -> str:
+        """Set the scan_id for the scan input json."""
+        input_json = json.loads(input_str)
+        try:
+            input_json["scan_id"] = scan_id
+        except Exception as e:
+            LOGGER.exception("Exception occurred while setting scan id: %s", e)
+            raise
+        return json.dumps(input_json)
