@@ -21,7 +21,6 @@ from tests.resources.test_support.common_utils.tmc_helpers import (
 )
 
 
-@pytest.mark.kk
 @pytest.mark.SKA_low
 @scenario(
     "../features/tmc/check_invalid_json_not_allowed.feature",
@@ -51,10 +50,10 @@ def given_tmc(central_node_low, event_recorder):
 def tmc_check_status(event_recorder, central_node_low, command_input_factory):
     """Set the subarray to 'IDLE' observation state."""
     event_recorder.subscribe_event(central_node_low.subarray_node, "obsState")
-    input_json = prepare_json_args_for_centralnode_commands(
+    assign_input_json = prepare_json_args_for_centralnode_commands(
         "assign_resources_low", command_input_factory
     )
-    central_node_low.store_resources(input_json)
+    central_node_low.store_resources(assign_input_json)
     assert event_recorder.has_change_event_occurred(
         central_node_low.subarray_node, "obsState", ObsState.RESOURCING
     )
@@ -139,12 +138,6 @@ def invalid_command_rejection(invalid_json):
 def tmc_status(event_recorder, subarray_node_low):
     """Ensure that the TMC subarray remains in the 'IDLE' observation state
     after rejection."""
-    # Verify obsState transitions
-    # assert event_recorder.has_change_event_occurred(
-    #     subarray_node_low.subarray_node,
-    #     "obsState",
-    #     ObsState.IDLE,
-    # )
     assert subarray_node_low.subarray_node.obsState == ObsState.IDLE
 
 
