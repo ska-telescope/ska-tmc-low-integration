@@ -13,7 +13,6 @@ from tests.resources.test_harness.helpers import (
 
 
 @pytest.mark.tmc_mccs
-@pytest.mark.skip(reason="Tag from SubarrayNode is unreleased.")
 @scenario(
     "../features/tmc_mccs/xtp-31009_configure.feature",
     "Configure a MCCS subarray for a scan",

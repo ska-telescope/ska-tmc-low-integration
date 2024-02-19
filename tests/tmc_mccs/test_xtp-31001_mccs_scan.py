@@ -11,7 +11,6 @@ from tests.resources.test_support.common_utils.tmc_helpers import (
 
 
 @pytest.mark.tmc_mccs
-@pytest.mark.skip(reason="Tag from SubarrayNode is unreleased.")
 @scenario(
     "../features/tmc_mccs/xtp-31001_scan_mccs.feature",
     "TMC executes a scan on MCCS subarray",

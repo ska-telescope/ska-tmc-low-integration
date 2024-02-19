@@ -12,7 +12,6 @@ from tests.resources.test_harness.helpers import (
 
 
 @pytest.mark.tmc_mccs
-@pytest.mark.skip(reason="Tag from SubarrayNode is unreleased.")
 @scenario(
     "../features/tmc_mccs/xtp-31010_end_command.feature",
     "End configure from MCCS Subarray",
