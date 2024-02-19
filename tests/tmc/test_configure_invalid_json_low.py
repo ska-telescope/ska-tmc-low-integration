@@ -50,11 +50,14 @@ def given_tmc(central_node_low, event_recorder):
 @given("the subarray is in IDLE obsState")
 def tmc_check_status(event_recorder, central_node_low, command_input_factory):
     """Set the subarray to 'IDLE' observation state."""
+    event_recorder.subscribe_event(central_node_low.subarray_node, "obsState")
     input_json = prepare_json_args_for_centralnode_commands(
         "assign_resources_low", command_input_factory
     )
-    event_recorder.subscribe_event(central_node_low.subarray_node, "obsState")
     central_node_low.store_resources(input_json)
+    assert event_recorder.has_change_event_occurred(
+        central_node_low.subarray_node, "obsState", ObsState.RESOURCING
+    )
     assert event_recorder.has_change_event_occurred(
         central_node_low.subarray_node, "obsState", ObsState.IDLE
     )
