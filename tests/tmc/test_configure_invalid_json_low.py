@@ -21,6 +21,7 @@ from tests.resources.test_support.common_utils.tmc_helpers import (
 )
 
 
+@pytest.mark.kk
 @pytest.mark.SKA_low
 @scenario(
     "../features/tmc/check_invalid_json_not_allowed.feature",
@@ -176,3 +177,8 @@ def tmc_accepts_next_commands(
         "release_resources_low", command_input_factory
     )
     central_node_low.invoke_release_resources(release_json)
+    assert event_recorder.has_change_event_occurred(
+        subarray_node_low.subarray_node,
+        "obsState",
+        ObsState.EMPTY,
+    )
