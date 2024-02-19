@@ -1,4 +1,6 @@
 """Test Error Propagation and Timeout for Configure command."""
+import json
+
 import pytest
 from ska_control_model import ObsState
 from ska_tango_testing.mock.placeholders import Anything
@@ -83,6 +85,7 @@ class TestConfigureErrorPropagation:
         assert (
             low_csp_subarray_leaf_node in assertion_data["attribute_value"][1]
         )
+        csp_subarray_sim.SetDefective(json.dumps({"enabled": False}))
 
     @pytest.mark.skip("temporarily skipped unstable")
     @pytest.mark.SKA_low
@@ -150,3 +153,4 @@ class TestConfigureErrorPropagation:
         assert (
             low_sdp_subarray_leaf_node in assertion_data["attribute_value"][1]
         )
+        sdp_subarray_sim.SetDefective(json.dumps({"enabled": False}))
