@@ -114,10 +114,10 @@ def subarray_node_in_scanning(subarray_node_low, event_recorder):
 def mccs_subarray_in_ready(subarray_node_low, event_recorder):
     """Checks if MCCS Subarray's obsState attribute value is READY"""
     event_recorder.subscribe_event(
-        subarray_node_low.subarray_devices.get("mccs_subarray"), "obsState"
+        subarray_node_low.mccs_subarray1, "obsState"
     )
     assert event_recorder.has_change_event_occurred(
-        subarray_node_low.subarray_devices.get("mccs_subarray"),
+        subarray_node_low.mccs_subarray1,
         "obsState",
         ObsState.READY,
     )
