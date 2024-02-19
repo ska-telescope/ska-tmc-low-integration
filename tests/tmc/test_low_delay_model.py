@@ -13,8 +13,8 @@ from tango import DevState
 from tests.resources.test_harness.helpers import (
     prepare_json_args_for_centralnode_commands,
     prepare_json_args_for_commands,
-    wait_till_delay_values_are_populated,
-    wait_till_delay_values_are_stop_populated,
+    wait_for_updates_on_delay_model,
+    wait_for_updates_stop_on_delay_model,
 )
 
 
@@ -25,13 +25,13 @@ from tests.resources.test_harness.helpers import (
 )
 def test_low_delay_model():
     """
-    Test whether delay value are generation on Cspleafnode.
+    Test whether delay value are generation on CSP Subarray Leaf Node.
     """
 
 
 @given("the telescope is in ON state")
 def check_tmc_csp_state_is_on(central_node_low, event_recorder):
-    """Move telescoep to on state"""
+    """Method to check if telescope is in ON State"""
     event_recorder.subscribe_event(
         central_node_low.central_node, "telescopeState"
     )
@@ -44,7 +44,7 @@ def check_tmc_csp_state_is_on(central_node_low, event_recorder):
 
 
 @given("subarray is in obsState IDLE")
-def check_subarray_is_in_idle_obsstate(
+def subarray_in_idle_obsstate(
     central_node_low, subarray_node_low, command_input_factory, event_recorder
 ) -> None:
     """Checks subarray is in obsState IDLE."""
@@ -70,19 +70,17 @@ def invoke_configure_command(subarray_node_low, command_input_factory) -> None:
     subarray_node_low.store_configuration_data(configure_input_json)
 
 
-@then("CSP subarray leaf node starts generating delay values")
+@then("CSP Subarray Leaf Node starts generating delay values")
 def check_if_delay_values_are_generating(subarray_node_low) -> None:
     """Check if delay values are generating."""
-    wait_till_delay_values_are_populated(
-        subarray_node_low.csp_subarray_leaf_node
-    )
+    wait_for_updates_on_delay_model(subarray_node_low.csp_subarray_leaf_node)
     assert subarray_node_low.csp_subarray_leaf_node.delayModel not in [
         "",
         "no_value",
     ]
 
 
-@when("I end the store_configuration")
+@when("I end the observation")
 def invoke_end_command(subarray_node_low, event_recorder) -> None:
     """Invoke End command."""
     subarray_node_low.end_observation()
@@ -97,7 +95,7 @@ def invoke_end_command(subarray_node_low, event_recorder) -> None:
 @then("CSP subarray leaf node stops generating delay values")
 def check_if_delay_values_are_not_generating(subarray_node_low) -> None:
     """Check if delay values are generating."""
-    wait_till_delay_values_are_stop_populated(
+    wait_for_updates_stop_on_delay_model(
         subarray_node_low.csp_subarray_leaf_node
     )
     assert subarray_node_low.csp_subarray_leaf_node.delayModel in [
