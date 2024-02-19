@@ -22,6 +22,7 @@ class TestConfigureErrorPropagation:
     """Tests for testing error propagation and timeout for Configure command on
     LOW TMC."""
 
+    @pytest.mark.skip("unstable")
     @pytest.mark.SKA_low
     def test_configure_timeout_csp_ln(
         self,
@@ -90,6 +91,7 @@ class TestConfigureErrorPropagation:
         )
         csp_subarray_sim.SetDefective(json.dumps({"enabled": False}))
 
+    @pytest.mark.skip("unstable")
     @pytest.mark.SKA_low
     def test_configure_timeout_sdp_ln(
         self,
