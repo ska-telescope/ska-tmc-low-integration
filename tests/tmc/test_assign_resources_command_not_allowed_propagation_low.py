@@ -1,6 +1,4 @@
 """Test cases for AssignResources Command not allowed for LOW."""
-import json
-
 import pytest
 from ska_control_model import ObsState
 from ska_tango_testing.mock.placeholders import Anything
@@ -62,14 +60,25 @@ class TestAssignCommandNotAllowedPropagation:
 
         _, unique_id = central_node_low.store_resources(assign_input_json)
 
-        ERROR_MESSAGE = "Timeout has occurred, command failed"
+        ERROR_MESSAGE = (
+            "The invocation of the AssignResources command is "
+            + "failed on Csp Subarray Device low-csp/subarray/01"
+        )
         assertion_data = event_recorder.has_change_event_occurred(
             central_node_low.central_node,
             "longRunningCommandResult",
             (unique_id[0], Anything),
         )
         assert ERROR_MESSAGE in assertion_data["attribute_value"][1]
-        csp_subarray_sim.SetDefective(json.dumps({"enabled": False}))
+
+        # Manually setting the obsState to EMPTY to circumvent the Restart
+        # command bug. Will be removed once the Bug is fixed under HM-371
+        mccs_subarray_sim.SetDirectObsState(ObsState.EMPTY)
+        assert event_recorder.has_change_event_occurred(
+            mccs_subarray_sim,
+            "obsState",
+            ObsState.EMPTY,
+        )
 
     @pytest.mark.SKA_low
     def test_assign_command_not_allowed_propagation_sdp_ln_low(
@@ -97,6 +106,7 @@ class TestAssignCommandNotAllowedPropagation:
         )
         event_recorder.subscribe_event(mccs_subarray_sim, "obsState")
 
+        # Preparing input arguments
         assign_input_json = prepare_json_args_for_centralnode_commands(
             "assign_resources_low", command_input_factory
         )
@@ -108,15 +118,27 @@ class TestAssignCommandNotAllowedPropagation:
             DevState.ON,
         )
 
+        # Setting Defects on Devices
         sdp_subarray_sim.SetDirectObsState(ObsState.RESOURCING)
 
         _, unique_id = central_node_low.store_resources(assign_input_json)
 
-        ERROR_MESSAGE = "Timeout has occurred, command failed"
+        ERROR_MESSAGE = (
+            "ska_tmc_common.exceptions.InvalidObsStateError: AssignResources "
+            + "command is not allowed in current observation state on device"
+        )
         assertion_data = event_recorder.has_change_event_occurred(
             central_node_low.central_node,
             "longRunningCommandResult",
             (unique_id[0], Anything),
         )
         assert ERROR_MESSAGE in assertion_data["attribute_value"][1]
-        sdp_subarray_sim.SetDefective(json.dumps({"enabled": False}))
+
+        # Manually setting the obsState to EMPTY to circumvent the Restart
+        # command bug. Will be removed once the Bug is fixed under HM-371
+        mccs_subarray_sim.SetDirectObsState(ObsState.EMPTY)
+        assert event_recorder.has_change_event_occurred(
+            mccs_subarray_sim,
+            "obsState",
+            ObsState.EMPTY,
+        )
