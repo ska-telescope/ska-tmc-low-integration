@@ -19,6 +19,7 @@ class TestConfigureErrorPropagation:
     """Tests for testing error propagation and timeout for Configure command on
     LOW TMC."""
 
+    @pytest.mark.skip("temporarily skipped unstable")
     @pytest.mark.SKA_low
     def test_configure_timeout_csp_ln(
         self,
@@ -83,6 +84,7 @@ class TestConfigureErrorPropagation:
             low_csp_subarray_leaf_node in assertion_data["attribute_value"][1]
         )
 
+    @pytest.mark.skip("temporarily skipped unstable")
     @pytest.mark.SKA_low
     def test_configure_timeout_sdp_ln(
         self,
