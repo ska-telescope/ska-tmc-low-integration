@@ -4,6 +4,7 @@ import os
 import time
 import uuid
 from typing import Any
+import threading
 
 import pytest
 from ska_control_model import ObsState
@@ -339,14 +340,9 @@ def wait_for_attribute_update(
 
 
 def wait_till_delay_values_are_populated(csp_subarray_leaf_node) -> None:
-    start_time = time.time()
     time_elapsed = 0
-    while (
-        csp_subarray_leaf_node.delayModel == "no_value"
-        and time_elapsed <= TIMEOUT
-    ):
-        time.sleep(1)
-        time_elapsed = time.time() - start_time
+    delay_thread = threading.Timer(5,csp_subarray_leaf_node.delayModel)
+    delay_thread.start()
     if (
         csp_subarray_leaf_node.delayModel == "no_value"
         and time_elapsed > TIMEOUT
@@ -358,20 +354,15 @@ def wait_till_delay_values_are_populated(csp_subarray_leaf_node) -> None:
 
 
 def wait_till_delay_values_are_stop_populated(csp_subarray_leaf_node) -> None:
-    start_time = time.time()
     time_elapsed = 0
-    while (
-        csp_subarray_leaf_node.delayModel != "no_value"
-        and time_elapsed <= TIMEOUT
-    ):
-        time.sleep(1)
-        time_elapsed = time.time() - start_time
+    delay_thread = threading.Timer(5,csp_subarray_leaf_node.delayModel)
+    delay_thread.start()
     if (
         csp_subarray_leaf_node.delayModel != "no_value"
         and time_elapsed > TIMEOUT
     ):
         raise Exception(
-            "Timeout while waiting for CspSubarrayLeafNode to generate \
+            "Timeout while waiting for CspSubarrayLeafNode to stop generating \
                 delay values."
         )
 
