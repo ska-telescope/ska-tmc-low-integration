@@ -30,7 +30,7 @@ def test_low_delay_model():
 
 
 @given("the telescope is in ON state")
-def check_tmc_csp_state_is_on(central_node_low, event_recorder):
+def given_telescope_is_in_on_state(central_node_low, event_recorder):
     """Method to check if telescope is in ON State"""
     event_recorder.subscribe_event(
         central_node_low.central_node, "telescopeState"
