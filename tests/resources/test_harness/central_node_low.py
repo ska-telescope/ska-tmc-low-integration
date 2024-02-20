@@ -209,10 +209,7 @@ class CentralNodeWrapperLow(object):
 
         if SIMULATED_DEVICES_DICT["sdp_and_mccs"]:
             self.set_standby()
-        elif (
-            SIMULATED_DEVICES_DICT["csp_and_sdp"]
-            or SIMULATED_DEVICES_DICT["all_mocks"]
-        ):
+        elif SIMULATED_DEVICES_DICT["all_mocks"]:
             self.move_to_off()
         self._clear_command_call_and_transition_data(clear_transition=True)
         # Adding a small sleep to allow the systems to clean up processes
