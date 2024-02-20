@@ -206,17 +206,14 @@ class CentralNodeWrapperLow(object):
         elif self.subarray_node.obsState == ObsState.IDLE:
             LOGGER.info("Calling Release Resource on centralnode")
             self.invoke_release_resources(self.release_input)
-        else:
-            if (
-                SIMULATED_DEVICES_DICT["sdp_and_mccs"]
-                and not SIMULATED_DEVICES_DICT["all_mocks"]
-            ):
-                self.set_standby()
-            elif (
-                SIMULATED_DEVICES_DICT["csp_and_sdp"]
-                and SIMULATED_DEVICES_DICT["all_mocks"]
-            ):
-                self.move_to_off()
+
+        if SIMULATED_DEVICES_DICT["sdp_and_mccs"]:
+            self.set_standby()
+        elif (
+            SIMULATED_DEVICES_DICT["csp_and_sdp"]
+            or SIMULATED_DEVICES_DICT["all_mocks"]
+        ):
+            self.move_to_off()
         self._clear_command_call_and_transition_data(clear_transition=True)
         # Adding a small sleep to allow the systems to clean up processes
         sleep(1)
@@ -387,8 +384,7 @@ class CentralNodeWrapperLow(object):
             self.subarray_devices.get("mccs_subarray"),
         ]
         for device in device_to_on_list:
-            device_proxy = DeviceProxy(device)
-            device_proxy.SetDirectState(subarray_state)
+            device.SetDirectState(subarray_state)
 
     def set_value_with_csp_sdp_mocks(self, subarray_state):
         """
@@ -402,8 +398,7 @@ class CentralNodeWrapperLow(object):
             self.subarray_devices.get("sdp_subarray"),
         ]
         for device in device_to_on_list:
-            device_proxy = DeviceProxy(device)
-            device_proxy.SetDirectState(subarray_state)
+            device.SetDirectState(subarray_state)
 
     def set_values_with_csp_mccs_mocks(self, subarray_state):
         """
@@ -417,8 +412,7 @@ class CentralNodeWrapperLow(object):
             self.subarray_devices.get("mccs_subarray"),
         ]
         for device in device_to_on_list:
-            device_proxy = DeviceProxy(device)
-            device_proxy.SetDirectState(subarray_state)
+            device.SetDirectState(subarray_state)
 
     def set_values_with_sdp_mccs_mocks(self, subarray_state):
         """
@@ -432,8 +426,7 @@ class CentralNodeWrapperLow(object):
             self.subarray_devices.get("mccs_subarray"),
         ]
         for device in device_to_on_list:
-            device_proxy = DeviceProxy(device)
-            device_proxy.SetDirectState(subarray_state)
+            device.SetDirectState(subarray_state)
 
     def reset_defects_for_devices(self):
         """Resets the defects for given devices."""

@@ -15,6 +15,7 @@ from ska_tango_base.commands import ResultCode
 from tango import DevState
 
 from tests.resources.test_harness.constant import (
+    low_sdp_subarray_leaf_node,
     mccs_controller,
     mccs_master_leaf_node,
     tmc_low_subarraynode1,
@@ -25,6 +26,10 @@ from tests.resources.test_support.common_utils.tmc_helpers import (
     prepare_json_args_for_centralnode_commands,
     prepare_json_args_for_commands,
     wait_for_attribute_update,
+)
+from tests.resources.test_support.constant_low import (
+    FAILED_RESULT_DEFECT,
+    RESET_DEFECT,
 )
 
 
@@ -310,7 +315,8 @@ class TestLowCentralNodeAssignResources:
         exception_message = (
             "Exception occurred on the following devices: "
             + f"{mccs_master_leaf_node}: Exception "
-            "occurred on device: "
+            "occurred on device: " + f"{mccs_controller}: Exception "
+            "occured on device: "
             + f"{mccs_controller}{tmc_low_subarraynode1}:"
             " Timeout has "
             "occurred, command failed"
@@ -337,6 +343,7 @@ class TestLowCentralNodeAssignResources:
         the_waiter.wait(200)
 
     @pytest.mark.SKA_low
+    @pytest.mark.temp
     def test_low_centralnode_release_resources_exception_propagation(
         self,
         central_node_low,
@@ -364,8 +371,8 @@ class TestLowCentralNodeAssignResources:
         release_resource_json = prepare_json_args_for_centralnode_commands(
             "release_resources_low", command_input_factory
         )
-        mccs_controller_sim = simulator_factory.get_or_create_simulator_device(
-            SimulatorDeviceType.MCCS_MASTER_DEVICE
+        sdp_subarray_sim = simulator_factory.get_or_create_simulator_device(
+            SimulatorDeviceType.LOW_SDP_DEVICE
         )
 
         event_recorder.subscribe_event(
@@ -406,11 +413,10 @@ class TestLowCentralNodeAssignResources:
             "longRunningCommandResult",
             (unique_id[0], str(ResultCode.OK.value)),
         )
-
         # Execute ReleaseResources and verify error propagation
 
         # Setting device to defective
-        mccs_controller_sim.SetRaiseException(True)
+        sdp_subarray_sim.SetDefective(json.dumps(FAILED_RESULT_DEFECT))
 
         _, unique_id = central_node_low.perform_action(
             "ReleaseResources", release_resource_json
@@ -418,11 +424,9 @@ class TestLowCentralNodeAssignResources:
 
         exception_message = (
             "Exception occurred on the following devices: "
-            + f"{mccs_master_leaf_node}: Exception "
-            "occurred on device: "
-            + f"{mccs_controller}{tmc_low_subarraynode1}:"
-            " Timeout has "
-            "occurred, command failed"
+            + f"{tmc_low_subarraynode1}: Exception occurred on the following "
+            + f"devices:\n{low_sdp_subarray_leaf_node}:"
+            " Timeout has occured, command failed\n"
         )
 
         expected_long_running_command_result = (
@@ -435,7 +439,7 @@ class TestLowCentralNodeAssignResources:
             "longRunningCommandResult",
             expected_long_running_command_result,
         )
-        mccs_controller_sim.SetRaiseException(False)
+        sdp_subarray_sim.SetDefecitve(json.dumps(RESET_DEFECT))
         central_node_low.subarray_node.Abort()
 
         # Verify ObsState is Aborted
