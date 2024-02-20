@@ -112,6 +112,7 @@ def tmc_subarray_idle(subarray_node_low, event_recorder):
     )
 )
 def mccs_subarray_assignedresources(central_node_low, station_ids):
+    """Method to check whether resources are assigned"""
     station_id = json.loads(
         central_node_low.subarray_devices["mccs_subarray"].assignedResources
     )["station_ids"]
