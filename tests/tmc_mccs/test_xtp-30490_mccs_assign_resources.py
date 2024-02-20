@@ -1,4 +1,6 @@
 """Test module for TMC-mccs AssignResources functionality"""
+import json
+
 import pytest
 from pytest_bdd import given, parsers, scenario, then, when
 from ska_control_model import ObsState
@@ -102,3 +104,16 @@ def tmc_subarray_idle(subarray_node_low, event_recorder):
     assert event_recorder.has_change_event_occurred(
         subarray_node_low.subarray_node, "obsState", ObsState.IDLE
     )
+
+
+@then(
+    parsers.parse(
+        "the correct resources {station_ids} are assigned to the MCCS subarray"
+    )
+)
+def mccs_subarray_assignedresources(central_node_low, station_ids):
+    station_id = json.loads(
+        central_node_low.subarray_devices["mccs_subarray"].assignedResources
+    )["station_ids"]
+    expected_station_ids = station_ids.replace('"', "").split(", ")
+    assert station_id == expected_station_ids

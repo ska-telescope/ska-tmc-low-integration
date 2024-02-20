@@ -7,6 +7,7 @@ Feature: TMC performs AssignResources on MCCS subsystem
 		When I assign resources with the <subarray_id> to the subarray using TMC
 		Then the MCCS subarray obsState must transition to IDLE
 		And the TMC subarray obsState is transitioned to IDLE
+		And the correct resources <station_ids> are assigned to the MCCS subarray
 		Examples:
-		| subarray_id |
-		| 1           |
+		| subarray_id | station_ids       |
+		| 1           | "ci-1", "ci-2"    |
