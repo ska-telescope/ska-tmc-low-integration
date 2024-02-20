@@ -1,5 +1,6 @@
 import functools
 from contextlib import contextmanager
+from time import sleep
 
 from tests.resources.test_harness.utils.wait_helpers import Waiter
 from tests.resources.test_support.common_utils.base_utils import DeviceUtils
@@ -16,6 +17,7 @@ def sync_set_to_on(device_dict: dict):
             the_waiter.set_wait_for_telescope_on()
             result = func(*args, **kwargs)
             the_waiter.wait(TIMEOUT)
+            sleep(0.15)
             return result
 
         return wrapper
@@ -31,6 +33,7 @@ def sync_set_to_off(device_dict: dict):
             the_waiter.set_wait_for_going_to_off()
             result = func(*args, **kwargs)
             the_waiter.wait(TIMEOUT)
+            sleep(0.15)
             return result
 
         return wrapper
@@ -54,6 +57,7 @@ def sync_set_to_standby(func):
         the_waiter.set_wait_for_going_to_standby()
         result = func(*args, **kwargs)
         the_waiter.wait(TIMEOUT)
+        sleep(0.15)
         return result
 
     return wrapper
@@ -67,6 +71,7 @@ def sync_release_resources(device_dict, timeout=200):
             the_waiter.set_wait_for_going_to_empty()
             result = func(*args, **kwargs)
             the_waiter.wait(timeout)
+            sleep(0.15)
             return result
 
         return wrapper
@@ -93,6 +98,7 @@ def sync_assign_resources(device_dict):
                 the_waiter = Waiter(**device_dict)
                 the_waiter.set_wait_for_assign_resources()
                 the_waiter.wait(500)
+            sleep(0.15)
             return result
 
         return wrapper
@@ -109,6 +115,7 @@ def sync_abort(device_dict, timeout=500):
             the_waiter.set_wait_for_aborted()
             result = func(*args, **kwargs)
             the_waiter.wait(timeout)
+            sleep(0.15)
             return result
 
         return wrapper
@@ -125,6 +132,7 @@ def sync_restart(device_dict, timeout=300):
             the_waiter.set_wait_for_going_to_empty()
             result = func(*args, **kwargs)
             the_waiter.wait(timeout)
+            sleep(0.15)
             return result
 
         return wrapper
@@ -147,6 +155,7 @@ def sync_configure(device_dict):
                 the_waiter.wait(500)
             the_waiter.set_wait_for_configure()
             the_waiter.wait(800)
+            sleep(0.15)
             return result
 
         return wrapper
@@ -163,6 +172,7 @@ def sync_end(device_dict):
             the_waiter.set_wait_for_idle()
             result = func(*args, **kwargs)
             the_waiter.wait(200)
+            sleep(0.15)
             return result
 
         return wrapper
@@ -179,6 +189,7 @@ def sync_endscan(device_dict):
             the_waiter.set_wait_for_ready()
             result = func(*args, **kwargs)
             the_waiter.wait(200)
+            sleep(0.15)
             return result
 
         return wrapper

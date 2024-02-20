@@ -216,7 +216,7 @@ class CentralNodeWrapperLow(object):
             self.move_to_off()
         self._clear_command_call_and_transition_data(clear_transition=True)
         # Adding a small sleep to allow the systems to clean up processes
-        sleep(1)
+        sleep(0.15)
 
     @sync_set_to_on(device_dict=device_dict_low)
     def move_to_on(self):
@@ -299,6 +299,7 @@ class CentralNodeWrapperLow(object):
                 "Invoke TelescopeStandby command with all real sub-systems"
             )
             self.central_node.TelescopeStandBy()
+        sleep(0.15)
 
     def store_resources(self, assign_json: str):
         """Invoke Assign Resource command on subarray Node
