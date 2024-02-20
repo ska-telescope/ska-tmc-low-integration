@@ -12,7 +12,6 @@ from tests.resources.test_harness.helpers import (
     update_eb_pb_ids,
 )
 
-
 @pytest.mark.tmc_sdp
 @scenario(
     "../features/tmc_sdp/xtp-30127_abort_configuring.feature",
