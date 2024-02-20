@@ -92,7 +92,7 @@ def invoke_end_command(subarray_node_low, event_recorder) -> None:
     )
 
 
-@then("CSP subarray leaf node stops generating delay values")
+@then("CSP Subarray Leaf Node stops generating delay values")
 def check_if_delay_values_are_not_generating(subarray_node_low) -> None:
     """Check if delay values are generating."""
     wait_for_updates_stop_on_delay_model(
