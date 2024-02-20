@@ -11,6 +11,7 @@ import json
 import pytest
 from pytest_bdd import given, parsers, scenario, then, when
 from ska_control_model import ObsState
+from tango import DevState
 
 from tests.conftest import LOGGER
 from tests.resources.test_support.common_utils.result_code import ResultCode
@@ -20,7 +21,6 @@ from tests.resources.test_support.common_utils.tmc_helpers import (
 )
 
 
-@pytest.mark.kk
 @pytest.mark.SKA_low
 @scenario(
     "../features/tmc/check_invalid_json_not_allowed.feature",
@@ -36,6 +36,15 @@ def test_invalid_json_in_configure_obsState():
 def given_tmc(central_node_low, event_recorder):
     """Ensure the TMC is in the 'On' state."""
     assert central_node_low.central_node.ping() > 0
+    event_recorder.subscribe_event(
+        central_node_low.central_node, "telescopeState"
+    )
+    central_node_low.move_to_on()
+    assert event_recorder.has_change_event_occurred(
+        central_node_low.central_node,
+        "telescopeState",
+        DevState.ON,
+    )
 
 
 @given("the subarray is in IDLE obsState")

@@ -4,6 +4,7 @@ import json
 import pytest
 from ska_control_model import ObsState
 from ska_tango_testing.mock.placeholders import Anything
+from tango import DevState
 
 from tests.resources.test_harness.constant import (
     INTERMEDIATE_CONFIGURING_STATE_DEFECT,
@@ -42,6 +43,15 @@ class TestConfigureErrorPropagation:
         )
         event_recorder.subscribe_event(
             subarray_node_low.subarray_node, "longRunningCommandResult"
+        )
+        event_recorder.subscribe_event(
+            central_node_low.central_node, "telescopeState"
+        )
+        central_node_low.move_to_on()
+        assert event_recorder.has_change_event_occurred(
+            central_node_low.central_node,
+            "telescopeState",
+            DevState.ON,
         )
         assign_input_json = prepare_json_args_for_centralnode_commands(
             "assign_resources_low", command_input_factory
@@ -100,6 +110,15 @@ class TestConfigureErrorPropagation:
         )
         event_recorder.subscribe_event(
             subarray_node_low.subarray_node, "longRunningCommandResult"
+        )
+        event_recorder.subscribe_event(
+            central_node_low.central_node, "telescopeState"
+        )
+        central_node_low.move_to_on()
+        assert event_recorder.has_change_event_occurred(
+            central_node_low.central_node,
+            "telescopeState",
+            DevState.ON,
         )
 
         # Preparing input files
