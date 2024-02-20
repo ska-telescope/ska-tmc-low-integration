@@ -75,9 +75,13 @@ def subarray_in_idle_obsstate(
         subarray_node_low.subarray_devices["mccs_subarray"],
         "obsState",
         ObsState.IDLE,
+        lookahead=10,
     )
     assert event_recorder.has_change_event_occurred(
-        subarray_node_low.subarray_node, "obsState", ObsState.IDLE
+        subarray_node_low.subarray_node,
+        "obsState",
+        ObsState.IDLE,
+        lookahead=10,
     )
 
 
