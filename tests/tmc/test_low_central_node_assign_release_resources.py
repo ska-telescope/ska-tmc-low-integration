@@ -343,7 +343,6 @@ class TestLowCentralNodeAssignResources:
         the_waiter.wait(200)
 
     @pytest.mark.SKA_low
-    @pytest.mark.temp
     def test_low_centralnode_release_resources_exception_propagation(
         self,
         central_node_low,

@@ -1,5 +1,7 @@
 """Module for TMC-CSP Abort command tests"""
 
+import time
+
 import pytest
 from pytest_bdd import given, scenario, then, when
 from ska_control_model import ObsState
@@ -71,12 +73,13 @@ def subarray_busy_assigning(
         "obsState",
         ObsState.RESOURCING,
     )
+    time.sleep(1)
 
 
 @when("I command it to Abort")
 def abort_subarray(subarray_node_real_csp_low):
     """Abort command invoked on Subarray Node"""
-    subarray_node_real_csp_low.abort_subarray()
+    subarray_node_real_csp_low.execute_transition("Abort")
 
 
 @then("the CSP subarray should go into an aborted obsState")
