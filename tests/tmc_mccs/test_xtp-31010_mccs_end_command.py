@@ -90,7 +90,7 @@ def check_if_mccs_subarray_moved_to_idle_obsstate(
 ):
     """Ensure Mccs subarray is moved to IDLE obsstate"""
     assert event_recorder.has_change_event_occurred(
-        subarray_node_low.subarray_devices["mccs_subarray"],
+        subarray_node_low.mccs_subarray1,
         "obsState",
         ObsState.IDLE,
         lookahead=10,

@@ -107,6 +107,9 @@ def check_tmc_subarray_obs_state(subarray_node_low, event_recorder):
     assert event_recorder.has_change_event_occurred(
         subarray_node_low.subarray_node,
         "obsState",
-        ObsState.READY,
-        lookahead=10,
+        ObsState.CONFIGURING,
+        lookahead=15,
+    )
+    assert event_recorder.has_change_event_occurred(
+        subarray_node_low.subarray_node, "obsState", ObsState.READY
     )
