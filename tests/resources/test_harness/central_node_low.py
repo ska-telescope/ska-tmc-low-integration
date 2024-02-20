@@ -234,7 +234,6 @@ class CentralNodeWrapperLow(object):
             "Starting up the Telescope %s", self.central_node.telescopeState
         )
         LOGGER.info(f"Received simulated devices: {SIMULATED_DEVICES_DICT}")
-
         if SIMULATED_DEVICES_DICT["all_mocks"]:
             LOGGER.info("Invoking TelescopeOn command with all Mocks")
             self.central_node.TelescopeOn()
