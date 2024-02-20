@@ -217,6 +217,9 @@ class CentralNodeWrapperLow(object):
                 and SIMULATED_DEVICES_DICT["all_mocks"]
             ):
                 self.move_to_off()
+        if SIMULATED_DEVICES_DICT["all_mocks"]:
+            LOGGER.info("Invoking Off command")
+            self.move_to_off()
         self._clear_command_call_and_transition_data(clear_transition=True)
         # Adding a small sleep to allow the systems to clean up processes
         sleep(1)
@@ -227,7 +230,9 @@ class CentralNodeWrapperLow(object):
         A method to invoke TelescopeOn command to
         put telescope in ON state
         """
-        LOGGER.info("Starting up the Telescope")
+        LOGGER.info(
+            "Starting up the Telescope %s", self.central_node.telescopeState
+        )
         LOGGER.info(f"Received simulated devices: {SIMULATED_DEVICES_DICT}")
 
         if SIMULATED_DEVICES_DICT["all_mocks"]:

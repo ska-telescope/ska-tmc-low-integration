@@ -337,6 +337,53 @@ def wait_for_attribute_update(
     return False
 
 
+def wait_and_validate_device_attribute_value(
+    device: DeviceProxy,
+    attribute_name: str,
+    expected_value: str,
+    is_json: str = False,
+    timeout: int = 300,
+):
+    """This method wait and validate if attribute value is equal to provided
+    expected value
+    """
+    count = 0
+    error = ""
+    while count <= timeout:
+        try:
+            attribute_value = device.read_attribute(attribute_name).value
+            logging.info(
+                "%s current %s value: %s",
+                device.name(),
+                attribute_name,
+                attribute_value,
+            )
+            if is_json and json.loads(attribute_value) == json.loads(
+                expected_value
+            ):
+                return True
+            elif attribute_value == expected_value:
+                return True
+        except Exception as e:
+            # Device gets unavailable due to restart and the above command
+            # tries to access the attribute resulting into exception
+            # It keeps it printing till the attribute is accessible
+            # the exception log is suppressed by storing into variable
+            # the error is printed later into the log in case of failure
+            error = e
+        count += 10
+        # When device restart it will at least take 10 sec to up again
+        # so added 10 sec sleep and to avoid frequent attribute read.
+        time.sleep(10)
+
+    logging.exception(
+        "Exception occurred while reading attribute %s and cnt is %s",
+        error,
+        count,
+    )
+    return False
+
+
 def get_simulated_devices_info() -> dict:
     """
     A method to get simulated devices present in low deployment.

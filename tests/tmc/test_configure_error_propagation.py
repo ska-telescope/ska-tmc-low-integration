@@ -11,6 +11,9 @@ from tests.resources.test_harness.constant import (
     low_csp_subarray_leaf_node,
     low_sdp_subarray_leaf_node,
 )
+from tests.resources.test_harness.helpers import (
+    wait_and_validate_device_attribute_value,
+)
 from tests.resources.test_harness.utils.enums import SimulatorDeviceType
 from tests.resources.test_support.common_utils.tmc_helpers import (
     prepare_json_args_for_centralnode_commands,
@@ -25,11 +28,11 @@ class TestConfigureErrorPropagation:
     @pytest.mark.SKA_low
     def test_configure_timeout_csp_ln(
         self,
+        central_node_low,
         subarray_node_low,
         event_recorder,
         simulator_factory,
         command_input_factory,
-        central_node_low,
     ):
         """Test timeout on CSP Leaf Nodes for Configure command by inducing
         fault into the system."""
@@ -69,6 +72,13 @@ class TestConfigureErrorPropagation:
         # Inducing Fault
         csp_subarray_sim.SetDefective(INTERMEDIATE_CONFIGURING_STATE_DEFECT)
 
+        assert wait_and_validate_device_attribute_value(
+            csp_subarray_sim,
+            "defective",
+            INTERMEDIATE_CONFIGURING_STATE_DEFECT,
+            is_json=True,
+        )
+
         _, unique_id = subarray_node_low.execute_transition(
             "Configure", configure_input_str
         )
@@ -93,8 +103,8 @@ class TestConfigureErrorPropagation:
     @pytest.mark.SKA_low
     def test_configure_timeout_sdp_ln(
         self,
-        subarray_node_low,
         central_node_low,
+        subarray_node_low,
         event_recorder,
         simulator_factory,
         command_input_factory,
@@ -140,6 +150,12 @@ class TestConfigureErrorPropagation:
         # Inducing Fault
         sdp_subarray_sim.SetDefective(INTERMEDIATE_CONFIGURING_STATE_DEFECT)
 
+        assert wait_and_validate_device_attribute_value(
+            sdp_subarray_sim,
+            "defective",
+            INTERMEDIATE_CONFIGURING_STATE_DEFECT,
+            is_json=True,
+        )
         _, unique_id = subarray_node_low.execute_transition(
             "Configure", configure_input_str
         )
