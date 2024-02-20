@@ -439,7 +439,7 @@ class TestLowCentralNodeAssignResources:
             "longRunningCommandResult",
             expected_long_running_command_result,
         )
-        sdp_subarray_sim.SetDefecitve(json.dumps(RESET_DEFECT))
+        sdp_subarray_sim.SetDefective(json.dumps(RESET_DEFECT))
         central_node_low.subarray_node.Abort()
 
         # Verify ObsState is Aborted
