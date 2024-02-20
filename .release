@@ -1,6 +1,6 @@
-release=0.13.1
-tag=0.13.1
+release=0.13.2
+tag=0.13.2
 tag_description=
 **Charts:**
-**1. ska-tmc-low-integration 0.13.1**
-        a. Integration of dashboards with TMC low chart for monitoring."
+**1. ska-tmc-low-integration 0.13.2**
+        a. Aligned low delay model json as per ADR-88."
