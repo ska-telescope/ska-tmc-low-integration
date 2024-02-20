@@ -43,7 +43,6 @@ class TestConfigureErrorPropagation:
         event_recorder.subscribe_event(
             subarray_node_low.subarray_node, "longRunningCommandResult"
         )
-        # Preparing input files
         configure_input_str = prepare_json_args_for_commands(
             "configure_low", command_input_factory
         )
