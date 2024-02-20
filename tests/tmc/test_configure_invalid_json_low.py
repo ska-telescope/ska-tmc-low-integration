@@ -164,4 +164,3 @@ def tmc_accepts_next_commands(
         "obsState",
         ObsState.READY,
     )
-
