@@ -8,6 +8,7 @@ verification of attribute updates, exception handling, and proper propagation
 of exceptions.
 """
 import json
+import time
 
 import pytest
 from ska_control_model import ObsState
@@ -412,7 +413,10 @@ class TestLowCentralNodeAssignResources:
             "longRunningCommandResult",
             (unique_id[0], str(ResultCode.OK.value)),
         )
-        # Execute ReleaseResources and verify error propagation
+        # Allowing Subarray Node to finish processing the Assign command
+        # completion. Removing the sleep leads to timer thread for Release
+        # being stopped by Assign cleanup
+        time.sleep(1)
 
         # Setting device to defective
         sdp_subarray_sim.SetDefective(json.dumps(FAILED_RESULT_DEFECT))
