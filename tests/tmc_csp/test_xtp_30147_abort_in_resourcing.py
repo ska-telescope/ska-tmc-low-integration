@@ -13,6 +13,9 @@ from tests.resources.test_support.common_utils.tmc_helpers import (
 
 
 @pytest.mark.tmc_csp
+@pytest.mark.skip(
+    reason="CSP Subarray goes from RESTARTING to IDLE with the SKB-285 fix chart"
+)
 @scenario(
     "../features/tmc_csp/xtp-30147_abort_in_resourcing.feature",
     "Abort assigning using TMC",
@@ -108,4 +111,3 @@ def subarray_in_aborted_obs_state(subarray_node_real_csp_low, event_recorder):
         ObsState.ABORTED,
         lookahead=10,
     )
-    event_recorder.clear_events()

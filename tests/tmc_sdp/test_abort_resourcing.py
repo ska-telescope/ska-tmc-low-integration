@@ -1,13 +1,16 @@
 """Test TMC-SDP Abort functionality in RESOURCING obsState"""
+import time
+
 import pytest
 from pytest_bdd import given, scenario, then, when
 from ska_control_model import ObsState
 from tango import DevState
-import time
+
 from tests.resources.test_harness.helpers import (
     prepare_json_args_for_centralnode_commands,
     update_eb_pb_ids,
 )
+
 
 @pytest.mark.tmc_sdp
 @scenario(
@@ -65,6 +68,7 @@ def telescope_is_in_resourcing_obsstate(
         ObsState.RESOURCING,
     )
     time.sleep(1)
+
 
 @when("I command it to Abort")
 def abort_is_invoked(subarray_node_low):
