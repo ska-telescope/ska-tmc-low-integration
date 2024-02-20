@@ -343,7 +343,6 @@ class TestLowCentralNodeAssignResources:
         the_waiter.wait(200)
 
     @pytest.mark.SKA_low
-    @pytest.mark.temp
     def test_low_centralnode_release_resources_exception_propagation(
         self,
         central_node_low,
@@ -439,7 +438,7 @@ class TestLowCentralNodeAssignResources:
             "longRunningCommandResult",
             expected_long_running_command_result,
         )
-        sdp_subarray_sim.SetDefecitve(json.dumps(RESET_DEFECT))
+        sdp_subarray_sim.SetDefective(json.dumps(RESET_DEFECT))
         central_node_low.subarray_node.Abort()
 
         # Verify ObsState is Aborted
