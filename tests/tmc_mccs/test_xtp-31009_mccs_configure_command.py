@@ -17,7 +17,7 @@ from tests.resources.test_harness.helpers import (
     "../features/tmc_mccs/xtp-31009_configure.feature",
     "Configure a MCCS subarray for a scan",
 )
-def test_tmc_mccs_configure():
+def test_configure_command():
     """
     Test case to verify TMC-MCCS Configure functionality
 
@@ -107,6 +107,9 @@ def check_tmc_subarray_obs_state(subarray_node_low, event_recorder):
     assert event_recorder.has_change_event_occurred(
         subarray_node_low.subarray_node,
         "obsState",
-        ObsState.READY,
-        lookahead=10,
+        ObsState.CONFIGURING,
+        lookahead=15,
+    )
+    assert event_recorder.has_change_event_occurred(
+        subarray_node_low.subarray_node, "obsState", ObsState.READY
     )

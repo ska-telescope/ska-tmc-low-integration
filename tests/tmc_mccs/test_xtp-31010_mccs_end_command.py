@@ -16,7 +16,7 @@ from tests.resources.test_harness.helpers import (
     "../features/tmc_mccs/xtp-31010_end_command.feature",
     "End configure from MCCS Subarray",
 )
-def test_tmc_mccs_end_functionality():
+def test_end_command():
     """
     Test case to verify TMC-MCCS observation End functionality
     """
@@ -37,7 +37,7 @@ def check_telescope_is_in_on_state(central_node_low, event_recorder) -> None:
     )
 
 
-@given(parsers.parse("the obsState of subarray is READY"))
+@given(parsers.parse("obsState of subarray {subarray_id} is READY"))
 def move_subarray_node_to_ready_obsstate(
     central_node_low,
     subarray_node_low,
@@ -72,12 +72,15 @@ def move_subarray_node_to_ready_obsstate(
     )
 
 
-@when("I issue End command with the {subarray_id} to the subarray using TMC")
-def invoke_end_command(
-    subarray_node_low, central_node_low, subarray_id
-) -> None:
+@when(
+    parsers.parse(
+        "I issue the End command to the TMC subarray with the "
+        + "{subarray_id}"
+    )
+)
+def invoke_end_command(subarray_node_low, subarray_id) -> None:
     """Invoke End command."""
-    central_node_low.set_subarray_id(subarray_id)
+    subarray_node_low.set_subarray_id(subarray_id)
     subarray_node_low.execute_transition("End")
 
 
@@ -87,7 +90,7 @@ def check_if_mccs_subarray_moved_to_idle_obsstate(
 ):
     """Ensure Mccs subarray is moved to IDLE obsstate"""
     assert event_recorder.has_change_event_occurred(
-        subarray_node_low.subarray_devices["mccs_subarray"],
+        subarray_node_low.mccs_subarray1,
         "obsState",
         ObsState.IDLE,
         lookahead=10,
