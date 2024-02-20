@@ -11,7 +11,7 @@ from tests.resources.test_harness.helpers import (
 
 @pytest.mark.tmc_sdp
 @scenario(
-    "../features/tmc_sdp/tmc_sdp_end_scan.feature",
+    "../features/tmc_sdp/xtp-29457_tmc_sdp_end_scan.feature",
     "TMC executes a EndScan command on SDP subarray",
 )
 def test_tmc_sdp_endscan():
