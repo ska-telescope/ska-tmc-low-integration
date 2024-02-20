@@ -14,7 +14,8 @@ from tests.resources.test_support.common_utils.tmc_helpers import (
 
 @pytest.mark.tmc_csp
 @pytest.mark.skip(
-    reason="CSP Subarray goes from RESTARTING to IDLE with the SKB-285 fix chart"
+    reason="CSP Subarray goes from RESTARTING to IDLE with the SKB-285 "
+    + "fix chart v0.11.1"
 )
 @scenario(
     "../features/tmc_csp/xtp-30147_abort_in_resourcing.feature",
