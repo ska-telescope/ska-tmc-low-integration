@@ -3,7 +3,7 @@ Feature: TMC performs End Configuration on MCCS subsystem
 Scenario: End configure from MCCS Subarray
     Given the Telescope is in the ON state
     And obsState of subarray <subarray_id> is READY
-    When I issue End command with the <subarray_id> to the subarray using TMC 
+    When I issue the End command to the TMC subarray with the <subarray_id>
     Then the MCCS subarray is transitioned to IDLE obsState
     And TMC subarray is transitioned to IDLE obsState
     Examples:

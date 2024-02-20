@@ -72,7 +72,12 @@ def move_subarray_node_to_ready_obsstate(
     )
 
 
-@when("I issue End command with the {subarray_id} to the subarray using TMC")
+@when(
+    parsers.parse(
+        "I issue the End command to the TMC subarray with the "
+        + "{subarray_id}"
+    )
+)
 def invoke_end_command(subarray_node_low, subarray_id) -> None:
     """Invoke End command."""
     subarray_node_low.set_subarray_id(subarray_id)
