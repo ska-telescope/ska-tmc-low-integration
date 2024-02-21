@@ -1,4 +1,6 @@
 """Test TMC-SDP Abort functionality in RESOURCING obsState"""
+import time
+
 import pytest
 from pytest_bdd import given, scenario, then, when
 from ska_control_model import ObsState
@@ -41,7 +43,7 @@ def telescope_is_in_resourcing_obsstate(
         "assign_resources_low", command_input_factory
     )
     input_json = update_eb_pb_ids(assign_input_json)
-    central_node_low.store_resources(input_json)
+    central_node_low.perform_action("AssignResources", input_json)
 
     event_recorder.subscribe_event(
         subarray_node_low.subarray_devices.get("sdp_subarray"), "obsState"
@@ -65,6 +67,10 @@ def telescope_is_in_resourcing_obsstate(
         "sdpSubarrayObsState",
         ObsState.RESOURCING,
     )
+    # The sleep is required here because subarraynode takes
+    # some time to processobsstate resourcing, resulting
+    # in invocation of abort command in empty obsstate
+    time.sleep(1)
 
 
 @when("I command it to Abort")
@@ -72,7 +78,7 @@ def abort_is_invoked(subarray_node_low):
     """
     This method invokes abort command on tmc subarray
     """
-    subarray_node_low.abort_subarray()
+    subarray_node_low.execute_transition("Abort")
 
 
 @then("the SDP subarray should go into an aborted obsstate")

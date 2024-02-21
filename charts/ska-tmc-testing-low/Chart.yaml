@@ -33,6 +33,10 @@ dependencies:
     version: 0.6.1
     repository: https://artefact.skao.int/repository/helm-internal
     condition: ska-low-cbf.enabled
+  - name: ska-low-mccs
+    version: 0.13.0
+    repository: https://artefact.skao.int/repository/helm-internal
+    condition: ska-low-mccs.enabled
   - name: ska-ser-skuid
     version: 0.3.0
     repository: https://artefact.skao.int/repository/helm-internal

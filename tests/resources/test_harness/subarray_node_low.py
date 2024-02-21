@@ -277,20 +277,25 @@ class SubarrayNodeWrapperLow:
 
     def _reset_simulator_devices(self):
         """Reset Simulator devices to it's original state"""
-        if (
-            SIMULATED_DEVICES_DICT["csp_and_sdp"]
-            or SIMULATED_DEVICES_DICT["all_mocks"]
-        ):
-            sim_device_fqdn_list = [self.sdp_subarray1, self.csp_subarray1]
+        if SIMULATED_DEVICES_DICT["all_mocks"]:
+            sim_device_proxy_list = [
+                self.sdp_subarray1,
+                self.csp_subarray1,
+                self.mccs_subarray1,
+            ]
+        elif SIMULATED_DEVICES_DICT["csp_and_sdp"]:
+            sim_device_proxy_list = [self.sdp_subarray1, self.csp_subarray1]
         elif SIMULATED_DEVICES_DICT["csp_and_mccs"]:
-            sim_device_fqdn_list = [self.csp_subarray1]
+            sim_device_proxy_list = [self.csp_subarray1, self.mccs_subarray1]
         elif SIMULATED_DEVICES_DICT["sdp_and_mccs"]:
-            sim_device_fqdn_list = [self.sdp_subarray1]
-        for sim_device_fqdn in sim_device_fqdn_list:
-            device = DeviceProxy(sim_device_fqdn)
-            device.ResetDelay()
-            device.SetDirectHealthState(HealthState.UNKNOWN)
-            device.SetDefective(json.dumps({"enabled": False}))
+            sim_device_proxy_list = [self.sdp_subarray1, self.mccs_subarray1]
+        else:
+            sim_device_proxy_list = []
+
+        for sim_device_proxy in sim_device_proxy_list:
+            sim_device_proxy.ResetDelay()
+            sim_device_proxy.SetDirectHealthState(HealthState.UNKNOWN)
+            sim_device_proxy.SetDefective(json.dumps({"enabled": False}))
 
     def force_change_of_obs_state(
         self,
@@ -356,40 +361,35 @@ class SubarrayNodeWrapperLow:
             for sim_device in [
                 self.sdp_subarray1,
                 self.csp_subarray1,
-                self.mccs_subarray1,
             ]:
-                device = DeviceProxy(sim_device)
-                device.ClearCommandCallInfo()
+                sim_device.ClearCommandCallInfo()
                 if clear_transition:
-                    device.ResetTransitions()
+                    sim_device.ResetTransitions()
         elif SIMULATED_DEVICES_DICT["csp_and_mccs"]:
             for sim_device in [
                 self.csp_subarray1,
-                mccs_subarray1,
+                self.mccs_subarray1,
             ]:
-                device = DeviceProxy(sim_device)
-                device.ClearCommandCallInfo()
+                sim_device.ClearCommandCallInfo()
                 if clear_transition:
-                    device.ResetTransitions()
+                    sim_device.ResetTransitions()
         elif SIMULATED_DEVICES_DICT["sdp_and_mccs"]:
             for sim_device in [
                 self.sdp_subarray1,
-                mccs_subarray1,
+                self.mccs_subarray1,
             ]:
-                device = DeviceProxy(sim_device)
-                device.ClearCommandCallInfo()
+                sim_device.ClearCommandCallInfo()
                 if clear_transition:
-                    device.ResetTransitions()
+                    sim_device.ResetTransitions()
         elif SIMULATED_DEVICES_DICT["all_mocks"]:
             for sim_device in [
                 self.sdp_subarray1,
                 self.csp_subarray1,
-                mccs_subarray1,
+                self.mccs_subarray1,
             ]:
-                device = DeviceProxy(sim_device)
-                device.ClearCommandCallInfo()
+                sim_device.ClearCommandCallInfo()
                 if clear_transition:
-                    device.ResetTransitions()
+                    sim_device.ResetTransitions()
         else:
             LOGGER.info("Devices deployed are real")
 
@@ -430,3 +430,13 @@ class SubarrayNodeWrapperLow:
         assert check_subarray_obs_state("EMPTY")
         # Adding a small sleep to allow the systems to clean up processes
         sleep(1)
+
+    def set_scan_id(self, scan_id: int, input_str: str) -> str:
+        """Set the scan_id for the scan input json."""
+        input_json = json.loads(input_str)
+        try:
+            input_json["scan_id"] = scan_id
+        except Exception as e:
+            LOGGER.exception("Exception occurred while setting scan id: %s", e)
+            raise
+        return json.dumps(input_json)

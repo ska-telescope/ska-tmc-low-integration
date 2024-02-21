@@ -19,6 +19,7 @@ from tests.resources.test_harness.central_node_with_csp_low import (
     CentralNodeCspWrapperLow,
 )
 from tests.resources.test_harness.event_recorder import EventRecorder
+from tests.resources.test_harness.helpers import set_admin_mode_values_mccs
 from tests.resources.test_harness.simulator_factory import SimulatorFactory
 from tests.resources.test_harness.subarray_node_low import (
     SubarrayNodeWrapperLow,
@@ -186,6 +187,12 @@ def event_recorder() -> EventRecorder:
     event_rec = EventRecorder()
     yield event_rec
     event_rec.clear_events()
+
+
+@pytest.fixture(scope="session", autouse=True)
+def set_admin_mode_mccs():
+    """Fixture to set admin mode values"""
+    set_admin_mode_values_mccs()
 
 
 def wait_for_obsstate_state_change(

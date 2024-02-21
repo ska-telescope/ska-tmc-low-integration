@@ -6,6 +6,7 @@ import uuid
 from typing import Any
 
 import pytest
+import tango
 from ska_control_model import ObsState
 from ska_ser_logging import configure_logging
 from ska_tango_base.commands import ResultCode
@@ -20,6 +21,7 @@ from tests.resources.test_harness.constant import (
     low_csp_subarray_leaf_node,
     low_sdp_subarray1,
     low_sdp_subarray_leaf_node,
+    mccs_controller,
     mccs_subarray1,
     mccs_subarray_leaf_node,
     tmc_low_subarraynode1,
@@ -291,9 +293,6 @@ def set_desired_health_state(
 
     for device in sim_devices_list:
         device.SetDirectHealthState(health_state_value)
-        device.SetDirectHealthState(health_state_value)
-        device.SetDirectHealthState(health_state_value)
-        device.SetDirectHealthState(health_state_value)
 
 
 def device_attribute_changed(
@@ -385,13 +384,13 @@ def get_simulated_devices_info() -> dict:
     is_mccs_simulated = MCCS_SIMULATION_ENABLED.lower() == "true"
     return {
         "csp_and_sdp": all(
-            [is_csp_simulated, is_sdp_simulated]
+            [is_csp_simulated, is_sdp_simulated, not is_mccs_simulated]
         ),  # real MCCS enabled
         "csp_and_mccs": all(
-            [is_csp_simulated, is_mccs_simulated]
+            [is_csp_simulated, is_mccs_simulated, not is_sdp_simulated]
         ),  # real SDP enabled
         "sdp_and_mccs": all(
-            [is_sdp_simulated, is_mccs_simulated]
+            [is_sdp_simulated, is_mccs_simulated, not is_csp_simulated]
         ),  # real CSP.LMC enabled
         "all_mocks": all(
             [
@@ -463,33 +462,15 @@ def update_eb_pb_ids(input_json: str) -> str:
     return input_json
 
 
-def get_simulated_devices_info() -> dict:
-    """
-    A method to get simulated devices present in the deployement.
-
-    return: dict
-    """
-    is_csp_simulated = CSP_SIMULATION_ENABLED.lower() == "true"
-    is_sdp_simulated = SDP_SIMULATION_ENABLED.lower() == "true"
-    is_mccs_simulated = MCCS_SIMULATION_ENABLED.lower() == "true"
-    return {
-        "csp_and_sdp": all(
-            [is_csp_simulated, is_sdp_simulated]
-        ),  # real MCCS enabled
-        "csp_and_mccs": all(
-            [is_csp_simulated, is_mccs_simulated]
-        ),  # real SDP enabled
-        "sdp_and_mccs": all(
-            [is_sdp_simulated, is_mccs_simulated]
-        ),  # real CSP.LMC enabled
-        "all_mocks": all(
-            [
-                is_csp_simulated,
-                is_sdp_simulated,
-                is_mccs_simulated,
-            ]
-        ),
-    }
-
-
-SIMULATED_DEVICES_DICT = get_simulated_devices_info()
+def set_admin_mode_values_mccs():
+    """Set the adminMode values of MCCS devices."""
+    if MCCS_SIMULATION_ENABLED.lower() == "false":
+        controller = tango.DeviceProxy(mccs_controller)
+        if controller.adminMode != 0:
+            db = tango.Database()
+            device_strings = db.get_device_exported("low-mccs/*")
+            devices = []
+            for device_str in device_strings:
+                device = tango.DeviceProxy(device_str)
+                device.adminMode = 0
+                devices.append(device)

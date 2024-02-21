@@ -43,7 +43,7 @@ K8S_CHART ?= $(HELM_CHART)
 
 CLUSTER_DOMAIN ?= svc.cluster.local
 PORT ?= 10000
-SUBARRAY_COUNT ?= 2
+SUBARRAY_COUNT ?= 1
 SDP_MASTER ?= tango://$(TANGO_HOST).$(KUBE_NAMESPACE).$(CLUSTER_DOMAIN):$(PORT)/low-sdp/control/0
 SDP_SUBARRAY_PREFIX ?= tango://$(TANGO_HOST).$(KUBE_NAMESPACE).$(CLUSTER_DOMAIN):$(PORT)/low-sdp/subarray
 CSP_MASTER ?= tango://$(TANGO_HOST).$(KUBE_NAMESPACE).$(CLUSTER_DOMAIN):$(PORT)/low-csp/control/0
@@ -82,12 +82,16 @@ endif
 PYTHON_VARS_AFTER_PYTEST ?= -m '$(MARK)' $(ADD_ARGS) $(FILE) -x
 
 ifeq ($(CSP_SIMULATION_ENABLED),false)
-CUSTOM_VALUES =	--set global.csp.isSimulated.enabled=$(CSP_SIMULATION_ENABLED)\
+CUSTOM_VALUES =	--set tmc-low.deviceServers.mocks.is_simulated.csp=$(CSP_SIMULATION_ENABLED)\
 	--set ska-csp-lmc-low.enabled=true\
 	--set ska-low-cbf.enabled=true\
 	--set ska-low-cbf.ska-low-cbf-proc.enabled=true
 endif
 
+ifeq ($(MCCS_SIMULATION_ENABLED),false)
+CUSTOM_VALUES =	--set tmc-low.deviceServers.mocks.is_simulated.mccs=$(MCCS_SIMULATION_ENABLED)\
+	--set ska-low-mccs.enabled=true
+endif
 
 ifeq ($(SDP_SIMULATION_ENABLED),false)
 CUSTOM_VALUES =	--set tmc-low.deviceServers.mocks.is_simulated.sdp=$(SDP_SIMULATION_ENABLED)\

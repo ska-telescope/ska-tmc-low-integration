@@ -14,7 +14,7 @@ from tests.resources.test_support.common_utils.tmc_helpers import (
 
 @pytest.mark.tmc_sdp
 @scenario(
-    "../features/tmc_sdp/release_resources_to_sdp_subarray.feature",
+    "../features/tmc_sdp/xtp-29291_release_resources_to_sdp_subarray.feature",
     """Release resources from SDP Subarray using TMC""",
 )
 def test_tmc_sdp_release_resources():
