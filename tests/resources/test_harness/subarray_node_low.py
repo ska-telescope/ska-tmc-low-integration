@@ -192,20 +192,6 @@ class SubarrayNodeWrapperLow:
         LOGGER.info("Invoked Restart on SubarrayNode")
         return result, message
 
-    def perform_action(self, command_name: str, input_json: str = ""):
-        """Execute provided command on centralnode
-        Args:
-            command_name (str): Name of command to execute
-            input_json (str): Json send as input to execute command
-        """
-        if input_json:
-            result, message = self.subarray_node.command_inout(
-                command_name, input_json
-            )
-        else:
-            result, message = self.subarray_node.command_inout(command_name)
-        return result, message
-
     @sync_assign_resources(device_dict=device_dict_low)
     def store_resources(self, assign_json: str):
         """Invoke Assign Resource command on subarray Node
