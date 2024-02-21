@@ -90,9 +90,7 @@ def test_assign_release_timeout_sdp(
     assign_input_json = prepare_json_args_for_centralnode_commands(
         "assign_resources_low", command_input_factory
     )
-    updated_input_json = json.loads(assign_input_json)
-    updated_input_json["sdp"]["execution_block"]["eb_id"] = "eb-xxx"
-    updated_input_json = json.dumps(updated_input_json)
+
     event_recorder.subscribe_event(
         central_node_low.central_node, "longRunningCommandResult"
     )
@@ -112,7 +110,7 @@ def test_assign_release_timeout_sdp(
     event_recorder.subscribe_event(sdp_sim, "obsState")
     sdp_sim.SetDefective(json.dumps(INTERMEDIATE_STATE_DEFECT))
     result, unique_id = central_node_low.perform_action(
-        "AssignResources", updated_input_json
+        "AssignResources", assign_input_json
     )
     assert unique_id[0].endswith("AssignResources")
     assert result[0] == ResultCode.QUEUED
