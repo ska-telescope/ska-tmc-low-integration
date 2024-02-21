@@ -75,31 +75,31 @@ def send(subarray_node_low, invalid_json, command_input_factory):
     if invalid_json == "csp_key_missing":
         invalid_configure_json = json.loads(configure_json)
         del invalid_configure_json["csp"]
-        pytest.command_result = subarray_node_low.subarray_node.Configure(
-            json.dumps(invalid_configure_json)
+        pytest.command_result = subarray_node_low.execute_transition(
+            "Configure", json.dumps(invalid_configure_json)
         )
     elif invalid_json == "sdp_key_missing":
         invalid_configure_json = json.loads(configure_json)
         del invalid_configure_json["sdp"]
-        pytest.command_result = subarray_node_low.subarray_node.Configure(
-            json.dumps(invalid_configure_json)
+        pytest.command_result = subarray_node_low.execute_transition(
+            "Configure", json.dumps(invalid_configure_json)
         )
     elif invalid_json == "tmc_key_missing":
         invalid_configure_json = json.loads(configure_json)
         del invalid_configure_json["tmc"]
-        pytest.command_result = subarray_node_low.subarray_node.Configure(
-            json.dumps(invalid_configure_json)
+        pytest.command_result = subarray_node_low.execute_transition(
+            "Configure", json.dumps(invalid_configure_json)
         )
     elif invalid_json == "scan_duration_key_missing":
         invalid_configure_json = json.loads(configure_json)
         del invalid_configure_json["tmc"]["scan_duration"]
-        pytest.command_result = subarray_node_low.subarray_node.Configure(
-            json.dumps(invalid_configure_json)
+        pytest.command_result = subarray_node_low.execute_transition(
+            "Configure", json.dumps(invalid_configure_json)
         )
     elif invalid_json == "empty_string":
         invalid_configure_json = {}
-        pytest.command_result = subarray_node_low.subarray_node.Configure(
-            json.dumps(invalid_configure_json)
+        pytest.command_result = subarray_node_low.execute_transition(
+            "Configure", json.dumps(invalid_configure_json)
         )
 
 
