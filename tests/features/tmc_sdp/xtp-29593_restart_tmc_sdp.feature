@@ -1,7 +1,7 @@
 Feature: Default
 
         #This BDD test performs TMC-SDP pairwise testing to verify Restart command flow.
-        @XTP-29292 @XTP-29593 @tmc_sdp
+        @XTP-29593 @XTP-29227 @tmc_sdp
         Scenario: TMC executes a Restart on SDP subarray when subarray completes Abort
             Given the telescope is in ON state
             And TMC and SDP subarray are in ABORTED ObsState

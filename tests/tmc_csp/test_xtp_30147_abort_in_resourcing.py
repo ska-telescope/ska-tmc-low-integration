@@ -1,5 +1,7 @@
 """Module for TMC-CSP Abort command tests"""
 
+import time
+
 import pytest
 from pytest_bdd import given, scenario, then, when
 from ska_control_model import ObsState
@@ -12,7 +14,8 @@ from tests.resources.test_support.common_utils.tmc_helpers import (
 
 @pytest.mark.tmc_csp
 @pytest.mark.skip(
-    reason="Issue on CSP - CBF subarray side, waiting for SKB-285 fix"
+    reason="CSP Subarray goes from RESTARTING to IDLE with the SKB-285 "
+    + "fix chart v0.11.1"
 )
 @scenario(
     "../features/tmc_csp/xtp-30147_abort_in_resourcing.feature",
@@ -74,12 +77,13 @@ def subarray_busy_assigning(
         "obsState",
         ObsState.RESOURCING,
     )
+    time.sleep(1)
 
 
 @when("I command it to Abort")
 def abort_subarray(subarray_node_real_csp_low):
     """Abort command invoked on Subarray Node"""
-    subarray_node_real_csp_low.abort_subarray()
+    subarray_node_real_csp_low.execute_transition("Abort")
 
 
 @then("the CSP subarray should go into an aborted obsState")
@@ -108,4 +112,3 @@ def subarray_in_aborted_obs_state(subarray_node_real_csp_low, event_recorder):
         ObsState.ABORTED,
         lookahead=10,
     )
-    event_recorder.clear_events()

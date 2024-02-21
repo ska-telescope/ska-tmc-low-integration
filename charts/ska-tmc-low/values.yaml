@@ -17,7 +17,7 @@ annotations:
 
 #  .Values.subarray_count
 # subarray_count, this will be expanded (1 to N inclusive)
-subarray_count: 2
+subarray_count: 1
 global:
   minikube: false
   tango_host: databaseds-tango-base-test:10000
@@ -32,10 +32,6 @@ global:
     - "sdpsubarrayleafnode"
     - "subarraynode"
     - "mccssubarrayleafnode"
- 
-  csp:
-    isSimulated:
-      enabled: true
 
   # fqdn for low devices
   tmc_subarray_prefix: "ska_low/tm_subarray_node"
@@ -51,6 +47,7 @@ global:
   mccs_master: "low-mccs/control/control"
   mccs_subarray_ln_prefix: "ska_low/tm_leaf_node/mccs_subarray"
   mccs_subarray_prefix: "low-mccs/subarray"
+
 dsconfig:
   configuration_file: data/tmc-low-config.json
   image:
@@ -67,11 +64,11 @@ itango:
     pullPolicy: IfNotPresent
 
 centralnode:
-   image:
-     registry: artefact.skao.int
-     image: ska-tmc-centralnode
-     tag: 0.11.10
-     pullPolicy: IfNotPresent
+  image:
+    registry: artefact.skao.int
+    image: ska-tmc-centralnode
+    tag: 0.11.10
+    pullPolicy: IfNotPresent
 
 subarraynode:
   image:
@@ -105,14 +102,14 @@ mccsmasterleafnode:
   image:
     registry: artefact.skao.int
     image: ska-tmc-mccsleafnodes
-    tag: 0.2.0
+    tag: 0.3.0
     pullPolicy: IfNotPresent
 
 mccssubarrayleafnode:
   image:
     registry: artefact.skao.int
     image: ska-tmc-mccsleafnodes
-    tag: 0.2.0
+    tag: 0.3.0
     pullPolicy: IfNotPresent
 
 resources:
@@ -131,7 +128,7 @@ deviceServers:
     file: "data/centralnode.yaml"
 
   subarraynode:
-    enabled: true 
+    enabled: true
     file: "data/subarraynode.yaml"
 
   sdpsubarrayleafnode:
@@ -166,6 +163,8 @@ deviceServers:
     file: "data/mocks.yaml"
     is_simulated:
       sdp: false
+      csp: false
+      mccs: false
 
 
 
