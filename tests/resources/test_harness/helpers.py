@@ -341,7 +341,7 @@ def wait_and_validate_device_attribute_value(
     device: DeviceProxy,
     attribute_name: str,
     expected_value: str,
-    is_json: str = False,
+    is_json: bool = False,
     timeout: int = 300,
 ):
     """This method wait and validate if attribute value is equal to provided

@@ -1,7 +1,6 @@
 """Test cases for recovery of subarray stuck in RESOURCING
 ObsState for low"""
 import json
-import time
 
 import pytest
 from ska_control_model import ObsState
@@ -200,7 +199,6 @@ def test_recover_subarray_stuck_in_resourcing_with_csp_empty_with_abort(
         "obsState",
         ObsState.RESOURCING,
     )
-    time.sleep(2)
     assert event_recorder.has_change_event_occurred(
         central_node_low.subarray_devices["mccs_subarray"],
         "obsState",
@@ -270,15 +268,14 @@ def test_recover_subarray_stuck_in_resourcing_with_abort(
         "obsState",
         ObsState.EMPTY,
     )
-    csp_sim, _ = get_device_simulators(simulator_factory)
-    csp_sim.SetDefective(json.dumps({"enabled": False}))
+    _, sdp_sim = get_device_simulators(simulator_factory)
+    sdp_sim.SetDefective(json.dumps({"enabled": False}))
     central_node_low.perform_action("AssignResources", assign_input_json)
     assert event_recorder.has_change_event_occurred(
         central_node_low.subarray_node,
         "obsState",
         ObsState.RESOURCING,
     )
-    time.sleep(2)
     assert event_recorder.has_change_event_occurred(
         central_node_low.subarray_devices["mccs_subarray"],
         "obsState",
@@ -294,8 +291,8 @@ def test_recover_subarray_stuck_in_resourcing_with_abort(
         "obsState",
         ObsState.IDLE,
     )
-    csp_sim.SetDefective(json.dumps({"enabled": False}))
-    csp_sim.SetDirectObsstate(ObsState.IDLE)
+    sdp_sim.SetDefective(json.dumps({"enabled": False}))
+    sdp_sim.SetDirectObsstate(ObsState.IDLE)
     assert event_recorder.has_change_event_occurred(
         central_node_low.subarray_node,
         "obsState",
