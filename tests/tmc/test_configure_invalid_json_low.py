@@ -54,7 +54,7 @@ def tmc_check_status(event_recorder, central_node_low, command_input_factory):
     assign_input_json = prepare_json_args_for_centralnode_commands(
         "assign_resources_low", command_input_factory
     )
-    central_node_low.central_node.AssignResources(assign_input_json)
+    central_node_low.store_resources(assign_input_json)
     assert event_recorder.has_change_event_occurred(
         central_node_low.subarray_node, "obsState", ObsState.RESOURCING
     )
