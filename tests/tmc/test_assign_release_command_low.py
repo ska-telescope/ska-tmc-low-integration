@@ -119,7 +119,6 @@ def test_assign_release_timeout_sdp(
         attribute_name="longRunningCommandResult",
         attribute_value=(unique_id[0], Anything),
     )
-    sdp_sim.SetDefective(json.dumps({"enabled": False}))
     assert "AssignResources" in assertion_data["attribute_value"][0]
     assert exception_message in assertion_data["attribute_value"][1]
 
@@ -184,7 +183,6 @@ def test_release_exception_propagation(
         "longRunningCommandResult",
         (unique_id[0], str(ResultCode.FAILED.value)),
     )
-    csp_sim.SetDefective(json.dumps({"enabled": False}))
 
 
 @pytest.mark.SKA_low
@@ -228,4 +226,3 @@ def test_assign_release_timeout_csp(
         (unique_id[0], Anything),
     )
     assert ERROR_MESSAGE in assertion_data["attribute_value"][1]
-    csp_subarray_sim.SetDefective(json.dumps({"enabled": False}))
