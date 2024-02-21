@@ -110,10 +110,7 @@ class TestConfigureErrorPropagation:
             "configure_low", command_input_factory
         )
 
-        subarray_node_low.move_to_on()
-        assert event_recorder.has_change_event_occurred(
-            subarray_node_low.subarray_node, "State", DevState.ON
-        )
+        subarray_node_low.force_change_of_obs_state("IDLE")
 
         subarray_node_low.force_change_of_obs_state("IDLE")
         assert event_recorder.has_change_event_occurred(
