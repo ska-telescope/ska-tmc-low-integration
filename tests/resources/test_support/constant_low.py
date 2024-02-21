@@ -114,6 +114,16 @@ INTERMEDIATE_STATE_DEFECT = {
     "intermediate_state": ObsState.RESOURCING,
 }
 
+FAILED_RESULT_DEFECT = {
+    "enabled": True,
+    "fault_type": FaultType.FAILED_RESULT,
+    "error_message": "Device defective.",
+    "result": ResultCode.FAILED,
+    "target_obsstates": [ObsState.IDLE],
+}
+
+RESET_DEFECT = {"enabled": False}
+
 COMMAND_NOT_ALLOWED_DEFECT = {
     "enabled": True,
     "fault_type": FaultType.COMMAND_NOT_ALLOWED,
