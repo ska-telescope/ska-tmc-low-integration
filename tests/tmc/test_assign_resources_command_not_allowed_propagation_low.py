@@ -1,12 +1,10 @@
 """Test cases for AssignResources Command not allowed for LOW."""
-import json
-
 import pytest
 from ska_control_model import ObsState
 from ska_tango_testing.mock.placeholders import Anything
 from tango import DevState
 
-from tests.resources.test_harness.constant import INTERMEDIATE_STATE_DEFECT
+from tests.resources.test_harness.constant import COMMAND_NOT_ALLOWED_DEFECT
 from tests.resources.test_harness.utils.enums import SimulatorDeviceType
 from tests.resources.test_support.common_utils.tmc_helpers import (
     prepare_json_args_for_centralnode_commands,
@@ -58,18 +56,20 @@ class TestAssignCommandNotAllowedPropagation:
         )
 
         # Setting Defects on Devices
-        csp_subarray_sim.SetDefective(json.dumps(INTERMEDIATE_STATE_DEFECT))
+        csp_subarray_sim.SetDefective(COMMAND_NOT_ALLOWED_DEFECT)
 
         _, unique_id = central_node_low.store_resources(assign_input_json)
 
-        ERROR_MESSAGE = "Timeout has occurred, command failed"
+        ERROR_MESSAGE = (
+            "The invocation of the AssignResources command is "
+            + "failed on Csp Subarray Device low-csp/subarray/01"
+        )
         assertion_data = event_recorder.has_change_event_occurred(
             central_node_low.central_node,
             "longRunningCommandResult",
             (unique_id[0], Anything),
         )
         assert ERROR_MESSAGE in assertion_data["attribute_value"][1]
-        csp_subarray_sim.SetDefective(json.dumps({"enabled": False}))
 
     @pytest.mark.SKA_low
     def test_assign_command_not_allowed_propagation_sdp_ln_low(
@@ -97,6 +97,7 @@ class TestAssignCommandNotAllowedPropagation:
         )
         event_recorder.subscribe_event(mccs_subarray_sim, "obsState")
 
+        # Preparing input arguments
         assign_input_json = prepare_json_args_for_centralnode_commands(
             "assign_resources_low", command_input_factory
         )
@@ -108,15 +109,18 @@ class TestAssignCommandNotAllowedPropagation:
             DevState.ON,
         )
 
+        # Setting Defects on Devices
         sdp_subarray_sim.SetDirectObsState(ObsState.RESOURCING)
 
         _, unique_id = central_node_low.store_resources(assign_input_json)
 
-        ERROR_MESSAGE = "Timeout has occurred, command failed"
+        ERROR_MESSAGE = (
+            "ska_tmc_common.exceptions.InvalidObsStateError: AssignResources "
+            + "command is not allowed in current observation state on device"
+        )
         assertion_data = event_recorder.has_change_event_occurred(
             central_node_low.central_node,
             "longRunningCommandResult",
             (unique_id[0], Anything),
         )
         assert ERROR_MESSAGE in assertion_data["attribute_value"][1]
-        sdp_subarray_sim.SetDefective(json.dumps({"enabled": False}))
