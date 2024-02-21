@@ -114,7 +114,7 @@ def test_assign_release_timeout_sdp(
     )
     assert unique_id[0].endswith("AssignResources")
     assert result[0] == ResultCode.QUEUED
-    exception_message = "Timeout has occurred, command failed"
+    exception_message = "Timeout has occured, command failed"
     assertion_data = event_recorder.has_change_event_occurred(
         central_node_low.central_node,
         attribute_name="longRunningCommandResult",
