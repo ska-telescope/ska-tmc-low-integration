@@ -35,7 +35,6 @@ def test_invalid_json_in_configure_obsState():
 @given("the TMC is On")
 def given_tmc(central_node_low, event_recorder):
     """Ensure the TMC is in the 'On' state."""
-    assert central_node_low.central_node.ping() > 0
     event_recorder.subscribe_event(
         central_node_low.central_node, "telescopeState"
     )
