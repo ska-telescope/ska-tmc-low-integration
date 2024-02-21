@@ -1,5 +1,4 @@
 """Test Error Propagation and Timeout for Configure command."""
-import json
 
 import pytest
 from ska_control_model import ObsState
@@ -56,14 +55,11 @@ class TestConfigureErrorPropagation:
             "telescopeState",
             DevState.ON,
         )
-        assign_input_json = prepare_json_args_for_centralnode_commands(
-            "assign_resources_low", command_input_factory
-        )
         configure_input_str = prepare_json_args_for_commands(
             "configure_low", command_input_factory
         )
 
-        central_node_low.store_resources(assign_input_json)
+        subarray_node_low.force_change_of_obs_state("IDLE")
         assert event_recorder.has_change_event_occurred(
             subarray_node_low.subarray_node, "obsState", ObsState.IDLE
         )
@@ -97,7 +93,6 @@ class TestConfigureErrorPropagation:
         assert (
             low_csp_subarray_leaf_node in assertion_data["attribute_value"][1]
         )
-        csp_subarray_sim.SetDefective(json.dumps({"enabled": False}))
 
     @pytest.mark.SKA_low
     def test_configure_timeout_sdp_ln(
@@ -173,4 +168,3 @@ class TestConfigureErrorPropagation:
         assert (
             low_sdp_subarray_leaf_node in assertion_data["attribute_value"][1]
         )
-        sdp_subarray_sim.SetDefective(json.dumps({"enabled": False}))
