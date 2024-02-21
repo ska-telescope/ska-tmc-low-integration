@@ -6,7 +6,7 @@ from ska_control_model import ObsState
 from ska_tango_testing.mock.placeholders import Anything
 from tango import DevState
 
-from tests.resources.test_harness.constant import COMMAND_NOT_ALLOWED_DEFECT
+from tests.resources.test_harness.constant import INTERMEDIATE_STATE_DEFECT
 from tests.resources.test_harness.utils.enums import SimulatorDeviceType
 from tests.resources.test_support.common_utils.tmc_helpers import (
     prepare_json_args_for_centralnode_commands,
@@ -58,7 +58,7 @@ class TestAssignCommandNotAllowedPropagation:
         )
 
         # Setting Defects on Devices
-        csp_subarray_sim.SetDefective(COMMAND_NOT_ALLOWED_DEFECT)
+        csp_subarray_sim.SetDefective(json.dumps(INTERMEDIATE_STATE_DEFECT))
 
         _, unique_id = central_node_low.store_resources(assign_input_json)
 
