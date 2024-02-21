@@ -13,6 +13,7 @@ from tests.resources.test_harness.constant import (
 from tests.resources.test_harness.helpers import (
     get_device_simulators,
     prepare_json_args_for_centralnode_commands,
+    wait_and_validate_device_attribute_value,
 )
 from tests.resources.test_harness.utils.enums import SimulatorDeviceType
 from tests.resources.test_support.common_utils.result_code import ResultCode
@@ -108,6 +109,12 @@ def test_assign_release_timeout_sdp(
     _, sdp_sim = get_device_simulators(simulator_factory)
     event_recorder.subscribe_event(sdp_sim, "obsState")
     sdp_sim.SetDefective(json.dumps(INTERMEDIATE_STATE_DEFECT))
+    assert wait_and_validate_device_attribute_value(
+        sdp_sim,
+        "defective",
+        json.dumps(INTERMEDIATE_STATE_DEFECT),
+        is_json=True,
+    )
     result, unique_id = central_node_low.perform_action(
         "AssignResources", assign_input_json
     )
@@ -162,6 +169,12 @@ def test_release_exception_propagation(
     central_node_low.perform_action("AssignResources", assign_input_json)
 
     csp_sim.SetDefective(json.dumps(INTERMEDIATE_STATE_DEFECT))
+    assert wait_and_validate_device_attribute_value(
+        csp_sim,
+        "defective",
+        json.dumps(INTERMEDIATE_STATE_DEFECT),
+        is_json=True,
+    )
     result, unique_id = central_node_low.perform_action(
         "ReleaseResources", release_input_json
     )
@@ -217,7 +230,12 @@ def test_assign_release_timeout_csp(
     )
 
     csp_subarray_sim.SetDefective(json.dumps(INTERMEDIATE_STATE_DEFECT))
-
+    assert wait_and_validate_device_attribute_value(
+        csp_subarray_sim,
+        "defective",
+        json.dumps(INTERMEDIATE_STATE_DEFECT),
+        is_json=True,
+    )
     _, unique_id = central_node_low.store_resources(assign_input_json)
     ERROR_MESSAGE = "Timeout has occurred, command failed"
     assertion_data = event_recorder.has_change_event_occurred(
