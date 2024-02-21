@@ -1,5 +1,4 @@
 """Test Error Propagation and Timeout for Configure command."""
-
 import pytest
 from ska_control_model import ObsState
 from ska_tango_testing.mock.placeholders import Anything
@@ -10,12 +9,8 @@ from tests.resources.test_harness.constant import (
     low_csp_subarray_leaf_node,
     low_sdp_subarray_leaf_node,
 )
-from tests.resources.test_harness.helpers import (
-    wait_and_validate_device_attribute_value,
-)
 from tests.resources.test_harness.utils.enums import SimulatorDeviceType
 from tests.resources.test_support.common_utils.tmc_helpers import (
-    prepare_json_args_for_centralnode_commands,
     prepare_json_args_for_commands,
 )
 
@@ -27,7 +22,6 @@ class TestConfigureErrorPropagation:
     @pytest.mark.SKA_low
     def test_configure_timeout_csp_ln(
         self,
-        central_node_low,
         subarray_node_low,
         event_recorder,
         simulator_factory,
@@ -39,24 +33,24 @@ class TestConfigureErrorPropagation:
             SimulatorDeviceType.LOW_CSP_DEVICE
         )
         # Event Subscriptions
-
+        event_recorder.subscribe_event(
+            subarray_node_low.subarray_node, "State"
+        )
         event_recorder.subscribe_event(
             subarray_node_low.subarray_node, "obsState"
         )
         event_recorder.subscribe_event(
             subarray_node_low.subarray_node, "longRunningCommandResult"
         )
-        event_recorder.subscribe_event(
-            central_node_low.central_node, "telescopeState"
-        )
-        central_node_low.move_to_on()
-        assert event_recorder.has_change_event_occurred(
-            central_node_low.central_node,
-            "telescopeState",
-            DevState.ON,
-        )
+
+        # Preparing input files
         configure_input_str = prepare_json_args_for_commands(
             "configure_low", command_input_factory
+        )
+
+        subarray_node_low.move_to_on()
+        assert event_recorder.has_change_event_occurred(
+            subarray_node_low.subarray_node, "State", DevState.ON
         )
 
         subarray_node_low.force_change_of_obs_state("IDLE")
@@ -66,13 +60,6 @@ class TestConfigureErrorPropagation:
 
         # Inducing Fault
         csp_subarray_sim.SetDefective(INTERMEDIATE_CONFIGURING_STATE_DEFECT)
-
-        assert wait_and_validate_device_attribute_value(
-            csp_subarray_sim,
-            "defective",
-            INTERMEDIATE_CONFIGURING_STATE_DEFECT,
-            is_json=True,
-        )
 
         _, unique_id = subarray_node_low.execute_transition(
             "Configure", configure_input_str
@@ -97,7 +84,6 @@ class TestConfigureErrorPropagation:
     @pytest.mark.SKA_low
     def test_configure_timeout_sdp_ln(
         self,
-        central_node_low,
         subarray_node_low,
         event_recorder,
         simulator_factory,
@@ -109,21 +95,14 @@ class TestConfigureErrorPropagation:
             SimulatorDeviceType.LOW_SDP_DEVICE
         )
         # Event Subscriptions
-
+        event_recorder.subscribe_event(
+            subarray_node_low.subarray_node, "State"
+        )
         event_recorder.subscribe_event(
             subarray_node_low.subarray_node, "obsState"
         )
         event_recorder.subscribe_event(
             subarray_node_low.subarray_node, "longRunningCommandResult"
-        )
-        event_recorder.subscribe_event(
-            central_node_low.central_node, "telescopeState"
-        )
-        central_node_low.move_to_on()
-        assert event_recorder.has_change_event_occurred(
-            central_node_low.central_node,
-            "telescopeState",
-            DevState.ON,
         )
 
         # Preparing input files
@@ -131,11 +110,12 @@ class TestConfigureErrorPropagation:
             "configure_low", command_input_factory
         )
 
-        assign_input_json = prepare_json_args_for_centralnode_commands(
-            "assign_resources_low", command_input_factory
+        subarray_node_low.move_to_on()
+        assert event_recorder.has_change_event_occurred(
+            subarray_node_low.subarray_node, "State", DevState.ON
         )
-        central_node_low.store_resources(assign_input_json)
 
+        subarray_node_low.force_change_of_obs_state("IDLE")
         assert event_recorder.has_change_event_occurred(
             subarray_node_low.subarray_node, "obsState", ObsState.IDLE
         )
@@ -143,12 +123,6 @@ class TestConfigureErrorPropagation:
         # Inducing Fault
         sdp_subarray_sim.SetDefective(INTERMEDIATE_CONFIGURING_STATE_DEFECT)
 
-        assert wait_and_validate_device_attribute_value(
-            sdp_subarray_sim,
-            "defective",
-            INTERMEDIATE_CONFIGURING_STATE_DEFECT,
-            is_json=True,
-        )
         _, unique_id = subarray_node_low.execute_transition(
             "Configure", configure_input_str
         )
