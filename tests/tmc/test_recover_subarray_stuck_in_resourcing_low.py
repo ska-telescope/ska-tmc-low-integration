@@ -273,7 +273,13 @@ def test_recover_subarray_stuck_in_resourcing_with_abort(
         ObsState.EMPTY,
     )
     _, sdp_sim = get_device_simulators(simulator_factory)
-    sdp_sim.SetDefective(json.dumps({"enabled": False}))
+    sdp_sim.SetDefective(json.dumps(INTERMEDIATE_STATE_DEFECT))
+    assert wait_and_validate_device_attribute_value(
+        sdp_sim,
+        "defective",
+        json.dumps(INTERMEDIATE_STATE_DEFECT),
+        is_json=True,
+    )
     central_node_low.perform_action("AssignResources", assign_input_json)
     assert event_recorder.has_change_event_occurred(
         central_node_low.subarray_node,
@@ -288,19 +294,14 @@ def test_recover_subarray_stuck_in_resourcing_with_abort(
     assert event_recorder.has_change_event_occurred(
         central_node_low.subarray_devices["sdp_subarray"],
         "obsState",
-        ObsState.EMPTY,
+        ObsState.RESOURCING,
     )
     assert event_recorder.has_change_event_occurred(
         central_node_low.subarray_devices["csp_subarray"],
         "obsState",
         ObsState.IDLE,
     )
-    sdp_sim.SetDirectObsstate(ObsState.IDLE)
-    assert event_recorder.has_change_event_occurred(
-        central_node_low.subarray_node,
-        "obsState",
-        ObsState.IDLE,
-    )
+
     central_node_low.subarray_node.Abort()
     assert event_recorder.has_change_event_occurred(
         central_node_low.subarray_node,
