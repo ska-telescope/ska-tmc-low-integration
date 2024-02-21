@@ -4,6 +4,7 @@ import json
 
 import pytest
 from ska_control_model import ObsState
+from ska_tango_testing.mock.placeholders import Anything
 from tango import DevState
 
 from tests.resources.test_harness.helpers import (
@@ -15,7 +16,6 @@ from tests.resources.test_harness.utils.enums import SimulatorDeviceType
 from tests.resources.test_support.constant_low import INTERMEDIATE_STATE_DEFECT
 
 
-@pytest.mark.jj
 @pytest.mark.SKA_low
 def test_recover_subarray_stuck_in_resourcing_low(
     event_recorder, central_node_low, command_input_factory, simulator_factory
@@ -57,7 +57,18 @@ def test_recover_subarray_stuck_in_resourcing_low(
         json.dumps(INTERMEDIATE_STATE_DEFECT),
         is_json=True,
     )
-    central_node_low.perform_action("AssignResources", assign_input_json)
+    _, unique_id = central_node_low.store_resources(assign_input_json)
+
+    assertion_data = event_recorder.has_change_event_occurred(
+        central_node_low.central_node,
+        "longRunningCommandResult",
+        (unique_id[0], Anything),
+    )
+    assert (
+        "Exception occurred on the following devices:\n"
+        "ska_low/tm_leaf_node/csp_subarray01"
+        in assertion_data["attribute_value"][1]
+    )
     assert event_recorder.has_change_event_occurred(
         central_node_low.subarray_node,
         "obsState",
@@ -69,17 +80,16 @@ def test_recover_subarray_stuck_in_resourcing_low(
         ObsState.EMPTY,
     )
     assert event_recorder.has_change_event_occurred(
-        central_node_low.subarray_devices["csp_subarray"],
+        csp_sim,
         "obsState",
         ObsState.IDLE,
     )
     assert event_recorder.has_change_event_occurred(
-        central_node_low.subarray_devices["mccs_subarray"],
+        mccs_sim,
         "obsState",
         ObsState.IDLE,
     )
     sdp_sim.SetDefective(json.dumps({"enabled": False}))
-    sdp_sim.SetDirectObsstate(ObsState.EMPTY)
     csp_sim.ReleaseAllResources()
     mccs_sim.ReleaseAllResources()
     assert event_recorder.has_change_event_occurred(
@@ -99,19 +109,17 @@ def test_recover_subarray_stuck_in_resourcing_low(
     )
 
 
-@pytest.mark.skip("unstable test case")
 @pytest.mark.SKA_low
 def test_recover_subarray_stuck_in_resourcing_with_sdp_empty_with_abort(
     event_recorder, central_node_low, command_input_factory, simulator_factory
 ):
-    """AssignResources and ReleaseResources is executed."""
+    """recover subarray when sdp is in empty with abort."""
     event_recorder.subscribe_event(
         central_node_low.central_node, "telescopeState"
     )
     assign_input_json = prepare_json_args_for_centralnode_commands(
         "assign_resources_low", command_input_factory
     )
-
     event_recorder.subscribe_event(
         central_node_low.central_node, "longRunningCommandResult"
     )
@@ -131,38 +139,46 @@ def test_recover_subarray_stuck_in_resourcing_with_sdp_empty_with_abort(
         "telescopeState",
         DevState.ON,
     )
-    assert event_recorder.has_change_event_occurred(
-        central_node_low.subarray_node,
-        "obsState",
-        ObsState.EMPTY,
+    csp_sim, sdp_sim = get_device_simulators(simulator_factory)
+    mccs_sim = simulator_factory.get_or_create_simulator_device(
+        SimulatorDeviceType.MCCS_SUBARRAY_DEVICE
     )
-    (
-        _,
+    sdp_sim.SetDefective(json.dumps(INTERMEDIATE_STATE_DEFECT))
+    assert wait_and_validate_device_attribute_value(
         sdp_sim,
-    ) = get_device_simulators(simulator_factory)
-    central_node_low.perform_action("AssignResources", assign_input_json)
+        "defective",
+        json.dumps(INTERMEDIATE_STATE_DEFECT),
+        is_json=True,
+    )
+    _, unique_id = central_node_low.store_resources(assign_input_json)
+    ERROR_MESSAGE = "Timeout has occurred, command failed"
+    assertion_data = event_recorder.has_change_event_occurred(
+        central_node_low.central_node,
+        "longRunningCommandResult",
+        (unique_id[0], Anything),
+    )
+    assert ERROR_MESSAGE in assertion_data["attribute_value"][1]
     assert event_recorder.has_change_event_occurred(
         central_node_low.subarray_node,
         "obsState",
         ObsState.RESOURCING,
     )
     assert event_recorder.has_change_event_occurred(
-        central_node_low.subarray_devices["mccs_subarray"],
-        "obsState",
-        ObsState.IDLE,
-    )
-    assert event_recorder.has_change_event_occurred(
-        central_node_low.subarray_devices["sdp_subarray"],
+        sdp_sim,
         "obsState",
         ObsState.EMPTY,
     )
     assert event_recorder.has_change_event_occurred(
-        central_node_low.subarray_devices["csp_subarray"],
+        csp_sim,
+        "obsState",
+        ObsState.IDLE,
+    )
+    assert event_recorder.has_change_event_occurred(
+        mccs_sim,
         "obsState",
         ObsState.IDLE,
     )
     sdp_sim.SetDefective(json.dumps({"enabled": False}))
-    sdp_sim.SetDirectObsstate(ObsState.IDLE)
 
     central_node_low.subarray_node.Abort()
     assert event_recorder.has_change_event_occurred(
@@ -188,14 +204,13 @@ def test_recover_subarray_stuck_in_resourcing_with_sdp_empty_with_abort(
 def test_recover_subarray_stuck_in_resourcing_with_csp_empty_with_abort(
     event_recorder, central_node_low, command_input_factory, simulator_factory
 ):
-    """AssignResources and ReleaseResources is executed."""
+    """recover subarray when csp is in empty with abort."""
     event_recorder.subscribe_event(
         central_node_low.central_node, "telescopeState"
     )
     assign_input_json = prepare_json_args_for_centralnode_commands(
         "assign_resources_low", command_input_factory
     )
-
     event_recorder.subscribe_event(
         central_node_low.central_node, "longRunningCommandResult"
     )
@@ -215,42 +230,59 @@ def test_recover_subarray_stuck_in_resourcing_with_csp_empty_with_abort(
         "telescopeState",
         DevState.ON,
     )
-    assert event_recorder.has_change_event_occurred(
-        central_node_low.subarray_node,
-        "obsState",
-        ObsState.EMPTY,
+    csp_sim, sdp_sim = get_device_simulators(simulator_factory)
+    mccs_sim = simulator_factory.get_or_create_simulator_device(
+        SimulatorDeviceType.MCCS_SUBARRAY_DEVICE
     )
-    csp_sim, _ = get_device_simulators(simulator_factory)
-    central_node_low.perform_action("AssignResources", assign_input_json)
+    csp_sim.SetDefective(json.dumps(INTERMEDIATE_STATE_DEFECT))
+    assert wait_and_validate_device_attribute_value(
+        sdp_sim,
+        "defective",
+        json.dumps(INTERMEDIATE_STATE_DEFECT),
+        is_json=True,
+    )
+    _, unique_id = central_node_low.store_resources(assign_input_json)
+    ERROR_MESSAGE = "Timeout has occurred, command failed"
+    assertion_data = event_recorder.has_change_event_occurred(
+        central_node_low.central_node,
+        "longRunningCommandResult",
+        (unique_id[0], Anything),
+    )
+    assert ERROR_MESSAGE in assertion_data["attribute_value"][1]
     assert event_recorder.has_change_event_occurred(
         central_node_low.subarray_node,
         "obsState",
         ObsState.RESOURCING,
     )
     assert event_recorder.has_change_event_occurred(
-        central_node_low.subarray_devices["mccs_subarray"],
-        "obsState",
-        ObsState.IDLE,
-    )
-    assert event_recorder.has_change_event_occurred(
-        central_node_low.subarray_devices["sdp_subarray"],
+        csp_sim,
         "obsState",
         ObsState.EMPTY,
     )
     assert event_recorder.has_change_event_occurred(
-        central_node_low.subarray_devices["csp_subarray"],
+        sdp_sim,
         "obsState",
         ObsState.IDLE,
     )
-    csp_sim.SetDirectObsstate(ObsState.IDLE)
+    assert event_recorder.has_change_event_occurred(
+        mccs_sim,
+        "obsState",
+        ObsState.IDLE,
+    )
+    csp_sim.SetDefective(json.dumps({"enabled": False}))
 
-    central_node_low.subarray_node.Abort()
+    central_node_low.perform_action("Abort")
+    assert event_recorder.has_change_event_occurred(
+        central_node_low.subarray_node,
+        "obsState",
+        ObsState.ABORTING,
+    )
     assert event_recorder.has_change_event_occurred(
         central_node_low.subarray_node,
         "obsState",
         ObsState.ABORTED,
     )
-    central_node_low.subarray_node.Restart()
+    central_node_low.perform_action("Restart")
 
     assert event_recorder.has_change_event_occurred(
         central_node_low.subarray_node,
