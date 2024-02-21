@@ -222,7 +222,7 @@ def test_assign_release_timeout_csp(
     csp_subarray_sim.SetDefective(COMMAND_NOT_ALLOWED_DEFECT)
 
     _, unique_id = central_node_low.store_resources(assign_input_json)
-    ERROR_MESSAGE = "Timeout has occurred, command failed"
+    ERROR_MESSAGE = "Error in invoking AssignResources command on Csp Subarray"
     assertion_data = event_recorder.has_change_event_occurred(
         central_node_low.central_node,
         "longRunningCommandResult",
