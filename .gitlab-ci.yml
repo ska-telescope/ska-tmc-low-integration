@@ -159,6 +159,9 @@ k8s-test-tmc-with-mccs:
     - 'make help | grep k8s-test'
     - make k8s-install-chart K8S_HELMFILE_ENV=tmc-integration
     - make k8s-wait
+  after_script:
+    - pip3 install -U ska-ser-xray
+    - XRAY_TEST_RESULT_FILE="build/cucumber.json" make xray-publish
   retry: 1
 
 stop-k8s-test-tmc-with-mccs:
