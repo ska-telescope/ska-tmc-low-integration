@@ -15,7 +15,6 @@ from tests.resources.test_harness.helpers import (
 )
 from tests.resources.test_harness.utils.enums import SimulatorDeviceType
 from tests.resources.test_support.common_utils.tmc_helpers import (
-    prepare_json_args_for_centralnode_commands,
     prepare_json_args_for_commands,
 )
 
@@ -131,10 +130,7 @@ class TestConfigureErrorPropagation:
             "configure_low", command_input_factory
         )
 
-        assign_input_json = prepare_json_args_for_centralnode_commands(
-            "assign_resources_low", command_input_factory
-        )
-        central_node_low.store_resources(assign_input_json)
+        subarray_node_low.force_change_of_obs_state("IDLE")
 
         assert event_recorder.has_change_event_occurred(
             subarray_node_low.subarray_node, "obsState", ObsState.IDLE
