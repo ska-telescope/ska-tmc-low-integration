@@ -11,10 +11,11 @@ from tests.resources.test_harness.helpers import (
     prepare_json_args_for_centralnode_commands,
     wait_and_validate_device_attribute_value,
 )
+from tests.resources.test_harness.utils.enums import SimulatorDeviceType
 from tests.resources.test_support.constant_low import INTERMEDIATE_STATE_DEFECT
 
 
-@pytest.mark.skip("unstable test case")
+@pytest.mark.jj
 @pytest.mark.SKA_low
 def test_recover_subarray_stuck_in_resourcing_low(
     event_recorder, central_node_low, command_input_factory, simulator_factory
@@ -45,7 +46,10 @@ def test_recover_subarray_stuck_in_resourcing_low(
         "telescopeState",
         DevState.ON,
     )
-    _, sdp_sim = get_device_simulators(simulator_factory)
+    csp_sim, sdp_sim = get_device_simulators(simulator_factory)
+    mccs_sim = simulator_factory.get_or_create_simulator_device(
+        SimulatorDeviceType.MCCS_SUBARRAY_DEVICE
+    )
     sdp_sim.SetDefective(json.dumps(INTERMEDIATE_STATE_DEFECT))
     assert wait_and_validate_device_attribute_value(
         sdp_sim,
@@ -69,8 +73,25 @@ def test_recover_subarray_stuck_in_resourcing_low(
         "obsState",
         ObsState.IDLE,
     )
+    assert event_recorder.has_change_event_occurred(
+        central_node_low.subarray_devices["mccs_subarray"],
+        "obsState",
+        ObsState.IDLE,
+    )
     sdp_sim.SetDefective(json.dumps({"enabled": False}))
     sdp_sim.SetDirectObsstate(ObsState.EMPTY)
+    csp_sim.ReleaseAllResources()
+    mccs_sim.ReleaseAllResources()
+    assert event_recorder.has_change_event_occurred(
+        mccs_sim,
+        "obsState",
+        ObsState.EMPTY,
+    )
+    assert event_recorder.has_change_event_occurred(
+        csp_sim,
+        "obsState",
+        ObsState.EMPTY,
+    )
     assert event_recorder.has_change_event_occurred(
         central_node_low.subarray_node,
         "obsState",
