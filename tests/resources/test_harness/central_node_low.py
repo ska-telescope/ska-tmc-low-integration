@@ -366,16 +366,18 @@ class CentralNodeWrapperLow(object):
         else:
             LOGGER.info("No devices to reset healthState")
 
-    def perform_action(self, command_name: str, input_json: str):
+    def perform_action(self, command_name: str, input_json: str = ""):
         """Execute provided command on centralnode
         Args:
             command_name (str): Name of command to execute
             input_json (str): Json send as input to execute command
         """
-
-        result, message = self.central_node.command_inout(
-            command_name, input_json
-        )
+        if input_json:
+            result, message = self.central_node.command_inout(
+                command_name, input_json
+            )
+        else:
+            result, message = self.central_node.command_inout(command_name)
         return result, message
 
     def set_values_with_all_mocks(self, subarray_state):
