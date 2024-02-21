@@ -199,11 +199,11 @@ class SubarrayNodeWrapperLow:
             input_json (str): Json send as input to execute command
         """
         if input_json:
-            result, message = self.central_node.command_inout(
+            result, message = self.subarray_node.command_inout(
                 command_name, input_json
             )
         else:
-            result, message = self.central_node.command_inout(command_name)
+            result, message = self.subarray_node.command_inout(command_name)
         return result, message
 
     @sync_assign_resources(device_dict=device_dict_low)
