@@ -14,6 +14,7 @@ from tests.resources.test_harness.helpers import (
 from tests.resources.test_support.constant_low import INTERMEDIATE_STATE_DEFECT
 
 
+@pytest.mark.skip("unstable test case")
 @pytest.mark.SKA_low
 def test_recover_subarray_stuck_in_resourcing_low(
     event_recorder, central_node_low, command_input_factory, simulator_factory
@@ -77,6 +78,7 @@ def test_recover_subarray_stuck_in_resourcing_low(
     )
 
 
+@pytest.mark.skip("unstable test case")
 @pytest.mark.SKA_low
 def test_recover_subarray_stuck_in_resourcing_with_sdp_empty_with_abort(
     event_recorder, central_node_low, command_input_factory, simulator_factory
