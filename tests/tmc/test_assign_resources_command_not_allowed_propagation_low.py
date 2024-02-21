@@ -133,6 +133,8 @@ class TestAssignCommandNotAllowedPropagation:
             (unique_id[0], Anything),
         )
         assert ERROR_MESSAGE in assertion_data["attribute_value"][1]
+        # Revert Defects on Devices
+        sdp_subarray_sim.SetDirectObsState(ObsState.EMPTY)
 
         # Manually setting the obsState to EMPTY to circumvent the Restart
         # command bug. Will be removed once the Bug is fixed under HM-371
