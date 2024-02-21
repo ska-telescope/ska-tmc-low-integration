@@ -9,7 +9,6 @@ from tango import DevState
 
 from tests.resources.test_harness.constant import (
     COMMAND_FAILED_WITH_EXCEPTION_OBSSTATE_EMPTY,
-    COMMAND_NOT_ALLOWED_DEFECT,
 )
 from tests.resources.test_harness.helpers import (
     get_device_simulators,
@@ -219,10 +218,10 @@ def test_assign_release_timeout_csp(
         DevState.ON,
     )
 
-    csp_subarray_sim.SetDefective(COMMAND_NOT_ALLOWED_DEFECT)
+    csp_subarray_sim.SetDefective(json.dumps(INTERMEDIATE_STATE_DEFECT))
 
     _, unique_id = central_node_low.store_resources(assign_input_json)
-    ERROR_MESSAGE = "Error in invoking AssignResources command on Csp Subarray"
+    ERROR_MESSAGE = "Timeout has occurred, command failed"
     assertion_data = event_recorder.has_change_event_occurred(
         central_node_low.central_node,
         "longRunningCommandResult",
