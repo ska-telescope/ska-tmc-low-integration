@@ -353,23 +353,21 @@ def wait_for_updates_on_delay_model(csp_subarray_leaf_node) -> None:
         )
 
 
-# def wait_for_updates_stop_on_delay_model(csp_subarray_leaf_node) -> None:
-#     start_time = time.time()
-#     time_elapsed = 0
-#     while (
-#         csp_subarray_leaf_node.delayModel != "no_value"
-#         and time_elapsed <= TIMEOUT
-#     ):
-#         time.sleep(1)
-#         time_elapsed = time.time() - start_time
-#     if (
-#         csp_subarray_leaf_node.delayModel != "no_value"
-#         and time_elapsed > TIMEOUT
-#     ):
-#         raise Exception(
-#             "Timeout while waiting for CspSubarrayLeafNode to generate \
-#                 delay values."
-#         )
+def wait_for_updates_stop_on_delay_model(csp_subarray_leaf_node) -> None:
+    start_time = time.time()
+    time_elapsed = 0
+    required_delay_stop_time = 350
+    while (
+        csp_subarray_leaf_node.delayModel != "no_value"
+        and time_elapsed <= required_delay_stop_time
+    ):
+        time.sleep(1)
+        time_elapsed = time.time() - start_time
+    if time_elapsed > required_delay_stop_time:
+        raise Exception(
+            "Timeout while waiting for CspSubarrayLeafNode to generate \
+                delay values."
+        )
 
 
 def get_simulated_devices_info() -> dict:

@@ -14,9 +14,11 @@ from tests.resources.test_harness.helpers import (
     prepare_json_args_for_centralnode_commands,
     prepare_json_args_for_commands,
     wait_for_updates_on_delay_model,
+    wait_for_updates_stop_on_delay_model,
 )
 
 
+@pytest.mark.test2
 @pytest.mark.SKA_low
 @scenario(
     "../features/tmc/check_low_delay_model.feature",
@@ -79,26 +81,25 @@ def check_if_delay_values_are_generating(subarray_node_low) -> None:
     ]
 
 
-# @when("I end the observation")
-# def invoke_end_command(subarray_node_low, event_recorder) -> None:
-#     """Invoke End command."""
-#     subarray_node_low.end_observation()
-#     event_recorder.subscribe_event(subarray_node_low.
-# subarray_node, "obsState")
-#     assert event_recorder.has_change_event_occurred(
-#         subarray_node_low.subarray_node,
-#         "obsState",
-#         ObsState.IDLE,
-#     )
+@when("I end the observation")
+def invoke_end_command(subarray_node_low, event_recorder) -> None:
+    """Invoke End command."""
+    subarray_node_low.end_observation()
+    event_recorder.subscribe_event(subarray_node_low.subarray_node, "obsState")
+    assert event_recorder.has_change_event_occurred(
+        subarray_node_low.subarray_node,
+        "obsState",
+        ObsState.IDLE,
+    )
 
 
-# @then("CSP Subarray Leaf Node stops generating delay values")
-# def check_if_delay_values_are_not_generating(subarray_node_low) -> None:
-#     """Check if delay values are generating."""
-#     wait_for_updates_stop_on_delay_model(
-#         subarray_node_low.csp_subarray_leaf_node
-#     )
-#     assert subarray_node_low.csp_subarray_leaf_node.delayModel in [
-#         "",
-#         "no_value",
-#     ]
+@then("CSP Subarray Leaf Node stops generating delay values")
+def check_if_delay_values_are_not_generating(subarray_node_low) -> None:
+    """Check if delay values are generating."""
+    wait_for_updates_stop_on_delay_model(
+        subarray_node_low.csp_subarray_leaf_node
+    )
+    assert subarray_node_low.csp_subarray_leaf_node.delayModel in [
+        "",
+        "no_value",
+    ]
