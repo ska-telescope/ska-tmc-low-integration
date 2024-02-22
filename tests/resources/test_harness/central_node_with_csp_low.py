@@ -38,7 +38,7 @@ class CentralNodeCspWrapperLow(CentralNodeWrapperLow):
             device_proxy = DeviceProxy(device)
             device_proxy.SetDirectState(DevState.ON)
         self.wait.set_wait_for_telescope_on()
-        self.wait.wait(30)
+        self.wait.wait(300)
 
     def _reset_health_state_for_mock_devices(self):
         """Reset Mock devices"""
