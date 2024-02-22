@@ -18,7 +18,6 @@ from tests.resources.test_harness.helpers import (
 )
 
 
-@pytest.mark.test2
 @pytest.mark.SKA_low
 @scenario(
     "../features/tmc/check_low_delay_model.feature",
