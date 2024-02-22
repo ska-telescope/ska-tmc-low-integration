@@ -105,16 +105,24 @@ ska-sdp:
 ska-low-cbf:
   enabled: false
   minikube: true
-  ska-low-cbf-conn:
-    enabled: false
-  ska-low-cbf-proc:
-    deviceServers:
-      processor:
-        instances: ["0", "1"]
-        resources:
-          limits:
-            xilinx.com/fpga-xilinx_u55c_gen3x16_xdma_base_3-0: 0  # no FPGA hardware
-            memory: 512Mi  # reduced
+  labels:
+    app: ska-csp-lmc-low
+  cbf:
+    hardware_connections:
+      # psi-perentie1
+      - 'switch=p4_01  port=19/0  speed=100  alveo=XFL14SLO1LIF'
+      - 'switch=p4_01  port=21/0  speed=100  alveo=XFL1DKXBEVG2'
+      - 'switch=p4_01  port=23/0  speed=100  alveo=XFL1HOOQ1Y44'
+      - 'switch=p4_01  port=25/0  speed=100  alveo=XFL1LHN4TXO2'
+
+ska-low-cbf-proc:
+  deviceServers:
+    processor:
+      instances: ["0", "1"]
+      resources:
+        limits:
+          xilinx.com/fpga-xilinx_u55c_gen3x16_xdma_base_3-0: 0  # no FPGA hardware
+          memory: 512Mi  # reduced
 
 ska-csp-lmc-low:
   legacy_compatibility: true
@@ -476,14 +484,6 @@ ska-low-mccs:
     cluster_domain: cluster.local
     minikube: true
     tango_host: databaseds-tango-base:10000
-ska-low-cbf-proc:
-  deviceServers:
-    processor:
-      instances: ["0", "1"]
-      resources:
-        limits:
-          xilinx.com/fpga-xilinx_u55c_gen3x16_xdma_base_3-0: 0  # no FPGA hardware
-          memory: 512Mi  # reduced
 
 
 # SKUID
