@@ -147,6 +147,7 @@ device_dict_low = {
     "mccs_master_leaf_node": mccs_master_leaf_node,
     "mccs_subarray_leaf_node": mccs_subarray_leaf_node,
     "mccs_subarray": mccs_subarray1,
+    "central_node": low_centralnode,
 }
 
 SIMULATOR_DEVICE_FQDN_DICT = {

@@ -36,6 +36,9 @@ class Waiter:
         self.tmc_sdp_subarray_leaf_node = kwargs.get("sdp_subarray_leaf_node")
         self.cbf_subarray1 = kwargs.get("cbf_subarray1")
         self.cbf_controller = kwargs.get("cbf_controller")
+        self.mccs_subarray = kwargs.get("mccs_subarray")
+        self.central_node = kwargs.get("central_node")
+        self.mccs_master = kwargs.get("mccs_master")
 
     def clear_watches(self):
         self.waits = []
@@ -58,6 +61,23 @@ class Waiter:
         )
         self.waits.append(
             watch(Resource(self.csp_master)).to_become(
+                "State", changed_to="OFF"
+            )
+        )
+        self.waits.append(
+            watch(Resource(self.mccs_subarray)).to_become(
+                "State", changed_to="OFF"
+            )
+        )
+
+        self.waits.append(
+            watch(Resource(self.central_node)).to_become(
+                "telescopeState", changed_to="OFF"
+            )
+        )
+
+        self.waits.append(
+            watch(Resource(self.mccs_master)).to_become(
                 "State", changed_to="OFF"
             )
         )
@@ -106,6 +126,17 @@ class Waiter:
             )
         )
 
+        self.waits.append(
+            watch(Resource(self.mccs_subarray)).to_become(
+                "State", changed_to="ON"
+            )
+        )
+        self.waits.append(
+            watch(Resource(self.mccs_master)).to_become(
+                "State", changed_to="ON"
+            )
+        )
+
         if self.cbf_subarray1:
             watch(Resource(self.cbf_subarray1)).to_become(
                 "State", changed_to="ON"
@@ -117,6 +148,11 @@ class Waiter:
             watch(Resource(self.cbf_controller)).to_become(
                 "reportVccState", changed_to="[0, 0, 0, 0]"
             )
+        self.waits.append(
+            watch(Resource(self.central_node)).to_become(
+                "telescopeState", changed_to="ON"
+            )
+        )
 
     def set_wait_for_going_to_empty(self):
         self.waits.append(
