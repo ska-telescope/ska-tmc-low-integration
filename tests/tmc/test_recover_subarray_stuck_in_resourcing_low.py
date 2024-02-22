@@ -358,7 +358,7 @@ def test_recover_subarray_stuck_in_resourcing_with_abort(
         ObsState.RESOURCING,
     )
 
-    central_node_low.subarray_node.Abort()
+    central_node_low.perform_action("Abort")
     sdp_sim.SetDefective(json.dumps({"enabled": False}))
     assert event_recorder.has_change_event_occurred(
         central_node_low.subarray_node,
@@ -370,7 +370,7 @@ def test_recover_subarray_stuck_in_resourcing_with_abort(
         "obsState",
         ObsState.ABORTED,
     )
-    central_node_low.subarray_node.Restart()
+    central_node_low.perform_action("Restart")
 
     assert event_recorder.has_change_event_occurred(
         central_node_low.subarray_node,
