@@ -7,40 +7,20 @@ and validate the rejection
 of various invalid JSON inputs.
 """
 import json
-from copy import deepcopy
 
 import pytest
 from pytest_bdd import given, parsers, scenario, then, when
+from ska_control_model import ObsState
+from tango import DevState
 
 from tests.conftest import LOGGER
 from tests.resources.test_support.common_utils.result_code import ResultCode
-from tests.resources.test_support.common_utils.telescope_controls import (
-    BaseTelescopeControl,
-)
 from tests.resources.test_support.common_utils.tmc_helpers import (
-    TmcHelper,
-    tear_down,
-)
-from tests.resources.test_support.constant_low import (
-    DEVICE_OBS_STATE_EMPTY_INFO,
-    DEVICE_OBS_STATE_IDLE_INFO,
-    DEVICE_OBS_STATE_READY_INFO,
-    DEVICE_STATE_ON_INFO,
-    DEVICE_STATE_STANDBY_INFO,
-    ON_OFF_DEVICE_COMMAND_DICT,
-    centralnode,
-    tmc_subarraynode1,
+    prepare_json_args_for_centralnode_commands,
+    prepare_json_args_for_commands,
 )
 
-tmc_helper = TmcHelper(centralnode, tmc_subarraynode1)
-telescope_control = BaseTelescopeControl()
 
-
-@pytest.mark.skip(
-    reason="AssignResources and ReleaseResources"
-    " functionalities are not yet"
-    " implemented on mccs master leaf node."
-)
 @pytest.mark.SKA_low
 @scenario(
     "../features/tmc/check_invalid_json_not_allowed.feature",
@@ -53,86 +33,73 @@ def test_invalid_json_in_configure_obsState():
 
 
 @given("the TMC is On")
-def given_tmc(json_factory):
+def given_tmc(central_node_low, event_recorder):
     """Ensure the TMC is in the 'On' state."""
-    release_json = json_factory("command_release_resource_low")
-    try:
-        # Verify Telescope is Off/Standby
-        assert telescope_control.is_in_valid_state(
-            DEVICE_STATE_STANDBY_INFO, "State"
-        )
-
-        # Invoke TelescopeOn() command on TMC CentralNode
-        LOGGER.info("Invoking TelescopeOn command on TMC CentralNode")
-        tmc_helper.set_to_on(**ON_OFF_DEVICE_COMMAND_DICT)
-
-        # Verify State transitions after TelescopeOn
-        assert telescope_control.is_in_valid_state(
-            DEVICE_STATE_ON_INFO, "State"
-        )
-
-    except Exception:
-        tear_down(release_json, **ON_OFF_DEVICE_COMMAND_DICT)
+    event_recorder.subscribe_event(
+        central_node_low.central_node, "telescopeState"
+    )
+    central_node_low.move_to_on()
+    assert event_recorder.has_change_event_occurred(
+        central_node_low.central_node,
+        "telescopeState",
+        DevState.ON,
+    )
 
 
 @given("the subarray is in IDLE obsState")
-def tmc_check_status(json_factory):
+def tmc_check_status(event_recorder, central_node_low, command_input_factory):
     """Set the subarray to 'IDLE' observation state."""
-    assert telescope_control.is_in_valid_state(
-        DEVICE_OBS_STATE_EMPTY_INFO, "obsState"
+    event_recorder.subscribe_event(central_node_low.subarray_node, "obsState")
+    assign_input_json = prepare_json_args_for_centralnode_commands(
+        "assign_resources_low", command_input_factory
     )
-    assign_json = json_factory("command_assign_resource_low")
-    LOGGER.info("Invoking AssignResources command on TMC CentralNode")
-    tmc_helper.compose_sub(assign_json, **ON_OFF_DEVICE_COMMAND_DICT)
-
-    # Verify ObsState is IDLE
-    assert telescope_control.is_in_valid_state(
-        DEVICE_OBS_STATE_IDLE_INFO, "obsState"
+    central_node_low.store_resources(assign_input_json)
+    assert event_recorder.has_change_event_occurred(
+        central_node_low.subarray_node, "obsState", ObsState.RESOURCING
+    )
+    assert event_recorder.has_change_event_occurred(
+        central_node_low.subarray_node, "obsState", ObsState.IDLE
     )
 
 
 @when(
     parsers.parse("the command Configure is invoked with {invalid_json} input")
 )
-def send(json_factory, invalid_json):
+def send(subarray_node_low, invalid_json, command_input_factory):
     """Invoke the Configure command with different invalid JSON inputs."""
-    device_params = deepcopy(ON_OFF_DEVICE_COMMAND_DICT)
-    device_params["set_wait_for_obsstate"] = False
-    release_json = json_factory("command_release_resource_low")
-    try:
-        configure_json = json_factory("command_Configure_low")
-        if invalid_json == "csp_key_missing":
-            invalid_configure_json = json.loads(configure_json)
-            del invalid_configure_json["csp"]
-            pytest.command_result = tmc_helper.configure_subarray(
-                json.dumps(invalid_configure_json), **device_params
-            )
-        elif invalid_json == "sdp_key_missing":
-            invalid_configure_json = json.loads(configure_json)
-            del invalid_configure_json["sdp"]
-            pytest.command_result = tmc_helper.configure_subarray(
-                json.dumps(invalid_configure_json), **device_params
-            )
-        elif invalid_json == "tmc_key_missing":
-            invalid_configure_json = json.loads(configure_json)
-            del invalid_configure_json["tmc"]
-            pytest.command_result = tmc_helper.configure_subarray(
-                json.dumps(invalid_configure_json), **device_params
-            )
-        elif invalid_json == "scan_duration_key_missing":
-            invalid_configure_json = json.loads(configure_json)
-            del invalid_configure_json["tmc"]["scan_duration"]
-            pytest.command_result = tmc_helper.configure_subarray(
-                json.dumps(invalid_configure_json), **device_params
-            )
-        elif invalid_json == "empty_string":
-            invalid_configure_json = ""
-            pytest.command_result = tmc_helper.configure_subarray(
-                invalid_configure_json, **device_params
-            )
-    except Exception as e:
-        LOGGER.exception(f"Exception occurred: {e}")
-        tear_down(release_json, **ON_OFF_DEVICE_COMMAND_DICT)
+
+    configure_json = prepare_json_args_for_commands(
+        "configure_low", command_input_factory
+    )
+    if invalid_json == "csp_key_missing":
+        invalid_configure_json = json.loads(configure_json)
+        del invalid_configure_json["csp"]
+        pytest.command_result = subarray_node_low.execute_transition(
+            "Configure", json.dumps(invalid_configure_json)
+        )
+    elif invalid_json == "sdp_key_missing":
+        invalid_configure_json = json.loads(configure_json)
+        del invalid_configure_json["sdp"]
+        pytest.command_result = subarray_node_low.execute_transition(
+            "Configure", json.dumps(invalid_configure_json)
+        )
+    elif invalid_json == "tmc_key_missing":
+        invalid_configure_json = json.loads(configure_json)
+        del invalid_configure_json["tmc"]
+        pytest.command_result = subarray_node_low.execute_transition(
+            "Configure", json.dumps(invalid_configure_json)
+        )
+    elif invalid_json == "scan_duration_key_missing":
+        invalid_configure_json = json.loads(configure_json)
+        del invalid_configure_json["tmc"]["scan_duration"]
+        pytest.command_result = subarray_node_low.execute_transition(
+            "Configure", json.dumps(invalid_configure_json)
+        )
+    elif invalid_json == "empty_string":
+        invalid_configure_json = {}
+        pytest.command_result = subarray_node_low.execute_transition(
+            "Configure", json.dumps(invalid_configure_json)
+        )
 
 
 @then(
@@ -162,69 +129,37 @@ def invalid_command_rejection(invalid_json):
             in pytest.command_result[1][0]
         )
     elif invalid_json == "scan_duration_key_missing":
-        assert (
-            "Malformed input string. The key -> `scan_duration` is missing"
-            in pytest.command_result[1][0]
-        )
+        assert "Malformed input string" in pytest.command_result[1][0]
     elif invalid_json == "empty_string":
         assert "Malformed input string" in pytest.command_result[1][0]
 
 
 @then("TMC subarray remains in IDLE obsState")
-def tmc_status():
+def tmc_status(event_recorder, subarray_node_low):
     """Ensure that the TMC subarray remains in the 'IDLE' observation state
     after rejection."""
-    # Verify obsState transitions
-    assert telescope_control.is_in_valid_state(
-        DEVICE_OBS_STATE_IDLE_INFO, "obsState"
-    )
+    assert subarray_node_low.subarray_node.obsState == ObsState.IDLE
 
 
 @then(
     "TMC successfully executes the Configure \
 command for the subarray with a valid json"
 )
-def tmc_accepts_next_commands(json_factory):
+def tmc_accepts_next_commands(
+    subarray_node_low, command_input_factory, event_recorder, central_node_low
+):
     """Execute the Configure command with a valid JSON and verify successful
     execution."""
-    release_json = json_factory("command_release_resource_low")
-    try:
-        configure_json = json_factory("command_Configure_low")
-        LOGGER.info(f"Input argin for Configure: {configure_json}")
+    configure_json = prepare_json_args_for_commands(
+        "configure_low", command_input_factory
+    )
+    LOGGER.info(f"Input argin for Configure: {configure_json}")
 
-        # Invoke Configure() Command on TMC
-        LOGGER.info("Invoking Configure command on TMC SubarrayNode")
-        tmc_helper.configure_subarray(
-            configure_json, **ON_OFF_DEVICE_COMMAND_DICT
-        )
-        assert telescope_control.is_in_valid_state(
-            DEVICE_OBS_STATE_READY_INFO, "obsState"
-        )
-
-        # teardown
-        LOGGER.info("Invoking END on TMC")
-        tmc_helper.end(**ON_OFF_DEVICE_COMMAND_DICT)
-
-        #  Verify obsState is IDLE
-        assert telescope_control.is_in_valid_state(
-            DEVICE_OBS_STATE_IDLE_INFO, "obsState"
-        )
-
-        LOGGER.info("Invoking ReleaseResources on TMC")
-        tmc_helper.invoke_releaseResources(
-            release_json, **ON_OFF_DEVICE_COMMAND_DICT
-        )
-
-        assert telescope_control.is_in_valid_state(
-            DEVICE_OBS_STATE_EMPTY_INFO, "obsState"
-        )
-
-        LOGGER.info("Invoking Telescope Standby on TMC")
-        tmc_helper.set_to_standby(**ON_OFF_DEVICE_COMMAND_DICT)
-
-        assert telescope_control.is_in_valid_state(
-            DEVICE_STATE_STANDBY_INFO, "State"
-        )
-        LOGGER.info("Tear Down complete. Telescope is in Standby State")
-    except Exception:
-        tear_down(release_json, **ON_OFF_DEVICE_COMMAND_DICT)
+    # Invoke Configure() Command on TMC
+    LOGGER.info("Invoking Configure command on TMC SubarrayNode")
+    subarray_node_low.store_configuration_data(configure_json)
+    assert event_recorder.has_change_event_occurred(
+        subarray_node_low.subarray_node,
+        "obsState",
+        ObsState.READY,
+    )

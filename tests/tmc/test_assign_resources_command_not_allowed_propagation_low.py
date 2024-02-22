@@ -71,15 +71,6 @@ class TestAssignCommandNotAllowedPropagation:
         )
         assert ERROR_MESSAGE in assertion_data["attribute_value"][1]
 
-        # Manually setting the obsState to EMPTY to circumvent the Restart
-        # command bug. Will be removed once the Bug is fixed under HM-371
-        mccs_subarray_sim.SetDirectObsState(ObsState.EMPTY)
-        assert event_recorder.has_change_event_occurred(
-            mccs_subarray_sim,
-            "obsState",
-            ObsState.EMPTY,
-        )
-
     @pytest.mark.SKA_low
     def test_assign_command_not_allowed_propagation_sdp_ln_low(
         self,
@@ -105,7 +96,7 @@ class TestAssignCommandNotAllowedPropagation:
             central_node_low.central_node, "longRunningCommandResult"
         )
         event_recorder.subscribe_event(mccs_subarray_sim, "obsState")
-
+        event_recorder.subscribe_event(sdp_subarray_sim, "obsState")
         # Preparing input arguments
         assign_input_json = prepare_json_args_for_centralnode_commands(
             "assign_resources_low", command_input_factory
@@ -120,7 +111,11 @@ class TestAssignCommandNotAllowedPropagation:
 
         # Setting Defects on Devices
         sdp_subarray_sim.SetDirectObsState(ObsState.RESOURCING)
-
+        assert event_recorder.has_change_event_occurred(
+            sdp_subarray_sim,
+            "obsState",
+            ObsState.RESOURCING,
+        )
         _, unique_id = central_node_low.store_resources(assign_input_json)
 
         ERROR_MESSAGE = (
@@ -133,12 +128,3 @@ class TestAssignCommandNotAllowedPropagation:
             (unique_id[0], Anything),
         )
         assert ERROR_MESSAGE in assertion_data["attribute_value"][1]
-
-        # Manually setting the obsState to EMPTY to circumvent the Restart
-        # command bug. Will be removed once the Bug is fixed under HM-371
-        mccs_subarray_sim.SetDirectObsState(ObsState.EMPTY)
-        assert event_recorder.has_change_event_occurred(
-            mccs_subarray_sim,
-            "obsState",
-            ObsState.EMPTY,
-        )
