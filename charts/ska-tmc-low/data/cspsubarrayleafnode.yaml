@@ -4,6 +4,9 @@ domain: general-monitoring
 instances: ["01"]
 entrypoints:
   - name: "ska_tmc_cspsubarrayleafnode.csp_subarray_leaf_node_low.CspSubarrayLeafNodeLow"
+{{- $DelayModelTimeInAdvance := .Values.deviceServers.cspsubarrayleafnode.DelayModelTimeInAdvance }}
+{{- $DelayCadence := .Values.deviceServers.cspsubarrayleafnode.DelayCadence }}
+{{- $DelayValidityPeriod := .Values.deviceServers.cspsubarrayleafnode.DelayValidityPeriod }}
 server:
   name: "csp_subarray_leaf_node_low"
   instances:
@@ -27,6 +30,15 @@ server:
               - name: "LoggingLevelDefault"
                 values:
                 - "5"
+              - name: "DelayModelTimeInAdvance"
+                values:
+                - "{{ $DelayModelTimeInAdvance }}"
+              - name: "DelayCadence"
+                values:
+                - "{{ $DelayCadence }}"
+              - name: "DelayValidityPeriod"
+                values:
+                - "{{ $DelayValidityPeriod }}"
   {{- end}}
 depends_on:
   - device: sys/database/2

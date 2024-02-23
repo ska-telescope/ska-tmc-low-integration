@@ -93,6 +93,9 @@ class TestAssignCommandNotAllowedPropagation:
             central_node_low.central_node, "telescopeState"
         )
         event_recorder.subscribe_event(
+            central_node_low.subarray_node, "obsState"
+        )
+        event_recorder.subscribe_event(
             central_node_low.central_node, "longRunningCommandResult"
         )
         event_recorder.subscribe_event(mccs_subarray_sim, "obsState")
@@ -128,3 +131,6 @@ class TestAssignCommandNotAllowedPropagation:
             (unique_id[0], Anything),
         )
         assert ERROR_MESSAGE in assertion_data["attribute_value"][1]
+        assert event_recorder.has_change_event_occurred(
+            central_node_low.subarray_node, "obsState", ObsState.RESOURCING
+        )

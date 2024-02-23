@@ -337,6 +337,43 @@ def wait_for_attribute_update(
     return False
 
 
+def wait_for_updates_on_delay_model(csp_subarray_leaf_node) -> None:
+    start_time = time.time()
+    time_elapsed = 0
+    while (
+        csp_subarray_leaf_node.delayModel == "no_value"
+        and time_elapsed <= TIMEOUT
+    ):
+        time.sleep(1)
+        time_elapsed = time.time() - start_time
+    if time_elapsed > TIMEOUT:
+        raise Exception(
+            "Timeout while waiting for CspSubarrayLeafNode to generate \
+                delay values."
+        )
+
+
+def wait_for_updates_stop_on_delay_model(csp_subarray_leaf_node) -> None:
+    start_time = time.time()
+    time_elapsed = 0
+    # delay_cadence for low is 300 sec and in attribute it will stay for
+    # 300 sec so after end required this time to set attribute to no_value,
+    # this will fix in PI22 till then wait is apply here
+    required_delay_stop_time = 350
+    while (
+        csp_subarray_leaf_node.delayModel != "no_value"
+        and time_elapsed <= required_delay_stop_time
+    ):
+        time.sleep(1)
+        time_elapsed = time.time() - start_time
+    LOGGER.info(f"time_elapsed: {time_elapsed}")
+    if time_elapsed > required_delay_stop_time:
+        raise Exception(
+            "Timeout while waiting for CspSubarrayLeafNode to generate \
+                delay values."
+        )
+
+
 def wait_and_validate_device_attribute_value(
     device: DeviceProxy,
     attribute_name: str,
