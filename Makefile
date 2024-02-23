@@ -104,7 +104,6 @@ endif
 
 K8S_CHART_PARAMS = --set global.minikube=$(MINIKUBE) \
 	--set global.tango_host=$(TANGO_HOST) \
-	--set global.cluster_domain=$(CLUSTER_DOMAIN) \
 	--set ska-tango-base.display=$(DISPLAY) \
 	--set ska-tango-base.xauthority=$(XAUTHORITY) \
 	--set ska-tango-base.jive.enabled=$(JIVE) \
@@ -171,7 +170,6 @@ alarm-handler-configurator-link:
 cred:
 	make k8s-namespace
 	make k8s-namespace-credentials
-
 test-requirements:
 	@poetry export --without-hashes --dev --format requirements.txt --output tests/requirements.txt
 k8s-pre-test: test-requirements
