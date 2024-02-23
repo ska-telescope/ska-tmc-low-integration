@@ -10,6 +10,8 @@ KUBE_NAMESPACE_SDP ?= ska-tmc-integration-sdp
 CSP_SIMULATION_ENABLED ?= true
 SDP_SIMULATION_ENABLED ?= true
 MCCS_SIMULATION_ENABLED ?= true
+EXPOSE_All_DS ?= true 
+SKA_TANGO_OPERATOR ?= true
 
 
 PYTHON_LINT_TARGET ?= tests/
@@ -107,8 +109,8 @@ K8S_CHART_PARAMS = --set global.minikube=$(MINIKUBE) \
 	--set ska-tango-base.display=$(DISPLAY) \
 	--set ska-tango-base.xauthority=$(XAUTHORITY) \
 	--set ska-tango-base.jive.enabled=$(JIVE) \
-	--set global.exposeAllDS=false \
-	--set global.operator=true \
+	--set global.exposeAllDS=$(EXPOSE_All_DS) \
+	--set global.operator=$(SKA_TANGO_OPERATOR) \
 	--set ska-taranta.enabled=$(TARANTA_ENABLED)\
 	--set tmc-low.subarray_count=$(SUBARRAY_COUNT)\
 	$(CUSTOM_VALUES)
@@ -169,7 +171,7 @@ alarm-handler-configurator-link:
 
 cred:
 	make k8s-namespace
-	curl -s https://gitlab.com/ska-telescope/templates-repository/-/raw/master/scripts/namespace_auth.sh | bash -s $(SERVICE_ACCOUNT) $(KUBE_NAMESPACE) || true
+	make k8s-namespace-credentials
 
 
 test-requirements:
