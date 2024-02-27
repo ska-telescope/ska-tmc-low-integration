@@ -224,9 +224,10 @@ class CentralNodeWrapperLow(object):
         A method to invoke TelescopeOn command to
         put telescope in ON state
         """
-        LOGGER.info("Starting up the Telescope")
+        LOGGER.info(
+            "Starting up the Telescope %s", self.central_node.telescopeState
+        )
         LOGGER.info(f"Received simulated devices: {SIMULATED_DEVICES_DICT}")
-
         if SIMULATED_DEVICES_DICT["all_mocks"]:
             LOGGER.info("Invoking TelescopeOn command with all Mocks")
             self.central_node.TelescopeOn()
@@ -360,16 +361,18 @@ class CentralNodeWrapperLow(object):
         else:
             LOGGER.info("No devices to reset healthState")
 
-    def perform_action(self, command_name: str, input_json: str):
+    def perform_action(self, command_name: str, input_json: str = ""):
         """Execute provided command on centralnode
         Args:
             command_name (str): Name of command to execute
             input_json (str): Json send as input to execute command
         """
-
-        result, message = self.central_node.command_inout(
-            command_name, input_json
-        )
+        if input_json:
+            result, message = self.central_node.command_inout(
+                command_name, input_json
+            )
+        else:
+            result, message = self.central_node.command_inout(command_name)
         return result, message
 
     def set_values_with_all_mocks(self, subarray_state):

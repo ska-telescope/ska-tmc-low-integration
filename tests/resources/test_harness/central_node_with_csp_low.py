@@ -33,9 +33,11 @@ class CentralNodeCspWrapperLow(CentralNodeWrapperLow):
         self.central_node.TelescopeOn()
         self.csp_master.adminMode = 0
         self.csp_subarray1.adminMode = 0
-        device_to_on_list = [self.subarray_devices.get("sdp_subarray")]
-        for device in device_to_on_list:
-            device_proxy = DeviceProxy(device)
+        device_to_on_list = [
+            self.subarray_devices.get("sdp_subarray"),
+            self.subarray_devices.get("mccs_subarray"),
+        ]
+        for device_proxy in device_to_on_list:
             device_proxy.SetDirectState(DevState.ON)
         self.wait.set_wait_for_telescope_on()
         self.wait.wait(300)
