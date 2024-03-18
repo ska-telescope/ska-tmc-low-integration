@@ -1,7 +1,7 @@
 """Module for TMC-CSP Abort command tests"""
 
-import time
 import random
+import time
 
 import pytest
 from pytest_bdd import given, scenario, then, when
