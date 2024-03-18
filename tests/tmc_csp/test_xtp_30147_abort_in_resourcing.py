@@ -1,6 +1,5 @@
 """Module for TMC-CSP Abort command tests"""
 
-import random
 import time
 
 import pytest
@@ -77,8 +76,7 @@ def subarray_busy_assigning(
     # The sleep is added to allow Subarray Node time to update the device
     # obsStates before invoking the Abort command. Without sleep, Subarray Node
     # at times finds all devices in EMPTY and does not invoke Abort on them.
-    sleep_t = round(random.uniform(0.3, 1.0), 2)
-    time.sleep(sleep_t)
+    time.sleep(0.3)
 
 
 @when("I command it to Abort")
