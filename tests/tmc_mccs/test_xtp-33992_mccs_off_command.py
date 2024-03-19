@@ -8,7 +8,7 @@ from tango import DevState
 
 @pytest.mark.tmc_mccs1
 @scenario(
-    "../features/tmc_mccs/tmc_mccs_off.feature",
+    "../features/tmc_mccs/xtp-33992_tmc_mccs_off.feature",
     "Switch off the telescope having TMC and MCCS subsystems",
 )
 def test_tmc_mccs_shutdown_telescope():
