@@ -157,7 +157,7 @@ k8s-test-tmc-with-mccs:
     - make cred SERVICE_ACCOUNT=$SERVICE_ACCOUNT
     - '[ -f .make/k8s.mk ] || (echo "File k8s.mk not included in Makefile; exit 1")'
     - 'make help | grep k8s-test'
-    - make k8s-install-chart K8S_HELMFILE_ENV=tmc-integration
+    - make k8s-install-chart
     - make k8s-wait
   retry: 1
 
