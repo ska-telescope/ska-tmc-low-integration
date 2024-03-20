@@ -101,47 +101,47 @@ k8s-test:
     - XRAY_TEST_RESULT_FILE="build/cucumber.json" make xray-publish
   retry: 1
 
-# k8s-test-tmc-with-csp:
-#   tags:
-#     - k8srunner
-#   extends:
-#     - k8s-test
-#   variables:
-#     KUBE_NAMESPACE: 'ci-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-csp-low'
-#     SERVICE_ACCOUNT: "ci-svc-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-csp-low"
-#     MARK: 'tmc_csp'
-#     CSP_SIMULATION_ENABLED: 'false'
-#   retry: 1
+k8s-test-tmc-with-csp:
+  tags:
+    - k8srunner
+  extends:
+    - k8s-test
+  variables:
+    KUBE_NAMESPACE: 'ci-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-csp-low'
+    SERVICE_ACCOUNT: "ci-svc-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-csp-low"
+    MARK: 'tmc_csp'
+    CSP_SIMULATION_ENABLED: 'false'
+  retry: 1
 
-# stop-k8s-test-tmc-with-csp:
-#   extends:
-#     - stop-k8s-test
-#   variables:
-#     KUBE_NAMESPACE: 'ci-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-csp-low'
+stop-k8s-test-tmc-with-csp:
+  extends:
+    - stop-k8s-test
+  variables:
+    KUBE_NAMESPACE: 'ci-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-csp-low'
 
-# k8s-test-tmc-with-sdp:
-#   tags:
-#     - k8srunner
-#   extends:
-#     - k8s-test
-#   variables:
-#     TELESCOPE: 'SKA-low'
-#     CLUSTER_DOMAIN: "svc.cluster.local"
-#     PORT: "10000"
-#     KUBE_NAMESPACE: 'ci-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-tmc-sdp'
-#     KUBE_NAMESPACE_SDP: 'ci-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-sdp'
-#     SERVICE_ACCOUNT: "ci-svc-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-tmc-sdp"
-#     MARK: 'tmc_sdp'
-#     SDP_SIMULATION_ENABLED: 'false'
-#     TARANTA_ENABLED: 'true'  
-#   retry: 1
+k8s-test-tmc-with-sdp:
+  tags:
+    - k8srunner
+  extends:
+    - k8s-test
+  variables:
+    TELESCOPE: 'SKA-low'
+    CLUSTER_DOMAIN: "svc.cluster.local"
+    PORT: "10000"
+    KUBE_NAMESPACE: 'ci-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-tmc-sdp'
+    KUBE_NAMESPACE_SDP: 'ci-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-sdp'
+    SERVICE_ACCOUNT: "ci-svc-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-tmc-sdp"
+    MARK: 'tmc_sdp'
+    SDP_SIMULATION_ENABLED: 'false'
+    TARANTA_ENABLED: 'true'  
+  retry: 1
 
 
-# stop-k8s-test-tmc-with-sdp:
-#   extends:
-#     - stop-k8s-test
-#   variables:
-#     KUBE_NAMESPACE: 'ci-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-tmc-sdp'
+stop-k8s-test-tmc-with-sdp:
+  extends:
+    - stop-k8s-test
+  variables:
+    KUBE_NAMESPACE: 'ci-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-tmc-sdp'
 
 k8s-test-tmc-with-mccs:
   tags:
@@ -151,7 +151,7 @@ k8s-test-tmc-with-mccs:
   variables:
     KUBE_NAMESPACE: 'ci-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-mccs-low'
     SERVICE_ACCOUNT: "ci-svc-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-mccs-low"
-    MARK: 'tmc_mccs1'
+    MARK: 'tmc_mccs'
     MCCS_SIMULATION_ENABLED: 'false'
   before_script:
     - make cred SERVICE_ACCOUNT=$SERVICE_ACCOUNT
