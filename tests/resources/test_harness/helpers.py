@@ -517,7 +517,6 @@ def set_admin_mode_values_mccs():
         controller = tango.DeviceProxy(mccs_controller)
         if controller.adminMode != 0:
             db = tango.Database()
-            controller.adminMode = 0
             pasd_bus_trls = db.get_device_exported("low-mccs/pasdbus/*")
             for pasd_bus_trl in pasd_bus_trls:
                 pasdbus = tango.DeviceProxy(pasd_bus_trl)
