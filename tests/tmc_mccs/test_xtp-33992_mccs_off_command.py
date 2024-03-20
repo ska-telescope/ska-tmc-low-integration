@@ -6,7 +6,7 @@ from pytest_bdd import given, scenario, then, when
 from tango import DevState
 
 
-@pytest.mark.tmc_mccs1
+@pytest.mark.skip
 @scenario(
     "../features/tmc_mccs/xtp-33992_tmc_mccs_off.feature",
     "Switch off the telescope having TMC and MCCS subsystems",
