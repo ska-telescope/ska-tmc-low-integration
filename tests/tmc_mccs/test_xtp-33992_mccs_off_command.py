@@ -54,7 +54,7 @@ def check_tmc_and_mccs_is_on(central_node_low, event_recorder):
 
 @given("telescope state is ON")
 def check_telescope_state_is_on(central_node_low, event_recorder):
-    """A method to check CentralNode.telescopeState"""
+    """A method to check CentralNode's telescopeState"""
     assert event_recorder.has_change_event_occurred(
         central_node_low.central_node,
         "telescopeState",
@@ -85,7 +85,7 @@ def check_mccs_is_off(central_node_low, event_recorder):
 
 @then("telescope state is OFF")
 def check_telescope_state_off(central_node_low, event_recorder):
-    """A method to check CentralNode.telescopeState"""
+    """A method to check CentralNode;s telescopeState"""
     assert event_recorder.has_change_event_occurred(
         central_node_low.central_node,
         "telescopeState",

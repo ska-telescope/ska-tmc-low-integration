@@ -67,7 +67,7 @@ def check_mccs_is_on(central_node_low, event_recorder):
 
 @then("the telescope state should change to ON")
 def check_telescopestate(central_node_low, event_recorder):
-    """A method to check CentralNode telescopeState"""
+    """A method to check CentralNode's telescopeState"""
     event_recorder.subscribe_event(
         central_node_low.central_node, "telescopeState"
     )

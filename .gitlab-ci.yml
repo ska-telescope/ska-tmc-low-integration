@@ -23,12 +23,18 @@ stages:
 include:
   - project: 'ska-telescope/templates-repository'
     file: 'gitlab-ci/includes/python-lint.gitlab-ci.yml'
+  
+  - project: 'ska-telescope/templates-repository'
+    file: 'gitlab-ci/includes/release.gitlab-ci.yml'
 
   - project: 'ska-telescope/templates-repository'
     file: 'gitlab-ci/includes/helm-chart.gitlab-ci.yml'
 
   - project: 'ska-telescope/templates-repository'
     file: 'gitlab-ci/includes/docs-pages.gitlab-ci.yml'
+  
+  - project: 'ska-telescope/templates-repository'
+    file: 'gitlab-ci/includes/docs.gitlab-ci.yml'
 
   - project: 'ska-telescope/templates-repository'
     file: 'gitlab-ci/includes/k8s.gitlab-ci.yml'
