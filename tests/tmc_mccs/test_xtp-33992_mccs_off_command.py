@@ -1,5 +1,4 @@
 """Test module for TMC-MCCS ShutDown functionality"""
-import time
 
 import pytest
 from pytest_bdd import given, scenario, then, when
@@ -35,7 +34,6 @@ def check_tmc_and_mccs_is_on(central_node_low, event_recorder):
     event_recorder.subscribe_event(
         central_node_low.subarray_devices["mccs_subarray"], "State"
     )
-    time.sleep(5)
 
     if central_node_low.telescope_state != "ON":
         central_node_low.move_to_on()

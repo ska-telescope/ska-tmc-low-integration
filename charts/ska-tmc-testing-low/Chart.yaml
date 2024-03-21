@@ -38,7 +38,7 @@ dependencies:
     repository: https://artefact.skao.int/repository/helm-internal
     condition: ska-low-mccs.enabled
   - name: ska-ser-skuid
-    version: 0.3.3
+    version: 0.3.0
     repository: https://artefact.skao.int/repository/helm-internal
     condition: ska-ser-skuid.enabled
   - name: ska-tango-taranta
