@@ -65,12 +65,6 @@ class Waiter:
             )
         )
         self.waits.append(
-            watch(Resource(self.mccs_subarray)).to_become(
-                "State", changed_to="OFF"
-            )
-        )
-
-        self.waits.append(
             watch(Resource(self.central_node)).to_become(
                 "telescopeState", changed_to="OFF"
             )
