@@ -133,6 +133,8 @@ mccs_subarray1 = "low-mccs/subarray/01"
 mccs_subarray2 = "low-mccs/subarray/02"
 mccs_subarray3 = "low-mccs/subarray/03"
 processor1 = "low-cbf/processor/0.0.0"
+mccs_pasdbus_prefix = "low-mccs/pasdbus/*"
+mccs_prefix = "low-mccs/*"
 
 
 device_dict_low = {

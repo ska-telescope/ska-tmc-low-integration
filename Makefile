@@ -10,7 +10,7 @@ KUBE_NAMESPACE_SDP ?= ska-tmc-integration-sdp
 CSP_SIMULATION_ENABLED ?= true
 SDP_SIMULATION_ENABLED ?= true
 MCCS_SIMULATION_ENABLED ?= true
-
+K8S_TIMEOUT ?= 600s
 
 PYTHON_LINT_TARGET ?= tests/
 
@@ -131,11 +131,8 @@ K8S_TEST_TEST_COMMAND ?= $(PYTHON_VARS_BEFORE_PYTEST) $(PYTHON_RUNNER) \
 -include .make/helm.mk
 -include .make/python.mk
 -include .make/oci.mk
--include .make/docs.mk
--include .make/release.mk
--include .make/make.mk
--include .make/help.mk
 -include .make/xray.mk
+-include .make/base.mk
 -include PrivateRules.mak
 -include resources/alarmhandler.mk
 
