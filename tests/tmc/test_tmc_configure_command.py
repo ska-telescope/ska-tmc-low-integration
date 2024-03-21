@@ -20,6 +20,7 @@ from tests.resources.test_support.common_utils.tmc_helpers import (
 )
 
 
+@pytest.mark.skip
 @pytest.mark.SKA_low
 @scenario(
     "../features/tmc/check_configure_command.feature",

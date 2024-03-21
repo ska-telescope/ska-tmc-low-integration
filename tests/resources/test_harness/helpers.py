@@ -22,6 +22,8 @@ from tests.resources.test_harness.constant import (
     low_sdp_subarray1,
     low_sdp_subarray_leaf_node,
     mccs_controller,
+    mccs_pasdbus_prefix,
+    mccs_prefix,
     mccs_subarray1,
     mccs_subarray_leaf_node,
     tmc_low_subarraynode1,
@@ -517,14 +519,14 @@ def set_admin_mode_values_mccs():
         controller = tango.DeviceProxy(mccs_controller)
         if controller.adminMode != 0:
             db = tango.Database()
-            pasd_bus_trls = db.get_device_exported("low-mccs/pasdbus/*")
+            pasd_bus_trls = db.get_device_exported(mccs_pasdbus_prefix)
             for pasd_bus_trl in pasd_bus_trls:
                 pasdbus = tango.DeviceProxy(pasd_bus_trl)
                 if pasdbus.adminmode != 0:
                     pasdbus.adminmode = 0
                     time.sleep(0.1)
 
-            device_trls = db.get_device_exported("low-mccs/*")
+            device_trls = db.get_device_exported(mccs_prefix)
             devices = []
             for device_trl in device_trls:
                 if "daq" in device_trl or "calibrationstore" in device_trl:
