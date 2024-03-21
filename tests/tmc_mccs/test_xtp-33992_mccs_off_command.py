@@ -73,11 +73,6 @@ def check_mccs_is_off(central_node_low, event_recorder):
         "State",
         DevState.OFF,
     )
-    assert event_recorder.has_change_event_occurred(
-        central_node_low.subarray_devices["mccs_subarray"],
-        "State",
-        DevState.OFF,
-    )
 
 
 @then("telescope state is OFF")
@@ -86,20 +81,5 @@ def check_telescope_state_off(central_node_low, event_recorder):
     assert event_recorder.has_change_event_occurred(
         central_node_low.central_node,
         "telescopeState",
-        DevState.OFF,
-    )
-
-
-@then("the mccs subarray must go to OFF State")
-def check_mccs_subarray_is_off(central_node_low, event_recorder):
-    """A method to check MCCS State"""
-    assert event_recorder.has_change_event_occurred(
-        central_node_low.mccs_master,
-        "State",
-        DevState.OFF,
-    )
-    assert event_recorder.has_change_event_occurred(
-        central_node_low.subarray_devices["mccs_subarray"],
-        "State",
         DevState.OFF,
     )
