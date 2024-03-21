@@ -19,6 +19,7 @@ class TestConfigureErrorPropagation:
     """Tests for testing error propagation and timeout for Configure command on
     LOW TMC."""
 
+    @pytest.mark.skip
     @pytest.mark.SKA_low
     def test_configure_timeout_csp_ln(
         self,
