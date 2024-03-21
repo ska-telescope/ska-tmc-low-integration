@@ -5,7 +5,6 @@ from pytest_bdd import given, scenario, then, when
 from tango import DevState
 
 
-@pytest.mark.xfail(reason="SKB-311- TMC is not able to invoke Telescopeoff")
 @pytest.mark.tmc_mccs
 @scenario(
     "../features/tmc_mccs/xtp-33992_tmc_mccs_off.feature",
