@@ -7,7 +7,7 @@ from tango import DevState
 
 
 # @pytest.mark.skip(reason="SKB-311- TMC is not able to invoke Telescopeoff")
-@pytest.mark.tmc_mccs
+@pytest.mark.tmc_mccs1
 @scenario(
     "../features/tmc_mccs/xtp-33992_tmc_mccs_off.feature",
     "Switch off the telescope having TMC and MCCS subsystems",
