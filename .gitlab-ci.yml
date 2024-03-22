@@ -105,7 +105,6 @@ k8s-test:
   after_script:
     - pip3 install -q -U ska-ser-xray
     - XRAY_TEST_RESULT_FILE="build/cucumber.json" make xray-publish
-  retry: 1
 
 k8s-test-tmc-with-csp:
   tags:
@@ -117,7 +116,6 @@ k8s-test-tmc-with-csp:
     SERVICE_ACCOUNT: "ci-svc-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-csp-low"
     MARK: 'tmc_csp'
     CSP_SIMULATION_ENABLED: 'false'
-  retry: 1
 
 stop-k8s-test-tmc-with-csp:
   extends:
@@ -140,7 +138,6 @@ k8s-test-tmc-with-sdp:
     MARK: 'tmc_sdp'
     SDP_SIMULATION_ENABLED: 'false'
     TARANTA_ENABLED: 'true'  
-  retry: 1
 
 
 stop-k8s-test-tmc-with-sdp:
@@ -165,7 +162,6 @@ k8s-test-tmc-with-mccs:
     - 'make help | grep k8s-test'
     - make k8s-install-chart
     - make k8s-wait
-  retry: 1
 
 stop-k8s-test-tmc-with-mccs:
   extends:
