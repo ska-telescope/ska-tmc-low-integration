@@ -19,7 +19,7 @@ from tests.resources.test_support.common_utils.tmc_helpers import (
     "../features/tmc_mccs/xtp-34263_invalid_json_mccs.feature",
     "Invalid Station Id provided to MCCS controller",
 )
-def tetest_invalid_station_id_handling_tmc_mccs_controller():
+def test_invalid_station_id_handling_tmc_mccs_controller():
     """
     Test the behavior of the MCCS controller when an invalid station ID is
       provided.
