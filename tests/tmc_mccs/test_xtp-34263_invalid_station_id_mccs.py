@@ -19,21 +19,29 @@ from tests.resources.test_support.common_utils.tmc_helpers import (
     "../features/tmc_mccs/xtp-34263_invalid_json_mccs.feature",
     "Invalid Station Id provided to MCCS controller",
 )
-def test():
-    """."""
+def tetest_invalid_station_id_handling_tmc_mccs_controller():
+    """
+    Test the behavior of the MCCS controller when an invalid station ID is
+      provided.
+
+    This test case checks that the MCCS controller correctly handles the error
+      for an invalid station ID and that the system transitions to the expected
+        states after the error occurs.
+    """
 
 
-def update_assign_json(
-    assign_json: str,
-    station_id: int,
-) -> str:
+def update_assign_json(assign_json: str, station_id: int) -> str:
     """
     Returns a json with updated values for the given keys
     """
     assign_dict = json.loads(assign_json)
 
-    assign_dict["mccs"]["subarray_beams"]["apertures"] = station_id
-    return json.dumps(assign_dict)
+    for subarray_beam in assign_dict["mccs"]["subarray_beams"]:
+        for aperture in subarray_beam["apertures"]:
+            aperture["station_id"] = station_id
+
+    updated_assign_json = json.dumps(assign_dict)
+    return updated_assign_json
 
 
 @given("a Telescope consisting of TMC,MCCS,simulated SDP and simulated CSP")
