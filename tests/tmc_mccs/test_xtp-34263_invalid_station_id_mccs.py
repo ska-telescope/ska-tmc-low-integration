@@ -99,6 +99,7 @@ def invoke_assignresources(
 
 @then("the MCCS subarray should throw the error for invalid station id")
 def invalid_command_rejection():
+    """Mccs throws error"""
     assert (
         "JSON validation error: data is not compliant"
     ) in pytest.command_result[1][0]
