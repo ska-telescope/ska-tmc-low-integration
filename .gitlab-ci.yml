@@ -48,6 +48,14 @@ include:
   - project: 'ska-telescope/templates-repository'
     file: 'gitlab-ci/includes/finaliser.gitlab-ci.yml'
 
+lint:
+  tags:
+    - k8srunner-large
+
+build:
+  tags:
+    - k8srunner-large
+  
 on-demand-deploy:
   stage: on-demand
   tags:
