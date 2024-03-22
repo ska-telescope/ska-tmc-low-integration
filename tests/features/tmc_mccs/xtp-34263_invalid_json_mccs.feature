@@ -4,7 +4,7 @@ Scenario: Invalid Station Id provided to MCCS controller
    Given a Telescope consisting of TMC,MCCS,simulated SDP and simulated CSP
    And the Telescope is in the ON state
    And the TMC subarray is in EMPTY obsState
-   When I assign resources with invalid <station_id> to the MCCS subarray using TMC
+   When I assign resources with invalid <station_id> to the MCCS subarray using TMC with subarray_id <subarray_id>
    Then the MCCS controller should throw the error for invalid station id
    And the MCCS subarray should remain in EMPTY ObsState
    And the TMC propagate the error to the client
@@ -15,5 +15,5 @@ Scenario: Invalid Station Id provided to MCCS controller
    When I issue the Restart command on TMC SubarrayNode
    Then the CSP, SDP and TMC subarray transitions to obsState EMPTY
    Examples:
-   | station_id       |
-   | 15               |
+   | station_id       | subarray_id      |
+   | 15               | 1                |

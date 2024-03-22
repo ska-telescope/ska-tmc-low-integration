@@ -76,7 +76,7 @@ def subarray_in_empty_obsstate(subarray_node_low, event_recorder):
 @when(
     parsers.parse(
         "I assign resources with invalid {station_id} to "
-        + "the MCCS subarray using TMC"
+        + "the MCCS subarray using TMC with subarray_id {subarray_id}"
     )
 )
 def invoke_assignresources(
