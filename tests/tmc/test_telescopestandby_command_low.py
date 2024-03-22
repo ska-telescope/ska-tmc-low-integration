@@ -18,7 +18,6 @@ from tests.resources.test_support.constant_low import (
 )
 
 
-@pytest.mark.skip(reason="Unskip after repository setup")
 @pytest.mark.SKA_low
 def test_telescope_standby():
     """TelescopeStandby() is executed."""
