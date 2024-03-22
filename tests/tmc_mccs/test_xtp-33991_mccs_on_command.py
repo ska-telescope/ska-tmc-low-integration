@@ -7,7 +7,7 @@ from tango import DevState
 from tests.resources.test_harness.helpers import get_master_device_simulators
 
 
-@pytest.mark.tmc_mccs1
+@pytest.mark.tmc_mccs
 @scenario(
     "../features/tmc_mccs/xtp-33991_tmc_mccs_on.feature",
     "StartUp Telescope with TMC and MCCS devices",

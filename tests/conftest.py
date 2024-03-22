@@ -181,6 +181,12 @@ def simulator_factory() -> SimulatorFactory:
     return SimulatorFactory()
 
 
+@pytest.fixture(scope="module")
+def stored_unique_id():
+    """store the unique_ids"""
+    return []
+
+
 @pytest.fixture()
 def event_recorder() -> EventRecorder:
     """Return EventRecorder and clear events"""
