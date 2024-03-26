@@ -25,7 +25,7 @@ def test_invalid_station_id_handling_tmc_mccs_controller():
       provided.
 
     This test case checks that the MCCS controller correctly handles the error
-        for an invalid station ID and that the system transitions to the expected
+      for an invalid station ID and that the system transitions to the expected
             states after the error occurs.
     """
 
