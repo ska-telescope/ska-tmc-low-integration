@@ -119,9 +119,7 @@ def invoke_assignresources(
 )
 def invalid_command_rejection(station_id: int):
     """Mccs throws error"""
-    assert (
-        f"Cannot allocate resources: {station_id}"
-    ) in pytest.command_result
+    assert f"Cannot allocate resources: {station_id}" in pytest.command_result
 
 
 @then("the MCCS subarray should remain in EMPTY ObsState")
