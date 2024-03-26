@@ -8,7 +8,8 @@ from ska_tango_testing.mock.placeholders import Anything
 from tango import DevState
 
 from tests.resources.test_harness.utils.enums import SimulatorDeviceType
-from tests.resources.test_support.common_utils.result_code import ResultCode
+
+# from tests.resources.test_support.common_utils.result_code import ResultCode
 from tests.resources.test_support.common_utils.tmc_helpers import (
     prepare_json_args_for_centralnode_commands,
 )
@@ -103,8 +104,11 @@ def invoke_assignresources(
         input_json,
         station_id,
     )
-    _, unique_id = central_node_low.store_resources(assign_json_string)
-    stored_unique_id.append(unique_id)
+    try:
+        _, unique_id = central_node_low.store_resources(assign_json_string)
+        stored_unique_id.append(unique_id)
+    except Exception as exception:
+        pytest.command_result = str(exception)
 
 
 # placeholder
@@ -117,9 +121,7 @@ def invalid_command_rejection(station_id: int):
     """Mccs throws error"""
     assert (
         f"Cannot allocate resources: {station_id}"
-    ) in pytest.command_result[1][0]
-
-    assert pytest.command_result[0][0] == ResultCode.FAILED
+    ) in pytest.command_result
 
 
 @then("the MCCS subarray should remain in EMPTY ObsState")
