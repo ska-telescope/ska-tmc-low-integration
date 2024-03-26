@@ -4,7 +4,9 @@ import json
 import pytest
 from pytest_bdd import given, parsers, scenario, then, when
 from ska_control_model import ObsState
-from ska_tango_testing.mock.placeholders import Anything
+from ska_tango_base.commands import ResultCode
+
+# from ska_tango_testing.mock.placeholders import Anything
 from tango import DevState
 
 from tests.resources.test_harness.utils.enums import SimulatorDeviceType
@@ -93,7 +95,7 @@ def invoke_assignresources(
     central_node_low,
     command_input_factory,
     subarray_id,
-    stored_unique_id,
+    # stored_unique_id,
 ):
     """Invokes AssignResources command on TMC"""
     central_node_low.set_subarray_id(subarray_id)
@@ -104,11 +106,10 @@ def invoke_assignresources(
         input_json,
         int(station_id),
     )
-    try:
-        _, unique_id = central_node_low.store_resources(assign_json_string)
-        stored_unique_id.append(unique_id)
-    except Exception as exception:
-        pytest.command_result = str(exception)
+    pytest.command_result = central_node_low.store_resources(
+        assign_json_string
+    )
+    # stored_unique_id.append(unique_id)
 
 
 # placeholder
@@ -119,7 +120,10 @@ def invoke_assignresources(
 )
 def invalid_command_rejection(station_id: int):
     """Mccs throws error"""
-    assert f"Cannot allocate resources: {station_id}" in pytest.command_result
+    assert (
+        f"Cannot allocate resources: {station_id}"
+        in pytest.command_result[1][0]
+    )
 
 
 @then("the MCCS subarray should remain in EMPTY ObsState")
@@ -141,24 +145,21 @@ def check_mccs_is_on(central_node_low, subarray_node_low, event_recorder):
 
 @then("the TMC propagate the error to the client")
 def central_node_receiving_error(
-    event_recorder, central_node_low, stored_unique_id
+    event_recorder,
+    central_node_low,
 ):
     """CN gets error"""
-    unique_id = stored_unique_id[0]
+    # unique_id = stored_unique_id[0]
     event_recorder.subscribe_event(
         central_node_low.central_node, "longRunningCommandResult"
     )
 
-    assertion_data = event_recorder.has_change_event_occurred(
-        central_node_low.central_node,
-        "longRunningCommandResult",
-        (unique_id[0], Anything),
-    )
+    assert pytest.command_result[0][0] == ResultCode.REJECTED
     assert (
         "Exception occurred on the following devices: "
         + "ska_low/tm_leaf_node/mccs_master: Cannot allocate resources: 15"
         + "ska_low/tm_subarray_node/1: Timeout has occurred, command failed"
-        in assertion_data["attribute_value"][1]
+        in pytest.command_result[1][0]
     )
 
 
