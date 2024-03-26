@@ -1,5 +1,4 @@
 """Test module for TMC-MCCS handle invalid json functionality"""
-import json
 import logging
 
 import pytest
@@ -9,6 +8,7 @@ from ska_ser_logging import configure_logging
 from ska_tango_base.commands import ResultCode
 from tango import DevState
 
+from tests.conftest import update_assign_json
 from tests.resources.test_harness.utils.enums import SimulatorDeviceType
 from tests.resources.test_support.common_utils.tmc_helpers import (
     prepare_json_args_for_centralnode_commands,
@@ -33,20 +33,6 @@ def test_invalid_station_id_handling_tmc_mccs_controller():
       for an invalid station ID and that the system transitions to the expected
             states after the error occurs.
     """
-
-
-def update_assign_json(assign_json: str, station_id: int) -> str:
-    """
-    Returns a json with updated values for the given keys
-    """
-    assign_dict = json.loads(assign_json)
-
-    for subarray_beam in assign_dict["mccs"]["subarray_beams"]:
-        for aperture in subarray_beam["apertures"]:
-            aperture["station_id"] = station_id
-
-    updated_assign_json = json.dumps(assign_dict)
-    return updated_assign_json
 
 
 @given("a Telescope consisting of TMC,MCCS,simulated SDP and simulated CSP")
