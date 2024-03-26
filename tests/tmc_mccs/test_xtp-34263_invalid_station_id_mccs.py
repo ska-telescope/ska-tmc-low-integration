@@ -6,19 +6,20 @@ import pytest
 from pytest_bdd import given, parsers, scenario, then, when
 from ska_control_model import ObsState
 from ska_ser_logging import configure_logging
-from ska_tango_testing.mock.placeholders import Anything
+from ska_tango_base.commands import ResultCode
 from tango import DevState
 
 from tests.resources.test_harness.utils.enums import SimulatorDeviceType
 from tests.resources.test_support.common_utils.tmc_helpers import (
     prepare_json_args_for_centralnode_commands,
+    wait_for_attribute_update,
 )
 
 configure_logging(logging.DEBUG)
 LOGGER = logging.getLogger(__name__)
 
 
-@pytest.mark.tmc_mccs1
+@pytest.mark.tmc_mccs
 @scenario(
     "../features/tmc_mccs/xtp-34263_invalid_json_mccs.feature",
     "Invalid Station Id provided to MCCS controller",
@@ -114,23 +115,18 @@ def invoke_assignresources(
 
 
 @then("the MCCS controller should throw the error for invalid station id")
-def invalid_command_rejection(
-    event_recorder, central_node_low, stored_unique_id
-):
+def invalid_command_rejection(event_recorder, central_node_low):
     """Mccs throws error"""
-    unique_id = stored_unique_id[0]
     event_recorder.subscribe_event(
         central_node_low.mccs_master_leaf_node,
         "longRunningCommandResult",
     )
-    exception_message = "Cannot allocate resources: 15"
-    assertion_data = event_recorder.has_change_event_occurred(
+    assert wait_for_attribute_update(
         central_node_low.mccs_master_leaf_node,
-        attribute_name="longRunningCommandResult",
-        attribute_value=(unique_id[0], Anything),
+        "longRunningCommandResult",
+        "AssignResources",
+        ResultCode.FAILED,
     )
-    assert "AssignResources" in assertion_data["attribute_value"][0]
-    assert exception_message in assertion_data["attribute_value"][1]
 
 
 @then("the MCCS subarray should remain in EMPTY ObsState")
