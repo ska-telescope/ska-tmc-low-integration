@@ -102,7 +102,7 @@ def invoke_assignresources(
     )
     assign_json_string = update_assign_json(
         input_json,
-        station_id,
+        int(station_id),
     )
     try:
         _, unique_id = central_node_low.store_resources(assign_json_string)
