@@ -25,8 +25,8 @@ def test_invalid_station_id_handling_tmc_mccs_controller():
       provided.
 
     This test case checks that the MCCS controller correctly handles the error
-      for an invalid station ID and that the system transitions to the expected
-        states after the error occurs.
+        for an invalid station ID and that the system transitions to the expected
+            states after the error occurs.
     """
 
 
@@ -107,6 +107,7 @@ def invoke_assignresources(
     stored_unique_id.append(unique_id)
 
 
+# placeholder
 @then(
     parsers.parse(
         "the MCCS controller should throw the error for invalid {station_id}"
