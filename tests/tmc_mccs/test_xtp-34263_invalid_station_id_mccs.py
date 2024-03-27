@@ -35,7 +35,7 @@ def test_invalid_station_id_handling_tmc_mccs_controller():
     """
 
 
-@given("a Telescope consisting of TMC,MCCS,simulated SDP and simulated CSP")
+@given("a Telescope consisting of TMC,MCCS,emulated SDP and emulated CSP")
 def given_the_sut(central_node_low, subarray_node_low, simulator_factory):
     """
     Given a TMC and CSP in ON state

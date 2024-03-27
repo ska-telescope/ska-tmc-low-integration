@@ -1,7 +1,7 @@
 Feature: Handling Invalid Station Id in MCCS controller
 @XTP-34263 @tmc_mccs @Team_himalaya
 Scenario: Invalid Station Id provided to MCCS controller
-   Given a Telescope consisting of TMC,MCCS,simulated SDP and simulated CSP
+   Given a Telescope consisting of TMC,MCCS,emulated SDP and emulated CSP
    And the Telescope is in the ON state
    And the TMC subarray is in EMPTY obsState
    When I assign resources with invalid <station_id> to the MCCS subarray using TMC with subarray_id <subarray_id>
