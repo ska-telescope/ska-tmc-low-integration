@@ -26,8 +26,7 @@ LOGGER = logging.getLogger(__name__)
 @pytest.mark.tmc_mccs
 @scenario(
     "../features/tmc_mccs/xtp-34263_invalid_json_mccs.feature",
-    "The TMC Subarray reports on the exception activated by the MCCS"
-    + "controller upon encountering an invalid station ID.",
+    "Invalid Station Id provided to MCCS controller",
 )
 def test_invalid_station_id_reporting_tmc_mccs_controller():
     """
