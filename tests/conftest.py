@@ -215,18 +215,18 @@ def wait_for_obsstate_state_change(
     return False
 
 
-def update_assign_json(assign_json: str, station_id: int) -> str:
+def updated_assign_str(assign_json: str, station_id: int) -> str:
     """
     Returns a json with updated values for the given keys
     """
-    assign_dict = json.loads(assign_json)
+    assign_json = json.loads(assign_json)
 
-    for subarray_beam in assign_dict["mccs"]["subarray_beams"]:
+    for subarray_beam in assign_json["mccs"]["subarray_beams"]:
         for aperture in subarray_beam["apertures"]:
             aperture["station_id"] = station_id
 
-    updated_assign_json = json.dumps(assign_dict)
-    return updated_assign_json
+    updated_assign_str = json.dumps(assign_json)
+    return updated_assign_str
 
 
 @given("the Telescope is in ON state")

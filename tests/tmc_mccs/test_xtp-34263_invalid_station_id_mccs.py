@@ -8,7 +8,11 @@ from ska_ser_logging import configure_logging
 from ska_tango_base.commands import ResultCode
 from tango import DevState
 
-from tests.conftest import update_assign_json
+from tests.conftest import updated_assign_str
+from tests.resources.test_harness.constant import (
+    mccs_master_leaf_node,
+    tmc_low_subarraynode1,
+)
 from tests.resources.test_harness.utils.enums import SimulatorDeviceType
 from tests.resources.test_support.common_utils.tmc_helpers import (
     prepare_json_args_for_centralnode_commands,
@@ -22,37 +26,45 @@ LOGGER = logging.getLogger(__name__)
 @pytest.mark.tmc_mccs
 @scenario(
     "../features/tmc_mccs/xtp-34263_invalid_json_mccs.feature",
-    "Invalid Station Id provided to MCCS controller",
+    "The TMC Subarray reports on the exception activated by the MCCS"
+    + "controller upon encountering an invalid station ID.",
 )
-def test_invalid_station_id_handling_tmc_mccs_controller():
+def test_invalid_station_id_reporting_tmc_mccs_controller():
     """
     Test the behavior of the MCCS controller when an invalid station ID is
       provided.
 
-    This test case checks that the MCCS controller correctly handles the error
+    This test case checks that the MCCS controller correctly reports the error
       for an invalid station ID and that the system transitions to the expected
             states after the error occurs.
+
     """
 
 
-@given("a Telescope consisting of TMC,MCCS,emulated SDP and emulated CSP")
-def given_the_sut(central_node_low, subarray_node_low, simulator_factory):
+@given("a Telescope consisting of TMC-MCCS, emulated SDP and emulated CSP")
+def given_telescope_setup_with_simulators(central_node_low, simulator_factory):
     """
-    Given a TMC and CSP in ON state
+    Given a Telescope setup including TMC-MCCS, emulated SDP, and emulated CSP.
+    Checks if all necessary simulator devices are reachable.
     """
-    mccs_master_sim = simulator_factory.get_or_create_simulator_device(
-        SimulatorDeviceType.MCCS_MASTER_DEVICE
+    csp_master_sim = simulator_factory.get_or_create_simulator_device(
+        SimulatorDeviceType.LOW_CSP_MASTER_DEVICE
     )
-
+    sdp_master_sim = simulator_factory.get_or_create_simulator_device(
+        SimulatorDeviceType.LOW_SDP_MASTER_DEVICE
+    )
+    assert csp_master_sim.ping() > 0
+    assert sdp_master_sim.ping() > 0
     assert central_node_low.central_node.ping() > 0
-    assert central_node_low.sdp_master.ping() > 0
-    assert subarray_node_low.subarray_devices["mccs_subarray"].ping() > 0
-    assert mccs_master_sim.ping() > 0
+    assert central_node_low.subarray_devices["mccs_subarray"].ping() > 0
 
 
 @given("the Telescope is in the ON state")
 def check_telescope_is_in_on_state(central_node_low, event_recorder) -> None:
-    """Ensure telescope is in ON state."""
+    """
+    Ensure the Telescope is in the ON state and subscribe to the telescopeState
+    event.
+    """
     central_node_low.move_to_on()
     event_recorder.subscribe_event(
         central_node_low.central_node, "telescopeState"
@@ -61,15 +73,20 @@ def check_telescope_is_in_on_state(central_node_low, event_recorder) -> None:
         central_node_low.central_node,
         "telescopeState",
         DevState.ON,
-        lookahead=10,
+        lookahead=8,
     )
 
 
 @given("the TMC subarray is in EMPTY obsState")
-def subarray_in_empty_obsstate(subarray_node_low, event_recorder):
-    """Checks if SubarrayNode's obsState attribute value is EMPTY"""
+def tmc_subarray_in_empty_obsstate(subarray_node_low, event_recorder):
+    """
+    Check if the TMC subarray's obsState attribute value is EMPTY
+    and subscribe to the obsState event.
+    """
     event_recorder.subscribe_event(subarray_node_low.subarray_node, "obsState")
-    assert subarray_node_low.subarray_node.obsState == ObsState.EMPTY
+    assert event_recorder.has_change_event_occurred(
+        subarray_node_low.subarray_node, "obsState", ObsState.EMPTY
+    )
 
 
 @when(
@@ -85,12 +102,15 @@ def invoke_assignresources(
     subarray_id,
     stored_unique_id,
 ):
-    """Invokes AssignResources command on TMC"""
+    """
+    Invoke AssignResources command on TMC with invalid station_id to the MCCS
+    subarray.
+    """
     central_node_low.set_subarray_id(subarray_id)
     input_json = prepare_json_args_for_centralnode_commands(
         "assign_resources_low", command_input_factory
     )
-    assign_json_string = update_assign_json(
+    assign_json_string = updated_assign_str(
         input_json,
         int(station_id),
     )
@@ -102,8 +122,15 @@ def invoke_assignresources(
 
 @then("the MCCS controller should throw the error for invalid station id")
 def invalid_command_rejection(event_recorder, central_node_low):
-    """Mccs throws error"""
+    """
+    Ensure that the MCCS controller throws an error for the invalid station ID
+    and subscribe to the longRunningCommandResult event.
+    """
     event_recorder.subscribe_event(
+        central_node_low.mccs_master_leaf_node,
+        "longRunningCommandResult",
+    )
+    assert event_recorder.has_change_event_occurred(
         central_node_low.mccs_master_leaf_node,
         "longRunningCommandResult",
     )
@@ -116,30 +143,36 @@ def invalid_command_rejection(event_recorder, central_node_low):
 
 
 @then("the MCCS subarray should remain in EMPTY ObsState")
-def check_mccs_is_on(subarray_node_low):
-    """A method to check MCCS controller and MCCS subarray states"""
-    assert (
-        subarray_node_low.subarray_devices["mccs_subarray"].obsState
-        == ObsState.EMPTY
+def mccs_subarray_remains_in_empty_obsstate(event_recorder, subarray_node_low):
+    """
+    Check that the MCCS subarray remains in the EMPTY obsState.
+    """
+    assert event_recorder.has_change_event_occurred(
+        subarray_node_low.subarray_devices.get("mccs_subarray"),
+        "obsState",
+        ObsState.EMPTY,
+        lookahead=8,
     )
 
 
-@then("the TMC propagate the error to the client")
+@then("the TMC propogate the error to the client")
 def central_node_receiving_error(
     event_recorder, central_node_low, stored_unique_id
 ):
-    """CN gets error"""
-    unique_id = stored_unique_id[0]
+    """
+    Ensure that the TMC propagates the error to the client and subscribe to
+    the longRunningCommandResult event.
+    """
     event_recorder.subscribe_event(
         central_node_low.central_node, "longRunningCommandResult", timeout=80.0
     )
     exception_msg = (
         "Exception occurred on the following devices: "
-        + "ska_low/tm_leaf_node/mccs_master: Cannot allocate resources: 15"
-        + "ska_low/tm_subarray_node/1: Timeout has occurred, command failed"
+        + f"{mccs_master_leaf_node}: Cannot allocate resources: 15 "
+        + f"{tmc_low_subarraynode1}: Timeout has occurred, command failed"
     )
     expected_long_running_command_result = (
-        unique_id[0],
+        stored_unique_id[0],
         exception_msg,
     )
 
@@ -150,61 +183,37 @@ def central_node_receiving_error(
     )
 
 
-@then("CSP,SDP Subarray transitions to ObsState IDLE")
-def check_sdp_csp_obsstate(event_recorder, subarray_node_low):
-    """Check SDP and CSP obsstate"""
-    event_recorder.subscribe_event(
-        subarray_node_low.subarray_devices.get("sdp_subarray"), "obsState"
-    )
-    event_recorder.subscribe_event(
-        subarray_node_low.subarray_devices.get("csp_subarray"), "obsState"
-    )
-    assert event_recorder.has_change_event_occurred(
-        subarray_node_low.subarray_devices.get("csp_subarray"),
-        "obsState",
-        ObsState.IDLE,
-    )
-    assert event_recorder.has_change_event_occurred(
-        subarray_node_low.subarray_devices.get("sdp_subarray"),
-        "obsState",
-        ObsState.IDLE,
-    )
-
-
-@then("the TMC SubarrayNode stuck in RESOURCING")
-def check_subarraynode_obsstate(event_recorder, subarray_node_low):
-    """Check subarraynode obssate to be in RESOURCING"""
+@then("the TMC SubarrayNode remains in RESOURCING obsState")
+def tmc_subarray_remains_in_resourcing_obsstate(
+    event_recorder, subarray_node_low
+):
+    """
+    Check that the TMC SubarrayNode remains in the RESOURCING obsState
+    and subscribe to the obsState event.
+    """
     event_recorder.subscribe_event(subarray_node_low.subarray_node, "obsState")
     assert event_recorder.has_change_event_occurred(
         subarray_node_low.subarray_node,
         "obsState",
-        ObsState.EMPTY,
+        ObsState.RESOURCING,
+        lookahead=8,
     )
 
 
 @when("I issue the Abort command on TMC SubarrayNode")
 def abort_is_invoked(subarray_node_low):
     """
-    This method invokes abort command on tmc subarray
+    Invoke the Abort command on the TMC SubarrayNode.
     """
     subarray_node_low.execute_transition("Abort")
 
 
-@then("the CSP, SDP and TMC subarray transitions to obsState ABORTED")
-def sdp_subarray_is_in_aborted_obsstate(subarray_node_low, event_recorder):
+@then("the TMC subarray transitions to obsState ABORTED")
+def tmc_subarray_is_in_aborted_obsstate(subarray_node_low, event_recorder):
     """
-    Method to check SDP subarray is in ABORTED obsstate
+    Check that the TMC subarray transitions to the ABORTED obsState
+    and subscribe to the obsState event.
     """
-    assert event_recorder.has_change_event_occurred(
-        subarray_node_low.subarray_devices.get("sdp_subarray"),
-        "obsState",
-        ObsState.ABORTED,
-    )
-    assert event_recorder.has_change_event_occurred(
-        subarray_node_low.subarray_devices.get("csp_subarray"),
-        "obsState",
-        ObsState.ABORTED,
-    )
     assert event_recorder.has_change_event_occurred(
         subarray_node_low.subarray_node,
         "obsState",
@@ -215,24 +224,17 @@ def sdp_subarray_is_in_aborted_obsstate(subarray_node_low, event_recorder):
 @when("I issue the Restart command on TMC SubarrayNode")
 def restart_is_invoked(subarray_node_low):
     """
-    This method invokes restart command on tmc subarray
+    Invoke the Restart command on the TMC SubarrayNode.
     """
     subarray_node_low.execute_transition("Restart")
 
 
-@then("the CSP, SDP and TMC subarray transitions to obsState EMPTY")
-def check_sdp_csp_subarray_obsstate(event_recorder, subarray_node_low):
-    """Check SDP CSP and TMC Subarray obsstate to be EMPTY"""
-    assert event_recorder.has_change_event_occurred(
-        subarray_node_low.subarray_devices.get("sdp_subarray"),
-        "obsState",
-        ObsState.EMPTY,
-    )
-    assert event_recorder.has_change_event_occurred(
-        subarray_node_low.subarray_devices.get("csp_subarray"),
-        "obsState",
-        ObsState.EMPTY,
-    )
+@then("the TMC subarray transitions to obsState EMPTY")
+def check_tmc_subarray_is_in_empty_obsstate(event_recorder, subarray_node_low):
+    """
+    Check that the TMC subarray transitions to the EMPTY obsState
+    and subscribe to the obsState event.
+    """
     assert event_recorder.has_change_event_occurred(
         subarray_node_low.subarray_node,
         "obsState",

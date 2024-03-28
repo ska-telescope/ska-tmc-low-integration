@@ -21,8 +21,8 @@ class TestConfigureErrorPropagation:
 
     @pytest.mark.SKA_low
     @pytest.mark.skip(
-        "This test case are failing on pipeline, issue will fix as part "
-        + "of hm-443"
+        "This test case is currently unstable, will be debugged and fixed as "
+        + "a part of HM-443"
     )
     def test_configure_timeout_csp_ln(
         self,

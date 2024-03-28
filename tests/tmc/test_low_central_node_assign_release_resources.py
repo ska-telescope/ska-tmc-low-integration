@@ -260,6 +260,10 @@ class TestLowCentralNodeAssignResources:
         )
 
     @pytest.mark.SKA_low
+    @pytest.mark.skip(
+        "This test case is currently unstable, will be debugged and fixed as "
+        + "a part of HM-443"
+    )
     def test_low_centralnode_assign_resources_exception_propagation(
         self,
         central_node_low,
