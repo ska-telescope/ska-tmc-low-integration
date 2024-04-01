@@ -16,7 +16,7 @@ from tests.resources.test_support.common_utils.tmc_helpers import (
 )
 
 
-@pytest.mark.tmc_mccs
+@pytest.mark.tmc_mccs1
 @scenario(
     "../features/tmc_mccs/xtp-34263_invalid_json_mccs.feature",
     "The TMC Low Subarray reports the exception triggered by the MCCS "
@@ -83,8 +83,8 @@ def tmc_subarray_in_empty_obsstate(subarray_node_low, event_recorder):
 
 @when(
     parsers.parse(
-        "I assign resources with invalid {station_id} to "
-        + "the MCCS subarray using TMC with subarray_id {subarray_id}"
+        "I assign resources with invalid {station_id} "
+        + "to the MCCS subarray using TMC with {subarray_id}"
     )
 )
 def invoke_assignresources(
