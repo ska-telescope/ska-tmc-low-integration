@@ -38,6 +38,9 @@ def given_tmc(central_node_low, event_recorder):
     event_recorder.subscribe_event(
         central_node_low.central_node, "telescopeState"
     )
+    event_recorder.subscribe_event(
+        central_node_low.subarray_node, "longRunningCommandResult"
+    )
     central_node_low.move_to_on()
     assert event_recorder.has_change_event_occurred(
         central_node_low.central_node,
@@ -53,10 +56,15 @@ def tmc_check_status(event_recorder, central_node_low, command_input_factory):
     assign_input_json = prepare_json_args_for_centralnode_commands(
         "assign_resources_low", command_input_factory
     )
-    central_node_low.store_resources(assign_input_json)
+    _, unique_id = central_node_low.store_resources(assign_input_json)
 
     assert event_recorder.has_change_event_occurred(
         central_node_low.subarray_node, "obsState", ObsState.IDLE
+    )
+    event_recorder.has_change_event_occurred(
+        central_node_low.subarray_node,
+        "longRunningCommandResult",
+        (unique_id[0], str(ResultCode.OK.value)),
     )
 
 
