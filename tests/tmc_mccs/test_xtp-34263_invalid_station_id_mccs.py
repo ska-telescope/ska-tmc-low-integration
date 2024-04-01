@@ -1,10 +1,7 @@
-"""Test module for TMC-MCCS handle invalid json functionality"""
-import logging
-
+"""Test module for TMC-MCCS handle invalid json(invalid station id)"""
 import pytest
 from pytest_bdd import given, parsers, scenario, then, when
 from ska_control_model import ObsState
-from ska_ser_logging import configure_logging
 from ska_tango_base.commands import ResultCode
 from tango import DevState
 
@@ -16,17 +13,14 @@ from tests.resources.test_harness.constant import (
 from tests.resources.test_harness.utils.enums import SimulatorDeviceType
 from tests.resources.test_support.common_utils.tmc_helpers import (
     prepare_json_args_for_centralnode_commands,
-    wait_for_attribute_update,
 )
-
-configure_logging(logging.DEBUG)
-LOGGER = logging.getLogger(__name__)
 
 
 @pytest.mark.tmc_mccs
 @scenario(
     "../features/tmc_mccs/xtp-34263_invalid_json_mccs.feature",
-    "Invalid Station Id provided to MCCS controller",
+    "The TMC Low Subarray reports the exception triggered by the MCCS "
+    + "controller when it encounters an invalid station ID.",
 )
 def test_invalid_station_id_reporting_tmc_mccs_controller():
     """
@@ -72,7 +66,6 @@ def check_telescope_is_in_on_state(central_node_low, event_recorder) -> None:
         central_node_low.central_node,
         "telescopeState",
         DevState.ON,
-        lookahead=8,
     )
 
 
@@ -132,10 +125,6 @@ def invalid_command_rejection(event_recorder, central_node_low):
     assert event_recorder.has_change_event_occurred(
         central_node_low.mccs_master_leaf_node,
         "longRunningCommandResult",
-    )
-    assert wait_for_attribute_update(
-        central_node_low.mccs_master_leaf_node,
-        "longRunningCommandResult",
         "AssignResources",
         ResultCode.FAILED,
     )
@@ -150,7 +139,6 @@ def mccs_subarray_remains_in_empty_obsstate(event_recorder, subarray_node_low):
         subarray_node_low.subarray_devices.get("mccs_subarray"),
         "obsState",
         ObsState.EMPTY,
-        lookahead=8,
     )
 
 
@@ -165,14 +153,11 @@ def central_node_receiving_error(
     event_recorder.subscribe_event(
         central_node_low.central_node, "longRunningCommandResult", timeout=80.0
     )
-    exception_msg = (
-        "Exception occurred on the following devices: "
-        + f"{mccs_master_leaf_node}: Cannot allocate resources: 15 "
-        + f"{tmc_low_subarraynode1}: Timeout has occurred, command failed"
-    )
     expected_long_running_command_result = (
         stored_unique_id[0],
-        exception_msg,
+        "Exception occurred on the following devices: "
+        + f"{mccs_master_leaf_node}: Cannot allocate resources: 15 "
+        + f"{tmc_low_subarraynode1}: Timeout has occurred, command failed",
     )
 
     assert event_recorder.has_change_event_occurred(
@@ -195,7 +180,6 @@ def tmc_subarray_remains_in_resourcing_obsstate(
         subarray_node_low.subarray_node,
         "obsState",
         ObsState.RESOURCING,
-        lookahead=8,
     )
 
 
@@ -234,6 +218,7 @@ def check_tmc_subarray_is_in_empty_obsstate(event_recorder, subarray_node_low):
     Check that the TMC subarray transitions to the EMPTY obsState
     and subscribe to the obsState event.
     """
+    event_recorder.subscribe_event(subarray_node_low.subarray_node, "obsState")
     assert event_recorder.has_change_event_occurred(
         subarray_node_low.subarray_node,
         "obsState",
