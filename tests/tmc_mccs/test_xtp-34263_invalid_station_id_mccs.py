@@ -127,6 +127,7 @@ def invalid_command_rejection(event_recorder, central_node_low):
         "longRunningCommandResult",
         "AssignResources",
         ResultCode.FAILED,
+        lookahead=10,
     )
 
 
