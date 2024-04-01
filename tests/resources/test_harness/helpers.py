@@ -536,3 +536,17 @@ def set_admin_mode_values_mccs():
                     device.adminmode = 0
                     devices.append(device)
                     time.sleep(0.1)
+
+
+def updated_assign_str(assign_json: str, station_id: int) -> str:
+    """
+    Returns a json with updated values for the given keys
+    """
+    assign_json = json.loads(assign_json)
+
+    for subarray_beam in assign_json["mccs"]["subarray_beams"]:
+        for aperture in subarray_beam["apertures"]:
+            aperture["station_id"] = station_id
+
+    updated_assign_str = json.dumps(assign_json)
+    return updated_assign_str

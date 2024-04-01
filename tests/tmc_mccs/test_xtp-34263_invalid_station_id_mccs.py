@@ -5,11 +5,11 @@ from ska_control_model import ObsState
 from ska_tango_base.commands import ResultCode
 from tango import DevState
 
-from tests.conftest import updated_assign_str
 from tests.resources.test_harness.constant import (
     mccs_master_leaf_node,
     tmc_low_subarraynode1,
 )
+from tests.resources.test_harness.helpers import updated_assign_str
 from tests.resources.test_harness.utils.enums import SimulatorDeviceType
 from tests.resources.test_support.common_utils.tmc_helpers import (
     prepare_json_args_for_centralnode_commands,
