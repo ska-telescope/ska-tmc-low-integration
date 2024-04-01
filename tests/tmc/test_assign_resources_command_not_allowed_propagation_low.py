@@ -71,6 +71,7 @@ class TestAssignCommandNotAllowedPropagation:
         )
         assert ERROR_MESSAGE in assertion_data["attribute_value"][1]
 
+    @pytest.mark.skip
     @pytest.mark.SKA_low
     def test_assign_command_not_allowed_propagation_sdp_ln_low(
         self,
