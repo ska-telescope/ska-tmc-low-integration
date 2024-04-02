@@ -172,6 +172,7 @@ def central_node_receiving_error(
         central_node_low.central_node,
         "longRunningCommandResult",
         expected_long_running_command_result,
+        lookahead=10,
     )
 
 
