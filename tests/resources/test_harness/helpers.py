@@ -119,10 +119,10 @@ def get_master_device_simulators(simulator_factory):
     sdp_master_sim = simulator_factory.get_or_create_simulator_device(
         SimulatorDeviceType.LOW_SDP_MASTER_DEVICE
     )
-    return (
-        csp_master_sim,
-        sdp_master_sim,
+    mccs_master_sim = simulator_factory.get_or_create_simulator_device(
+        SimulatorDeviceType.MCCS_MASTER_DEVICE
     )
+    return (csp_master_sim, sdp_master_sim, mccs_master_sim)
 
 
 def get_device_simulator_with_given_name(simulator_factory, devices):
@@ -135,6 +135,8 @@ def get_device_simulator_with_given_name(simulator_factory, devices):
         "sdp subarray": SimulatorDeviceType.LOW_SDP_DEVICE,
         "csp master": SimulatorDeviceType.LOW_CSP_MASTER_DEVICE,
         "sdp master": SimulatorDeviceType.LOW_SDP_MASTER_DEVICE,
+        "mccs master": SimulatorDeviceType.MCCS_MASTER_DEVICE,
+        "mccs subarray": SimulatorDeviceType.MCCS_SUBARRAY_DEVICE,
     }
     sim_device_proxy_list = []
     for device_name in devices:
@@ -500,16 +502,22 @@ def generate_id(prefix: str) -> str:
     return f"{prefix}-{unique_id[:8]}-{unique_id[-5:]}"
 
 
-def update_eb_pb_ids(input_json: str) -> str:
+def update_eb_pb_ids(input_json: str, id: str = "") -> str:
     """
     Method to generate different eb_id and pb_id
     :param input_json: json to utilised to update values.
     """
     input_json = json.loads(input_json)
-    input_json["sdp"]["execution_block"]["eb_id"] = generate_id("eb-test")
-    for pb in input_json["sdp"]["processing_blocks"]:
-        pb["pb_id"] = generate_id("pb-test")
-    input_json = json.dumps(input_json)
+    if id == "eb_id":
+        input_json["sdp"]["execution_block"]["eb_id"] = generate_id("eb-test")
+    elif id == "pb_id":
+        for pb in input_json["sdp"]["processing_blocks"]:
+            pb["pb_id"] = generate_id("pb-test")
+    else:
+        input_json["sdp"]["execution_block"]["eb_id"] = generate_id("eb-test")
+        for pb in input_json["sdp"]["processing_blocks"]:
+            pb["pb_id"] = generate_id("pb-test")
+        input_json = json.dumps(input_json)
     return input_json
 
 
