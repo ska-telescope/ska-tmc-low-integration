@@ -342,10 +342,7 @@ def wait_for_attribute_update(
 def wait_for_updates_on_delay_model(csp_subarray_leaf_node) -> None:
     start_time = time.time()
     time_elapsed = 0
-    while (
-        csp_subarray_leaf_node.delayModel == "no_value"
-        and time_elapsed <= TIMEOUT
-    ):
+    while csp_subarray_leaf_node.delayModel == "" and time_elapsed <= TIMEOUT:
         time.sleep(1)
         time_elapsed = time.time() - start_time
     if time_elapsed > TIMEOUT:
@@ -363,7 +360,7 @@ def wait_for_updates_stop_on_delay_model(csp_subarray_leaf_node) -> None:
     # this will fix in PI22 till then wait is apply here
     required_delay_stop_time = 350
     while (
-        csp_subarray_leaf_node.delayModel != "no_value"
+        csp_subarray_leaf_node.delayModel != ""
         and time_elapsed <= required_delay_stop_time
     ):
         time.sleep(1)
@@ -371,7 +368,7 @@ def wait_for_updates_stop_on_delay_model(csp_subarray_leaf_node) -> None:
     LOGGER.info(f"time_elapsed: {time_elapsed}")
     if time_elapsed > required_delay_stop_time:
         raise Exception(
-            "Timeout while waiting for CspSubarrayLeafNode to generate \
+            "Timeout while waiting for CspSubarrayLeafNode to stop generating \
                 delay values."
         )
 
