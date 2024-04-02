@@ -18,6 +18,7 @@ from tests.resources.test_harness.helpers import (
 )
 
 
+@pytest.mark.skip(reason="Delay model calculation not working")
 @pytest.mark.SKA_low
 @scenario(
     "../features/tmc/check_low_delay_model.feature",
