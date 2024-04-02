@@ -2,7 +2,7 @@
 import pytest
 from pytest_bdd import given, parsers, scenario, then, when
 from ska_control_model import ObsState
-from ska_tango_base.commands import ResultCode
+from ska_tango_testing.mock.placeholders import Anything
 from tango import DevState
 
 from tests.resources.test_harness.constant import (
@@ -16,7 +16,7 @@ from tests.resources.test_support.common_utils.tmc_helpers import (
 )
 
 
-@pytest.mark.tmc_mccs1
+@pytest.mark.tmc_mccs
 @scenario(
     "../features/tmc_mccs/xtp-34263_invalid_json_mccs.feature",
     "The TMC Low Subarray reports the exception triggered by the MCCS "
@@ -109,11 +109,13 @@ def invoke_assignresources(
     _, unique_id = central_node_low.perform_action(
         "AssignResources", assign_json_string
     )
-    stored_unique_id.append(unique_id)
+    stored_unique_id.append(unique_id[0])
 
 
 @then("the MCCS controller should throw the error for invalid station id")
-def invalid_command_rejection(event_recorder, central_node_low):
+def invalid_command_rejection(
+    event_recorder, central_node_low, stored_unique_id
+):
     """
     Ensure that the MCCS controller throws an error for the invalid station ID
     and subscribe to the longRunningCommandResult event.
@@ -122,13 +124,15 @@ def invalid_command_rejection(event_recorder, central_node_low):
         central_node_low.mccs_master_leaf_node,
         "longRunningCommandResult",
     )
-    assert event_recorder.has_change_event_occurred(
+    exception_message = "Cannot allocate resources: 15"
+    assert stored_unique_id[0].endswith("AssignResources")
+    assertion_data = event_recorder.has_change_event_occurred(
         central_node_low.mccs_master_leaf_node,
-        "longRunningCommandResult",
-        "AssignResources",
-        ResultCode.FAILED,
-        lookahead=10,
+        attribute_name="longRunningCommandResult",
+        attribute_value=(Anything, exception_message),
     )
+    assert "AssignResources" in assertion_data["attribute_value"][0]
+    assert exception_message in assertion_data["attribute_value"][1]
 
 
 @then("the MCCS subarray should remain in EMPTY ObsState")
@@ -136,8 +140,11 @@ def mccs_subarray_remains_in_empty_obsstate(event_recorder, subarray_node_low):
     """
     Check that the MCCS subarray remains in the EMPTY obsState.
     """
+    event_recorder.subscribe_event(
+        subarray_node_low.subarray_devices["mccs_subarray"], "obsState"
+    )
     assert event_recorder.has_change_event_occurred(
-        subarray_node_low.subarray_devices.get("mccs_subarray"),
+        subarray_node_low.subarray_devices["mccs_subarray"],
         "obsState",
         ObsState.EMPTY,
     )
@@ -157,7 +164,7 @@ def central_node_receiving_error(
     expected_long_running_command_result = (
         stored_unique_id[0],
         "Exception occurred on the following devices: "
-        + f"{mccs_master_leaf_node}: Cannot allocate resources: 15 "
+        + f"{mccs_master_leaf_node}: Cannot allocate resources: 15"
         + f"{tmc_low_subarraynode1}: Timeout has occurred, command failed",
     )
 
@@ -184,7 +191,7 @@ def tmc_subarray_remains_in_resourcing_obsstate(
     )
 
 
-@when("I issue the Abort command on TMC SubarrayNode")
+@then("I issue the Abort command on TMC SubarrayNode")
 def abort_is_invoked(subarray_node_low):
     """
     Invoke the Abort command on the TMC SubarrayNode.
@@ -198,6 +205,7 @@ def tmc_subarray_is_in_aborted_obsstate(subarray_node_low, event_recorder):
     Check that the TMC subarray transitions to the ABORTED obsState
     and subscribe to the obsState event.
     """
+    event_recorder.subscribe_event(subarray_node_low.subarray_node, "obsState")
     assert event_recorder.has_change_event_occurred(
         subarray_node_low.subarray_node,
         "obsState",
@@ -205,7 +213,7 @@ def tmc_subarray_is_in_aborted_obsstate(subarray_node_low, event_recorder):
     )
 
 
-@when("I issue the Restart command on TMC SubarrayNode")
+@then("I issue the Restart command on TMC SubarrayNode")
 def restart_is_invoked(subarray_node_low):
     """
     Invoke the Restart command on the TMC SubarrayNode.
