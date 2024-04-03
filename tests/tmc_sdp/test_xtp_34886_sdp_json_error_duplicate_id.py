@@ -343,7 +343,14 @@ def assign_resources_with_new_id(
     central_node_low: CentralNodeWrapperLow,
     event_recorder: EventRecorder,
 ):
+    """
+    Method assigns resources with new eb and pb id.
 
+    Args:
+        subarray_id (str): _description_
+        central_node_low (CentralNodeWrapperLow): _description_
+        event_recorder (EventRecorder): _description_
+    """
     assign_input = update_eb_pb_ids(central_node_low.assign_input)
     central_node_low.store_resources(assign_input)
 
