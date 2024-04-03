@@ -541,6 +541,7 @@ def set_admin_mode_values_mccs():
 def updated_assign_str(assign_json: str, station_id: int) -> str:
     """
     Returns a json with updated values for the given keys
+    :returns: updated assign string
     """
     assign_json = json.loads(assign_json)
 

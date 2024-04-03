@@ -183,7 +183,10 @@ def simulator_factory() -> SimulatorFactory:
 
 @pytest.fixture(scope="module")
 def stored_unique_id():
-    """store the unique_ids"""
+    """
+    store the unique_ids
+    :returns: empty list
+    """
     return []
 
 
