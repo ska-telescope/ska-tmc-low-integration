@@ -29,10 +29,7 @@ def given_a_tmc(central_node_low, simulator_factory):
         event_recorder: fixture for EventRecorder class
 
     """
-    (
-        csp_master_sim,
-        _,
-    ) = get_master_device_simulators(simulator_factory)
+    (_, csp_master_sim, _) = get_master_device_simulators(simulator_factory)
 
     assert central_node_low.central_node.ping() > 0
     assert central_node_low.mccs_master.ping() > 0
