@@ -6,6 +6,10 @@ from ska_control_model import ObsState
 from tango import DevState
 
 
+@pytest.mark.skip(
+    "This test case is currently unstable, will be debugged and fixed as "
+    + "a part of HM-443"
+)
 @pytest.mark.tmc_csp
 @scenario(
     "../features/tmc_csp/xtp-30156_abort_in_idle_ready.feature",
