@@ -113,7 +113,7 @@ def check_tmc_sdp_subarray_idle(
     assert event_recorder.has_change_event_occurred(
         central_node_low.subarray_devices.get("sdp_subarray"),
         "obsState",
-        ObsState.RESOURCING
+        ObsState.RESOURCING,
     )
     assert event_recorder.has_change_event_occurred(
         central_node_low.subarray_devices.get("sdp_subarray"),
