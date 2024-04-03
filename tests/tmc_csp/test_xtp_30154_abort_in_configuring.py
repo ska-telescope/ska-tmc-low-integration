@@ -5,6 +5,7 @@ from pytest_bdd import given, scenario, then, when
 from ska_control_model import ObsState
 from tango import DevState
 
+from tests.resources.test_support.common_utils.result_code import ResultCode
 from tests.resources.test_support.common_utils.tmc_helpers import (
     prepare_json_args_for_centralnode_commands,
     prepare_json_args_for_commands,
@@ -35,6 +36,10 @@ def subarray_busy_configuring(
     event_recorder.subscribe_event(
         central_node_real_csp_low.central_node, "telescopeState"
     )
+    event_recorder.subscribe_event(
+        central_node_real_csp_low.central_node, "longRunningCommandResult"
+    )
+
     assert event_recorder.has_change_event_occurred(
         central_node_real_csp_low.central_node,
         "telescopeState",
@@ -46,7 +51,7 @@ def subarray_busy_configuring(
         "assign_resources_low", command_input_factory
     )
     # Invoking AssignResources command
-    central_node_real_csp_low.store_resources(input_json)
+    _, unique_id = central_node_real_csp_low.store_resources(input_json)
     event_recorder.subscribe_event(
         central_node_real_csp_low.subarray_node, "obsState"
     )
@@ -58,6 +63,11 @@ def subarray_busy_configuring(
         central_node_real_csp_low.subarray_node,
         "obsState",
         ObsState.IDLE,
+    )
+    event_recorder.has_change_event_occurred(
+        central_node_real_csp_low.central_node,
+        "longRunningCommandResult",
+        (unique_id[0], str(ResultCode.OK.value)),
     )
 
     configure_input_json = prepare_json_args_for_commands(
