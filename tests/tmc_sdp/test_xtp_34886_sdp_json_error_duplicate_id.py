@@ -164,7 +164,7 @@ def tmc_assign_resources_with_duplicate_id(
 
 @when(
     parsers.parse(
-        "SDP subarray {subarray_id} throws an exception"
+        "SDP subarray {subarray_id} throws an exception "
         + "and remain in IDLE obsState"
     )
 )
@@ -190,9 +190,7 @@ def check_sdp_error(
 
 
 @when(
-    parsers.parse(
-        "TMC subarray {subarray_id} " + "remain in RESOURCING obsState"
-    )
+    parsers.parse("TMC subarray {subarray_id} remain in RESOURCING obsState")
 )
 def check_tmc_resourcing_obstate(
     subarray_id: str,
