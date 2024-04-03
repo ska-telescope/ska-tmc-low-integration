@@ -64,7 +64,6 @@ def given_a_tmc_sdp(
 def check_tmc_sdp_subarray_idle(
     subarray_id: str,
     input_json1: str,
-    json_factory,
     central_node_low: CentralNodeWrapperLow,
     event_recorder: EventRecorder,
 ):
@@ -72,11 +71,11 @@ def check_tmc_sdp_subarray_idle(
     Checks TMC Subarray and SDP Subarray is in obsstate IDLE
 
     Args:
-        subarray_id (str): _description_
-        input_json1 (str): _description_
-        json_factory (_type_): _description_
-        central_node_low (CentralNodeWrapperLow): _description_
-        event_recorder (EventRecorder): _description_
+        subarray_id (str): subarray id used for testing
+        input_json1 (str): assign resources input json
+        central_node_low (CentralNodeWrapperLow): fixture for
+        CentralNodeWrapperLow class instance
+        event_recorder (EventRecorder):fixture for EventRecorder class instance
     """
     central_node_low.set_subarray_id(subarray_id)
     event_recorder.subscribe_event(
@@ -141,9 +140,10 @@ def tmc_assign_resources_with_duplicate_id(
     duplicate id for SDP Subarray configuration
 
     Args:
-        duplicate_id (str): _description_
-        input_json1 (str): _description_
-        central_node_low (CentralNodeWrapperLow): _description_
+        duplicate_id (str): Type ID to be duplicated(eb_id/pb_id).
+        input_json1 (str): assign resources input json
+        central_node_low (CentralNodeWrapperLow): fixture for
+        CentralNodeWrapperLow class instance
     """
     if duplicate_id == "eb_id":
         id = "pb_id"
@@ -171,16 +171,15 @@ def tmc_assign_resources_with_duplicate_id(
 def check_sdp_error(
     subarray_id: str,
     central_node_low: CentralNodeWrapperLow,
-    event_recorder: EventRecorder,
 ):
     """Method to verify SDP Subarray raises exception
     with duplicate id in SDP configuration.
     Checks SDP Subarray remains in obsstate IDLE
 
     Args:
-        subarray_id (str): _description_
-        central_node_low (CentralNodeWrapperLow): _description_
-        event_recorder (EventRecorder): _description_
+        subarray_id (str): subarray id used for testing
+        central_node_low (CentralNodeWrapperLow): fixture for
+        CentralNodeWrapperLow class instance
     """
     sdp_subarray_obsstate = central_node_low.subarray_devices.get(
         "sdp_subarray"
@@ -201,9 +200,10 @@ def check_tmc_resourcing_obstate(
     once SDP Subarray raises exception
 
     Args:
-        subarray_id (str): _description_
-        central_node_low (CentralNodeWrapperLow): _description_
-        event_recorder (EventRecorder): _description_
+        subarray_id (str): subarray id used for testing
+        central_node_low (CentralNodeWrapperLow): fixture for
+        CentralNodeWrapperLow class instance
+        event_recorder (EventRecorder):fixture for EventRecorder class instance
     """
     assert event_recorder.has_change_event_occurred(
         central_node_low.subarray_node,
@@ -220,8 +220,9 @@ def check_central_node_exception_propagation(
     is prapogated to TMC nodes
 
     Args:
-        central_node_low (CentralNodeWrapperLow): _description_
-        event_recorder (EventRecorder): _description_
+        central_node_low (CentralNodeWrapperLow): fixture for
+        CentralNodeWrapperLow class instance
+        event_recorder (EventRecorder):fixture for EventRecorder class instance
     """
     exception_message = (
         "Exception occurred on the following devices:"
@@ -243,8 +244,9 @@ def abort_tmc_subarray(
     """Method to invoke Abort command from TMC Subarray
 
     Args:
-        subarray_id (str): _description_
-        central_node_low (CentralNodeWrapperLow): _description_
+        subarray_id (str): subarray id used for testing
+        central_node_low (CentralNodeWrapperLow): fixture for
+        CentralNodeWrapperLow class instance
     """
     central_node_low.subarray_abort()
 
@@ -264,9 +266,10 @@ def check_tmc_sdp_subarray_aborted_obstate(
     in obsstate ABORTED after Abort is successful
 
     Args:
-        subarray_id (str): _description_
-        central_node_low (CentralNodeWrapperLow): _description_
-        event_recorder (EventRecorder): _description_
+        subarray_id (str): subarray id used for testing
+        central_node_low (CentralNodeWrapperLow): fixture for
+        CentralNodeWrapperLow class instance
+        event_recorder (EventRecorder):fixture for EventRecorder class instance
     """
 
     assert event_recorder.has_change_event_occurred(
@@ -291,8 +294,9 @@ def restart_tmc_subarray(
     """Method to invoke Restart command from TMC Subarray
 
     Args:
-        subarray_id (str): _description_
-        central_node_low (CentralNodeWrapperLow): _description_
+        subarray_id (str): subarray id used for testing
+        central_node_low (CentralNodeWrapperLow): fixture for
+        CentralNodeWrapperLow class instance
     """
     central_node_low.subarray_restart()
 
@@ -311,9 +315,10 @@ def check_tmc_sdp_empy_obstate(
     in obsstate EMPTY after Restart is successful
 
     Args:
-        subarray_id (str): _description_
-        central_node_low (CentralNodeWrapperLow): _description_
-        event_recorder (EventRecorder): _description_
+        subarray_id (str): subarray id used for testing
+        central_node_low (CentralNodeWrapperLow): fixture for
+        CentralNodeWrapperLow class instance
+        event_recorder (EventRecorder):fixture for EventRecorder class instance
     """
     assert event_recorder.has_change_event_occurred(
         central_node_low.subarray_devices.get("sdp_subarray"),
@@ -343,9 +348,10 @@ def assign_resources_with_new_id(
     Method assigns resources with new eb and pb id.
 
     Args:
-        subarray_id (str): _description_
-        central_node_low (CentralNodeWrapperLow): _description_
-        event_recorder (EventRecorder): _description_
+        subarray_id (str): subarray id used for testing
+        central_node_low (CentralNodeWrapperLow): fixture for
+                                        CentralNodeWrapperLow class instance
+        event_recorder (EventRecorder):fixture for EventRecorder class instance
     """
     assign_input = update_eb_pb_ids(central_node_low.assign_input)
     central_node_low.store_resources(assign_input)
