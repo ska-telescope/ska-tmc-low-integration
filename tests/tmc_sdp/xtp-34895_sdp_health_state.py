@@ -1,4 +1,4 @@
-""""""
+"""Test case for healthstate"""
 import pytest
 from pytest_bdd import given, parsers, scenario, then, when
 from ska_tango_base.control_model import HealthState
@@ -13,11 +13,11 @@ from tests.resources.test_harness.utils.enums import SimulatorDeviceType
 @pytest.mark.MS
 @scenario(
     "../features/tmc_mccs/xtp-34895_health_state_sdp.feature",
-    "Verify TMC TelescopeHealthState transition based on SDP Controller",
-    +"HealthState",
+    "Verify TMC TelescopeHealthState transition based on SDP Controller"
+    + "HealthState",
 )
 def test_telescope_state_sdp_controller():
-    """"""
+    """test case for healthstate."""
 
 
 @given("a Telescope consisting of TMC-SDP,emulated CSP and emulated MCCS ")
