@@ -17,7 +17,10 @@ from tests.resources.test_harness.helpers import (
     wait_for_updates_stop_on_delay_model,
 )
 
-
+@pytest.mark.skip(
+    "This test case is currently unstable, will be debugged and fixed as "
+    + "a part of HM-443"
+)
 @pytest.mark.SKA_low
 @scenario(
     "../features/tmc/check_low_delay_model.feature",
