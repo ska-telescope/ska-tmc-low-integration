@@ -185,7 +185,7 @@ def check_sdp_error(
     assert event_recorder.has_change_event_occurred(
         central_node_low.subarray_devices.get("sdp_subarray"),
         "obsState",
-        ObsState.IDLE,
+        ObsState.EMPTY,
     )
 
 
