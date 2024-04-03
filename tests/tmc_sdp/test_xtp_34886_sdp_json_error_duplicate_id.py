@@ -78,7 +78,7 @@ def check_tmc_sdp_subarray_idle(
         central_node_low (CentralNodeWrapperLow): _description_
         event_recorder (EventRecorder): _description_
     """
-
+    central_node_low.set_subarray_id(subarray_id)
     event_recorder.subscribe_event(
         central_node_low.central_node, "telescopeState"
     )
@@ -155,8 +155,8 @@ def tmc_assign_resources_with_duplicate_id(
             input_json1
         )
     )
-    pytest.result, pytest.unique_id = central_node_low.store_resources(
-        assign_input
+    pytest.result, pytest.unique_id = central_node_low.perform_action(
+        "AssignResources", assign_input
     )
     assert pytest.unique_id[0].endswith("AssignResources")
     assert pytest.result[0] == ResultCode.QUEUED
@@ -182,11 +182,10 @@ def check_sdp_error(
         central_node_low (CentralNodeWrapperLow): _description_
         event_recorder (EventRecorder): _description_
     """
-    assert event_recorder.has_change_event_occurred(
-        central_node_low.subarray_devices.get("sdp_subarray"),
-        "obsState",
-        ObsState.EMPTY,
-    )
+    sdp_subarray_obsstate = central_node_low.subarray_devices.get(
+        "sdp_subarray"
+    ).obsState
+    assert sdp_subarray_obsstate == ObsState.IDLE
 
 
 @when(
@@ -273,18 +272,18 @@ def check_tmc_sdp_subarray_aborted_obstate(
     assert event_recorder.has_change_event_occurred(
         central_node_low.subarray_devices.get("sdp_subarray"),
         "obsState",
-        ObsState.IDLE,
+        ObsState.ABORTED,
     )
 
     assert event_recorder.has_change_event_occurred(
         central_node_low.subarray_node,
         "obsState",
-        ObsState.IDLE,
+        ObsState.ABORTED,
     )
 
 
 @when(
-    parsers.parse("I issue the Restart command on TMC Subarray {subarray_id>}")
+    parsers.parse("I issue the Restart command on TMC Subarray {subarray_id}")
 )
 def restart_tmc_subarray(
     subarray_id: str, central_node_low: CentralNodeWrapperLow
@@ -319,13 +318,13 @@ def check_tmc_sdp_empy_obstate(
     assert event_recorder.has_change_event_occurred(
         central_node_low.subarray_devices.get("sdp_subarray"),
         "obsState",
-        ObsState.IDLE,
+        ObsState.EMPTY,
     )
 
     assert event_recorder.has_change_event_occurred(
         central_node_low.subarray_node,
         "obsState",
-        ObsState.IDLE,
+        ObsState.EMPTY,
     )
 
 

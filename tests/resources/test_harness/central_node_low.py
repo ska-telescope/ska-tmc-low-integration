@@ -25,6 +25,7 @@ from tests.resources.test_harness.helpers import SIMULATED_DEVICES_DICT
 from tests.resources.test_harness.utils.common_utils import JsonFactory
 from tests.resources.test_harness.utils.sync_decorators import (
     sync_abort,
+    sync_assign_resources,
     sync_release_resources,
     sync_restart,
     sync_set_to_off,
@@ -302,6 +303,7 @@ class CentralNodeWrapperLow(object):
             self.central_node.TelescopeStandBy()
         sleep(0.15)
 
+    @sync_assign_resources(device_dict=device_dict_low)
     def store_resources(self, assign_json: str):
         """Invoke Assign Resource command on subarray Node
         Args:

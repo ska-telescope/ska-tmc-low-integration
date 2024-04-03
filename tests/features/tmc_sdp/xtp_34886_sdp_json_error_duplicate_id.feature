@@ -17,4 +17,4 @@ Feature: Default
 		Examples:
             | subarray_id  | input_json1           | duplicate_id |
             | 1            | assign_resources_json | eb_id        |
-            | 1            | assign_resources_json | pb_id        |
+            | 1            | assign_resources_json2 | pb_id        |
