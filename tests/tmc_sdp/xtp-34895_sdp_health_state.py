@@ -1,4 +1,6 @@
-"""Test case for healthstate"""
+"""Test case for verifying TMC TelescopeHealthState transition based on SDP
+ Controller HealthState."""
+
 import pytest
 from pytest_bdd import given, parsers, scenario, then, when
 from ska_tango_base.control_model import HealthState
@@ -9,14 +11,17 @@ from tests.resources.test_harness.helpers import (
 from tests.resources.test_harness.utils.enums import SimulatorDeviceType
 
 
-@pytest.mark.tmc_sdp1
+@pytest.mark.tmc_sdp_unhappy_path
 @scenario(
-    "../features/tmc_mccs/xtp-34895_health_state_sdp.feature",
+    "../features/tmc_sdp/xtp-34895_health_state_sdp.feature",
     "Verify TMC TelescopeHealthState transition based on SDP Controller"
     + "HealthState",
 )
 def test_telescope_state_sdp_controller():
-    """test case for healthstate."""
+    """This test case sets up a Telescope consisting of TMC-SDP, emulated CSP,
+    and emulated MCCS. It then changes the health state of specified simulator
+    devices and checks if the telescope's health state is
+    updated accordingly."""
 
 
 @given("a Telescope consisting of TMC-SDP, emulated CSP and emulated MCCS ")
@@ -46,13 +51,15 @@ def set_simulator_devices_health_states(
     devices_list = devices.split(",")
     health_state_list = health_state.split(",")
 
-    devices_list = get_device_simulator_with_given_name(
+    sim_devices_list = get_device_simulator_with_given_name(
         simulator_factory, devices_list
     )
-    for device_val, health_state_val in list(
-        zip(devices_list, health_state_list)
+    for sim_device, sim_health_state_val in list(
+        zip(sim_devices_list, health_state_list)
     ):
-        device_val.SetDirectHealthState(HealthState[health_state_val])
+        # Check if the device is not the SDP controller
+        if sim_device.device_name not in ["sdp controller"]:
+            sim_device.SetDirectHealthState(HealthState[sim_health_state_val])
 
 
 @then(parsers.parse("the telescope health state is {telescope_health_state}"))

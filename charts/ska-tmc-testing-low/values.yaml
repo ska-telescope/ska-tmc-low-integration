@@ -99,8 +99,6 @@ ska-sdp:
         resources:
           requests:
             cpu: 100m
-  proccontrol:
-    replicas: 0
   ska-tango-base:
     enabled: false
 

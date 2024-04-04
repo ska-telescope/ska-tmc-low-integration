@@ -95,6 +95,7 @@ endif
 
 ifeq ($(SDP_SIMULATION_ENABLED),false)
 CUSTOM_VALUES =	--set tmc-low.deviceServers.mocks.is_simulated.sdp=$(SDP_SIMULATION_ENABLED)\
+	--set proccontrol.replicas=0 \
 	--set ska-sdp.enabled=true \
 	--set global.sdp_master="$(SDP_MASTER)"\
 	--set global.sdp_subarray_prefix="$(SDP_SUBARRAY_PREFIX)"\
@@ -109,7 +110,7 @@ K8S_CHART_PARAMS = --set global.minikube=$(MINIKUBE) \
 	--set ska-tango-base.jive.enabled=$(JIVE) \
 	--set global.exposeAllDS=false \
 	--set global.cluster_domain=$(CLUSTER_DOMAIN) \
-	--set global.operator=false \
+	--set global.operator=true \
 	--set ska-taranta.enabled=$(TARANTA_ENABLED)\
 	--set tmc-low.subarray_count=$(SUBARRAY_COUNT)\
 	$(CUSTOM_VALUES)
