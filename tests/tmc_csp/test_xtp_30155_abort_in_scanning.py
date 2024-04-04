@@ -47,9 +47,9 @@ def subarray_busy_scanning(
     )
     # Invoking AssignResources command
     central_node_low.store_resources(input_json)
-    event_recorder.subscribe_event(central_node_low.subarray_node, "obsState")
+    event_recorder.subscribe_event(subarray_node_low.subarray_node, "obsState")
     event_recorder.subscribe_event(
-        central_node_low.subarray_devices.get("csp_subarray"),
+        subarray_node_low.subarray_devices.get("csp_subarray"),
         "obsState",
     )
     assert event_recorder.has_change_event_occurred(
@@ -65,7 +65,7 @@ def subarray_busy_scanning(
     subarray_node_low.store_configuration_data(configure_input_json)
 
     assert event_recorder.has_change_event_occurred(
-        central_node_low.subarray_node,
+        subarray_node_low.subarray_node,
         "obsState",
         ObsState.READY,
     )
@@ -77,13 +77,13 @@ def subarray_busy_scanning(
     subarray_node_low.store_scan_data(scan_input_json)
 
     assert event_recorder.has_change_event_occurred(
-        central_node_low.subarray_devices.get("csp_subarray"),
+        subarray_node_low.subarray_devices.get("csp_subarray"),
         "obsState",
         ObsState.SCANNING,
         lookahead=10,
     )
     assert event_recorder.has_change_event_occurred(
-        central_node_low.subarray_node,
+        subarray_node_low.subarray_node,
         "obsState",
         ObsState.SCANNING,
         lookahead=10,

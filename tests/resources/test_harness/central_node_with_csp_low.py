@@ -71,8 +71,11 @@ class CentralNodeCspWrapperLow(CentralNodeWrapperLow):
 
         """
         self.central_node.TelescopeOff()
-        device_to_on_list = [self.subarray_devices.get("sdp_subarray")]
-        for device in device_to_on_list:
+        device_to_off_list = [
+            self.subarray_devices.get("sdp_subarray"),
+            self.subarray_devices.get("mccs_subarray"),
+        ]
+        for device in device_to_off_list:
             device_proxy = DeviceProxy(device)
             device_proxy.SetDirectState(DevState.OFF)
 

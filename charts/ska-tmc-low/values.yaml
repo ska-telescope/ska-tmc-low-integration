@@ -98,6 +98,7 @@ cspsubarrayleafnode:
     tag: 0.15.2-dev.c9baba70a
     pullPolicy: IfNotPresent
 
+
 mccsmasterleafnode:
   image:
     registry: artefact.skao.int
