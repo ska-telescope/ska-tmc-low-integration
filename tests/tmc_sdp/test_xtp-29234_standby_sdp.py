@@ -53,7 +53,7 @@ def check_tmc_and_sdp_is_on(central_node_low, event_recorder):
 @given("simulated CSP and MCCS in ON States")
 def check_simulated_devices_states(simulator_factory, event_recorder):
     """A method to check CSP and MCCS"""
-    (_, csp_master_sim, _) = get_master_device_simulators(simulator_factory)
+    (csp_master_sim, _, _) = get_master_device_simulators(simulator_factory)
 
     event_recorder.subscribe_event(csp_master_sim, "State")
 
