@@ -23,7 +23,7 @@ stages:
 include:
   - project: 'ska-telescope/templates-repository'
     file: 'gitlab-ci/includes/python-lint.gitlab-ci.yml'
-
+  
   - project: 'ska-telescope/templates-repository'
     file: 'gitlab-ci/includes/release.gitlab-ci.yml'
 
@@ -32,7 +32,7 @@ include:
 
   - project: 'ska-telescope/templates-repository'
     file: 'gitlab-ci/includes/docs-pages.gitlab-ci.yml'
-
+  
   - project: 'ska-telescope/templates-repository'
     file: 'gitlab-ci/includes/docs.gitlab-ci.yml'
 
@@ -48,7 +48,7 @@ include:
   - project: 'ska-telescope/templates-repository'
     file: 'gitlab-ci/includes/finaliser.gitlab-ci.yml'
 
-
+  
 on-demand-deploy:
   stage: on-demand
   tags:
@@ -90,24 +90,6 @@ on-demand-destroy:
     action: stop
   when: manual
   allow_failure: true
-
-k8s-tmc-sdp-unhappy-path:
-  tags:
-    - k8srunner
-  extends:
-    - k8s-test
-  variables:
-    KUBE_NAMESPACE: 'ci-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-sdp-unhappy-path'
-    SERVICE_ACCOUNT: "ci-svc-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-sdp-unhappy-path"
-    K8S_CHART_PARAMS: "--set proccontrol.replicas=0"
-    MARK: 'tmc_sdp_unhappy_path'
-    SDP_SIMULATION_ENABLED: 'false'
-
-stop-k8s-tmc-sdp-unhappy-path:
-  extends:
-    - stop-k8s-test
-  variables:
-    KUBE_NAMESPACE: 'ci-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-sdp-unhappy-path'
 
 k8s-test:
   tags:
@@ -156,7 +138,8 @@ k8s-test-tmc-with-sdp:
     SERVICE_ACCOUNT: "ci-svc-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-tmc-sdp"
     MARK: 'tmc_sdp'
     SDP_SIMULATION_ENABLED: 'false'
-    TARANTA_ENABLED: 'true'
+    TARANTA_ENABLED: 'true'  
+
 
 stop-k8s-test-tmc-with-sdp:
   extends:
@@ -186,6 +169,24 @@ stop-k8s-test-tmc-with-mccs:
     - stop-k8s-test
   variables:
     KUBE_NAMESPACE: 'ci-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-mccs-low'
+
+k8s-tmc-sdp-unhappy-path:
+  tags:
+    - k8srunner
+  extends:
+    - k8s-test
+  variables:
+    KUBE_NAMESPACE: 'ci-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-sdp-unhappy-path'
+    SERVICE_ACCOUNT: "ci-svc-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-sdp-unhappy-path"
+    K8S_CHART_PARAMS: "--set proccontrol.replicas=0"
+    MARK: 'tmc_sdp_unhappy_path'
+    SDP_SIMULATION_ENABLED: 'false'
+
+stop-k8s-tmc-sdp-unhappy-path:
+  extends:
+    - stop-k8s-test
+  variables:
+    KUBE_NAMESPACE: 'ci-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-sdp-unhappy-path'
 
 deploy-integration:
   rules:
