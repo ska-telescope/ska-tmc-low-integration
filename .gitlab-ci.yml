@@ -92,7 +92,6 @@ on-demand-destroy:
   allow_failure: true
 
 k8s-tmc-sdp-unhappy-path:
-  stage: lifecycle
   tags:
     - k8srunner
   extends:
