@@ -27,9 +27,6 @@ server:
               - name: "LoggingLevelDefault"
                 values:
                 - "5"
-              - name: "TimeOut"
-                values:
-                - "10"
   {{- end}}
 depends_on:
   - device: sys/database/2
