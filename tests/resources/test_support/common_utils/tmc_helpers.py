@@ -8,6 +8,7 @@ from typing import Optional, Tuple
 from ska_control_model import ObsState
 from ska_ser_logging import configure_logging
 from tango import DeviceProxy, DevState
+from tango.db import Database, DbDevInfo
 
 from tests.resources.test_harness.utils.common_utils import JsonFactory
 from tests.resources.test_support.common_utils.common_helpers import Resource
@@ -492,3 +493,13 @@ def set_subarray_to_given_obs_state(
             )
             # Resetting defect on CSP Subarray.
             csp_subarray.SetDefective(json.dumps({"enabled": False}))
+
+
+def add_device_to_db(device_name, class_name, server_name):
+    """Add Device to DB"""
+    db = Database()
+    dev_info = DbDevInfo()
+    dev_info.name = device_name
+    dev_info._class = class_name
+    dev_info.server = server_name
+    db.add_device(dev_info)
