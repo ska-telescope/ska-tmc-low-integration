@@ -76,7 +76,7 @@ def check_if_delay_values_are_generating(subarray_node_low) -> None:
     wait_for_updates_on_delay_model(subarray_node_low.csp_subarray_leaf_node)
     assert subarray_node_low.csp_subarray_leaf_node.delayModel not in [
         "",
-        "no_value",
+        "",
     ]
 
 
@@ -98,7 +98,4 @@ def check_if_delay_values_are_not_generating(subarray_node_low) -> None:
     wait_for_updates_stop_on_delay_model(
         subarray_node_low.csp_subarray_leaf_node
     )
-    assert subarray_node_low.csp_subarray_leaf_node.delayModel in [
-        "",
-        "no_value",
-    ]
+    assert subarray_node_low.csp_subarray_leaf_node.delayModel == ""

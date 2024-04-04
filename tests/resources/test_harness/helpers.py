@@ -354,7 +354,7 @@ def wait_for_updates_stop_on_delay_model(csp_subarray_leaf_node) -> None:
     start_time = time.time()
     time_elapsed = 0
     # delay_cadence for low is 300 sec and in attribute it will stay for
-    # 300 sec so after end required this time to set attribute to no_value,
+    # 300 sec so after end required this time to set attribute to "",
     # this will fix in PI22 till then wait is apply here
     required_delay_stop_time = 350
     while (
