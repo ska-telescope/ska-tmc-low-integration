@@ -97,26 +97,17 @@ k8s-tmc-sdp-unhappy-path:
   extends:
     - k8s-test
   variables:
-    KUBE_NAMESPACE: 'ci-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-unhappy-path'
-    SERVICE_ACCOUNT: "ci-svc-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-unhappy-path"
+    KUBE_NAMESPACE: 'ci-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-sdp-unhappy-path'
+    SERVICE_ACCOUNT: "ci-svc-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-sdp-unhappy-path"
     K8S_CHART_PARAMS: "--set proccontrol.replicas=0"
     MARK: 'tmc_sdp_unhappy_path'
     SDP_SIMULATION_ENABLED: 'false'
-  before_script:
-    - make cred SERVICE_ACCOUNT=$SERVICE_ACCOUNT
-    - '[ -f .make/k8s.mk ] || (echo "File k8s.mk not included in Makefile; exit 1")'
-    - 'make help | grep k8s-test'
-    - make k8s-install-chart
-    - make k8s-wait
-  after_script:
-    - pip3 install -q -U ska-ser-xray
-    - XRAY_TEST_RESULT_FILE="build/cucumber.json" make xray-publish
 
 stop-k8s-tmc-sdp-unhappy-path:
   extends:
     - stop-k8s-test
   variables:
-    KUBE_NAMESPACE: 'ci-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA'
+    KUBE_NAMESPACE: 'ci-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-sdp-unhappy-path'
 
 k8s-test:
   tags:
