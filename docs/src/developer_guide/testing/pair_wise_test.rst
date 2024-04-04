@@ -94,3 +94,9 @@ To test with tmc_mccs execute the command `make k8s-test MARK=tmc_mccs MCCS_SIMU
 * ``Scan``- Testing Scan command on TMC with real MCCS controller and MCCS Subarrays and mocked/simulated SDP and CSP subsystems.
 
 * ``EndScan`` - Testing EndScan command on TMC with real MCCS controller and MCCS Subarrays and mocked/simulated SDP and CSP subsystems.
+
+Negative scenarios
+^^^^^^^^^^^^^^^^^^
+* ``Handling Invalid Station Id in MCCS controller`` - The TMC Low Subarray reports the exception triggered by the MCCS controller when it encounters an invalid station ID.
+
+* ``Test Error propogation when MCCS subsystem is unavaialable`` - MCCS Controller report the error when one of the subarray beam is unavailable
