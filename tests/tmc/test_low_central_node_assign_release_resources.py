@@ -429,7 +429,7 @@ class TestLowCentralNodeAssignResources:
             "Exception occurred on the following devices: "
             + f"{tmc_low_subarraynode1}: Exception occurred on the following "
             + f"devices:\n{low_sdp_subarray_leaf_node}:"
-            " Timeout has occured, command failed\n"
+            " Timeout has occurred, command failed\n"
         )
 
         expected_long_running_command_result = (
