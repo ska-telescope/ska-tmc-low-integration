@@ -9,8 +9,7 @@ from tests.resources.test_harness.helpers import (
 from tests.resources.test_harness.utils.enums import SimulatorDeviceType
 
 
-@pytest.mark.tmc_sdp
-@pytest.mark.MS
+@pytest.mark.tmc_sdp1
 @scenario(
     "../features/tmc_mccs/xtp-34895_health_state_sdp.feature",
     "Verify TMC TelescopeHealthState transition based on SDP Controller"
@@ -20,7 +19,7 @@ def test_telescope_state_sdp_controller():
     """test case for healthstate."""
 
 
-@given("a Telescope consisting of TMC-SDP,emulated CSP and emulated MCCS ")
+@given("a Telescope consisting of TMC-SDP, emulated CSP and emulated MCCS ")
 def given_telescope_setup_with_simulators(central_node_low, simulator_factory):
     """
     Given a Telescope setup including TMC-SDP, emulated SDP, and emulated CSP.
@@ -40,27 +39,20 @@ def given_telescope_setup_with_simulators(central_node_low, simulator_factory):
 
 @when(parsers.parse("The {devices} health state changes to {health_state} "))
 def set_simulator_devices_health_states(
-    simulator_factory, devices, health_state, components
+    devices, health_state, simulator_factory
 ):
-    """A method to set HealthState value for the simulator devices
-
-    Args:
-        simulator_factory: fixture for SimulatorFactory class,
-        which provides simulated subarray and master devices
-        devices (str): simulator devices
-        health_state (str): healthstate value
-    """
-    # health_state = update_health_state(components)
+    """A method to set HealthState value for the simulator devices"""
+    # Split the devices string into individual devices
     devices_list = devices.split(",")
     health_state_list = health_state.split(",")
 
-    sim_devices_list = get_device_simulator_with_given_name(
+    devices_list = get_device_simulator_with_given_name(
         simulator_factory, devices_list
     )
-    for sim_device, sim_health_state_val in list(
-        zip(sim_devices_list, health_state_list)
+    for device_val, health_state_val in list(
+        zip(devices_list, health_state_list)
     ):
-        sim_device.SetDirectHealthState(HealthState[sim_health_state_val])
+        device_val.SetDirectHealthState(HealthState[health_state_val])
 
 
 @then(parsers.parse("the telescope health state is {telescope_health_state}"))
