@@ -17,7 +17,7 @@ from tests.resources.test_harness.helpers import (
 from tests.resources.test_harness.utils.enums import ResultCode
 
 
-@pytest.mark.tmc_sdp1
+@pytest.mark.tmc_sdp
 @scenario(
     "../features/tmc_sdp/xtp_34886_sdp_json_error_duplicate_id.feature",
     "TMC Subarray report the exception triggered by the SDP subarray "
