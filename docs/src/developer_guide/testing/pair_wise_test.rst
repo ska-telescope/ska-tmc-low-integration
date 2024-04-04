@@ -1,6 +1,6 @@
-############################################
+######################################
 TMC LOW integration Testing guidelines
-#############################################
+######################################
 
 ****************************
 Pair wise testing / Real-SDP
@@ -68,9 +68,9 @@ To test with tmc_csp execute the command `make k8s-test MARK=tmc_csp CSP_SIMULAT
 * ``Restart`` - Testing Restart command on TMC with real CSP controller and CSP Subarrays and mocked/simulated SDP and Mccs subsystems.
 
 
-****************************
+*****************************
 Pair wise testing / Real-MCCS
-****************************
+*****************************
 
 Pair wise testing is way of testing the TMC code with real MCCS subsystem in place. 
 using latest `test harness` implemented. 
