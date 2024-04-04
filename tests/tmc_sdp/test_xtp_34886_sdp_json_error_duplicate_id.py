@@ -1,4 +1,6 @@
 """Test module for TMC-SDP Json error propagation functionality """
+import logging
+
 import pytest
 from pytest_bdd import given, parsers, scenario, then, when
 from ska_control_model import ObsState
@@ -8,13 +10,14 @@ from tango import DevState
 from tests.resources.test_harness.central_node_low import CentralNodeWrapperLow
 from tests.resources.test_harness.event_recorder import EventRecorder
 from tests.resources.test_harness.helpers import (
+    get_assign_json_id,
     get_device_simulator_with_given_name,
     update_eb_pb_ids,
 )
 from tests.resources.test_harness.utils.enums import ResultCode
 
 
-@pytest.mark.tmc_sdp
+@pytest.mark.tmc_sdp1
 @scenario(
     "../features/tmc_sdp/xtp_34886_sdp_json_error_duplicate_id.feature",
     "TMC Subarray report the exception triggered by the SDP subarray "
@@ -101,6 +104,7 @@ def check_tmc_sdp_subarray_idle(
             input_json1
         )
     )
+    central_node_low.assign_input = assign_input
     central_node_low.store_resources(assign_input)
 
     assert event_recorder.has_change_event_occurred(
@@ -145,21 +149,25 @@ def tmc_assign_resources_with_duplicate_id(
         central_node_low (CentralNodeWrapperLow): fixture for
         CentralNodeWrapperLow class instance
     """
+    id: str = ""
+    logging.info(duplicate_id)
     if duplicate_id == "eb_id":
         id = "pb_id"
     else:
         id = "eb_id"
-    assign_input = update_eb_pb_ids(central_node_low.assign_input, id=id)
     assign_input = (
         central_node_low.json_factory.create_centralnode_configuration(
             input_json1
         )
     )
+    assign_input = update_eb_pb_ids(central_node_low.assign_input, id=id)
     pytest.result, pytest.unique_id = central_node_low.perform_action(
         "AssignResources", assign_input
     )
     assert pytest.unique_id[0].endswith("AssignResources")
     assert pytest.result[0] == ResultCode.QUEUED
+    pytest.duplicate_id_type = duplicate_id
+    pytest.duplicate_id = get_assign_json_id(assign_input, duplicate_id)[0]
 
 
 @when(
@@ -224,11 +232,14 @@ def check_central_node_exception_propagation(
         CentralNodeWrapperLow class instance
         event_recorder (EventRecorder):fixture for EventRecorder class instance
     """
-    exception_message = (
-        "Exception occurred on the following devices:"
-        + " ska_low/tm_subarray_node/1:"
-        + " Exception occurred on the following devices:"
-    )
+    if pytest.duplicate_id_type == "pb_id":
+        exception_message = (
+            f"Processing block {pytest.duplicate_id} already exists"
+        )
+    else:
+        exception_message = (
+            f"Execution block {pytest.duplicate_id} already exists"
+        )
     assertion_data = event_recorder.has_change_event_occurred(
         central_node_low.central_node,
         attribute_name="longRunningCommandResult",

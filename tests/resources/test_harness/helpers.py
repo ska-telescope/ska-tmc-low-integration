@@ -510,15 +510,34 @@ def update_eb_pb_ids(input_json: str, id: str = "") -> str:
     input_json = json.loads(input_json)
     if id == "eb_id":
         input_json["sdp"]["execution_block"]["eb_id"] = generate_id("eb-test")
+
     elif id == "pb_id":
         for pb in input_json["sdp"]["processing_blocks"]:
             pb["pb_id"] = generate_id("pb-test")
+
     else:
         input_json["sdp"]["execution_block"]["eb_id"] = generate_id("eb-test")
         for pb in input_json["sdp"]["processing_blocks"]:
             pb["pb_id"] = generate_id("pb-test")
-        input_json = json.dumps(input_json)
+
+    input_json = json.dumps(input_json)
     return input_json
+
+
+def get_assign_json_id(input_json: str, id: str = "") -> list[str]:
+    """
+    Method to get different eb_id and pb_id
+    :param input_json: json to utilised to update values.
+    """
+    input_json = json.loads(input_json)
+    if id == "eb_id":
+        return [input_json["sdp"]["execution_block"]["eb_id"]]
+
+    elif id == "pb_id":
+        pb_list = []
+        for pb in input_json["sdp"]["processing_blocks"]:
+            pb_list.append(pb["pb_id"])
+        return pb_list
 
 
 def set_admin_mode_values_mccs():
