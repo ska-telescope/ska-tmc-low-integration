@@ -10,7 +10,7 @@ from tango import DevState
 
 @pytest.mark.tmc_mccs
 @scenario(
-    "../features/xtp-35263_subsystem_unavailable.feature",
+    "../features/tmc_mccs/xtp-35236_mccs_subsystem_unavailable.feature",
     "Switch off the telescope having TMC and MCCS subsystems",
 )
 def test_tmc_mccs_error_propagation_when_subsystem_unavailable():
