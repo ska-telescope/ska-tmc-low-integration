@@ -97,8 +97,8 @@ k8s-tmc-sdp-unhappy-path:
   extends:
     - k8s-test
   variables:
-    KUBE_NAMESPACE: 'ci-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA'
-    SERVICE_ACCOUNT: "ci-svc-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA"
+    KUBE_NAMESPACE: 'ci-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-unhappy-path'
+    SERVICE_ACCOUNT: "ci-svc-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-unhappy-path"
     K8S_CHART_PARAMS: "--set proccontrol.replicas=0"
     MARK: 'tmc_sdp_unhappy_path'
     SDP_SIMULATION_ENABLED: 'false'
