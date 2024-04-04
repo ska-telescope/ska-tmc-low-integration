@@ -16,10 +16,6 @@ from tests.resources.test_support.common_utils.tmc_helpers import (
 )
 
 
-@pytest.mark.skip(
-    "This test case is currently unstable, will be debugged and fixed as "
-    + "a part of HM-443"
-)
 @pytest.mark.SKA_low
 @scenario(
     "../features/tmc/check_scan_command.feature",

@@ -260,10 +260,6 @@ class TestLowCentralNodeAssignResources:
         )
 
     @pytest.mark.SKA_low
-    @pytest.mark.skip(
-        "This test case is currently unstable, will be debugged and fixed as "
-        + "a part of HM-443"
-    )
     def test_low_centralnode_assign_resources_exception_propagation(
         self,
         central_node_low,
@@ -348,10 +344,6 @@ class TestLowCentralNodeAssignResources:
         the_waiter.wait(200)
 
     @pytest.mark.SKA_low
-    @pytest.mark.skip(
-        "This test case is currently unstable, will be debugged and fixed as "
-        + "a part of HM-443"
-    )
     def test_low_centralnode_release_resources_exception_propagation(
         self,
         central_node_low,
@@ -436,8 +428,8 @@ class TestLowCentralNodeAssignResources:
         exception_message = (
             "Exception occurred on the following devices: "
             + f"{tmc_low_subarraynode1}: Exception occurred on the following "
-            + f"devices: {low_sdp_subarray_leaf_node}:"
-            " Timeout has occured, command failed\n"
+            + f"devices:\n{low_sdp_subarray_leaf_node}:"
+            " Timeout has occurred, command failed\n"
         )
 
         expected_long_running_command_result = (
