@@ -19,6 +19,7 @@ from tests.resources.test_harness.constant import (
     mccs_controller,
     mccs_master_leaf_node,
     mccs_subarray1,
+    processor1,
     tmc_low_subarraynode1,
 )
 from tests.resources.test_harness.helpers import SIMULATED_DEVICES_DICT
@@ -437,3 +438,11 @@ class CentralNodeWrapperLow(object):
         if SIMULATED_DEVICES_DICT["all_mocks"]:
             self.csp_subarray1.SetDefective(RESET_DEFECT)
             self.sdp_subarray1.SetDefective(RESET_DEFECT)
+
+    def set_serial_number_of_cbf_processor(self):
+        """Sets serial number for cbf processor"""
+        if SIMULATED_DEVICES_DICT["sdp_and_mccs"]:
+            self.processor1 = DeviceProxy(processor1)
+            self.processor1.serialnumber = "XFL14SLO1LIF"
+            self.processor1.subscribetoallocator("low-cbf/allocator/0")
+            self.processor1.register()

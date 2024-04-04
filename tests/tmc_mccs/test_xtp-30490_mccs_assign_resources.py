@@ -35,7 +35,7 @@ def given_a_telescope_in_on_state(
     )
     event_recorder.subscribe_event(central_node_low.mccs_master, "State")
     event_recorder.subscribe_event(
-        central_node_low.subarray_devices["mccs_subarray"], "State"
+        subarray_node_low.subarray_devices["mccs_subarray"], "State"
     )
     assert event_recorder.has_change_event_occurred(
         central_node_low.mccs_master,
@@ -83,10 +83,10 @@ def invoke_assignresources(
 def mccs_subarray_idle(subarray_node_low, event_recorder):
     """Checks if mccs Subarray's obsState attribute value is IDLE"""
     event_recorder.subscribe_event(
-        subarray_node_low.subarray_devices.get("mccs_subarray"), "obsState"
+        subarray_node_low.subarray_devices["mccs_subarray"], "obsState"
     )
     assert event_recorder.has_change_event_occurred(
-        subarray_node_low.subarray_devices.get("mccs_subarray"),
+        subarray_node_low.subarray_devices["mccs_subarray"],
         "obsState",
         ObsState.IDLE,
     )
