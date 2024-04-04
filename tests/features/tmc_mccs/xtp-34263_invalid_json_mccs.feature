@@ -1,5 +1,5 @@
 Feature: Handling Invalid Station Id in MCCS controller
-@XTP-34263 @tmc_mccs @Team_himalaya
+@XTP-34263 @XTP-34276 @tmc_mccs @Team_himalaya
 Scenario: The TMC Low Subarray reports the exception triggered by the MCCS controller when it encounters an invalid station ID.
    Given a Telescope consisting of TMC-MCCS, emulated SDP and emulated CSP
    And the Telescope is in the ON state
