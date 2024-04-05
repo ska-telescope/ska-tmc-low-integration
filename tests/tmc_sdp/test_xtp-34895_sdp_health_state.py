@@ -24,7 +24,7 @@ def test_telescope_state_sdp_controller():
     updated accordingly."""
 
 
-@given("a Telescope consisting of TMC-SDP, emulated CSP and emulated MCCS ")
+@given("a Telescope consisting of TMC-SDP,emulated CSP and emulated MCCS ")
 def given_telescope_setup_with_simulators(
     event_recorder, central_node_low, simulator_factory
 ):
