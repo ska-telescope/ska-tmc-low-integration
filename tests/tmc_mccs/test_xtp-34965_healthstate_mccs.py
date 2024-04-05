@@ -31,8 +31,8 @@ def adjust_controller_to_degraded_state(controller):
     controller.healthModelParams = json.dumps(health_params)
 
 
-@pytest.xfail(
-    "The test is marked as xfail due to existing issues"
+@pytest.mark.xfail(
+    reason="The test is marked as xfail due to existing issues"
     + "with health in MCCS, which prevent the controller from entering a"
     + "DEGRADED state. This is a temporary measure until the underlying "
     + "issues are fixed."
