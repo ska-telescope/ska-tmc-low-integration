@@ -5,6 +5,7 @@ from tango import DevState
 
 from tests.resources.test_harness.constant import COMMAND_NOT_ALLOWED_DEFECT
 from tests.resources.test_harness.utils.enums import SimulatorDeviceType
+from tests.resources.test_support.common_utils.result_code import ResultCode
 from tests.resources.test_support.common_utils.tmc_helpers import (
     prepare_json_args_for_centralnode_commands,
 )
@@ -69,6 +70,11 @@ class TestAssignCommandNotAllowedPropagation:
             (unique_id[0], Anything),
         )
         assert ERROR_MESSAGE in assertion_data["attribute_value"][1]
+        event_recorder.has_change_event_occurred(
+            central_node_low.central_node,
+            "longRunningCommandResult",
+            (unique_id[0], str(ResultCode.FAILED.value)),
+        )
 
     @pytest.mark.SKA_low
     def test_assign_command_not_allowed_propagation_sdp_ln_low(
@@ -125,3 +131,8 @@ class TestAssignCommandNotAllowedPropagation:
             (unique_id[0], Anything),
         )
         assert ERROR_MESSAGE in assertion_data["attribute_value"][1]
+        event_recorder.has_change_event_occurred(
+            central_node_low.central_node,
+            "longRunningCommandResult",
+            (unique_id[0], str(ResultCode.FAILED.value)),
+        )
