@@ -39,7 +39,7 @@ def adjust_controller_to_degraded_state(controller):
 )
 @pytest.mark.tmc_mccs
 @scenario(
-    "../features/tmc_mccs/xtp-34965_health_state_mccs.feature",
+    "../features/tmc_mccs/xtp-34965_healthstate_mccs.feature",
     "Verify CentralNode TelescopeHealthState",
 )
 def test_telescope_state_mccs_controller():
