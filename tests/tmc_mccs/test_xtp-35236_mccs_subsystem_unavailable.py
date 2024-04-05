@@ -1,6 +1,5 @@
 """Test module for TMC-MCCS ShutDown functionality"""
 import pytest
-import tango
 from pytest_bdd import given, parsers, scenario, then, when
 from ska_control_model import ObsState
 from ska_tango_base.commands import ResultCode
@@ -10,7 +9,6 @@ from tango import DevState
 from tests.resources.test_harness.constant import (
     mccs_controller,
     mccs_master_leaf_node,
-    mccs_subarraybeam,
     tmc_low_subarraynode1,
 )
 from tests.resources.test_harness.helpers import (
@@ -42,9 +40,7 @@ def test_tmc_mccs_when_subsystem_unavailable():
 
 
 @given("a Telescope consisting of TMC,MCCS,emulated SDP and emulated CSP")
-def check_tmc_and_mccs_is_on(
-    central_node_low, event_recorder, simulator_factory, subarray_node_low
-):
+def check_tmc_and_mccs_is_on(tmc_low, event_recorder, simulator_factory):
     """
     Given a TMC and MCCS in ON state
     """
@@ -54,61 +50,53 @@ def check_tmc_and_mccs_is_on(
     csp_master_sim, sdp_master_sim = simulated_devices
     assert csp_master_sim.ping() > 0
     assert sdp_master_sim.ping() > 0
-    assert central_node_low.central_node.ping() > 0
-    assert central_node_low.mccs_master.ping() > 0
-    assert subarray_node_low.subarray_devices["mccs_subarray"].ping() > 0
+    assert tmc_low.central_node.ping() > 0
+    assert tmc_low.central_node.mccs_master.ping() > 0
+    assert tmc_low.subarray_node.subarray_devices["mccs_subarray"].ping() > 0
 
+    event_recorder.subscribe_event(tmc_low.central_node, "telescopeState")
+    event_recorder.subscribe_event(tmc_low.central_node.mccs_master, "State")
     event_recorder.subscribe_event(
-        central_node_low.central_node, "telescopeState"
-    )
-    event_recorder.subscribe_event(central_node_low.mccs_master, "State")
-    event_recorder.subscribe_event(
-        central_node_low.subarray_devices["mccs_subarray"], "State"
+        tmc_low.subarray_node.subarray_devices["mccs_subarray"], "State"
     )
 
-    if central_node_low.telescope_state != "ON":
-        central_node_low.move_to_on()
+    if tmc_low.central_node.telescope_state != "ON":
+        tmc_low.central_node.move_to_on()
 
     assert event_recorder.has_change_event_occurred(
-        central_node_low.mccs_master,
+        tmc_low.central_node.mccs_master,
         "State",
         DevState.ON,
     )
     assert event_recorder.has_change_event_occurred(
-        central_node_low.subarray_devices["mccs_subarray"],
+        tmc_low.subarray_node.subarray_devices["mccs_subarray"],
         "State",
         DevState.ON,
     )
 
 
 @given("the telescope is in ON state")
-def check_telescope_state_is_on(central_node_low, event_recorder):
+def check_telescope_state_is_on(tmc_low, event_recorder):
     """A method to check CentralNode's telescopeState"""
     assert event_recorder.has_change_event_occurred(
-        central_node_low.central_node,
+        tmc_low.central_node,
         "telescopeState",
         DevState.ON,
     )
 
 
 @given("the TMC subarray is in EMPTY obsState")
-def subarray_in_empty_obsstate(subarray_node_low, event_recorder):
+def subarray_in_empty_obsstate(tmc_low, event_recorder):
     """Checks if SubarrayNode's obsState attribute value is EMPTY"""
-    event_recorder.subscribe_event(subarray_node_low.subarray_node, "obsState")
-    assert subarray_node_low.subarray_node.obsState == ObsState.EMPTY
+    event_recorder.subscribe_event(tmc_low.subarray_node, "obsState")
+    assert tmc_low.subarray_node.obsState == ObsState.EMPTY
 
 
 @when("one of the MCCS subarraybeam is made unavailable")
-def mccs_subarraybeam_is_unavaiable():
-    """make mccs subsystem which is subarraybeam as unavailable"""
-    mccs_subarraybeam_device = tango.DeviceProxy(
-        "dserver/MccsSubarrayBeam/subarraybeam-01"
-    )
-    db = tango.Database()
-    # Delete mccs subarraybeam Device
-    db.delete_device(mccs_subarraybeam)
-    # Restart the server
-    mccs_subarraybeam_device.RestartServer()
+def mccs_subarraybeam_is_unavaiable(tmc_low):
+    """Delete the MCCS's SubarrayBeam device"""
+    tmc_low.delete_device_from_db(server_type="MCCS_SUBARRAYBEAM")
+    tmc_low.RestartServer(server_type="MCCS_SUBARRAYBEAM")
 
 
 @when(
@@ -118,32 +106,30 @@ def mccs_subarraybeam_is_unavaiable():
     )
 )
 def invoke_assignresources(
-    central_node_low, command_input_factory, subarray_id, stored_unique_id
+    tmc_low, command_input_factory, subarray_id, stored_unique_id
 ):
     """Invokes AssignResources command on TMC"""
-    central_node_low.set_subarray_id(subarray_id)
+    tmc_low.set_subarray_id(subarray_id)
     input_json = prepare_json_args_for_centralnode_commands(
         "assign_resources_low", command_input_factory
     )
-    _, unique_id = central_node_low.perform_action(
-        "AssignResources", input_json
-    )
+    _, unique_id = tmc_low.perform_action("AssignResources", input_json)
     stored_unique_id.append(unique_id[0])
 
 
 @then("MCCS controller should throw the error and report to TMC")
-def mccs_error_reporting(event_recorder, central_node_low, stored_unique_id):
+def mccs_error_reporting(event_recorder, tmc_low, stored_unique_id):
     """
     Ensure that the MCCS controller throws an
     error for the subsystem unavailable
     and subscribe to the longRunningCommandResult event.
     """
     event_recorder.subscribe_event(
-        central_node_low.mccs_master_leaf_node,
+        tmc_low.central_node.mccs_master_leaf_node,
         "longRunningCommandResult",
     )
     assert wait_for_attribute_update(
-        central_node_low.mccs_master_leaf_node,
+        tmc_low.central_node.mccs_master_leaf_node,
         "longRunningCommandResult",
         "AssignResources",
         ResultCode.FAILED,
@@ -154,7 +140,7 @@ def mccs_error_reporting(event_recorder, central_node_low, stored_unique_id):
     )
     assert stored_unique_id[0].endswith("AssignResources")
     assertion_data = event_recorder.has_change_event_occurred(
-        central_node_low.mccs_master_leaf_node,
+        tmc_low.central_node.mccs_master_leaf_node,
         attribute_name="longRunningCommandResult",
         attribute_value=(Anything, exception_message),
     )
@@ -163,15 +149,13 @@ def mccs_error_reporting(event_recorder, central_node_low, stored_unique_id):
 
 
 @then("TMC should propogate the error to client")
-def central_node_receiving_error(
-    event_recorder, central_node_low, stored_unique_id
-):
+def central_node_receiving_error(event_recorder, tmc_low, stored_unique_id):
     """
     Ensure that the TMC propagates the error to the client and subscribe to
     the longRunningCommandResult event.
     """
     event_recorder.subscribe_event(
-        central_node_low.central_node, "longRunningCommandResult", timeout=80.0
+        tmc_low.central_node, "longRunningCommandResult", timeout=80.0
     )
     expected_long_running_command_result = (
         stored_unique_id[0],
@@ -183,7 +167,7 @@ def central_node_receiving_error(
     )
 
     assert event_recorder.has_change_event_occurred(
-        central_node_low.central_node,
+        tmc_low.central_node,
         "longRunningCommandResult",
         expected_long_running_command_result,
         lookahead=10,
@@ -191,10 +175,10 @@ def central_node_receiving_error(
 
 
 @then("the TMC SubarrayNode remains in ObsState RESOURCING")
-def tmc_subarray_obsstate_resourcing(subarray_node_low, event_recorder):
+def tmc_subarray_obsstate_resourcing(tmc_low, event_recorder):
     """Checks if SubarrayNode's obsState attribute value is RESOURCING"""
     assert event_recorder.has_change_event_occurred(
-        subarray_node_low.subarray_node,
+        tmc_low.subarray_node,
         "obsState",
         ObsState.RESOURCING,
     )
