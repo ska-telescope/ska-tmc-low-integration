@@ -1,5 +1,6 @@
-"""Test case for verifying TMC TelescopeHealthState transition based on SDP
+"""Test case for verifying TMC TelescopeHealthState transition based on MCCS
  Controller HealthState."""
+import json
 
 import pytest
 from pytest_bdd import given, parsers, scenario, then, when
@@ -10,20 +11,32 @@ from tests.resources.test_harness.helpers import (
 )
 
 
-@pytest.mark.tmc_sdp_unahppy_path
-@scenario(
-    "../features/tmc_sdp/xtp-34895_health_state_sdp.feature",
-    "Verify TMC TelescopeHealthState transition based on SDP Controller"
-    + " HealthState",
+# Adjust the health thresholds on the controller to force it into DEGRADED
+# state
+def adjust_controller_to_degraded_state(controller):
+    health_params = {"stations_degraded_threshold": 0}
+    controller.healthModelParams = json.dumps(health_params)
+
+
+@pytest.xfail(
+    "The test is marked as xfail due to existing issues"
+    + "with health in MCCS, which prevent the controller from entering a"
+    + "DEGRADED state. This is a temporary measure until the underlying "
+    + "issues are fixed."
 )
-def test_telescope_state_sdp_controller():
-    """This test case sets up a Telescope consisting of TMC-SDP, emulated CSP,
-    and emulated MCCS. It then changes the health state of specified simulator
+@pytest.mark.tmc_mccs
+@scenario(
+    "../features/tmc_mccs/xtp-34965_health_state_mccs.feature",
+    "Verify CentralNode TelescopeHealthState",
+)
+def test_telescope_state_mccs_controller():
+    """This test case sets up a Telescope consisting of TMC-MCCS, emulated CSP,
+    and emulated SDP. It then changes the health state of specified simulator
     devices and checks if the telescope's health state is
     updated accordingly."""
 
 
-@given("a Telescope consisting of TMC, SDP, simulated CSP and simulated MCCS")
+@given("a Telescope consisting of TMC, MCCS, simulated CSP and simulated SDP")
 def given_telescope_setup_with_simulators(central_node_low, simulator_factory):
     """Method to check TMC real devices and sub-system simulators
 
@@ -34,19 +47,19 @@ def given_telescope_setup_with_simulators(central_node_low, simulator_factory):
         which provides simulated subarray and master devices
     """
     simulated_devices = get_device_simulator_with_given_name(
-        simulator_factory, ["csp master", "mccs master"]
+        simulator_factory, ["csp master", "sdp master"]
     )
-    csp_master_sim, mccs_master_sim = simulated_devices
+    csp_master_sim, sdp_master_sim = simulated_devices
     assert central_node_low.central_node.ping() > 0
-    assert central_node_low.sdp_master.ping() > 0
-    assert central_node_low.subarray_devices["sdp_subarray"].ping() > 0
+    assert central_node_low.mccs_master.ping() > 0
+    assert central_node_low.subarray_devices["mccs_subarray"].ping() > 0
     assert csp_master_sim.ping() > 0
-    assert mccs_master_sim.ping() > 0
+    assert sdp_master_sim.ping() > 0
 
 
 @when(parsers.parse("The {devices} health state changes to {health_state}"))
 def set_simulator_devices_health_states(
-    devices, health_state, simulator_factory
+    devices, health_state, simulator_factory, controller
 ):
     """A method to set HealthState value for the simulator devices"""
     # Split the devices string into individual devices
@@ -59,8 +72,10 @@ def set_simulator_devices_health_states(
     for sim_device, sim_health_state_val in list(
         zip(sim_devices_list, health_state_list)
     ):
-        # Check if the device is not the SDP controller
-        if sim_device.dev_name not in ["low-sdp/control/0"]:
+        # Check if the device is not the Mccs controller
+        if sim_device.dev_name not in adjust_controller_to_degraded_state(
+            controller
+        ):
             sim_device.SetDirectHealthState(HealthState[sim_health_state_val])
 
 
