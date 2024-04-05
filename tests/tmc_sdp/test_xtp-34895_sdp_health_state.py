@@ -60,7 +60,7 @@ def set_simulator_devices_health_states(
         zip(sim_devices_list, health_state_list)
     ):
         # Check if the device is not the SDP controller
-        if sim_device.device_name not in ["low-sdp/control/0"]:
+        if sim_device.dev_name not in ["low-sdp/control/0"]:
             sim_device.SetDirectHealthState(HealthState[sim_health_state_val])
 
 
