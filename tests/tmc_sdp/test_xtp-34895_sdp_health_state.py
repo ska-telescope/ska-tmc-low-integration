@@ -24,12 +24,12 @@ def test_telescope_state_sdp_controller():
     updated accordingly."""
 
 
-@given("a Telescope consisting of TMC-SDP,emulated CSP and emulated MCCS ")
+@given("a Telescope consisting of TMC,SDP,simulated CSP and simulated MCCS ")
 def given_telescope_setup_with_simulators(
     event_recorder, central_node_low, simulator_factory
 ):
     """
-    Given a Telescope setup including TMC-SDP, emulated SDP, and emulated CSP.
+    Given a Telescope setup including TMC-SDP,simulated MCCS and simulated MCCS
     Checks if all necessary simulator devices are reachable.
     """
     simulated_devices = get_device_simulator_with_given_name(
