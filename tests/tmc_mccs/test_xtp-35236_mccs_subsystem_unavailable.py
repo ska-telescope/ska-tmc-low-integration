@@ -20,7 +20,6 @@ from tests.resources.test_support.common_utils.tmc_helpers import (
 )
 
 
-@pytest.mark.aki
 @pytest.mark.tmc_mccs
 @scenario(
     "../features/tmc_mccs/xtp-35236_mccs_subsystem_unavailable.feature",
@@ -50,11 +49,13 @@ def check_tmc_and_mccs_is_on(tmc_low, event_recorder, simulator_factory):
     csp_master_sim, sdp_master_sim = simulated_devices
     assert csp_master_sim.ping() > 0
     assert sdp_master_sim.ping() > 0
-    assert tmc_low.central_node.ping() > 0
+    assert tmc_low.central_node.central_node.ping() > 0
     assert tmc_low.central_node.mccs_master.ping() > 0
     assert tmc_low.subarray_node.subarray_devices["mccs_subarray"].ping() > 0
 
-    event_recorder.subscribe_event(tmc_low.central_node, "telescopeState")
+    event_recorder.subscribe_event(
+        tmc_low.central_node.central_node, "telescopeState"
+    )
     event_recorder.subscribe_event(tmc_low.central_node.mccs_master, "State")
     event_recorder.subscribe_event(
         tmc_low.subarray_node.subarray_devices["mccs_subarray"], "State"
@@ -79,7 +80,7 @@ def check_tmc_and_mccs_is_on(tmc_low, event_recorder, simulator_factory):
 def check_telescope_state_is_on(tmc_low, event_recorder):
     """A method to check CentralNode's telescopeState"""
     assert event_recorder.has_change_event_occurred(
-        tmc_low.central_node,
+        tmc_low.central_node.central_node,
         "telescopeState",
         DevState.ON,
     )
@@ -88,8 +89,10 @@ def check_telescope_state_is_on(tmc_low, event_recorder):
 @given("the TMC subarray is in EMPTY obsState")
 def subarray_in_empty_obsstate(tmc_low, event_recorder):
     """Checks if SubarrayNode's obsState attribute value is EMPTY"""
-    event_recorder.subscribe_event(tmc_low.subarray_node, "obsState")
-    assert tmc_low.subarray_node.obsState == ObsState.EMPTY
+    event_recorder.subscribe_event(
+        tmc_low.subarray_node.subarray_node, "obsState"
+    )
+    assert tmc_low.subarray_node.subarray_node.obsState == ObsState.EMPTY
 
 
 @when("one of the MCCS subarraybeam is made unavailable")
@@ -109,11 +112,13 @@ def invoke_assignresources(
     tmc_low, command_input_factory, subarray_id, stored_unique_id
 ):
     """Invokes AssignResources command on TMC"""
-    tmc_low.set_subarray_id(subarray_id)
+    tmc_low.central_node.set_subarray_id(subarray_id)
     input_json = prepare_json_args_for_centralnode_commands(
         "assign_resources_low", command_input_factory
     )
-    _, unique_id = tmc_low.perform_action("AssignResources", input_json)
+    _, unique_id = tmc_low.central_node.perform_action(
+        "AssignResources", input_json
+    )
     stored_unique_id.append(unique_id[0])
 
 
@@ -155,7 +160,9 @@ def central_node_receiving_error(event_recorder, tmc_low, stored_unique_id):
     the longRunningCommandResult event.
     """
     event_recorder.subscribe_event(
-        tmc_low.central_node, "longRunningCommandResult", timeout=80.0
+        tmc_low.central_node.central_node,
+        "longRunningCommandResult",
+        timeout=80.0,
     )
     expected_long_running_command_result = (
         stored_unique_id[0],
@@ -167,7 +174,7 @@ def central_node_receiving_error(event_recorder, tmc_low, stored_unique_id):
     )
 
     assert event_recorder.has_change_event_occurred(
-        tmc_low.central_node,
+        tmc_low.central_node.central_node,
         "longRunningCommandResult",
         expected_long_running_command_result,
         lookahead=10,
@@ -178,7 +185,7 @@ def central_node_receiving_error(event_recorder, tmc_low, stored_unique_id):
 def tmc_subarray_obsstate_resourcing(tmc_low, event_recorder):
     """Checks if SubarrayNode's obsState attribute value is RESOURCING"""
     assert event_recorder.has_change_event_occurred(
-        tmc_low.subarray_node,
+        tmc_low.subarray_node.subarray_node,
         "obsState",
         ObsState.RESOURCING,
     )

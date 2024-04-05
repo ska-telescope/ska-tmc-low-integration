@@ -25,7 +25,7 @@ class TMCLow:
             )
             db = tango.Database()
             # Delete mccs subarraybeam Device
-            db.delete_device(self.mccs_subarraybeam)
+            db.delete_device(mccs_subarraybeam)
             self.deleted_device[mccs_subarraybeam] = {
                 "device_name": mccs_subarraybeam,
                 "server_name": "MccsSubarrayBeam/subarraybeam-01",
