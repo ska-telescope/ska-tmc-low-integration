@@ -96,6 +96,7 @@ endif
 ifeq ($(SDP_SIMULATION_ENABLED),false)
 CUSTOM_VALUES =	--set tmc-low.deviceServers.mocks.is_simulated.sdp=$(SDP_SIMULATION_ENABLED)\
 	--set ska-sdp.enabled=true \
+	--set ska-sdp.proccontrol.replicas=0 \
 	--set global.sdp_master="$(SDP_MASTER)"\
 	--set global.sdp_subarray_prefix="$(SDP_SUBARRAY_PREFIX)"\
 	--set ska-sdp.helmdeploy.namespace=$(KUBE_NAMESPACE_SDP)

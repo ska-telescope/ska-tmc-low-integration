@@ -131,9 +131,9 @@ k8s-test-tmc-with-sdp:
     - k8s-test
   variables:
     TELESCOPE: 'SKA-low'
+    KUBE_NAMESPACE: 'ci-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-tmc-sdp'
     KUBE_NAMESPACE_SDP: 'ci-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-sdp'
     SERVICE_ACCOUNT: "ci-svc-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-tmc-sdp"
-    K8S_CHART_PARAMS: "--set proccontrol.replicas=0"
     MARK: 'tmc_sdp_unhappy_path'
     SDP_SIMULATION_ENABLED: 'false'
     TARANTA_ENABLED: 'true'  
@@ -143,7 +143,7 @@ stop-k8s-test-tmc-with-sdp:
   extends:
     - stop-k8s-test
   variables:
-    KUBE_NAMESPACE_SDP: 'ci-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-tmc-sdp'
+    KUBE_NAMESPACE: 'ci-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-tmc-sdp'
 
 k8s-test-tmc-with-mccs:
   tags:
@@ -167,25 +167,6 @@ stop-k8s-test-tmc-with-mccs:
     - stop-k8s-test
   variables:
     KUBE_NAMESPACE: 'ci-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-mccs-low'
-
-# k8s-tmc-sdp-unhappy-path:
-#   tags:
-#     - k8srunner
-#   extends:
-#     - k8s-test
-#   variables:
-#     KUBE_NAMESPACE: 'ci-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-sdp-unhappy-path'
-#     KUBE_NAMESPACE_SDP: 'ci-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-sdp-unhappy-path'
-#     SERVICE_ACCOUNT: "ci-svc-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-sdp-unhappy-path"
-#     K8S_CHART_PARAMS: "--set proccontrol.replicas=0"
-#     MARK: 'tmc_sdp_unhappy_path'
-#     SDP_SIMULATION_ENABLED: 'false'
-
-# stop-k8s-tmc-sdp-unhappy-path:
-#   extends:
-#     - stop-k8s-test
-#   variables:
-#     KUBE_NAMESPACE: 'ci-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-sdp-unhappy-path'
 
 deploy-integration:
   rules:

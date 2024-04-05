@@ -4,11 +4,11 @@
 import pytest
 from pytest_bdd import given, parsers, scenario, then, when
 from ska_tango_base.control_model import HealthState
+from tango import DevState
 
 from tests.resources.test_harness.helpers import (
     get_device_simulator_with_given_name,
 )
-from tests.resources.test_harness.utils.enums import SimulatorDeviceType
 
 
 @pytest.mark.tmc_sdp_unhappy_path
@@ -25,21 +25,32 @@ def test_telescope_state_sdp_controller():
 
 
 @given("a Telescope consisting of TMC-SDP, emulated CSP and emulated MCCS ")
-def given_telescope_setup_with_simulators(central_node_low, simulator_factory):
+def given_telescope_setup_with_simulators(
+    event_recorder, central_node_low, simulator_factory
+):
     """
     Given a Telescope setup including TMC-SDP, emulated SDP, and emulated CSP.
     Checks if all necessary simulator devices are reachable.
     """
-    csp_master_sim = simulator_factory.get_or_create_simulator_device(
-        SimulatorDeviceType.LOW_CSP_MASTER_DEVICE
+    simulated_devices = get_device_simulator_with_given_name(
+        simulator_factory, ["csp master", "mccs master", "mccs subarray"]
     )
-    sdp_master_sim = simulator_factory.get_or_create_simulator_device(
-        SimulatorDeviceType.LOW_SDP_MASTER_DEVICE
-    )
-    assert csp_master_sim.ping() > 0
-    assert sdp_master_sim.ping() > 0
+    csp_master_sim, mccs_master_sim, mccs_subarray_sim = simulated_devices
     assert central_node_low.central_node.ping() > 0
-    assert central_node_low.subarray_devices["mccs_subarray"].ping() > 0
+    assert central_node_low.sdp_master.ping() > 0
+    assert central_node_low.subarray_devices["sdp_subarray"].ping() > 0
+    assert csp_master_sim.ping() > 0
+    assert mccs_master_sim.ping() > 0
+    assert mccs_subarray_sim.ping() > 0
+    event_recorder.subscribe_event(
+        central_node_low.central_node, "telescopeState"
+    )
+    central_node_low.move_to_on()
+    assert event_recorder.has_change_event_occurred(
+        central_node_low.central_node,
+        "telescopeState",
+        DevState.ON,
+    )
 
 
 @when(parsers.parse("The {devices} health state changes to {health_state} "))
