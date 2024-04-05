@@ -1,0 +1,12 @@
+@XTP-34965 @XTP-34275 @tmc_mccs @Team_himalaya
+Scenario Outline: Verify CentralNode TelescopeHealthState
+    Given a Telescope consisting of TMC,MCCS,emulated SDP and emulated CSP 
+    When The <devices> health state changes to <health_state> 
+    Then the telescope health state is <telescope_health_state>
+    Examples:
+    | devices                           | health_state               | telescope_health_state |
+    | mccs controller                   | DEGRADED                   |   DEGRADED             |
+    | mccs controller,sdp master        | DEGRADED,DEGRADED          |   DEGRADED             |
+    | mccs controller,csp master        | DEGRADED,DEGRADED          |   DEGRADED             |
+    | mccs controller,sdp master        | DEGRADED,OK                |   DEGRADED             |
+    | mccs controller,csp master        | DEGRADED,OK                |   DEGRADED             |
