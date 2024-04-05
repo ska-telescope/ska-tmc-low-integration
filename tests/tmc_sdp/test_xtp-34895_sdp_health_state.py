@@ -15,7 +15,7 @@ from tests.resources.test_harness.helpers import (
 @scenario(
     "../features/tmc_sdp/xtp-34895_health_state_sdp.feature",
     "Verify TMC TelescopeHealthState transition based on SDP Controller"
-    + "HealthState",
+    + " HealthState",
 )
 def test_telescope_state_sdp_controller():
     """This test case sets up a Telescope consisting of TMC-SDP, emulated CSP,
