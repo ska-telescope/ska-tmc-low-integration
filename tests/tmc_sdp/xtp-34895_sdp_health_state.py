@@ -11,7 +11,7 @@ from tests.resources.test_harness.helpers import (
 )
 
 
-@pytest.mark.tmc_sdp_unhappy_path
+@pytest.mark.tmc_sdp
 @scenario(
     "../features/tmc_sdp/xtp-34895_health_state_sdp.feature",
     "Verify TMC TelescopeHealthState transition based on SDP Controller"
