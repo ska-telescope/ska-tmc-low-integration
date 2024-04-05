@@ -495,7 +495,7 @@ def set_subarray_to_given_obs_state(
             csp_subarray.SetDefective(json.dumps({"enabled": False}))
 
 
-def add_device_to_db(device_name, class_name, server_name):
+def add_device_to_db(device_name: str, class_name: str, server_name: str):
     """Add Device to DB"""
     db = Database()
     dev_info = DbDevInfo()

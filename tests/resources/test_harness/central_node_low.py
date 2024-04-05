@@ -1,6 +1,7 @@
 import logging
 from time import sleep
 
+import tango
 from ska_control_model import ObsState
 from ska_ser_logging import configure_logging
 from ska_tango_base.control_model import HealthState
@@ -19,6 +20,7 @@ from tests.resources.test_harness.constant import (
     mccs_controller,
     mccs_master_leaf_node,
     mccs_subarray1,
+    mccs_subarraybeam,
     processor1,
     tmc_low_subarraynode1,
 )
@@ -32,6 +34,9 @@ from tests.resources.test_harness.utils.sync_decorators import (
     sync_set_to_on,
 )
 from tests.resources.test_support.common_utils.common_helpers import Resource
+from tests.resources.test_support.common_utils.tmc_helpers import (
+    add_device_to_db,
+)
 
 configure_logging(logging.DEBUG)
 LOGGER = logging.getLogger(__name__)
@@ -215,6 +220,18 @@ class CentralNodeWrapperLow(object):
             or SIMULATED_DEVICES_DICT["all_mocks"]
         ):
             self.move_to_off()
+        elif SIMULATED_DEVICES_DICT["csp_and_sdp"]:
+            # Add Device back to DB
+            add_device_to_db(
+                device_name=mccs_subarraybeam,
+                server_name="MccsSubarrayBeam/subarraybeam-01",
+                class_name="MccsSubarrayBeam",
+            )
+            mccs_subarraybeam_device = tango.DeviceProxy(
+                "dserver/MccsSubarrayBeam/subarraybeam-01"
+            )
+            mccs_subarraybeam_device.RestartServer()
+
         self._clear_command_call_and_transition_data(clear_transition=True)
         # Adding a small sleep to allow the systems to clean up processes
         sleep(0.15)

@@ -13,20 +13,23 @@ from tests.resources.test_harness.constant import (
     mccs_subarraybeam,
     tmc_low_subarraynode1,
 )
+from tests.resources.test_harness.helpers import (
+    get_device_simulator_with_given_name,
+)
 from tests.resources.test_support.common_utils.tmc_helpers import (
-    add_device_to_db,
     prepare_json_args_for_centralnode_commands,
     wait_for_attribute_update,
 )
 
 
+@pytest.mark.aki
 @pytest.mark.tmc_mccs
 @scenario(
     "../features/tmc_mccs/xtp-35236_mccs_subsystem_unavailable.feature",
     "MCCS Controller report the error when one of the subarray"
     + " beam is unavailable",
 )
-def test_tmc_mccs_error_propagation_when_subsystem_unavailable():
+def test_tmc_mccs_when_subsystem_unavailable():
     """
     Test case to verify TMC-MCCS error propagation
     when one of the mccs's subsystem subarray beam is unavailable.
@@ -39,10 +42,22 @@ def test_tmc_mccs_error_propagation_when_subsystem_unavailable():
 
 
 @given("a Telescope consisting of TMC,MCCS,emulated SDP and emulated CSP")
-def check_tmc_and_mccs_is_on(central_node_low, event_recorder):
+def check_tmc_and_mccs_is_on(
+    central_node_low, event_recorder, simulator_factory, subarray_node_low
+):
     """
     Given a TMC and MCCS in ON state
     """
+    simulated_devices = get_device_simulator_with_given_name(
+        simulator_factory, ["csp master", "sdp master"]
+    )
+    csp_master_sim, sdp_master_sim = simulated_devices
+    assert csp_master_sim.ping() > 0
+    assert sdp_master_sim.ping() > 0
+    assert central_node_low.central_node.ping() > 0
+    assert central_node_low.mccs_master.ping() > 0
+    assert subarray_node_low.subarray_devices["mccs_subarray"].ping() > 0
+
     event_recorder.subscribe_event(
         central_node_low.central_node, "telescopeState"
     )
@@ -115,17 +130,6 @@ def invoke_assignresources(
     )
     stored_unique_id.append(unique_id[0])
 
-    # Add Device back to DB
-    add_device_to_db(
-        device_name=mccs_subarraybeam,
-        server_name="MccsSubarrayBeam/subarraybeam-01",
-        class_name="MccsSubarrayBeam",
-    )
-    mccs_subarraybeam_device = tango.DeviceProxy(
-        "dserver/MccsSubarrayBeam/subarraybeam-01"
-    )
-    mccs_subarraybeam_device.RestartServer()
-
 
 @then("MCCS controller should throw the error and report to TMC")
 def mccs_error_reporting(event_recorder, central_node_low, stored_unique_id):
@@ -189,7 +193,6 @@ def central_node_receiving_error(
 @then("the TMC SubarrayNode remains in ObsState RESOURCING")
 def tmc_subarray_obsstate_resourcing(subarray_node_low, event_recorder):
     """Checks if SubarrayNode's obsState attribute value is RESOURCING"""
-    event_recorder.subscribe_event(subarray_node_low.subarray_node, "obsState")
     assert event_recorder.has_change_event_occurred(
         subarray_node_low.subarray_node,
         "obsState",
