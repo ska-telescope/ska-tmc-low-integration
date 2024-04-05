@@ -6,14 +6,27 @@ import pytest
 from pytest_bdd import given, parsers, scenario, then, when
 from ska_tango_base.control_model import HealthState
 
+from tests.resources.test_harness.central_node_low import CentralNodeWrapperLow
+from tests.resources.test_harness.event_recorder import EventRecorder
 from tests.resources.test_harness.helpers import (
     get_device_simulator_with_given_name,
 )
+from tests.resources.test_harness.simulator_factory import SimulatorFactory
 
 
 # Adjust the health thresholds on the controller to force it into DEGRADED
 # state
 def adjust_controller_to_degraded_state(controller):
+    """
+    Adjusts the health thresholds on the controller to
+      force it into DEGRADED state.
+
+    Args:
+        controller: The controller instance to adjust.
+
+    Returns:
+        None
+    """
     health_params = {"stations_degraded_threshold": 0}
     controller.healthModelParams = json.dumps(health_params)
 
@@ -37,14 +50,17 @@ def test_telescope_state_mccs_controller():
 
 
 @given("a Telescope consisting of TMC, MCCS, simulated CSP and simulated SDP")
-def given_telescope_setup_with_simulators(central_node_low, simulator_factory):
+def given_telescope_setup_with_simulators(
+    central_node_low: CentralNodeWrapperLow,
+    simulator_factory: SimulatorFactory,
+):
     """Method to check TMC real devices and sub-system simulators
 
     Args:
-        central_node_low (CentralNodeWrapperLow): fixture for a
+        central_node_low (CentralNodeWrapperLow): Fixture for a
         TMC CentralNode under test
-        simulator_factory (_type_):fixture for SimulatorFactory class,
-        which provides simulated subarray and master devices
+        simulator_factory (SimulatorFactory): Fixture for SimulatorFactory
+        class, which provides simulated subarray and master devices
     """
     simulated_devices = get_device_simulator_with_given_name(
         simulator_factory, ["csp master", "sdp master"]
@@ -59,9 +75,21 @@ def given_telescope_setup_with_simulators(central_node_low, simulator_factory):
 
 @when(parsers.parse("The {devices} health state changes to {health_state}"))
 def set_simulator_devices_health_states(
-    devices, health_state, simulator_factory, controller
+    devices: list,
+    health_state: list,
+    simulator_factory: SimulatorFactory,
+    controller,
 ):
-    """A method to set HealthState value for the simulator devices"""
+    """Method to set the health state of specified simulator devices.
+
+    Args:
+        devices (list): Names of the devices whose health state will change.
+        health_state (list): The new health states for the devices.
+        simulator_factory (SimulatorFactory): Fixture for SimulatorFactory
+          class.
+        controller: The controller instance to adjust.
+    """
+    adjust_controller_to_degraded_state(controller)
     # Split the devices string into individual devices
     devices_list = devices.split(",")
     health_state_list = health_state.split(",")
@@ -73,23 +101,23 @@ def set_simulator_devices_health_states(
         zip(sim_devices_list, health_state_list)
     ):
         # Check if the device is not the Mccs controller
-        if sim_device.dev_name not in adjust_controller_to_degraded_state(
-            controller
-        ):
+        if sim_device.dev_name not in ("low-mccs/control/control"):
             sim_device.SetDirectHealthState(HealthState[sim_health_state_val])
 
 
 @then(parsers.parse("the telescope health state is {telescope_health_state}"))
 def check_telescope_health_state(
-    central_node_low, event_recorder, telescope_health_state
+    central_node_low: CentralNodeWrapperLow,
+    event_recorder: EventRecorder,
+    telescope_health_state,
 ):
-    """A method to check CentralNode.telescopehealthState attribute
-    change after aggregation
+    """ "Method to check the telescope's health state.
 
     Args:
-        central_node_low : A fixture for CentralNode tango device class
-        event_recorder: A fixture for EventRecorder class_
-        telescope_health_state (str): telescopehealthState value
+        central_node_low (CentralNodeWrapperLow): Fixture for CentralNode
+          tango device class.
+        event_recorder: Fixture for EventRecorder class.
+        telescope_health_state (str): The expected telescope health state.
     """
     event_recorder.subscribe_event(
         central_node_low.central_node, "telescopeHealthState"

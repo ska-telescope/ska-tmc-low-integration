@@ -3,6 +3,8 @@
 
 import pytest
 from pytest_bdd import given, parsers, scenario, then, when
+from resources.test_harness.central_node_low import CentralNodeWrapperLow
+from resources.test_harness.simulator_factory import SimulatorFactory
 from ska_tango_base.control_model import HealthState
 
 from tests.resources.test_harness.helpers import (
@@ -24,7 +26,10 @@ def test_telescope_state_sdp_controller():
 
 
 @given("a Telescope consisting of TMC, SDP, simulated CSP and simulated MCCS")
-def given_telescope_setup_with_simulators(central_node_low, simulator_factory):
+def given_telescope_setup_with_simulators(
+    central_node_low: CentralNodeWrapperLow,
+    simulator_factory: SimulatorFactory,
+):
     """Method to check TMC real devices and sub-system simulators
 
     Args:
@@ -46,9 +51,16 @@ def given_telescope_setup_with_simulators(central_node_low, simulator_factory):
 
 @when(parsers.parse("The {devices} health state changes to {health_state}"))
 def set_simulator_devices_health_states(
-    devices, health_state, simulator_factory
+    devices: list, health_state: list, simulator_factory: SimulatorFactory
 ):
-    """A method to set HealthState value for the simulator devices"""
+    """Method to set the health state of specified simulator devices.
+
+    Args:
+        devices (list): Names of the devices whose health state will change.
+        health_state (list): The new health states for the devices.
+        simulator_factory (SimulatorFactory): Fixture for SimulatorFactory
+          class.
+    """
     # Split the devices string into individual devices
     devices_list = devices.split(",")
     health_state_list = health_state.split(",")
@@ -66,7 +78,9 @@ def set_simulator_devices_health_states(
 
 @then(parsers.parse("the telescope health state is {telescope_health_state}"))
 def check_telescope_health_state(
-    central_node_low, event_recorder, telescope_health_state
+    central_node_low: CentralNodeWrapperLow,
+    event_recorder,
+    telescope_health_state,
 ):
     """A method to check CentralNode.telescopehealthState attribute
     change after aggregation
