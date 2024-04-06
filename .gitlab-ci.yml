@@ -106,6 +106,8 @@ k8s-test:
   after_script:
     - pip3 install -q -U ska-ser-xray
     - XRAY_TEST_RESULT_FILE="build/cucumber.json" make xray-publish
+  needs:
+    - k8s-test-tmc-with-sdp
 
 k8s-test-tmc-with-csp:
   tags:
@@ -163,6 +165,8 @@ k8s-test-tmc-with-mccs:
     - 'make help | grep k8s-test'
     - make k8s-install-chart
     - make k8s-wait
+  needs:
+    - k8s-test-tmc-with-csp
 
 stop-k8s-test-tmc-with-mccs:
   extends:
