@@ -404,6 +404,42 @@ def wait_and_validate_device_attribute_value(
     return False
 
 
+def check_assigned_resources_attribute_value(
+    device: DeviceProxy,
+    attribute_name: str,
+    expected_value: str,
+    timeout: int = 10,
+) -> bool:
+    """
+    This function will verify if assignedResources attribute is set
+    as per expected value
+    :param device: Tango Device Proxy
+    :type device: DeviceProxy
+    :param attribute_name: device attribute name
+    :type attribute_name: str
+    :param expected_value: expected value of attribute to check
+    :type expected_value: str
+    :param timeout: no of sec to check if expected value changed for device
+    :type timeout: int
+    :rtype: bool
+    """
+    count = 0
+    while count <= timeout:
+        attribute_value = device.read_attribute(attribute_name).value
+        LOGGER.info(
+            "Assign Resource device value %s and expected value %s",
+            attribute_value,
+            expected_value,
+        )
+        if attribute_value and json.loads(attribute_value[0]) == json.loads(
+            expected_value
+        ):
+            return True
+        count += 1
+        time.sleep(1)
+    return False
+
+
 def get_simulated_devices_info() -> dict:
     """
     A method to get simulated devices present in low deployment.

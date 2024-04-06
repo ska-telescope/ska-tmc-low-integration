@@ -21,6 +21,9 @@ from tests.resources.test_harness.constant import (
     mccs_master_leaf_node,
     tmc_low_subarraynode1,
 )
+from tests.resources.test_harness.helpers import (
+    check_assigned_resources_attribute_value,
+)
 from tests.resources.test_harness.utils.enums import SimulatorDeviceType
 from tests.resources.test_support.common_utils.common_helpers import Waiter
 from tests.resources.test_support.common_utils.tmc_helpers import (
@@ -32,42 +35,6 @@ from tests.resources.test_support.constant_low import (
     FAILED_RESULT_DEFECT,
     RESET_DEFECT,
 )
-
-
-def check_assigned_resources_attribute_after_release(
-    assigned_resources_attribute_value,
-):
-    """
-    This function will verify if assignedResources attribute is set to
-    empty values after release resources is completed.
-    """
-    assigned_resources = json.loads(assigned_resources_attribute_value[0])
-    assert assigned_resources["subarray_beam_ids"] == []
-    assert assigned_resources["station_beam_ids"] == []
-    assert assigned_resources["station_ids"] == []
-    assert assigned_resources["apertures"] == []
-    assert assigned_resources["channels"] == [0]
-
-
-def check_assigned_resources_attribute_after_assign(
-    assigned_resources_attribute_value,
-):
-    """
-    This function will verify if assignedResources attribute is set to
-    expected values after assign resources command is completed.
-    """
-
-    assigned_resources = json.loads(assigned_resources_attribute_value[0])
-    assert assigned_resources["subarray_beam_ids"] == ["1"]
-    assert assigned_resources["channels"] == [32]
-    assert assigned_resources["station_ids"] == ["1", "2", "3"]
-    assert assigned_resources["apertures"] == [
-        "AP001.01",
-        "AP001.02",
-        "AP002.01",
-        "AP002.02",
-        "AP003.01",
-    ]
 
 
 class TestLowCentralNodeAssignResources:
@@ -208,12 +175,10 @@ class TestLowCentralNodeAssignResources:
             (unique_id[0], str(ResultCode.OK.value)),
         )
 
-        assigned_resources_attribute_value = (
-            central_node_low.subarray_node.assignedResources
-        )
-
-        check_assigned_resources_attribute_after_assign(
-            assigned_resources_attribute_value
+        assert check_assigned_resources_attribute_value(
+            central_node_low.subarray_node,
+            "assignedResources",
+            assigned_resources_json,
         )
 
         # Execute release command and verify command completed successfully
@@ -239,24 +204,26 @@ class TestLowCentralNodeAssignResources:
         )
 
         assert event_recorder.has_change_event_occurred(
+            central_node_low.subarray_node,
+            "obsState",
+            ObsState.EMPTY,
+        )
+
+        assert event_recorder.has_change_event_occurred(
             central_node_low.central_node,
             "longRunningCommandResult",
             (unique_id[0], str(ResultCode.OK.value)),
         )
-
-        assert central_node_low.subarray_node.obsState == ObsState.EMPTY
 
         # Setting Assigned Resources empty
 
         mccs_subarray_sim.SetDirectassignedResources(
             assigned_resources_json_empty
         )
-
-        assigned_resources_attribute_value = (
-            central_node_low.subarray_node.assignedResources
-        )
-        check_assigned_resources_attribute_after_release(
-            assigned_resources_attribute_value
+        assert check_assigned_resources_attribute_value(
+            central_node_low.subarray_node,
+            "assignedResources",
+            assigned_resources_json_empty,
         )
 
     @pytest.mark.SKA_low
