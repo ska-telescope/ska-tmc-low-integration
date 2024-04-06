@@ -52,7 +52,7 @@ def given_telescope_setup_with_simulators(
 
 @when(parsers.parse("The {devices} health state changes to {health_state}"))
 def set_simulator_devices_health_states(
-    devices: list, health_state: list, simulator_factory: SimulatorFactory
+    devices: str, health_state: str, simulator_factory: SimulatorFactory
 ):
     """Method to set the health state of specified simulator devices.
 
