@@ -3,11 +3,10 @@
 import json
 
 import pytest
-from pytest_bdd import given, parsers, scenario, then, when
+from pytest_bdd import given, parsers, scenario, when
 from ska_tango_base.control_model import HealthState
 
 from tests.resources.test_harness.central_node_low import CentralNodeWrapperLow
-from tests.resources.test_harness.event_recorder import EventRecorder
 from tests.resources.test_harness.helpers import (
     get_device_simulator_with_given_name,
 )
@@ -75,8 +74,8 @@ def given_telescope_setup_with_simulators(
 
 @when(parsers.parse("The {devices} health state changes to {health_state}"))
 def set_simulator_devices_health_states(
-    devices: list,
-    health_state: list,
+    devices: str,
+    health_state: str,
     simulator_factory: SimulatorFactory,
     controller,
 ):
@@ -105,27 +104,4 @@ def set_simulator_devices_health_states(
             sim_device.SetDirectHealthState(HealthState[sim_health_state_val])
 
 
-@then(parsers.parse("the telescope health state is {telescope_health_state}"))
-def check_telescope_health_state(
-    central_node_low: CentralNodeWrapperLow,
-    event_recorder: EventRecorder,
-    telescope_health_state,
-):
-    """ "Method to check the telescope's health state.
-
-    Args:
-        central_node_low (CentralNodeWrapperLow): Fixture for CentralNode
-          tango device class.
-        event_recorder: Fixture for EventRecorder class.
-        telescope_health_state (str): The expected telescope health state.
-    """
-    event_recorder.subscribe_event(
-        central_node_low.central_node, "telescopeHealthState"
-    )
-
-    assert event_recorder.has_change_event_occurred(
-        central_node_low.central_node,
-        "telescopeHealthState",
-        HealthState[telescope_health_state],
-    ), f"Expected telescopeHealthState to be \
-        {HealthState[telescope_health_state]}"
+# @then -> ../conftest.py

@@ -2,11 +2,10 @@
  Controller HealthState."""
 
 import pytest
-from pytest_bdd import given, parsers, scenario, then, when
+from pytest_bdd import given, parsers, scenario, when
 from ska_tango_base.control_model import HealthState
 
 from tests.resources.test_harness.central_node_low import CentralNodeWrapperLow
-from tests.resources.test_harness.event_recorder import EventRecorder
 from tests.resources.test_harness.helpers import (
     get_device_simulator_with_given_name,
 )
@@ -75,29 +74,3 @@ def set_simulator_devices_health_states(
         # Check if the device is not the SDP controller
         if sim_device.dev_name not in ["low-sdp/control/0"]:
             sim_device.SetDirectHealthState(HealthState[sim_health_state_val])
-
-
-@then(parsers.parse("the telescope health state is {telescope_health_state}"))
-def check_telescope_health_state(
-    central_node_low: CentralNodeWrapperLow,
-    event_recorder: EventRecorder,
-    telescope_health_state,
-):
-    """A method to check CentralNode.telescopehealthState attribute
-    change after aggregation
-
-    Args:
-        central_node_low : A fixture for CentralNode tango device class
-        event_recorder: A fixture for EventRecorder class_
-        telescope_health_state (str): telescopehealthState value
-    """
-    event_recorder.subscribe_event(
-        central_node_low.central_node, "telescopeHealthState"
-    )
-
-    assert event_recorder.has_change_event_occurred(
-        central_node_low.central_node,
-        "telescopeHealthState",
-        HealthState[telescope_health_state],
-    ), f"Expected telescopeHealthState to be \
-        {HealthState[telescope_health_state]}"
