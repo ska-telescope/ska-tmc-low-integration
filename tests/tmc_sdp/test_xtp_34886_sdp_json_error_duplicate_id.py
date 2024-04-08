@@ -34,7 +34,7 @@ def test_tmc_sdp_json_error_duplicate_id():
     """
 
 
-@given("a Telescope consisting of TMC,SDP,simulated CSP and simulated MCCS")
+@given("a Telescope consisting of TMC, SDP, simulated CSP and simulated MCCS")
 def given_a_tmc_sdp(
     central_node_low: CentralNodeWrapperLow, simulator_factory
 ):
