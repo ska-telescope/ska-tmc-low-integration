@@ -491,7 +491,7 @@ def update_eb_pb_ids(input_json: str, json_id: str = "") -> str:
     Method to generate different eb_id and pb_id
     :param input_json: json to utilised to update values.
     """
-
+    input_json = json.loads(input_json)
     if json_id in ("eb_id", ""):
         input_json["sdp"]["execution_block"]["eb_id"] = generate_id("eb-test")
 
