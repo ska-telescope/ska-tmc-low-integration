@@ -35,8 +35,7 @@ def adjust_controller_to_degraded_state(controller):
 @pytest.mark.xfail(
     reason="The test is marked as xfail due to existing issues"
     + "with health in MCCS, which prevent the controller from entering a"
-    + "DEGRADED state. This is a temporary measure until the underlying "
-    + "issues are fixed."
+    + "DEGRADED state. This will be fix as part of skb-319."
 )
 @pytest.mark.tmc_mccs
 @scenario(
@@ -50,7 +49,7 @@ def test_telescope_state_mccs_controller():
     updated accordingly."""
 
 
-@given("a Telescope consisting of TMC, MCCS, simulated CSP and simulated SDP")
+@given("a Telescope consisting of TMC, MCCS, emulated SDP and emulated CSP")
 def given_telescope_setup_with_simulators(
     central_node_low: CentralNodeWrapperLow,
     simulator_factory: SimulatorFactory,

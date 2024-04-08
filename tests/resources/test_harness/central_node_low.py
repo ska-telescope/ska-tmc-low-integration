@@ -24,6 +24,7 @@ from tests.resources.test_harness.constant import (
 )
 from tests.resources.test_harness.helpers import SIMULATED_DEVICES_DICT
 from tests.resources.test_harness.utils.common_utils import JsonFactory
+from tests.resources.test_harness.utils.enums import AdminMode
 from tests.resources.test_harness.utils.sync_decorators import (
     sync_abort,
     sync_release_resources,
@@ -240,11 +241,11 @@ class CentralNodeWrapperLow(object):
                 "Invoking TelescopeOn command with csp and sdp simulated"
             )
             # Set adminMode to Online for mccs_master
-            if self.mccs_master.adminMode != 0:
-                self.mccs_master.adminMode = 0
+            if self.mccs_master.adminMode != AdminMode.ONLINE:
+                self.mccs_master.adminMode = AdminMode.ONLINE
             # Set adminMode to Online for mccs_subarray
-            if self.mccs_subarray1.adminMode != 0:
-                self.mccs_subarray1.adminMode = 0
+            if self.mccs_subarray1.adminMode != AdminMode.ONLINE:
+                self.mccs_subarray1.adminMode = AdminMode.ONLINE
             self.central_node.TelescopeOn()
             self.set_value_with_csp_sdp_mocks(DevState.ON)
 
@@ -260,11 +261,11 @@ class CentralNodeWrapperLow(object):
                 "Invoking TelescopeOn command with sdp and mccss simulated"
             )
             # Set adminMode to Online for csp_master
-            if self.csp_master.adminMode != 0:
-                self.csp_master.adminMode = 0
+            if self.csp_master.adminMode != AdminMode.ONLINE:
+                self.csp_master.adminMode = AdminMode.ONLINE
             # Set adminMode to Online for csp_subarray
-            if self.csp_subarray1.adminMode != 0:
-                self.csp_subarray1.adminMode = 0
+            if self.csp_subarray1.adminMode != AdminMode.ONLINE:
+                self.csp_subarray1.adminMode = AdminMode.ONLINE
             self.central_node.TelescopeOn()
             self.set_values_with_sdp_mccs_mocks(DevState.ON)
         else:

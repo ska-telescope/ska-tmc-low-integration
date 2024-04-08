@@ -39,9 +39,9 @@ Negative Scenario implemented
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 * ``HealthState.DEGRADED Scenario`` - Testing TMC-SDP to  verification of the TelescopeHealthState transition
-in the Telescope Monitoring and Control (TMC) system based on the health state changes of the SDP Controller. 
-The scenario simulates a telescope setup consisting of Real SDP, and 
-simulated devices for the CSP and the MCCS.
+- in the Telescope Monitoring and Control TMC system based on the health state changes of the SDP Controller. 
+- The scenario simulates a telescope setup consisting of Real SDP, and 
+- simulated devices for the CSP and the MCCS.
 
 ****************************
 Pair wise testing / Real-CSP
@@ -105,7 +105,7 @@ To test with tmc_mccs execute the command `make k8s-test MARK=tmc_mccs MCCS_SIMU
 Negative Scenario implemented
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-* ``HealthState.DEGRADED Scenario`` - Testing TMC-MCCS to  verification of the TelescopeHealthState transition
-in the Telescope Monitoring and Control (TMC) system based on the health state changes of the SDP Controller. 
-The scenario simulates a telescope setup consisting of Real MCCS, and 
-simulated devices for the CSP and the SDP.
+* ``HealthState.DEGRADED Scenario`` - Testing TMC-MCCS to verification of the TelescopeHealthState transition
+- in the Telescope Monitoring and Control TMC system based on the health state changes of the SDP Controller. 
+- The scenario simulates a telescope setup consisting of Real MCCS, and 
+- simulated devices for the CSP and the SDP.

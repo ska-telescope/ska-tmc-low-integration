@@ -7,6 +7,7 @@ from tango import DeviceProxy, DevState
 
 from tests.resources.test_harness.central_node_low import CentralNodeWrapperLow
 from tests.resources.test_harness.constant import device_dict_low, processor1
+from tests.resources.test_harness.utils.enums import AdminMode
 from tests.resources.test_harness.utils.wait_helpers import Waiter
 
 configure_logging(logging.DEBUG)
@@ -31,8 +32,8 @@ class CentralNodeCspWrapperLow(CentralNodeWrapperLow):
         put telescope in ON state
         """
         self.central_node.TelescopeOn()
-        self.csp_master.adminMode = 0
-        self.csp_subarray1.adminMode = 0
+        self.csp_master.adminMode = AdminMode.ONLINE
+        self.csp_subarray1.adminMode = AdminMode.ONLINE
         device_to_on_list = [
             self.subarray_devices.get("sdp_subarray"),
             self.subarray_devices.get("mccs_subarray"),
