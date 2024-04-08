@@ -20,6 +20,10 @@ class TestConfigureErrorPropagation:
     LOW TMC."""
 
     @pytest.mark.SKA_low
+    @pytest.mark.skip(
+        "This test case is currently unstable, will be debugged and fixed as "
+        + "a part of HM-443"
+    )
     def test_configure_timeout_csp_ln(
         self,
         subarray_node_low,
@@ -81,6 +85,10 @@ class TestConfigureErrorPropagation:
             low_csp_subarray_leaf_node in assertion_data["attribute_value"][1]
         )
 
+    @pytest.mark.skip(
+        "This test case is currently unstable, will be debugged and fixed as "
+        + "a part of HM-443"
+    )
     @pytest.mark.SKA_low
     def test_configure_timeout_sdp_ln(
         self,

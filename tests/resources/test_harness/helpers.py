@@ -325,22 +325,6 @@ def device_attribute_changed(
     return True
 
 
-def wait_for_attribute_update(
-    device, attribute_name: str, expected_id: str, expected_result: ResultCode
-):
-    """Wait for the attribute to reflect necessary changes."""
-    start_time = time.time()
-    elapsed_time = time.time() - start_time
-    while elapsed_time <= TIMEOUT:
-        unique_id, result = device.read_attribute(attribute_name).value
-        if expected_id in unique_id:
-            LOGGER.info("The attribute value is: %s, %s", unique_id, result)
-            return result == str(expected_result.value)
-        time.sleep(1)
-        elapsed_time = time.time() - start_time
-    return False
-
-
 def wait_for_updates_on_delay_model(csp_subarray_leaf_node) -> None:
     start_time = time.time()
     time_elapsed = 0
@@ -554,3 +538,18 @@ def set_admin_mode_values_mccs():
                     device.adminmode = 0
                     devices.append(device)
                     time.sleep(0.1)
+
+
+def updated_assign_str(assign_json: str, station_id: int) -> str:
+    """
+    Returns a json with updated values for the given keys
+    :returns: updated assign string
+    """
+    assign_json = json.loads(assign_json)
+
+    for subarray_beam in assign_json["mccs"]["subarray_beams"]:
+        for aperture in subarray_beam["apertures"]:
+            aperture["station_id"] = station_id
+
+    updated_assign_str = json.dumps(assign_json)
+    return updated_assign_str
