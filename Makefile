@@ -139,13 +139,6 @@ K8S_TEST_TEST_COMMAND ?= $(PYTHON_VARS_BEFORE_PYTEST) $(PYTHON_RUNNER) \
 -include PrivateRules.mak
 -include resources/alarmhandler.mk
 
-.PHONY: test_sdp_comp
-
--test_sdp_comp:
-	kubectl scale statefulset proccontrol --replicas=0 -n $(KUBE_NAMESPACE)
-	pytest TEST_MARKER=<tmc_sdp_unhappy_path>
-	kubectl scale statefulset proccontrol --replicas=1 -n $(KUBE_NAMESPACE)
-
 # to create SDP namespace
 k8s-pre-install-chart:
 ifeq ($(SDP_SIMULATION_ENABLED),false)

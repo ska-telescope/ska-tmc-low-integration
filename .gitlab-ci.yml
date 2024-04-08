@@ -91,6 +91,34 @@ on-demand-destroy:
   when: manual
   allow_failure: true
 
+scale-proccontrol-to-zero:
+  stage: lifecycle
+  tags:
+    - k8srunner-large
+  variables:
+    KUBE_NAMESPACE: 'ci-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA'
+    SERVICE_ACCOUNT: "ci-svc-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA"
+  before_script:
+    - make cred SERVICE_ACCOUNT=$SERVICE_ACCOUNT
+    - '[ -f .make/k8s.mk ] || (echo "File k8s.mk not included in Makefile; exit 1")'
+  script:
+    - kubectl scale statefulset proccontrol --replicas=0 -n $KUBE_NAMESPACE
+  when: manual
+
+scale-proccontrol-to-one:
+  stage: lifecycle
+  tags:
+    - k8srunner-large
+  variables:
+    KUBE_NAMESPACE: 'ci-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA'
+    SERVICE_ACCOUNT: "ci-svc-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA"
+  before_script:
+    - make cred SERVICE_ACCOUNT=$SERVICE_ACCOUNT
+    - '[ -f .make/k8s.mk ] || (echo "File k8s.mk not included in Makefile; exit 1")'
+  script:
+    - kubectl scale statefulset proccontrol --replicas=1 -n $KUBE_NAMESPACE
+  when: manual
+
 k8s-test:
   tags:
     - k8srunner
@@ -126,22 +154,26 @@ stop-k8s-test-tmc-with-csp:
 
 k8s-test-tmc-with-sdp:
   tags:
-    - k8srunner
+    - k8srunner-large
   extends:
     - k8s-test
   variables:
     TELESCOPE: 'SKA-low'
-    CLUSTER_DOMAIN: "svc.cluster.local"
-    PORT: "10000"
-  script:
-    - make test_sdp_comp
     KUBE_NAMESPACE: 'ci-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-tmc-sdp'
     KUBE_NAMESPACE_SDP: 'ci-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-sdp'
     SERVICE_ACCOUNT: "ci-svc-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-tmc-sdp"
-    MARK: 'tmc_sdp'
+    MARK: 'tmc_sdp1'
     SDP_SIMULATION_ENABLED: 'false'
     TARANTA_ENABLED: 'true'  
-
+  dependencies:
+    - scale-proccontrol-to-zero
+  script:
+    - make cred SERVICE_ACCOUNT=$SERVICE_ACCOUNT
+    - '[ -f .make/k8s.mk ] || (echo "File k8s.mk not included in Makefile; exit 1")'
+    - kubectl scale statefulset proccontrol --replicas=1 -n $KUBE_NAMESPACE
+    - make k8s-install-chart
+    - make k8s-wait
+    - kubectl scale statefulset proccontrol --replicas=0 -n $KUBE_NAMESPACE
 
 stop-k8s-test-tmc-with-sdp:
   extends:
