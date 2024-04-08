@@ -91,7 +91,7 @@ class CentralNodeWrapperLow(object):
             f"ska_low/tm_leaf_node/mccs_subarray{subarray_id}"
         )
         self.subarray_device_by_id[subarray_id] = self.subarray_devices
-        self.subarray_devices[subarray_id].update(
+        self.subarray_device_by_id[subarray_id].update(
             {
                 "subarray_node": self.subarray_node,
                 "csp_subarray_leaf_node": self.csp_subarray_leaf_node,
