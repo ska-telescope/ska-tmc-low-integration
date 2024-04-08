@@ -87,6 +87,12 @@ def check_tmc_sdp_subarray_idle(
     event_recorder.subscribe_event(
         central_node_low.central_node, "longRunningCommandResult"
     )
+    event_recorder.subscribe_event(
+        central_node_low.get_subarray_devices_by_id(subarray_id).get(
+            "sdp_subarrayleafnode"
+        ),
+        "longRunningCommandResult",
+    )
     event_recorder.subscribe_event(central_node_low.subarray_node, "obsState")
     event_recorder.subscribe_event(
         central_node_low.get_subarray_devices_by_id(subarray_id).get(
@@ -183,6 +189,7 @@ def tmc_assign_resources_with_duplicate_id(
 def check_sdp_error(
     subarray_id: str,
     central_node_low: CentralNodeWrapperLow,
+    event_recorder: EventRecorder,
 ):
     """Method to verify SDP Subarray raises exception
     with duplicate id in SDP configuration.
@@ -192,13 +199,31 @@ def check_sdp_error(
         subarray_id (str): subarray id used for testing
         central_node_low (CentralNodeWrapperLow): fixture for
         CentralNodeWrapperLow class instance
+        event_recorder (EventRecorder):fixture for EventRecorder class instance
     """
-    sdp_subarray_obsstate = (
-        central_node_low.get_subarray_devices_by_id(subarray_id)
-        .get("sdp_subarray")
-        .obsState
-    )
+    sdp_subarray = central_node_low.get_subarray_devices_by_id(
+        subarray_id
+    ).get("sdp_subarray")
+    sdp_subarray_leaf_node = central_node_low.get_subarray_devices_by_id(
+        subarray_id
+    ).get("sdp_subarray_leaf_node")
+    sdp_subarray_obsstate = sdp_subarray.obsState
+
     assert sdp_subarray_obsstate == ObsState.IDLE
+    if pytest.duplicate_id_type == "pb_id":
+        exception_message = (
+            f"Processing block {pytest.duplicate_id} already exists"
+        )
+    else:
+        exception_message = (
+            f"Execution block {pytest.duplicate_id} already exists"
+        )
+    assertion_data = event_recorder.has_change_event_occurred(
+        sdp_subarray_leaf_node,
+        attribute_name="longRunningCommandResult",
+        attribute_value=(pytest.unique_id[0], Anything),
+    )
+    assert exception_message in assertion_data["attribute_value"][1]
 
 
 @when(
