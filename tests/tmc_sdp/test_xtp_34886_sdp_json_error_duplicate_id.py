@@ -89,7 +89,7 @@ def check_tmc_sdp_subarray_idle(
     )
     event_recorder.subscribe_event(
         central_node_low.get_subarray_devices_by_id(subarray_id).get(
-            "sdp_subarrayleafnode"
+            "sdp_subarray_leaf_node"
         ),
         "longRunningCommandResult",
     )
