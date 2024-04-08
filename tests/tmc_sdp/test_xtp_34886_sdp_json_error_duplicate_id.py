@@ -150,7 +150,6 @@ def tmc_assign_resources_with_duplicate_id(
         CentralNodeWrapperLow class instance
     """
     id: str = ""
-    logging.info(duplicate_id)
     if duplicate_id == "eb_id":
         id = "pb_id"
     else:
