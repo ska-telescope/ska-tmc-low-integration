@@ -30,7 +30,6 @@ class TMCLow:
                 "server_name": "MccsSubarrayBeam/subarraybeam-01",
                 "class_name": "MccsSubarrayBeam",
             }
-            self.device_deleted_flag = True  # Set flag when device is deleted
 
     def add_device_to_db(
         self, device_name: str, class_name: str, server_name: str
@@ -51,8 +50,8 @@ class TMCLow:
 
     def tear_down(self):
         """Tear down"""
-        if self.device_deleted_flag:  # Check if device deletion flag is set
-            # Add device back to the database
+        if self.deleted_device:  # Check if any devices have been deleted
+            # Add deleted devices back to the database and restart servers
             for _, device_info in self.deleted_device.items():
                 self.add_device_to_db(
                     device_info["device_name"],
@@ -60,12 +59,14 @@ class TMCLow:
                     device_info["server_name"],
                 )
                 # Restart the server after adding the device back
-                # to the database
                 if device_info["class_name"] == "MccsSubarrayBeam":
                     self.RestartServer("MCCS_SUBARRAYBEAM")
+
+            # Clear the deleted_device dictionary after devices have
+            # been added back
+            self.deleted_device.clear()
+
         self.central_node.tear_down()
-        # Reset the flag after tear down
-        self.device_deleted_flag = False
 
     def TelescopeOn(self):
         """Execute TelescopeOn command"""
