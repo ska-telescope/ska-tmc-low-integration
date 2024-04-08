@@ -54,6 +54,13 @@ class CentralNodeWrapperLow(object):
             "sdp_subarray": DeviceProxy(low_sdp_subarray1),
             "mccs_subarray": DeviceProxy(mccs_subarray1),
         }
+        self.subarray_device_by_id: dict = {
+            "1": {
+                "csp_subarray": DeviceProxy(low_csp_subarray1),
+                "sdp_subarray": DeviceProxy(low_sdp_subarray1),
+                "mccs_subarray": DeviceProxy(mccs_subarray1),
+            }
+        }
         self.csp_subarray1 = DeviceProxy(low_csp_subarray1)
         self.sdp_subarray1 = DeviceProxy(low_sdp_subarray1)
         self.sdp_master = DeviceProxy(low_sdp_master)
@@ -75,11 +82,6 @@ class CentralNodeWrapperLow(object):
             f"ska_low/tm_subarray_node/{subarray_id}"
         )
         subarray_id = "{:02d}".format(int(subarray_id))
-        self.subarray_devices = {
-            "csp_subarray": DeviceProxy(f"low-csp/subarray/{subarray_id}"),
-            "sdp_subarray": DeviceProxy(f"low-sdp/subarray/{subarray_id}"),
-            "mccs_subarray": DeviceProxy(f"low-mccs/subarray/{subarray_id}"),
-        }
         self.csp_subarray_leaf_node = DeviceProxy(
             f"ska_low/tm_leaf_node/csp_subarray{subarray_id}"
         )
@@ -89,6 +91,17 @@ class CentralNodeWrapperLow(object):
         self.mccs_subarray_leaf_node = DeviceProxy(
             f"ska_low/tm_leaf_node/mccs_subarray{subarray_id}"
         )
+        self.subarray_device_by_id[subarray_id] = {
+            "subarray_node": self.subarray_node,
+            "csp_subarray": self.csp_subarray_leaf_node,
+            "sdp_subarray": self.sdp_subarray_leaf_node,
+            "mccs_subarray": self.mccs_subarray_leaf_node,
+        }
+        self.subarray_devices = self.subarray_device_by_id[subarray_id]
+
+    def get_subarray_devices_by_id(self, subarray_id):
+        subarray_id = "{:02d}".format(int(subarray_id))
+        return self.subarray_device_by_id[subarray_id]
 
     @property
     def state(self) -> DevState:

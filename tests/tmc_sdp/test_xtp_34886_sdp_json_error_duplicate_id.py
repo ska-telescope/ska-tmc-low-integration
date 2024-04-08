@@ -89,7 +89,10 @@ def check_tmc_sdp_subarray_idle(
     )
     event_recorder.subscribe_event(central_node_low.subarray_node, "obsState")
     event_recorder.subscribe_event(
-        central_node_low.subarray_devices.get("sdp_subarray"), "obsState"
+        central_node_low.get_subarray_devices_by_id(subarray_id).get(
+            "sdp_subarray"
+        ),
+        "obsState",
     )
 
     central_node_low.move_to_on()
@@ -190,9 +193,11 @@ def check_sdp_error(
         central_node_low (CentralNodeWrapperLow): fixture for
         CentralNodeWrapperLow class instance
     """
-    sdp_subarray_obsstate = central_node_low.subarray_devices.get(
-        "sdp_subarray"
-    ).obsState
+    sdp_subarray_obsstate = (
+        central_node_low.get_subarray_devices_by_id(subarray_id)
+        .get("sdp_subarray")
+        .obsState
+    )
     assert sdp_subarray_obsstate == ObsState.IDLE
 
 
@@ -215,7 +220,9 @@ def check_tmc_resourcing_obstate(
         event_recorder (EventRecorder):fixture for EventRecorder class instance
     """
     assert event_recorder.has_change_event_occurred(
-        central_node_low.subarray_node,
+        central_node_low.get_subarray_devices_by_id(subarray_id).get(
+            "subarray_node"
+        ),
         "obsState",
         ObsState.RESOURCING,
     )
@@ -247,135 +254,3 @@ def check_central_node_exception_propagation(
         attribute_value=(pytest.unique_id[0], Anything),
     )
     assert exception_message in assertion_data["attribute_value"][1]
-
-
-@when(parsers.parse("I issue the Abort command on TMC Subarray {subarray_id}"))
-def abort_tmc_subarray(
-    subarray_id: str, central_node_low: CentralNodeWrapperLow
-):
-    """Method to invoke Abort command from TMC Subarray
-
-    Args:
-        subarray_id (str): subarray id used for testing
-        central_node_low (CentralNodeWrapperLow): fixture for
-        CentralNodeWrapperLow class instance
-    """
-    central_node_low.subarray_abort()
-
-
-@when(
-    parsers.parse(
-        "SDP Subarray and TMC Subarray {subarray_id} "
-        + "transitions to obsState ABORTED"
-    )
-)
-def check_tmc_sdp_subarray_aborted_obstate(
-    subarray_id: str,
-    central_node_low: CentralNodeWrapperLow,
-    event_recorder: EventRecorder,
-):
-    """Verify TMC Subarray and SDP Subarray is
-    in obsstate ABORTED after Abort is successful
-
-    Args:
-        subarray_id (str): subarray id used for testing
-        central_node_low (CentralNodeWrapperLow): fixture for
-        CentralNodeWrapperLow class instance
-        event_recorder (EventRecorder):fixture for EventRecorder class instance
-    """
-
-    assert event_recorder.has_change_event_occurred(
-        central_node_low.subarray_devices.get("sdp_subarray"),
-        "obsState",
-        ObsState.ABORTED,
-    )
-
-    assert event_recorder.has_change_event_occurred(
-        central_node_low.subarray_node,
-        "obsState",
-        ObsState.ABORTED,
-    )
-
-
-@when(
-    parsers.parse("I issue the Restart command on TMC Subarray {subarray_id}")
-)
-def restart_tmc_subarray(
-    subarray_id: str, central_node_low: CentralNodeWrapperLow
-):
-    """Method to invoke Restart command from TMC Subarray
-
-    Args:
-        subarray_id (str): subarray id used for testing
-        central_node_low (CentralNodeWrapperLow): fixture for
-        CentralNodeWrapperLow class instance
-    """
-    central_node_low.subarray_restart()
-
-
-@when(
-    parsers.parse(
-        "the SDP and TMC Subarray {subarray_id} transitions to obsState EMPTY"
-    )
-)
-def check_tmc_sdp_empy_obstate(
-    subarray_id: str,
-    central_node_low: CentralNodeWrapperLow,
-    event_recorder: EventRecorder,
-):
-    """Verify TMC Subarray and SDP Subarray is
-    in obsstate EMPTY after Restart is successful
-
-    Args:
-        subarray_id (str): subarray id used for testing
-        central_node_low (CentralNodeWrapperLow): fixture for
-        CentralNodeWrapperLow class instance
-        event_recorder (EventRecorder):fixture for EventRecorder class instance
-    """
-    assert event_recorder.has_change_event_occurred(
-        central_node_low.subarray_devices.get("sdp_subarray"),
-        "obsState",
-        ObsState.EMPTY,
-    )
-
-    assert event_recorder.has_change_event_occurred(
-        central_node_low.subarray_node,
-        "obsState",
-        ObsState.EMPTY,
-    )
-
-
-@then(
-    parsers.parse(
-        "AssignResources command is executed with a "
-        + "new ID and TMC and SDP subarray {subarray_id} transitions to IDLE"
-    )
-)
-def assign_resources_with_new_id(
-    subarray_id: str,
-    central_node_low: CentralNodeWrapperLow,
-    event_recorder: EventRecorder,
-):
-    """
-    Method assigns resources with new eb and pb id.
-
-    Args:
-        subarray_id (str): subarray id used for testing
-        central_node_low (CentralNodeWrapperLow): fixture for
-                                        CentralNodeWrapperLow class instance
-        event_recorder (EventRecorder):fixture for EventRecorder class instance
-    """
-    assign_input = update_eb_pb_ids(central_node_low.assign_input)
-    central_node_low.store_resources(assign_input)
-
-    assert event_recorder.has_change_event_occurred(
-        central_node_low.subarray_devices.get("sdp_subarray"),
-        "obsState",
-        ObsState.IDLE,
-    )
-
-    assert event_recorder.has_change_event_occurred(
-        central_node_low.subarray_node,
-        "obsState",
-        ObsState.IDLE,
-    )
