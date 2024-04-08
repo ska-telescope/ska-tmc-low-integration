@@ -15,7 +15,6 @@ class TMCLow:
         self.central_node = CentralNodeWrapperLow()
         self.subarray_node = SubarrayNodeWrapperLow()
         self.deleted_device = {}
-        self.device_deleted_flag = False  # Flag to indicate device deletion
 
     def delete_device_from_db(self, server_type):
         if server_type == "MCCS_SUBARRAYBEAM":
@@ -52,7 +51,6 @@ class TMCLow:
 
     def tear_down(self):
         """Tear down"""
-        self.central_node.tear_down()
         if self.device_deleted_flag:  # Check if device deletion flag is set
             # Add device back to the database
             for _, device_info in self.deleted_device.items():
@@ -61,7 +59,11 @@ class TMCLow:
                     device_info["class_name"],
                     device_info["server_name"],
                 )
-
+                # Restart the server after adding the device back
+                # to the database
+                if device_info["class_name"] == "MccsSubarrayBeam":
+                    self.RestartServer("MCCS_SUBARRAYBEAM")
+        self.central_node.tear_down()
         # Reset the flag after tear down
         self.device_deleted_flag = False
 
