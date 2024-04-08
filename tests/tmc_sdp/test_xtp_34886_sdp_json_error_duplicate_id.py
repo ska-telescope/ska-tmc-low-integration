@@ -1,5 +1,5 @@
 """Test module for TMC-SDP Json error propagation functionality """
-import logging
+
 
 import pytest
 from pytest_bdd import given, parsers, scenario, then, when
@@ -149,17 +149,19 @@ def tmc_assign_resources_with_duplicate_id(
         central_node_low (CentralNodeWrapperLow): fixture for
         CentralNodeWrapperLow class instance
     """
-    id: str = ""
+    json_id: str = ""
     if duplicate_id == "eb_id":
-        id = "pb_id"
+        json_id = "pb_id"
     else:
-        id = "eb_id"
+        json_id = "eb_id"
     assign_input = (
         central_node_low.json_factory.create_centralnode_configuration(
             input_json1
         )
     )
-    assign_input = update_eb_pb_ids(central_node_low.assign_input, id=id)
+    assign_input = update_eb_pb_ids(
+        central_node_low.assign_input, json_id=json_id
+    )
     pytest.result, pytest.unique_id = central_node_low.perform_action(
         "AssignResources", assign_input
     )
