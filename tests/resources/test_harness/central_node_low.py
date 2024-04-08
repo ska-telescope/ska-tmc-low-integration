@@ -1,7 +1,7 @@
 import logging
 from time import sleep
 
-from ska_control_model import ObsState
+from ska_control_model import AdminMode, ObsState
 from ska_ser_logging import configure_logging
 from ska_tango_base.control_model import HealthState
 from tango import DeviceProxy, DevState
@@ -24,7 +24,6 @@ from tests.resources.test_harness.constant import (
 )
 from tests.resources.test_harness.helpers import SIMULATED_DEVICES_DICT
 from tests.resources.test_harness.utils.common_utils import JsonFactory
-from tests.resources.test_harness.utils.enums import AdminMode
 from tests.resources.test_harness.utils.sync_decorators import (
     sync_abort,
     sync_release_resources,

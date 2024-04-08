@@ -3,7 +3,7 @@
 import json
 
 import pytest
-from ska_control_model import ObsState
+from ska_control_model import ObsState, ResultCode
 from ska_tango_testing.mock.placeholders import Anything
 from tango import DevState
 
@@ -16,7 +16,6 @@ from tests.resources.test_harness.helpers import (
     wait_and_validate_device_attribute_value,
 )
 from tests.resources.test_harness.utils.enums import SimulatorDeviceType
-from tests.resources.test_support.common_utils.result_code import ResultCode
 from tests.resources.test_support.constant_low import INTERMEDIATE_STATE_DEFECT
 
 

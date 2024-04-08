@@ -1,13 +1,12 @@
 import logging
 
-from ska_control_model import ObsState
+from ska_control_model import AdminMode, ObsState
 from ska_ser_logging import configure_logging
 from ska_tango_base.control_model import HealthState
 from tango import DeviceProxy, DevState
 
 from tests.resources.test_harness.central_node_low import CentralNodeWrapperLow
 from tests.resources.test_harness.constant import device_dict_low, processor1
-from tests.resources.test_harness.utils.enums import AdminMode
 from tests.resources.test_harness.utils.wait_helpers import Waiter
 
 configure_logging(logging.DEBUG)
