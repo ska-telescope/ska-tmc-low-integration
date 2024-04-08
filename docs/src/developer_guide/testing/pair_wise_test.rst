@@ -35,6 +35,13 @@ To test with tmc_sdp execute the command `make k8s-test MARK=tmc_sdp SDP_SIMULAT
 
 * ``Restart`` - Testing Restart command TMC with Real-SDP in place.
 
+Negative Scenario implemented
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* ``HealthState.DEGRADED Scenario`` - Testing TMC-SDP to  verification of the TelescopeHealthState transition
+in the Telescope Monitoring and Control (TMC) system based on the health state changes of the SDP Controller. 
+The scenario simulates a telescope setup consisting of Real SDP, and 
+simulated devices for the CSP and the MCCS.
 
 ****************************
 Pair wise testing / Real-CSP
@@ -94,3 +101,11 @@ To test with tmc_mccs execute the command `make k8s-test MARK=tmc_mccs MCCS_SIMU
 * ``Scan``- Testing Scan command on TMC with real MCCS controller and MCCS Subarrays and mocked/simulated SDP and CSP subsystems.
 
 * ``EndScan`` - Testing EndScan command on TMC with real MCCS controller and MCCS Subarrays and mocked/simulated SDP and CSP subsystems.
+
+Negative Scenario implemented
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* ``HealthState.DEGRADED Scenario`` - Testing TMC-MCCS to  verification of the TelescopeHealthState transition
+in the Telescope Monitoring and Control (TMC) system based on the health state changes of the SDP Controller. 
+The scenario simulates a telescope setup consisting of Real MCCS, and 
+simulated devices for the CSP and the SDP.
