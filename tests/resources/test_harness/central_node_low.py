@@ -55,6 +55,7 @@ class CentralNodeWrapperLow(object):
         }
         self.csp_subarray1 = DeviceProxy(low_csp_subarray1)
         self.sdp_subarray1 = DeviceProxy(low_sdp_subarray1)
+        self.mccs_subarray1 = DeviceProxy(mccs_subarray1)
         self.sdp_master = DeviceProxy(low_sdp_master)
         self.csp_master = DeviceProxy(low_csp_master)
         self.mccs_master = DeviceProxy(mccs_controller)
@@ -238,6 +239,12 @@ class CentralNodeWrapperLow(object):
             LOGGER.info(
                 "Invoking TelescopeOn command with csp and sdp simulated"
             )
+            # Set adminMode to Online for mccs_master
+            if self.mccs_master.adminMode != 0:
+                self.mccs_master.adminMode = 0
+            # Set adminMode to Online for mccs_subarray
+            if self.mccs_subarray1.adminMode != 0:
+                self.mccs_subarray1.adminMode = 0
             self.central_node.TelescopeOn()
             self.set_value_with_csp_sdp_mocks(DevState.ON)
 

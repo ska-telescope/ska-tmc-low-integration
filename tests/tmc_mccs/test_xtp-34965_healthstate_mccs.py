@@ -5,6 +5,7 @@ import json
 import pytest
 from pytest_bdd import given, parsers, scenario, when
 from ska_tango_base.control_model import HealthState
+from tango import DevState
 
 from tests.resources.test_harness.central_node_low import CentralNodeWrapperLow
 from tests.resources.test_harness.constant import mccs_controller
@@ -71,6 +72,25 @@ def given_telescope_setup_with_simulators(
     assert central_node_low.subarray_devices["mccs_subarray"].ping() > 0
     assert csp_master_sim.ping() > 0
     assert sdp_master_sim.ping() > 0
+
+
+@given("the Telescope is in ON state")
+def check_telescope_is_in_on_state(
+    central_node_low: CentralNodeWrapperLow, event_recorder
+) -> None:
+    """Ensure telescope is in ON state."""
+
+    # The Admin mode for MCCS is set in the `move_to_on` method.
+    central_node_low.move_to_on()
+    event_recorder.subscribe_event(
+        central_node_low.central_node, "telescopeState"
+    )
+    assert event_recorder.has_change_event_occurred(
+        central_node_low.central_node,
+        "telescopeState",
+        DevState.ON,
+        lookahead=10,
+    )
 
 
 @when(parsers.parse("The {devices} health state changes to {health_state}"))

@@ -1,6 +1,7 @@
 @XTP-34965 @XTP-34275 @tmc_mccs @Team_himalaya
 Scenario Outline: Verify CentralNode TelescopeHealthState
     Given a Telescope consisting of TMC,MCCS,emulated SDP and emulated CSP 
+    And the Telescope is in ON state
     When The <devices> health state changes to <health_state> 
     Then the telescope health state is <telescope_health_state>
     Examples:
