@@ -10,7 +10,7 @@ KUBE_NAMESPACE_SDP ?= ska-tmc-integration-sdp
 CSP_SIMULATION_ENABLED ?= true
 SDP_SIMULATION_ENABLED ?= true
 MCCS_SIMULATION_ENABLED ?= true
-SDP_PROCCONTROL_REPLICAS ?= false
+SDP_PROCCONTROL_REPLICAS ?= 
 K8S_TIMEOUT ?= 600s
 
 PYTHON_LINT_TARGET ?= tests/
@@ -99,17 +99,7 @@ CUSTOM_VALUES =	--set tmc-low.deviceServers.mocks.is_simulated.sdp=$(SDP_SIMULAT
 	--set ska-sdp.enabled=true \
 	--set global.sdp_master="$(SDP_MASTER)"\
 	--set global.sdp_subarray_prefix="$(SDP_SUBARRAY_PREFIX)"\
-	--set ska-sdp.helmdeploy.namespace=$(KUBE_NAMESPACE_SDP)\
-	--set ska-sdp-proccontrol.replicas=1"
-else 
-ifeq ($(SDP_PROCCONTROL_REPLICAS),false)
-SDP_REPLICAS = --set tmc-low.deviceServers.mocks.is_simulated.sdp=$(SDP_SIMULATION_ENABLED)\
-   	--set ska-sdp.enabled=true \
-	--set global.sdp_master="$(SDP_MASTER)"\
-	--set global.sdp_subarray_prefix="$(SDP_SUBARRAY_PREFIX)"\
-	--set ska-sdp.helmdeploy.namespace=$(KUBE_NAMESPACE_SDP)\
-    --set ska-sdp-proccontrol.replicas=0"
-endif
+	--set ska-sdp.helmdeploy.namespace=$(KUBE_NAMESPACE_SDP)
 endif
 
 K8S_CHART_PARAMS = --set global.minikube=$(MINIKUBE) \
