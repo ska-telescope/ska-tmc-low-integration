@@ -9,6 +9,7 @@ from tests.resources.test_harness.helpers import (
     prepare_json_args_for_centralnode_commands,
     prepare_json_args_for_commands,
 )
+from tests.resources.test_support.common_utils.result_code import ResultCode
 
 
 @pytest.mark.tmc_mccs
@@ -48,27 +49,45 @@ def move_subarray_node_to_ready_obsstate(
     event_recorder.subscribe_event(central_node_low.subarray_node, "obsState")
     event_recorder.subscribe_event(subarray_node_low.subarray_node, "obsState")
     event_recorder.subscribe_event(
+        central_node_low.central_node, "longRunningCommandResult"
+    )
+    event_recorder.subscribe_event(
+        subarray_node_low.subarray_node, "longRunningCommandResult"
+    )
+    event_recorder.subscribe_event(
         subarray_node_low.subarray_devices.get("mccs_subarray"), "obsState"
     )
     assign_input_json = prepare_json_args_for_centralnode_commands(
         "assign_resources_low", command_input_factory
     )
-    central_node_low.store_resources(assign_input_json)
-
+    _, unique_id = central_node_low.store_resources(assign_input_json)
     assert event_recorder.has_change_event_occurred(
         central_node_low.subarray_node,
         "obsState",
         ObsState.IDLE,
     )
+    event_recorder.has_change_event_occurred(
+        central_node_low.central_node,
+        "longRunningCommandResult",
+        (unique_id[0], str(ResultCode.OK.value)),
+    )
     configure_input_json = prepare_json_args_for_commands(
         "configure_low", command_input_factory
     )
-    subarray_node_low.store_configuration_data(configure_input_json)
+
+    _, unique_id = subarray_node_low.store_configuration_data(
+        configure_input_json
+    )
     assert event_recorder.has_change_event_occurred(
         central_node_low.subarray_node,
         "obsState",
         ObsState.READY,
         lookahead=10,
+    )
+    event_recorder.has_change_event_occurred(
+        subarray_node_low.subarray_node,
+        "longRunningCommandResult",
+        (unique_id[0], str(ResultCode.OK.value)),
     )
 
 
@@ -78,10 +97,15 @@ def move_subarray_node_to_ready_obsstate(
         + "{subarray_id}"
     )
 )
-def invoke_end_command(subarray_node_low, subarray_id) -> None:
+def invoke_end_command(subarray_node_low, event_recorder, subarray_id) -> None:
     """Invoke End command."""
     subarray_node_low.set_subarray_id(subarray_id)
-    subarray_node_low.execute_transition("End")
+    _, unique_id = subarray_node_low.execute_transition("End")
+    event_recorder.has_change_event_occurred(
+        subarray_node_low.subarray_node,
+        "longRunningCommandResult",
+        (unique_id[0], str(ResultCode.OK.value)),
+    )
 
 
 @then("the MCCS subarray is transitioned to IDLE obsState")

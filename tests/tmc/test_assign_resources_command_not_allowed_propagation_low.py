@@ -1,11 +1,11 @@
 """Test cases for AssignResources Command not allowed for LOW."""
 import pytest
-from ska_control_model import ObsState
 from ska_tango_testing.mock.placeholders import Anything
 from tango import DevState
 
 from tests.resources.test_harness.constant import COMMAND_NOT_ALLOWED_DEFECT
 from tests.resources.test_harness.utils.enums import SimulatorDeviceType
+from tests.resources.test_support.common_utils.result_code import ResultCode
 from tests.resources.test_support.common_utils.tmc_helpers import (
     prepare_json_args_for_centralnode_commands,
 )
@@ -70,6 +70,11 @@ class TestAssignCommandNotAllowedPropagation:
             (unique_id[0], Anything),
         )
         assert ERROR_MESSAGE in assertion_data["attribute_value"][1]
+        event_recorder.has_change_event_occurred(
+            central_node_low.central_node,
+            "longRunningCommandResult",
+            (unique_id[0], str(ResultCode.FAILED.value)),
+        )
 
     @pytest.mark.SKA_low
     def test_assign_command_not_allowed_propagation_sdp_ln_low(
@@ -113,17 +118,12 @@ class TestAssignCommandNotAllowedPropagation:
         )
 
         # Setting Defects on Devices
-        sdp_subarray_sim.SetDirectObsState(ObsState.RESOURCING)
-        assert event_recorder.has_change_event_occurred(
-            sdp_subarray_sim,
-            "obsState",
-            ObsState.RESOURCING,
-        )
+        sdp_subarray_sim.SetDefective(COMMAND_NOT_ALLOWED_DEFECT)
         _, unique_id = central_node_low.store_resources(assign_input_json)
-
         ERROR_MESSAGE = (
-            "ska_tmc_common.exceptions.InvalidObsStateError: AssignResources "
-            + "command is not allowed in current observation state on device"
+            "Exception occurred on the following devices:"
+            "\nska_low/tm_leaf_node/sdp_subarray01: ska_tmc_common."
+            "exceptions.CommandNotAllowed: Command is not allowed"
         )
         assertion_data = event_recorder.has_change_event_occurred(
             central_node_low.central_node,
@@ -131,6 +131,8 @@ class TestAssignCommandNotAllowedPropagation:
             (unique_id[0], Anything),
         )
         assert ERROR_MESSAGE in assertion_data["attribute_value"][1]
-        assert event_recorder.has_change_event_occurred(
-            central_node_low.subarray_node, "obsState", ObsState.RESOURCING
+        event_recorder.has_change_event_occurred(
+            central_node_low.central_node,
+            "longRunningCommandResult",
+            (unique_id[0], str(ResultCode.FAILED.value)),
         )
