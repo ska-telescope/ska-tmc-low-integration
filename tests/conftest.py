@@ -27,6 +27,7 @@ from tests.resources.test_harness.subarray_node_low import (
 from tests.resources.test_harness.subarray_node_with_csp_low import (
     SubarrayNodeCspWrapperLow,
 )
+from tests.resources.test_harness.tmc_low import TMCLow
 from tests.resources.test_harness.utils.common_utils import JsonFactory
 
 configure_logging(logging.DEBUG)
@@ -131,6 +132,14 @@ def change_event_callbacks() -> MockTangoEventCallbackGroup:
         "longRunningCommandResult",
         timeout=50.0,
     )
+
+
+@pytest.fixture()
+def tmc_low() -> TMCLow:
+    """Return TMC Low object"""
+    tmc_low = TMCLow()
+    yield tmc_low
+    tmc_low.tear_down()
 
 
 @pytest.fixture()
