@@ -29,6 +29,7 @@ from tests.resources.test_harness.subarray_node_low import (
 from tests.resources.test_harness.subarray_node_with_csp_low import (
     SubarrayNodeCspWrapperLow,
 )
+from tests.resources.test_harness.tmc_low import TMCLow
 from tests.resources.test_harness.utils.common_utils import JsonFactory
 
 configure_logging(logging.DEBUG)

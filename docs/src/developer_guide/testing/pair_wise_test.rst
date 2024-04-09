@@ -109,3 +109,7 @@ Negative Scenario implemented
 - in the Telescope Monitoring and Control TMC system based on the health state changes of the SDP Controller. 
 - The scenario simulates a telescope setup consisting of Real MCCS, and 
 - simulated devices for the CSP and the SDP.
+
+* ``Handling Invalid Station Id in MCCS controller`` - The TMC Low Subarray reports the exception triggered by the MCCS controller when it encounters an invalid station ID.
+
+* ``Test Error propogation when MCCS subsystem is unavailable`` - MCCS Controller report the error when one of the subarray beam is unavailable

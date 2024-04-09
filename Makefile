@@ -172,10 +172,3 @@ cred:
 test-requirements:
 	@poetry export --without-hashes --dev --format requirements.txt --output tests/requirements.txt
 k8s-pre-test: test-requirements
-
-k8s-missing-proccontrol-test:
-	SDP_PROCCONTROL_REPLICAS=0
-	make k8s-install-chart
-	make k8s-wait
-	make k8s-test MARK=tmc_sdp_unhappy_path
-	SDP_PROCCONTROL_REPLICAS=1
