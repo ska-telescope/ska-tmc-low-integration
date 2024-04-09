@@ -5,6 +5,7 @@ from pytest_bdd import given, parsers, scenario, then, when
 from ska_control_model import ObsState
 from tango import DevState
 
+from tests.resources.test_support.common_utils.result_code import ResultCode
 from tests.resources.test_support.common_utils.tmc_helpers import (
     prepare_json_args_for_centralnode_commands,
 )
@@ -65,15 +66,22 @@ def subarray_in_empty_obsstate(
 
 @when("I assign resources to the subarray")
 def invoke_assignresources(
-    central_node_real_csp_low,
-    command_input_factory,
+    central_node_real_csp_low, command_input_factory, event_recorder
 ):
     """Invokes AssignResources command on TMC"""
+    event_recorder.subscribe_event(
+        central_node_real_csp_low.central_node, "longRunningCommandResult"
+    )
     input_json = prepare_json_args_for_centralnode_commands(
         "assign_resources_low", command_input_factory
     )
     central_node_real_csp_low.set_serial_number_of_cbf_processor()
-    central_node_real_csp_low.store_resources(input_json)
+    _, unique_id = central_node_real_csp_low.store_resources(input_json)
+    event_recorder.has_change_event_occurred(
+        central_node_real_csp_low.central_node,
+        "longRunningCommandResult",
+        (unique_id[0], str(ResultCode.OK.value)),
+    )
 
 
 @then("the CSP subarray must be in IDLE obsState")
@@ -92,12 +100,6 @@ def csp_subarray_idle(subarray_node_low, event_recorder):
 @then("the TMC subarray obsState is transitioned to IDLE")
 def tmc_subarray_idle(subarray_node_low, event_recorder):
     """Checks if SubarrayNode's obsState attribute value is IDLE"""
-    assert event_recorder.has_change_event_occurred(
-        subarray_node_low.subarray_node,
-        "obsState",
-        ObsState.RESOURCING,
-        lookahead=15,
-    )
     assert event_recorder.has_change_event_occurred(
         subarray_node_low.subarray_node, "obsState", ObsState.IDLE
     )

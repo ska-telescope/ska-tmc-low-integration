@@ -8,6 +8,7 @@ from tests.resources.test_harness.helpers import (
     prepare_json_args_for_centralnode_commands,
     update_eb_pb_ids,
 )
+from tests.resources.test_support.common_utils.result_code import ResultCode
 
 
 @pytest.mark.tmc_sdp
@@ -42,15 +43,20 @@ def telescope_is_in_aborted_obsstate(
     central_node_low, event_recorder, command_input_factory
 ):
     "Method to move subarray in ABORTED Obsstate."
-    assign_input_json = prepare_json_args_for_centralnode_commands(
-        "assign_resources_low", command_input_factory
-    )
-    input_json = update_eb_pb_ids(assign_input_json)
-    central_node_low.store_resources(input_json)
     event_recorder.subscribe_event(
         central_node_low.subarray_devices.get("sdp_subarray"), "obsState"
     )
     event_recorder.subscribe_event(central_node_low.subarray_node, "obsState")
+    event_recorder.subscribe_event(
+        central_node_low.central_node, "longRunningCommandResult"
+    )
+
+    assign_input_json = prepare_json_args_for_centralnode_commands(
+        "assign_resources_low", command_input_factory
+    )
+    input_json = update_eb_pb_ids(assign_input_json)
+    _, unique_id = central_node_low.store_resources(input_json)
+
     assert event_recorder.has_change_event_occurred(
         central_node_low.subarray_devices.get("sdp_subarray"),
         "obsState",
@@ -61,6 +67,12 @@ def telescope_is_in_aborted_obsstate(
         "obsState",
         ObsState.IDLE,
     )
+    event_recorder.has_change_event_occurred(
+        central_node_low.central_node,
+        "longRunningCommandResult",
+        (unique_id[0], str(ResultCode.OK.value)),
+    )
+
     central_node_low.subarray_abort()
     assert event_recorder.has_change_event_occurred(
         central_node_low.subarray_devices.get("sdp_subarray"),
