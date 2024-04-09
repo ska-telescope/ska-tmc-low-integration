@@ -22,6 +22,8 @@ from tests.resources.test_harness.constant import (
     low_sdp_subarray1,
     low_sdp_subarray_leaf_node,
     mccs_controller,
+    mccs_pasdbus_prefix,
+    mccs_prefix,
     mccs_subarray1,
     mccs_subarray_leaf_node,
     tmc_low_subarraynode1,
@@ -321,22 +323,6 @@ def device_attribute_changed(
     return True
 
 
-def wait_for_attribute_update(
-    device, attribute_name: str, expected_id: str, expected_result: ResultCode
-):
-    """Wait for the attribute to reflect necessary changes."""
-    start_time = time.time()
-    elapsed_time = time.time() - start_time
-    while elapsed_time <= TIMEOUT:
-        unique_id, result = device.read_attribute(attribute_name).value
-        if expected_id in unique_id:
-            LOGGER.info("The attribute value is: %s, %s", unique_id, result)
-            return result == str(expected_result.value)
-        time.sleep(1)
-        elapsed_time = time.time() - start_time
-    return False
-
-
 def wait_for_updates_on_delay_model(csp_subarray_leaf_node) -> None:
     start_time = time.time()
     time_elapsed = 0
@@ -366,7 +352,7 @@ def wait_for_updates_stop_on_delay_model(csp_subarray_leaf_node) -> None:
     LOGGER.info(f"time_elapsed: {time_elapsed}")
     if time_elapsed > required_delay_stop_time:
         raise Exception(
-            "Timeout while waiting for CspSubarrayLeafNode to generate \
+            "Timeout while waiting for CspSubarrayLeafNode to stop generating \
                 delay values."
         )
 
@@ -415,6 +401,42 @@ def wait_and_validate_device_attribute_value(
         error,
         count,
     )
+    return False
+
+
+def check_assigned_resources_attribute_value(
+    device: DeviceProxy,
+    attribute_name: str,
+    expected_value: str,
+    timeout: int = 10,
+) -> bool:
+    """
+    This function will verify if assignedResources attribute is set
+    as per expected value
+    :param device: Tango Device Proxy
+    :type device: DeviceProxy
+    :param attribute_name: device attribute name
+    :type attribute_name: str
+    :param expected_value: expected value of attribute to check
+    :type expected_value: str
+    :param timeout: no of sec to check if expected value changed for device
+    :type timeout: int
+    :rtype: bool
+    """
+    count = 0
+    while count <= timeout:
+        attribute_value = device.read_attribute(attribute_name).value
+        LOGGER.info(
+            "Assign Resource device value %s and expected value %s",
+            attribute_value,
+            expected_value,
+        )
+        if attribute_value and json.loads(attribute_value[0]) == json.loads(
+            expected_value
+        ):
+            return True
+        count += 1
+        time.sleep(1)
     return False
 
 
@@ -514,9 +536,35 @@ def set_admin_mode_values_mccs():
         controller = tango.DeviceProxy(mccs_controller)
         if controller.adminMode != 0:
             db = tango.Database()
-            device_strings = db.get_device_exported("low-mccs/*")
+            pasd_bus_trls = db.get_device_exported(mccs_pasdbus_prefix)
+            for pasd_bus_trl in pasd_bus_trls:
+                pasdbus = tango.DeviceProxy(pasd_bus_trl)
+                if pasdbus.adminmode != 0:
+                    pasdbus.adminmode = 0
+                    time.sleep(0.1)
+
+            device_trls = db.get_device_exported(mccs_prefix)
             devices = []
-            for device_str in device_strings:
-                device = tango.DeviceProxy(device_str)
-                device.adminMode = 0
-                devices.append(device)
+            for device_trl in device_trls:
+                if "daq" in device_trl or "calibrationstore" in device_trl:
+                    continue
+                device = tango.DeviceProxy(device_trl)
+                if device.adminmode != 0:
+                    device.adminmode = 0
+                    devices.append(device)
+                    time.sleep(0.1)
+
+
+def updated_assign_str(assign_json: str, station_id: int) -> str:
+    """
+    Returns a json with updated values for the given keys
+    :returns: updated assign string
+    """
+    assign_json = json.loads(assign_json)
+
+    for subarray_beam in assign_json["mccs"]["subarray_beams"]:
+        for aperture in subarray_beam["apertures"]:
+            aperture["station_id"] = station_id
+
+    updated_assign_str = json.dumps(assign_json)
+    return updated_assign_str

@@ -27,6 +27,7 @@ from tests.resources.test_harness.subarray_node_low import (
 from tests.resources.test_harness.subarray_node_with_csp_low import (
     SubarrayNodeCspWrapperLow,
 )
+from tests.resources.test_harness.tmc_low import TMCLow
 from tests.resources.test_harness.utils.common_utils import JsonFactory
 
 configure_logging(logging.DEBUG)
@@ -134,6 +135,14 @@ def change_event_callbacks() -> MockTangoEventCallbackGroup:
 
 
 @pytest.fixture()
+def tmc_low() -> TMCLow:
+    """Return TMC Low object"""
+    tmc_low = TMCLow()
+    yield tmc_low
+    tmc_low.tear_down()
+
+
+@pytest.fixture()
 def central_node_low() -> CentralNodeWrapperLow:
     """Return CentralNode for Low Telescope and calls tear down"""
     central_node_low = CentralNodeWrapperLow()
@@ -179,6 +188,15 @@ def command_input_factory() -> JsonFactory:
 def simulator_factory() -> SimulatorFactory:
     """Return Simulator Factory for Low Telescope"""
     return SimulatorFactory()
+
+
+@pytest.fixture(scope="module")
+def stored_unique_id():
+    """
+    store the unique_ids
+    :returns: empty list
+    """
+    return []
 
 
 @pytest.fixture()

@@ -81,7 +81,7 @@ sdpleafnodes:
   image:
     registry: artefact.skao.int
     image: ska-tmc-sdpleafnodes
-    tag: 0.13.2
+    tag: 0.15.0
     pullPolicy: IfNotPresent
 
 cspmasterleafnode:
@@ -97,6 +97,7 @@ cspsubarrayleafnode:
     image: ska-tmc-cspleafnodes
     tag: 0.16.0
     pullPolicy: IfNotPresent
+
 
 mccsmasterleafnode:
   image:
@@ -114,7 +115,6 @@ mccssubarrayleafnode:
 
 resources:
   limits:
-    cpu: 300m
     memory: 500Mi
   requests:
     cpu: 100m

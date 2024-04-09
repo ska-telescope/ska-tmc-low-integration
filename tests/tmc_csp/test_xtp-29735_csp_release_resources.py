@@ -5,6 +5,7 @@ from pytest_bdd import given, parsers, scenario, then, when
 from ska_control_model import ObsState
 from tango import DevState
 
+from tests.resources.test_support.common_utils.result_code import ResultCode
 from tests.resources.test_support.common_utils.tmc_helpers import (
     prepare_json_args_for_centralnode_commands,
 )
@@ -66,11 +67,14 @@ def subarray_in_idle_obsstate(
     event_recorder.subscribe_event(
         central_node_real_csp_low.subarray_node, "obsState"
     )
+    event_recorder.subscribe_event(
+        central_node_real_csp_low.central_node, "longRunningCommandResult"
+    )
     assign_input_json = prepare_json_args_for_centralnode_commands(
         "assign_resources_low", command_input_factory
     )
     central_node_real_csp_low.set_serial_number_of_cbf_processor()
-    central_node_real_csp_low.store_resources(assign_input_json)
+    _, unique_id = central_node_real_csp_low.store_resources(assign_input_json)
     event_recorder.subscribe_event(
         subarray_node_low.subarray_devices["csp_subarray"], "obsState"
     )
@@ -82,15 +86,29 @@ def subarray_in_idle_obsstate(
     assert event_recorder.has_change_event_occurred(
         subarray_node_low.subarray_node, "obsState", ObsState.IDLE
     )
+    event_recorder.has_change_event_occurred(
+        central_node_real_csp_low.central_node,
+        "longRunningCommandResult",
+        (unique_id[0], str(ResultCode.OK.value)),
+    )
 
 
 @when(parsers.parse("I release all resources assigned to it"))
-def invoke_releaseresources(central_node_low, command_input_factory):
+def invoke_releaseresources(
+    central_node_real_csp_low, command_input_factory, event_recorder
+):
     """Invokes ReleaseResources command on TMC"""
     release_input = prepare_json_args_for_centralnode_commands(
         "release_resources_low", command_input_factory
     )
-    central_node_low.invoke_release_resources(release_input)
+    _, unique_id = central_node_real_csp_low.invoke_release_resources(
+        release_input
+    )
+    event_recorder.has_change_event_occurred(
+        central_node_real_csp_low.central_node,
+        "longRunningCommandResult",
+        (unique_id[0], str(ResultCode.OK.value)),
+    )
 
 
 @then(parsers.parse("the CSP subarray must be in EMPTY obsState"))
