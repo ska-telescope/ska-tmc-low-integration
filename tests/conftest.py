@@ -138,9 +138,9 @@ def change_event_callbacks() -> MockTangoEventCallbackGroup:
 @pytest.fixture()
 def tmc_low() -> TMCLow:
     """Return TMC Low object"""
-    tmc_low = TMCLow()
-    yield tmc_low
-    tmc_low.tear_down()
+    tmc = TMCLow()
+    yield tmc
+    tmc.tear_down()
 
 
 @pytest.fixture()
