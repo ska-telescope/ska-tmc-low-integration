@@ -113,7 +113,7 @@ K8S_CHART_PARAMS = --set global.minikube=$(MINIKUBE) \
 	--set global.operator=false \
 	--set ska-taranta.enabled=$(TARANTA_ENABLED)\
 	--set tmc-low.subarray_count=$(SUBARRAY_COUNT)\
-	$(CUSTOM_VALUES)\
+	$(CUSTOM_VALUES)
 
 PYTHON_VARS_BEFORE_PYTEST ?= PYTHONPATH=.:./src \
 							 TANGO_HOST=$(TANGO_HOST) \
