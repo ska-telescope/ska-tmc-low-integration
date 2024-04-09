@@ -99,4 +99,4 @@ Negative scenarios
 ^^^^^^^^^^^^^^^^^^
 * ``Handling Invalid Station Id in MCCS controller`` - The TMC Low Subarray reports the exception triggered by the MCCS controller when it encounters an invalid station ID.
 
-* ``Test Error propogation when MCCS subsystem is unavaialable`` - MCCS Controller report the error when one of the subarray beam is unavailable
+* ``Test Error propogation when MCCS subsystem is unavailable`` - MCCS Controller report the error when one of the subarray beam is unavailable
