@@ -68,7 +68,7 @@ def test_recover_subarray_stuck_in_resourcing_low(
         (unique_id[0], Anything),
     )
     assert (
-        "Timeout has occured, command failed"
+        "Timeout has occurred, command failed"
         in assertion_data["attribute_value"][1]
     )
     assert event_recorder.has_change_event_occurred(

@@ -9,6 +9,7 @@ from tests.resources.test_harness.helpers import (
     prepare_json_args_for_commands,
     update_eb_pb_ids,
 )
+from tests.resources.test_support.common_utils.result_code import ResultCode
 
 
 @pytest.mark.tmc_sdp
@@ -43,6 +44,13 @@ def subarray_is_in_given_obsstate(
     event_recorder.subscribe_event(
         central_node_low.central_node, "telescopeState"
     )
+    event_recorder.subscribe_event(
+        central_node_low.central_node, "longRunningCommandResult"
+    )
+    event_recorder.subscribe_event(
+        subarray_node_low.subarray_node, "longRunningCommandResult"
+    )
+
     assert event_recorder.has_change_event_occurred(
         central_node_low.central_node,
         "telescopeState",
@@ -53,7 +61,9 @@ def subarray_is_in_given_obsstate(
     )
     central_node_low.set_subarray_id(subarray_id)
     input_json = update_eb_pb_ids(assign_input_json)
-    central_node_low.store_resources(input_json)
+
+    _, unique_id = central_node_low.store_resources(input_json)
+
     event_recorder.subscribe_event(
         subarray_node_low.subarray_devices.get("sdp_subarray"), "obsState"
     )
@@ -68,12 +78,20 @@ def subarray_is_in_given_obsstate(
         "obsState",
         ObsState.IDLE,
     )
+    event_recorder.has_change_event_occurred(
+        central_node_low.central_node,
+        "longRunningCommandResult",
+        (unique_id[0], str(ResultCode.OK.value)),
+    )
+
     if obsstate == "READY":
 
         input_json = prepare_json_args_for_commands(
             "configure_low", command_input_factory
         )
-        subarray_node_low.execute_transition("Configure", input_json)
+        _, unique_id = subarray_node_low.execute_transition(
+            "Configure", input_json
+        )
         assert event_recorder.has_change_event_occurred(
             subarray_node_low.subarray_devices["sdp_subarray"],
             "obsState",
@@ -83,6 +101,11 @@ def subarray_is_in_given_obsstate(
             subarray_node_low.subarray_node,
             "obsState",
             ObsState.READY,
+        )
+        event_recorder.has_change_event_occurred(
+            subarray_node_low.subarray_node,
+            "longRunningCommandResult",
+            (unique_id[0], str(ResultCode.OK.value)),
         )
 
 
