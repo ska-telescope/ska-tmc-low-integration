@@ -14,16 +14,13 @@ from pytest_bdd import given, scenario, then, when
 from ska_control_model import ObsState
 from tango import DevState
 
+from tests.resources.test_support.common_utils.result_code import ResultCode
 from tests.resources.test_support.common_utils.tmc_helpers import (
     prepare_json_args_for_centralnode_commands,
     prepare_json_args_for_commands,
 )
 
 
-@pytest.mark.skip(
-    "This test case is currently unstable, will be debugged and fixed as "
-    + "a part of HM-443"
-)
 @pytest.mark.SKA_low
 @scenario(
     "../features/tmc/check_configure_command.feature",
@@ -62,14 +59,25 @@ def given_subarray_in_idle(
 ):
     """Set up a subarray in the IDLE obsState."""
     event_recorder.subscribe_event(central_node_low.subarray_node, "obsState")
+    event_recorder.subscribe_event(
+        central_node_low.central_node, "longRunningCommandResult"
+    )
+
     assign_input_json = prepare_json_args_for_centralnode_commands(
         "assign_resources_low", command_input_factory
     )
-    central_node_low.perform_action("AssignResources", assign_input_json)
+    _, unique_id = central_node_low.perform_action(
+        "AssignResources", assign_input_json
+    )
     assert event_recorder.has_change_event_occurred(
         central_node_low.subarray_node,
         "obsState",
         ObsState.IDLE,
+    )
+    event_recorder.has_change_event_occurred(
+        central_node_low.central_node,
+        "longRunningCommandResult",
+        (unique_id[0], str(ResultCode.OK.value)),
     )
 
 

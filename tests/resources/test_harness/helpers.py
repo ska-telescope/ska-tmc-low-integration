@@ -330,10 +330,7 @@ def device_attribute_changed(
 def wait_for_updates_on_delay_model(csp_subarray_leaf_node) -> None:
     start_time = time.time()
     time_elapsed = 0
-    while (
-        csp_subarray_leaf_node.delayModel == "no_value"
-        and time_elapsed <= TIMEOUT
-    ):
+    while csp_subarray_leaf_node.delayModel == "" and time_elapsed <= TIMEOUT:
         time.sleep(1)
         time_elapsed = time.time() - start_time
     if time_elapsed > TIMEOUT:
@@ -351,7 +348,7 @@ def wait_for_updates_stop_on_delay_model(csp_subarray_leaf_node) -> None:
     # this will fix in PI22 till then wait is apply here
     required_delay_stop_time = 350
     while (
-        csp_subarray_leaf_node.delayModel != "no_value"
+        csp_subarray_leaf_node.delayModel != ""
         and time_elapsed <= required_delay_stop_time
     ):
         time.sleep(1)
@@ -359,7 +356,7 @@ def wait_for_updates_stop_on_delay_model(csp_subarray_leaf_node) -> None:
     LOGGER.info(f"time_elapsed: {time_elapsed}")
     if time_elapsed > required_delay_stop_time:
         raise Exception(
-            "Timeout while waiting for CspSubarrayLeafNode to generate \
+            "Timeout while waiting for CspSubarrayLeafNode to stop generating \
                 delay values."
         )
 
@@ -408,6 +405,42 @@ def wait_and_validate_device_attribute_value(
         error,
         count,
     )
+    return False
+
+
+def check_assigned_resources_attribute_value(
+    device: DeviceProxy,
+    attribute_name: str,
+    expected_value: str,
+    timeout: int = 10,
+) -> bool:
+    """
+    This function will verify if assignedResources attribute is set
+    as per expected value
+    :param device: Tango Device Proxy
+    :type device: DeviceProxy
+    :param attribute_name: device attribute name
+    :type attribute_name: str
+    :param expected_value: expected value of attribute to check
+    :type expected_value: str
+    :param timeout: no of sec to check if expected value changed for device
+    :type timeout: int
+    :rtype: bool
+    """
+    count = 0
+    while count <= timeout:
+        attribute_value = device.read_attribute(attribute_name).value
+        LOGGER.info(
+            "Assign Resource device value %s and expected value %s",
+            attribute_value,
+            expected_value,
+        )
+        if attribute_value and json.loads(attribute_value[0]) == json.loads(
+            expected_value
+        ):
+            return True
+        count += 1
+        time.sleep(1)
     return False
 
 
