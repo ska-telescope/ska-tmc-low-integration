@@ -1037,6 +1037,23 @@ url = "https://artefact.skao.int/repository/pypi-internal/simple"
 reference = 'ska-nexus'
 
 [[package]]
+name = "ska-ser-sphinx-theme"
+version = "0.1.2"
+description = "A Sphinx ReadTheDocs theme for SKA"
+category = "dev"
+optional = false
+python-versions = ">=3.8.1,<4.0.0"
+
+[package.dependencies]
+sphinx = ">4"
+sphinx-rtd-theme = ">=1.2.2,<2.0.0"
+
+[package.source]
+type = "legacy"
+url = "https://artefact.skao.int/repository/pypi-internal/simple"
+reference = 'ska-nexus'
+
+[[package]]
 name = "ska-tango-base"
 version = "0.17.0"
 description = "SKA Tango base classes"
@@ -1102,22 +1119,22 @@ reference = "PyPI-public"
 
 [[package]]
 name = "sphinx"
-version = "6.2.1"
+version = "5.3.0"
 description = "Python documentation generator"
 category = "dev"
 optional = false
-python-versions = ">=3.8"
+python-versions = ">=3.6"
 
 [package.dependencies]
 alabaster = ">=0.7,<0.8"
 babel = ">=2.9"
 colorama = {version = ">=0.4.5", markers = "sys_platform == \"win32\""}
-docutils = ">=0.18.1,<0.20"
+docutils = ">=0.14,<0.20"
 imagesize = ">=1.3"
 Jinja2 = ">=3.0"
 packaging = ">=21.0"
-Pygments = ">=2.13"
-requests = ">=2.25.0"
+Pygments = ">=2.12"
+requests = ">=2.5.0"
 snowballstemmer = ">=2.0"
 sphinxcontrib-applehelp = "*"
 sphinxcontrib-devhelp = "*"
@@ -1128,8 +1145,8 @@ sphinxcontrib-serializinghtml = ">=1.1.5"
 
 [package.extras]
 docs = ["sphinxcontrib-websupport"]
-lint = ["docutils-stubs", "flake8 (>=3.5.0)", "flake8-simplify", "isort", "mypy (>=0.990)", "ruff", "sphinx-lint", "types-requests"]
-test = ["cython", "filelock", "html5lib", "pytest (>=4.6)"]
+lint = ["docutils-stubs", "flake8 (>=3.5.0)", "flake8-bugbear", "flake8-comprehensions", "flake8-simplify", "isort", "mypy (>=0.981)", "sphinx-lint", "types-requests", "types-typed-ast"]
+test = ["cython", "html5lib", "pytest (>=4.6)", "typed_ast"]
 
 [package.source]
 type = "legacy"
@@ -1426,7 +1443,7 @@ reference = "PyPI-public"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.10"
-content-hash = "841a5a1a5f44177b79a4609b4ba4fe56071fbd9e916f15067f0eca95593cf959"
+content-hash = "b6310d82df8ab11f4a328a138447c4e8cedba4496c48c4f1a817e27d7d280cd1"
 
 [metadata.files]
 alabaster = [
@@ -2041,6 +2058,10 @@ ska-ser-logging = [
     {file = "ska_ser_logging-0.4.1+0a677a67-py3-none-any.whl", hash = "sha256:8b2bf14e9981966c22503b6b6477b6386dec1def1f71295579f0686d55b83841"},
     {file = "ska_ser_logging-0.4.1+0a677a67.tar.gz", hash = "sha256:558622000db39668d3a35b6986af9d70dac36635826636ef2c07f816a149a06d"},
 ]
+ska-ser-sphinx-theme = [
+    {file = "ska_ser_sphinx_theme-0.1.2-py3-none-any.whl", hash = "sha256:d8c457026d70caeea9c9529b472a2068ed236075fa422f47566afd33afeb8a67"},
+    {file = "ska_ser_sphinx_theme-0.1.2.tar.gz", hash = "sha256:9f2e0479cfaa0b0c1ee2349f182cbfdb12212bbe35baffde59878bc4724473ac"},
+]
 ska-tango-base = [
     {file = "ska_tango_base-0.17.0-py3-none-any.whl", hash = "sha256:b35d36066acf3f28d207c573b567a3bb291441133784b1934eb2f8cc2a983fad"},
     {file = "ska_tango_base-0.17.0.tar.gz", hash = "sha256:9e36547473a4aa6ab5e3b2f2bee980e36ecc1d45787f4319244450035631aff1"},
@@ -2058,8 +2079,8 @@ snowballstemmer = [
     {file = "snowballstemmer-2.2.0.tar.gz", hash = "sha256:09b16deb8547d3412ad7b590689584cd0fe25ec8db3be37788be3810cbf19cb1"},
 ]
 sphinx = [
-    {file = "Sphinx-6.2.1.tar.gz", hash = "sha256:6d56a34697bb749ffa0152feafc4b19836c755d90a7c59b72bc7dfd371b9cc6b"},
-    {file = "sphinx-6.2.1-py3-none-any.whl", hash = "sha256:97787ff1fa3256a3eef9eda523a63dbf299f7b47e053cfcf684a1c2a8380c912"},
+    {file = "Sphinx-5.3.0.tar.gz", hash = "sha256:51026de0a9ff9fc13c05d74913ad66047e104f56a129ff73e174eb5c3ee794b5"},
+    {file = "sphinx-5.3.0-py3-none-any.whl", hash = "sha256:060ca5c9f7ba57a08a1219e547b269fadf125ae25b06b9fa7f66768efb652d6d"},
 ]
 sphinx-autodoc-typehints = [
     {file = "sphinx_autodoc_typehints-1.23.0-py3-none-any.whl", hash = "sha256:ac099057e66b09e51b698058ba7dd76e57e1fe696cd91b54e121d3dad188f91d"},
