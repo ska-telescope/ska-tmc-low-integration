@@ -13,6 +13,10 @@ include = [
 name = 'ska-nexus'
 url = 'https://artefact.skao.int/repository/pypi-internal/simple'
 
+[[tool.poetry.source]]
+name = "PyPI-public"
+url = 'https://pypi.org/simple'
+
 [tool.poetry.dependencies]
 python = "^3.10"
 ska-control-model="0.3.1"
@@ -42,17 +46,9 @@ pytest-xdist = "^2.4.0"
 pytest-repeat = "^0.9.1"
 
 [tool.poetry.group.docs.dependencies]
-docutils = "^0.18.1"
-Sphinx = "^5.1.1"
+myst-parser = "^2.0.0"
 ska-ser-sphinx-theme = "^0.1.1"
-sphinx-autodoc-typehints = "^1.19.3"
-sphinxcontrib-plantuml = "^0.22"
-typing_extensions  = "^4.3.0"
-sphinx-rtd-theme = "^1.2.2"
-
-[[tool.poetry.source]]
-name = "PyPI-public"
-url = 'https://pypi.org/simple'
+Sphinx = "^6"
 
 [tool.flake8]
 rst-directives = "literalinclude"
