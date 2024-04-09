@@ -8,9 +8,8 @@ from typing import Generator
 
 import pytest
 import tango
-from pytest_bdd import given, parsers, then
+from pytest_bdd import given
 from ska_ser_logging import configure_logging
-from ska_tango_base.control_model import HealthState
 from ska_tango_testing.mock.tango.event_callback import (
     MockTangoEventCallbackGroup,
 )
@@ -137,6 +136,14 @@ def change_event_callbacks() -> MockTangoEventCallbackGroup:
 
 
 @pytest.fixture()
+def tmc_low() -> Generator[TMCLow, None, None]:
+    """Return TMC Low object"""
+    tmc_low = TMCLow()
+    yield tmc_low
+    tmc_low.tear_down()
+
+
+@pytest.fixture()
 def central_node_low() -> Generator[CentralNodeWrapperLow, None, None]:
     """Return CentralNode for Low Telescope and calls tear down"""
     central_node_low = CentralNodeWrapperLow()
@@ -245,28 +252,3 @@ def telescope_is_in_on_state(central_node_low, event_recorder):
         "telescopeState",
         DevState.ON,
     )
-
-
-@then(parsers.parse("the telescope health state is {telescope_health_state}"))
-def check_telescope_health_state(
-    central_node_low: CentralNodeWrapperLow,
-    event_recorder: EventRecorder,
-    telescope_health_state,
-):
-    """A method to check CentralNode.telescopehealthState attribute
-    change after aggregation
-
-    Args:
-        central_node_low : A fixture for CentralNode tango device class
-        event_recorder: A fixture for EventRecorder class_
-        telescope_health_state (str): telescopehealthState value
-    """
-    event_recorder.subscribe_event(
-        central_node_low.central_node, "telescopeHealthState"
-    )
-    assert event_recorder.has_change_event_occurred(
-        central_node_low.central_node,
-        "telescopeHealthState",
-        HealthState[telescope_health_state],
-    ), f"Expected telescopeHealthState to be \
-        {HealthState[telescope_health_state]}"
