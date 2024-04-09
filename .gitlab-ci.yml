@@ -132,6 +132,8 @@ k8s-test-tmc-with-sdp:
     KUBE_NAMESPACE: 'ci-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-tmc-sdp'
     KUBE_NAMESPACE_SDP: 'ci-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-sdp'
     SERVICE_ACCOUNT: "ci-svc-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-tmc-sdp"
+    SDP_SIMULATION_ENABLED: 'false'
+    TARANTA_ENABLED: 'true'  
   before_script:
     - make cred SERVICE_ACCOUNT=$SERVICE_ACCOUNT
     - '[ -f .make/k8s.mk ] || (echo "File k8s.mk not included in Makefile; exit 1")'
@@ -144,8 +146,6 @@ k8s-test-tmc-with-sdp:
   after_script:
     - pip3 install -q -U ska-ser-xray
     - XRAY_TEST_RESULT_FILE="build/cucumber.json" make xray-publish
-    SDP_SIMULATION_ENABLED: 'false'
-    TARANTA_ENABLED: 'true'  
 
 stop-k8s-test-tmc-with-sdp:
   extends:
