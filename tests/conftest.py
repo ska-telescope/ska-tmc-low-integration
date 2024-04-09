@@ -8,7 +8,8 @@ from typing import Generator
 
 import pytest
 import tango
-from pytest_bdd import given
+from pytest_bdd import given, parsers, then
+from ska_control_model import HealthState
 from ska_ser_logging import configure_logging
 from ska_tango_testing.mock.tango.event_callback import (
     MockTangoEventCallbackGroup,
@@ -252,3 +253,27 @@ def telescope_is_in_on_state(central_node_low, event_recorder):
         "telescopeState",
         DevState.ON,
     )
+
+
+@then(parsers.parse("the telescope health state is {telescope_health_state}"))
+def check_telescope_health_state(
+    central_node_low, event_recorder, telescope_health_state
+):
+    """A method to check CentralNode.telescopehealthState attribute
+    change after aggregation
+
+    Args:
+        central_node_low : A fixture for CentralNode tango device class
+        event_recorder: A fixture for EventRecorder class_
+        telescope_health_state (str): telescopehealthState value
+    """
+    event_recorder.subscribe_event(
+        central_node_low.central_node, "telescopeHealthState"
+    )
+
+    assert event_recorder.has_change_event_occurred(
+        central_node_low.central_node,
+        "telescopeHealthState",
+        HealthState[telescope_health_state],
+    ), f"Expected telescopeHealthState to be \
+        {HealthState[telescope_health_state]}"
