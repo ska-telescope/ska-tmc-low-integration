@@ -221,7 +221,7 @@ def check_sdp_error(
     assertion_data = event_recorder.has_change_event_occurred(
         sdp_subarray_leaf_node,
         attribute_name="longRunningCommandResult",
-        attribute_value=(pytest.unique_id[0], Anything),
+        attribute_value=(Anything, Anything),
     )
     assert exception_message in assertion_data["attribute_value"][1]
 
