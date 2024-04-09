@@ -263,7 +263,6 @@ def check_telescope_health_state(
     event_recorder.subscribe_event(
         central_node_low.central_node, "telescopeHealthState"
     )
-
     assert event_recorder.has_change_event_occurred(
         central_node_low.central_node,
         "telescopeHealthState",
