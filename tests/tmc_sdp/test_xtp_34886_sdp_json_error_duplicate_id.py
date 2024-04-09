@@ -10,6 +10,7 @@ from tango import DevState
 from tests.resources.test_harness.central_node_low import CentralNodeWrapperLow
 from tests.resources.test_harness.event_recorder import EventRecorder
 from tests.resources.test_harness.helpers import (
+    check_for_device_event,
     get_assign_json_id,
     get_device_simulator_with_given_name,
     update_eb_pb_ids,
@@ -17,7 +18,7 @@ from tests.resources.test_harness.helpers import (
 from tests.resources.test_harness.utils.enums import ResultCode
 
 
-@pytest.mark.tmc_sdp
+@pytest.mark.tmc_sdp1
 @scenario(
     "../features/tmc_sdp/xtp_34886_sdp_json_error_duplicate_id.feature",
     "TMC Subarray report the exception triggered by the SDP subarray "
@@ -168,6 +169,7 @@ def tmc_assign_resources_with_duplicate_id(
         CentralNodeWrapperLow class instance
         event_recorder (EventRecorder):
     """
+
     event_recorder.subscribe_event(
         central_node_low.sdp_subarray_leaf_node,
         "longRunningCommandResult",
@@ -232,13 +234,12 @@ def check_sdp_error(
         exception_message = (
             f"Execution block {pytest.duplicate_id} already exists"
         )
-    assertion_data = event_recorder.has_change_event_occurred(
+    assert check_for_device_event(
         sdp_subarray_leaf_node,
-        attribute_name="longRunningCommandResult",
-        attribute_value=(Anything, Anything),
-        lookahead=20,
+        "longRunningCommandResult",
+        exception_message,
+        event_recorder,
     )
-    assert exception_message in assertion_data["attribute_value"][1]
 
 
 @when(

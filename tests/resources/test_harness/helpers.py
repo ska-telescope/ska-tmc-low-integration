@@ -273,6 +273,36 @@ def device_received_this_command(
     )
 
 
+def check_for_device_event(
+    device: DeviceProxy, attr_name: str, event_data: str, event_recorder
+) -> bool:
+    """Method to check event from the device.
+
+    Args:
+        device (DeviceProxy): device proxy
+        attr_name (str): attribute name
+        event_data (str): event data to be searched
+    """
+    event_found: bool = False
+    timeout: int = 100
+    elapsed_time: float = 0
+    start_time: float = time.time()
+    while not event_found and elapsed_time < timeout:
+        assertion_data = event_recorder.has_change_event_occurred(
+            device,
+            attribute_name=attr_name,
+            attribute_value=(Anything, Anything),
+        )
+        if assertion_data["attribute_value"][0].endswith("AssignResources"):
+            if event_data in assertion_data["attribute_value"][1]:
+                event_found = True
+                return event_found
+
+        elapsed_time = time.time() - start_time
+
+    return event_found
+
+
 def get_recorded_commands(device: Any):
     """A method to get data from simulator device
 
