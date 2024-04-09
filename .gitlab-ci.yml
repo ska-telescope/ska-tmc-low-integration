@@ -134,15 +134,16 @@ k8s-test-tmc-with-sdp:
     SERVICE_ACCOUNT: "ci-svc-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-tmc-sdp"
     SDP_SIMULATION_ENABLED: 'false'
     TARANTA_ENABLED: 'true'  
-  before_script:
+  script:
     - make cred SERVICE_ACCOUNT=$SERVICE_ACCOUNT
     - '[ -f .make/k8s.mk ] || (echo "File k8s.mk not included in Makefile; exit 1")'
     - 'make help | grep k8s-test'
     - make k8s-install-chart $CUSTOM_VALUES2="--set proccontrol.replicas=0"
-    - make k8s-wait MARK='tmc_sdp_unhappy_path'
+  - make k8s-wait
+    - make k8s-test MARK='tmc_sdp_unhappy_path'
     - make k8s-install-chart $CUSTOM_VALUES2="--set proccontrol.replicas=1"
-    - make k8s-install-chart
-    - make k8s-wait MARK='tmc_sdp'
+  - make k8s-wait
+    - make k8s-test MARK='tmc_sdp'
   after_script:
     - pip3 install -q -U ska-ser-xray
     - XRAY_TEST_RESULT_FILE="build/cucumber.json" make xray-publish
