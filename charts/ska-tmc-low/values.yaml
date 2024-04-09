@@ -81,7 +81,7 @@ sdpleafnodes:
   image:
     registry: artefact.skao.int
     image: ska-tmc-sdpleafnodes
-    tag: 0.15.0-dirty
+    tag: 0.15.0
     pullPolicy: IfNotPresent
 
 cspmasterleafnode:
