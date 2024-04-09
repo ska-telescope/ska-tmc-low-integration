@@ -109,6 +109,6 @@ def test_low_abort_restart_in_restarting(json_factory):
         )
 
         LOGGER.info("Test complete.")
-
+    # pylint: disable=broad-exception-caught
     except Exception:
         tear_down(release_json, **ON_OFF_DEVICE_COMMAND_DICT)

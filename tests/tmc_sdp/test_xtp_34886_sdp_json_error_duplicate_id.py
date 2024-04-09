@@ -49,13 +49,16 @@ def given_a_tmc_sdp(
     simulated_devices = get_device_simulator_with_given_name(
         simulator_factory, ["csp master", "mccs master", "mccs subarray"]
     )
-    csp_master_sim, mccs_master_sim, mccs_subarray_sim = simulated_devices
+    if len(simulated_devices) == 3:
+        csp_master_sim = simulated_devices[0]
+        mccs_master_sim = simulated_devices[1]
+        mccs_subarray_sim = simulated_devices[2]
+        assert csp_master_sim.ping() > 0
+        assert mccs_master_sim.ping() > 0
+        assert mccs_subarray_sim.ping() > 0
     assert central_node_low.central_node.ping() > 0
     assert central_node_low.sdp_master.ping() > 0
     assert central_node_low.subarray_devices["sdp_subarray"].ping() > 0
-    assert csp_master_sim.ping() > 0
-    assert mccs_master_sim.ping() > 0
-    assert mccs_subarray_sim.ping() > 0
 
 
 @given(
