@@ -148,6 +148,7 @@ def tmc_assign_resources_with_duplicate_id(
     duplicate_id: str,
     input_json1: str,
     central_node_low: CentralNodeWrapperLow,
+    event_recorder: EventRecorder,
 ):
     """Method to assign resources again with
     duplicate id for SDP Subarray configuration
@@ -157,7 +158,12 @@ def tmc_assign_resources_with_duplicate_id(
         input_json1 (str): assign resources input json
         central_node_low (CentralNodeWrapperLow): fixture for
         CentralNodeWrapperLow class instance
+        event_recorder (EventRecorder):
     """
+    event_recorder.subscribe_event(
+        central_node_low.sdp_subarray_leaf_node,
+        "longRunningCommandResult",
+    )
     json_id: str = ""
     if duplicate_id == "eb_id":
         json_id = "pb_id"
