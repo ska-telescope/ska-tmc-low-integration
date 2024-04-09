@@ -139,7 +139,7 @@ k8s-test-tmc-with-sdp:
     - '[ -f .make/k8s.mk ] || (echo "File k8s.mk not included in Makefile; exit 1")'
     - 'make help | grep k8s-test'
     - make k8s-install-chart $CUSTOM_VALUES2="--set proccontrol.replicas=0"
-    - make k8s-wait MARK='tmc_sdp_unahppy_path'
+    - make k8s-wait MARK='tmc_sdp_unhappy_path'
     - make k8s-install-chart $CUSTOM_VALUES2="--set proccontrol.replicas=1"
     - make k8s-install-chart
     - make k8s-wait MARK='tmc_sdp'
