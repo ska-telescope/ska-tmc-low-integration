@@ -139,7 +139,6 @@ k8s-test-tmc-with-sdp:
     SDP_SIMULATION_ENABLED: 'false'
     TARANTA_ENABLED: 'true'  
 
-
 stop-k8s-test-tmc-with-sdp:
   extends:
     - stop-k8s-test

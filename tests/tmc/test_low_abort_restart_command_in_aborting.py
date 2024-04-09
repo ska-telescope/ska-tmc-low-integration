@@ -4,6 +4,7 @@
 
 import pytest
 from ska_control_model import ObsState
+from ska_tango_base.commands import ResultCode
 from tango import DevState
 
 from tests.resources.test_harness.helpers import (
@@ -26,6 +27,9 @@ def test_low_abort_restart_in_aborting(
     event_recorder.subscribe_event(
         central_node_low.central_node, "longRunningCommandResult"
     )
+    event_recorder.subscribe_event(
+        subarray_node_low.subarray_node, "longRunningCommandResult"
+    )
     event_recorder.subscribe_event(central_node_low.subarray_node, "obsState")
 
     central_node_low.move_to_on()
@@ -39,7 +43,9 @@ def test_low_abort_restart_in_aborting(
         "obsState",
         ObsState.EMPTY,
     )
-    central_node_low.perform_action("AssignResources", assign_input_json)
+    _, unique_id = central_node_low.perform_action(
+        "AssignResources", assign_input_json
+    )
     assert event_recorder.has_change_event_occurred(
         central_node_low.subarray_node,
         "obsState",
@@ -49,6 +55,11 @@ def test_low_abort_restart_in_aborting(
         central_node_low.subarray_node,
         "obsState",
         ObsState.IDLE,
+    )
+    assert event_recorder.has_change_event_occurred(
+        central_node_low.central_node,
+        "longRunningCommandResult",
+        (unique_id[0], str(ResultCode.OK.value)),
     )
     subarray_node_low.execute_transition("Abort")
 
@@ -66,9 +77,14 @@ def test_low_abort_restart_in_aborting(
         "obsState",
         ObsState.ABORTED,
     )
-    subarray_node_low.restart_subarray()
+    _, unique_id = subarray_node_low.restart_subarray()
     assert event_recorder.has_change_event_occurred(
         central_node_low.subarray_node,
         "obsState",
         ObsState.EMPTY,
+    )
+    assert event_recorder.has_change_event_occurred(
+        subarray_node_low.subarray_node,
+        "longRunningCommandResult",
+        (unique_id[0], str(ResultCode.OK.value)),
     )
