@@ -28,6 +28,7 @@ from tests.resources.test_harness.constant import (
     mccs_subarray_leaf_node,
     tmc_low_subarraynode1,
 )
+from tests.resources.test_harness.event_recorder import EventRecorder
 from tests.resources.test_harness.utils.common_utils import JsonFactory
 from tests.resources.test_harness.utils.enums import SimulatorDeviceType
 from tests.resources.test_harness.utils.wait_helpers import Waiter, watch
@@ -274,7 +275,10 @@ def device_received_this_command(
 
 
 def check_for_device_event(
-    device: DeviceProxy, attr_name: str, event_data: str, event_recorder
+    device: DeviceProxy,
+    attr_name: str,
+    event_data: str,
+    event_recorder: EventRecorder,
 ) -> bool:
     """Method to check event from the device.
 
@@ -282,6 +286,8 @@ def check_for_device_event(
         device (DeviceProxy): device proxy
         attr_name (str): attribute name
         event_data (str): event data to be searched
+        event_recorder(EventRecorder): event recorder instance
+        to check for events.
     """
     event_found: bool = False
     timeout: int = 100
