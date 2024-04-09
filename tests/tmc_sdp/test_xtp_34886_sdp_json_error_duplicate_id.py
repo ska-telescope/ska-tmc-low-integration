@@ -117,7 +117,7 @@ def check_tmc_sdp_subarray_idle(
         )
     )
     central_node_low.assign_input = assign_input
-    central_node_low.store_resources(assign_input)
+    _, unique_id = central_node_low.store_resources(assign_input)
 
     assert event_recorder.has_change_event_occurred(
         central_node_low.subarray_node,
@@ -138,6 +138,11 @@ def check_tmc_sdp_subarray_idle(
         central_node_low.subarray_node,
         "obsState",
         ObsState.IDLE,
+    )
+    assert event_recorder.has_change_event_occurred(
+        central_node_low.central_node,
+        "longRunningCommandResult",
+        (unique_id[0], str(ResultCode.OK.value)),
     )
 
 
@@ -231,6 +236,7 @@ def check_sdp_error(
         sdp_subarray_leaf_node,
         attribute_name="longRunningCommandResult",
         attribute_value=(Anything, Anything),
+        lookahead=20,
     )
     assert exception_message in assertion_data["attribute_value"][1]
 
