@@ -3,12 +3,15 @@
 
 How to recover TMC Low when it remains in given ObsState for long time
 =======================================================================
-The following table demonstrates the steps to recover TMC Low from the ObsState it is currently stuck in.
-The provided steps consist of command-line instructions that are executable from any terminal environment.
+The following table list down the steps to recover TMC Low when it is stuck in one 
+of the intermediate ObsState (Example: RESOURCING, CONFIGURING).
+
+The provided steps consist of command-line instructions that are executable from any python 
+runtime environment/script.
 
 
-Using Abort() Command
----------------------
+Using Abort() & Restart() Command
+---------------------------------
 +-----------------------------------+------------------------------------------------------------------------+ 
 | Scenario                          |               Steps to recover                                         | 
 +===================================+========================================================================+ 

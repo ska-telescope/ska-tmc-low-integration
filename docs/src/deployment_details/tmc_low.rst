@@ -77,11 +77,11 @@ Configurable options
 
 * q. **mccs_subarray_ln_prefix** : This value is present under global, User can use this to change the FQDN prefix of MCCS Subarray Leaf Node.
 
-* r. **DalayCadence** :  It is the time difference (in seconds) with which TMC publishes delay values to delayModel attribute on CspSubarrayLeafNode.
+* r. **DelayCadence** :  It is the time difference (in seconds) with which TMC publishes delay values to delayModel attribute on CspSubarrayLeafNode.
 
-* s. **DelayValidityPeriod** : It is the time (in seconds) for which delay values are valid since its published
+* s. **DelayValidityPeriod** : This represents the duration (in seconds) for which delay values remain valid after being published.
 
-* t. **DelayModelTimeInAdvance** : Time in seconds with which delay values are required in advance.
+* t. **DelayModelTimeInAdvance** : This indicates the time in seconds by which delay values need to be available in advance.
 
 
 
