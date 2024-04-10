@@ -1,7 +1,7 @@
 import logging
 from time import sleep
 
-from ska_control_model import ObsState
+from ska_control_model import AdminMode, ObsState
 from ska_ser_logging import configure_logging
 from ska_tango_base.control_model import HealthState
 from tango import DeviceProxy, DevState
@@ -55,6 +55,7 @@ class CentralNodeWrapperLow(object):
         }
         self.csp_subarray1 = DeviceProxy(low_csp_subarray1)
         self.sdp_subarray1 = DeviceProxy(low_sdp_subarray1)
+        self.mccs_subarray1 = DeviceProxy(mccs_subarray1)
         self.sdp_master = DeviceProxy(low_sdp_master)
         self.csp_master = DeviceProxy(low_csp_master)
         self.mccs_master = DeviceProxy(mccs_controller)
@@ -238,6 +239,12 @@ class CentralNodeWrapperLow(object):
             LOGGER.info(
                 "Invoking TelescopeOn command with csp and sdp simulated"
             )
+            # Set adminMode to Online for mccs_master
+            if self.mccs_master.adminMode != AdminMode.ONLINE:
+                self.mccs_master.adminMode = AdminMode.ONLINE
+            # Set adminMode to Online for mccs_subarray
+            if self.mccs_subarray1.adminMode != AdminMode.ONLINE:
+                self.mccs_subarray1.adminMode = AdminMode.ONLINE
             self.central_node.TelescopeOn()
             self.set_value_with_csp_sdp_mocks(DevState.ON)
 
@@ -253,11 +260,11 @@ class CentralNodeWrapperLow(object):
                 "Invoking TelescopeOn command with sdp and mccss simulated"
             )
             # Set adminMode to Online for csp_master
-            if self.csp_master.adminMode != 0:
-                self.csp_master.adminMode = 0
+            if self.csp_master.adminMode != AdminMode.ONLINE:
+                self.csp_master.adminMode = AdminMode.ONLINE
             # Set adminMode to Online for csp_subarray
-            if self.csp_subarray1.adminMode != 0:
-                self.csp_subarray1.adminMode = 0
+            if self.csp_subarray1.adminMode != AdminMode.ONLINE:
+                self.csp_subarray1.adminMode = AdminMode.ONLINE
             self.central_node.TelescopeOn()
             self.set_values_with_sdp_mccs_mocks(DevState.ON)
         else:
