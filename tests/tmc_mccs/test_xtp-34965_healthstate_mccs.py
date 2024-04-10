@@ -34,7 +34,7 @@ def adjust_controller_to_degraded_state(controller):
 
 @pytest.mark.xfail(
     reason="The test is marked as xfail due to existing issues"
-    + "with health in MCCS, which prevent the controller from entering a"
+    + "with healthstate in MCCS, which prevent the controller from entering a"
     + "DEGRADED state. This will be fix as part of skb-319."
 )
 @pytest.mark.tmc_mccs
