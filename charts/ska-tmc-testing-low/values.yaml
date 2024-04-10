@@ -104,6 +104,8 @@ ska-sdp:
     enabled: false
 
 ska-low-cbf:
+  labels:
+    app: ska-tmc-low-integration
   enabled: false
   minikube: true
   ska-low-cbf-conn:
@@ -120,6 +122,8 @@ ska-low-cbf:
             memory: 512Mi  # reduced
 
 ska-csp-lmc-low:
+  labels:
+    app: ska-tmc-low-integration
   legacy_compatibility: true
   enabled: false
   deviceServers:
@@ -131,6 +135,8 @@ ska-csp-lmc-low:
       file: "data/subarray_cbf_only.yaml"
 
 ska-low-mccs:
+  labels:
+    app: ska-tmc-low-integration
   legacy_compatibility: true
   enabled: false
   deviceServers:
@@ -946,6 +952,8 @@ ska-low-mccs:
           storage_class: standard
 
 ska-low-cbf-proc:
+  labels:
+    app: ska-tmc-low-integration
   deviceServers:
     processor:
       instances: ["0", "1"]
