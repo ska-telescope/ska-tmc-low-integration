@@ -5,13 +5,12 @@ import logging
 import time
 from typing import Optional, Tuple
 
-from ska_control_model import ObsState
+from ska_control_model import ObsState, ResultCode
 from ska_ser_logging import configure_logging
 from tango import DeviceProxy, DevState
 
 from tests.resources.test_harness.utils.common_utils import JsonFactory
 from tests.resources.test_support.common_utils.common_helpers import Resource
-from tests.resources.test_support.common_utils.result_code import ResultCode
 from tests.resources.test_support.common_utils.sync_decorators import (
     sync_abort,
     sync_assign_resources,

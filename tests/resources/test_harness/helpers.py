@@ -7,7 +7,7 @@ from typing import Any
 
 import pytest
 import tango
-from ska_control_model import ObsState
+from ska_control_model import AdminMode, ObsState
 from ska_ser_logging import configure_logging
 from ska_tango_base.commands import ResultCode
 from ska_tango_base.control_model import HealthState
@@ -588,13 +588,13 @@ def set_admin_mode_values_mccs():
     """Set the adminMode values of MCCS devices."""
     if MCCS_SIMULATION_ENABLED.lower() == "false":
         controller = tango.DeviceProxy(mccs_controller)
-        if controller.adminMode != 0:
+        if controller.adminMode != AdminMode.ONLINE:
             db = tango.Database()
             pasd_bus_trls = db.get_device_exported(mccs_pasdbus_prefix)
             for pasd_bus_trl in pasd_bus_trls:
                 pasdbus = tango.DeviceProxy(pasd_bus_trl)
-                if pasdbus.adminmode != 0:
-                    pasdbus.adminmode = 0
+                if pasdbus.adminmode != AdminMode.ONLINE:
+                    pasdbus.adminmode = AdminMode.ONLINE
                     time.sleep(0.1)
 
             device_trls = db.get_device_exported(mccs_prefix)
@@ -603,8 +603,8 @@ def set_admin_mode_values_mccs():
                 if "daq" in device_trl or "calibrationstore" in device_trl:
                     continue
                 device = tango.DeviceProxy(device_trl)
-                if device.adminmode != 0:
-                    device.adminmode = 0
+                if device.adminmode != AdminMode.ONLINE:
+                    device.adminmode = AdminMode.ONLINE
                     devices.append(device)
                     time.sleep(0.1)
 
