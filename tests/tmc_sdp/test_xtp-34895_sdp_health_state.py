@@ -42,12 +42,14 @@ def given_telescope_setup_with_simulators(
     simulated_devices = get_device_simulator_with_given_name(
         simulator_factory, ["csp master", "mccs master"]
     )
-    csp_master_sim, mccs_master_sim = simulated_devices
+    if len(simulated_devices) == 2:
+        csp_master_sim = simulated_devices[0]
+        mccs_master_sim = simulated_devices[1]
+        assert csp_master_sim.ping() > 0
+        assert mccs_master_sim.ping() > 0
     assert central_node_low.central_node.ping() > 0
     assert central_node_low.sdp_master.ping() > 0
     assert central_node_low.subarray_devices["sdp_subarray"].ping() > 0
-    assert csp_master_sim.ping() > 0
-    assert mccs_master_sim.ping() > 0
 
 
 @when(parsers.parse("The {devices} health state changes to {health_state}"))
