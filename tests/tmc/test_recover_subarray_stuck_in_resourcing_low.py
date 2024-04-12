@@ -118,8 +118,11 @@ def test_recover_subarray_stuck_in_resourcing_low(
     )
 
 
+@pytest.mark.test
 @pytest.mark.SKA_low
-@pytest.mark.parametrize("defective_device", ["csp_subarray", "sdp_subarray"])
+@pytest.mark.parametrize(
+    "defective_device", ["csp_subarray", "sdp_subarray", "mccs_subarray"]
+)
 def test_abort_with_sdp_in_empty(
     event_recorder,
     central_node_low,
