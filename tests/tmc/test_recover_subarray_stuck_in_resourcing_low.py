@@ -230,12 +230,9 @@ def test_abort_with_sdp_csp_in_empty(
     )
 
 
-@pytest.mark.test
 @pytest.mark.SKA_low
 def test_abort_with_mccs_in_empty(
-    event_recorder,
-    central_node_low,
-    command_input_factory,
+    event_recorder, central_node_low, command_input_factory, simulator_factory
 ):
     """recover subarray when sdp is in empty with abort."""
     event_recorder.subscribe_event(
@@ -263,7 +260,7 @@ def test_abort_with_mccs_in_empty(
         "telescopeState",
         DevState.ON,
     )
-
+    csp_sim, sdp_sim = get_device_simulators(simulator_factory)
     # Set SDP into FAILED RESULT to change from RESOURCING to EMPTY
     failed_result_defect = FAILED_RESULT_DEFECT
     failed_result_defect["target_obsstates"] = [
@@ -300,6 +297,16 @@ def test_abort_with_mccs_in_empty(
         mccs_device_proxy,
         "obsState",
         ObsState.RESOURCING,
+    )
+    assert event_recorder.has_change_event_occurred(
+        sdp_sim,
+        "obsState",
+        ObsState.IDLE,
+    )
+    assert event_recorder.has_change_event_occurred(
+        csp_sim,
+        "obsState",
+        ObsState.IDLE,
     )
     assert event_recorder.has_change_event_occurred(
         mccs_device_proxy,
