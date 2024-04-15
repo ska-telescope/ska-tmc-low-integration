@@ -1,6 +1,6 @@
-release=0.14.0
-tag=0.14.0
+release=0.14.1
+tag=0.14.1
 tag_description=
 **Charts:**
-**1. ska-tmc-low-integration 0.14.0**
-        a. Aligned low delay model json as per ADR-88."
+**1. ska-tmc-low-integration 0.14.1**
+        a. Fixed SKB-300."
