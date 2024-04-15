@@ -127,7 +127,7 @@ def test_abort_with_sdp_csp_in_empty(
     simulator_factory,
     defective_device,
 ):
-    """recover subarray when sdp is in empty with abort."""
+    """recover subarray when sdp and csp is in empty with abort."""
     event_recorder.subscribe_event(
         central_node_low.central_node, "telescopeState"
     )
@@ -234,7 +234,7 @@ def test_abort_with_sdp_csp_in_empty(
 def test_abort_with_mccs_in_empty(
     event_recorder, central_node_low, command_input_factory, simulator_factory
 ):
-    """recover subarray when sdp is in empty with abort."""
+    """recover subarray when MCCS is in empty with abort."""
     event_recorder.subscribe_event(
         central_node_low.central_node, "telescopeState"
     )
