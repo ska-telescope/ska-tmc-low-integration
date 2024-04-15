@@ -127,7 +127,7 @@ def test_abort_with_sdp_csp_in_empty(
     simulator_factory,
     defective_device,
 ):
-    """recover subarray when sdp and csp is in empty with abort."""
+    """recover subarray when SDP and CSP is in empty with abort."""
     event_recorder.subscribe_event(
         central_node_low.central_node, "telescopeState"
     )
@@ -278,7 +278,7 @@ def test_abort_with_mccs_in_empty(
     mccs_sim.SetDefective(json.dumps(failed_result_defect))
 
     assert wait_and_validate_device_attribute_value(
-        mccs_sim,
+        subarray_node_low.subarray_devices["mccs_subarray"],
         "defective",
         json.dumps(failed_result_defect),
         is_json=True,
