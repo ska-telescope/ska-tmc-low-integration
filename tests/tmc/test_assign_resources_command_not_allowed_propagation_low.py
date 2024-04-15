@@ -1,4 +1,5 @@
 """Test cases for AssignResources Command not allowed for LOW."""
+
 import pytest
 from ska_tango_testing.mock.placeholders import Anything
 from tango import DevState
