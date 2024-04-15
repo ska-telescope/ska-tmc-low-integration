@@ -200,45 +200,4 @@ def tmc_subarray_remains_in_resourcing_obsstate(
     )
 
 
-@then("I issue the Abort command on TMC SubarrayNode")
-def abort_is_invoked(subarray_node_low):
-    """
-    Invoke the Abort command on the TMC SubarrayNode.
-    """
-    subarray_node_low.execute_transition("Abort")
 
-
-@then("the TMC subarray transitions to obsState ABORTED")
-def tmc_subarray_is_in_aborted_obsstate(subarray_node_low, event_recorder):
-    """
-    Check that the TMC subarray transitions to the ABORTED obsState
-    and subscribe to the obsState event.
-    """
-    event_recorder.subscribe_event(subarray_node_low.subarray_node, "obsState")
-    assert event_recorder.has_change_event_occurred(
-        subarray_node_low.subarray_node,
-        "obsState",
-        ObsState.ABORTED,
-    )
-
-
-@then("I issue the Restart command on TMC SubarrayNode")
-def restart_is_invoked(subarray_node_low):
-    """
-    Invoke the Restart command on the TMC SubarrayNode.
-    """
-    subarray_node_low.execute_transition("Restart")
-
-
-@then("the TMC subarray transitions to obsState EMPTY")
-def check_tmc_subarray_is_in_empty_obsstate(event_recorder, subarray_node_low):
-    """
-    Check that the TMC subarray transitions to the EMPTY obsState
-    and subscribe to the obsState event.
-    """
-    event_recorder.subscribe_event(subarray_node_low.subarray_node, "obsState")
-    assert event_recorder.has_change_event_occurred(
-        subarray_node_low.subarray_node,
-        "obsState",
-        ObsState.EMPTY,
-    )
