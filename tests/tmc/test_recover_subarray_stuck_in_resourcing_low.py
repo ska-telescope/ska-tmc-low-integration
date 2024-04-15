@@ -230,6 +230,7 @@ def test_abort_with_sdp_csp_in_empty(
     )
 
 
+@pytest.mark.test
 @pytest.mark.SKA_low
 def test_abort_with_mccs_in_empty(
     event_recorder,
