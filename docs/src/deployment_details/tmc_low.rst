@@ -77,7 +77,7 @@ Configurable options
 
 * q. **mccs_subarray_ln_prefix** : This value is present under global, User can use this to change the FQDN prefix of MCCS Subarray Leaf Node.
 
-* r. **DelayCadence** :  It is the time difference (in seconds) with which TMC publishes delay values to delayModel attribute on CspSubarrayLeafNode.
+* r. **DelayCadence** :  This refers to the time difference (in seconds) between each publication of delay values to the `delayModel` attribute on the `CspSubarrayLeafNode`.
 
 * s. **DelayValidityPeriod** : This represents the duration (in seconds) for which delay values remain valid after being published.
 
@@ -115,7 +115,7 @@ Below are the FQDN's of the TMC Low components. For updated FQDN's kindly refer 
 
             Subarray 1 will be:
            
-                Subarray Node FQDN: ska_low/tm_subarray_node/01
+                Subarray Node : ska_low/tm_subarray_node/01
            
                 CSP Subarray Leaf Node: ska_low/tm_leaf_node/csp_subarray01 
            
@@ -125,7 +125,7 @@ Below are the FQDN's of the TMC Low components. For updated FQDN's kindly refer 
          
             For Subarray 2:
 
-                Subarray Node FQDN: ska_low/tm_subarray_node/02
+                Subarray Node : ska_low/tm_subarray_node/02
          
                 CSP Subarray Leaf Node: ska_low/tm_leaf_node/csp_subarray02
          
