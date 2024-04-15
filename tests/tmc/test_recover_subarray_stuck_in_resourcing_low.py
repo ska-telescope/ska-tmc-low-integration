@@ -296,7 +296,7 @@ def test_abort_with_mccs_in_empty(
         in assertion_data["attribute_value"][1]
     )
     assert event_recorder.has_change_event_occurred(
-        central_node_low.subarray_node,
+        subarray_node_low.subarray_node,
         "obsState",
         ObsState.RESOURCING,
     )
