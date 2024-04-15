@@ -112,7 +112,7 @@ def subarray_in_scanning_obsstate(
         + "{subarray_id}"
     )
 )
-def invoke_scan(
+def invoke_endscan(
     subarray_node_low,
     subarray_id,
 ):

@@ -1,4 +1,4 @@
-"""Test Error Propagation and Timeout for Configure command."""
+"""Test Error Propagation for Configure command."""
 import pytest
 from ska_control_model import ObsState
 from ska_tango_testing.mock.placeholders import Anything

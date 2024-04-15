@@ -28,9 +28,6 @@ class TestAssignCommandNotAllowedPropagation:
         csp_subarray_sim = simulator_factory.get_or_create_simulator_device(
             SimulatorDeviceType.LOW_CSP_DEVICE
         )
-        mccs_subarray_sim = simulator_factory.get_or_create_simulator_device(
-            SimulatorDeviceType.MCCS_SUBARRAY_DEVICE
-        )
 
         # Event Subscriptions
         event_recorder.subscribe_event(
@@ -39,8 +36,7 @@ class TestAssignCommandNotAllowedPropagation:
         event_recorder.subscribe_event(
             central_node_low.central_node, "longRunningCommandResult"
         )
-        event_recorder.subscribe_event(mccs_subarray_sim, "obsState")
-
+        event_recorder.subscribe_event(csp_subarray_sim, "obsState")
         # Preparing input arguments
         assign_input_json = prepare_json_args_for_centralnode_commands(
             "assign_resources_low", command_input_factory
@@ -87,9 +83,6 @@ class TestAssignCommandNotAllowedPropagation:
         sdp_subarray_sim = simulator_factory.get_or_create_simulator_device(
             SimulatorDeviceType.LOW_SDP_DEVICE
         )
-        mccs_subarray_sim = simulator_factory.get_or_create_simulator_device(
-            SimulatorDeviceType.MCCS_SUBARRAY_DEVICE
-        )
 
         # Event Subscriptions
         event_recorder.subscribe_event(
@@ -101,7 +94,6 @@ class TestAssignCommandNotAllowedPropagation:
         event_recorder.subscribe_event(
             central_node_low.central_node, "longRunningCommandResult"
         )
-        event_recorder.subscribe_event(mccs_subarray_sim, "obsState")
         event_recorder.subscribe_event(sdp_subarray_sim, "obsState")
         # Preparing input arguments
         assign_input_json = prepare_json_args_for_centralnode_commands(
@@ -146,7 +138,10 @@ class TestAssignCommandNotAllowedPropagation:
     ):
         """Verify command not allowed exception propagation from MccsLeafNodes
         ."""
-        mccs_controller_sim = simulator_factory.get_or_create_simulator_device(
+        mccs_subarray_sim = simulator_factory.get_or_create_simulator_device(
+            SimulatorDeviceType.LOW_SDP_DEVICE
+        )
+        mccs_master_sim = simulator_factory.get_or_create_simulator_device(
             SimulatorDeviceType.MCCS_MASTER_DEVICE
         )
 
@@ -160,6 +155,7 @@ class TestAssignCommandNotAllowedPropagation:
         event_recorder.subscribe_event(
             central_node_low.central_node, "longRunningCommandResult"
         )
+        event_recorder.subscribe_event(mccs_subarray_sim, "obsState")
         # Preparing input arguments
         assign_input_json = prepare_json_args_for_centralnode_commands(
             "assign_resources_low", command_input_factory
@@ -173,7 +169,7 @@ class TestAssignCommandNotAllowedPropagation:
         )
 
         # Setting Defects on Devices
-        mccs_controller_sim.SetDefective(COMMAND_NOT_ALLOWED_DEFECT)
+        mccs_master_sim.SetDefective(COMMAND_NOT_ALLOWED_DEFECT)
         _, unique_id = central_node_low.store_resources(assign_input_json)
         # Constructing the error message
         assertion_data = event_recorder.has_change_event_occurred(
