@@ -58,7 +58,9 @@ class TestAssignCommandNotAllowedPropagation:
         # Setting Defects on Devices
         csp_subarray_sim.SetDefective(COMMAND_NOT_ALLOWED_DEFECT)
 
-        _, unique_id = central_node_low.store_resources(assign_input_json)
+        _, unique_id = central_node_low.perform_action(
+            "AssignResources", assign_input_json
+        )
 
         ERROR_MESSAGE = (
             "The invocation of the AssignResources command is "
@@ -119,7 +121,9 @@ class TestAssignCommandNotAllowedPropagation:
 
         # Setting Defects on Devices
         sdp_subarray_sim.SetDefective(COMMAND_NOT_ALLOWED_DEFECT)
-        _, unique_id = central_node_low.store_resources(assign_input_json)
+        _, unique_id = central_node_low.perform_action(
+            "AssignResources", assign_input_json
+        )
         ERROR_MESSAGE = (
             "Exception occurred on the following devices:"
             "\nska_low/tm_leaf_node/sdp_subarray01: ska_tmc_common."

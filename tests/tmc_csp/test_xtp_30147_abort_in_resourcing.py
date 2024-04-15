@@ -50,7 +50,7 @@ def subarray_busy_assigning(
         "assign_resources_low", command_input_factory
     )
     # Invoking AssignResources command
-    central_node_real_csp_low.store_resources(input_json)
+    central_node_real_csp_low.perform_action("AssignResources", input_json)
     event_recorder.subscribe_event(
         central_node_real_csp_low.subarray_node, "obsState"
     )

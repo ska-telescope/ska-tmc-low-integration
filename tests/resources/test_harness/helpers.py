@@ -28,6 +28,7 @@ from tests.resources.test_harness.constant import (
     mccs_subarray_leaf_node,
     tmc_low_subarraynode1,
 )
+from tests.resources.test_harness.event_recorder import EventRecorder
 from tests.resources.test_harness.utils.common_utils import JsonFactory
 from tests.resources.test_harness.utils.enums import SimulatorDeviceType
 from tests.resources.test_harness.utils.wait_helpers import Waiter, watch
@@ -119,10 +120,10 @@ def get_master_device_simulators(simulator_factory):
     sdp_master_sim = simulator_factory.get_or_create_simulator_device(
         SimulatorDeviceType.LOW_SDP_MASTER_DEVICE
     )
-    return (
-        csp_master_sim,
-        sdp_master_sim,
+    mccs_master_sim = simulator_factory.get_or_create_simulator_device(
+        SimulatorDeviceType.MCCS_MASTER_DEVICE
     )
+    return (csp_master_sim, sdp_master_sim, mccs_master_sim)
 
 
 def get_device_simulator_with_given_name(simulator_factory, devices):
@@ -136,6 +137,7 @@ def get_device_simulator_with_given_name(simulator_factory, devices):
         "csp master": SimulatorDeviceType.LOW_CSP_MASTER_DEVICE,
         "sdp master": SimulatorDeviceType.LOW_SDP_MASTER_DEVICE,
         "mccs master": SimulatorDeviceType.MCCS_MASTER_DEVICE,
+        "mccs subarray": SimulatorDeviceType.MCCS_SUBARRAY_DEVICE,
     }
     sim_device_proxy_list = []
     for device_name in devices:
@@ -272,6 +274,41 @@ def device_received_this_command(
     )
 
 
+def check_for_device_event(
+    device: DeviceProxy,
+    attr_name: str,
+    event_data: str,
+    event_recorder: EventRecorder,
+) -> bool:
+    """Method to check event from the device.
+
+    Args:
+        device (DeviceProxy): device proxy
+        attr_name (str): attribute name
+        event_data (str): event data to be searched
+        event_recorder(EventRecorder): event recorder instance
+        to check for events.
+    """
+    event_found: bool = False
+    timeout: int = 100
+    elapsed_time: float = 0
+    start_time: float = time.time()
+    while not event_found and elapsed_time < timeout:
+        assertion_data = event_recorder.has_change_event_occurred(
+            device,
+            attribute_name=attr_name,
+            attribute_value=(Anything, Anything),
+        )
+        if assertion_data["attribute_value"][0].endswith("AssignResources"):
+            if event_data in assertion_data["attribute_value"][1]:
+                event_found = True
+                return event_found
+
+        elapsed_time = time.time() - start_time
+
+    return event_found
+
+
 def get_recorded_commands(device: Any):
     """A method to get data from simulator device
 
@@ -341,7 +378,7 @@ def wait_for_updates_stop_on_delay_model(csp_subarray_leaf_node) -> None:
     start_time = time.time()
     time_elapsed = 0
     # delay_cadence for low is 300 sec and in attribute it will stay for
-    # 300 sec so after end required this time to set attribute to no_value,
+    # 300 sec so after end required this time to set attribute to "",
     # this will fix in PI22 till then wait is apply here
     required_delay_stop_time = 350
     while (
@@ -518,17 +555,33 @@ def generate_id(prefix: str) -> str:
     return f"{prefix}-{unique_id[:8]}-{unique_id[-5:]}"
 
 
-def update_eb_pb_ids(input_json: str) -> str:
+def update_eb_pb_ids(input_json: str, json_id: str = "") -> str:
     """
     Method to generate different eb_id and pb_id
     :param input_json: json to utilised to update values.
     """
     input_json = json.loads(input_json)
-    input_json["sdp"]["execution_block"]["eb_id"] = generate_id("eb-test")
-    for pb in input_json["sdp"]["processing_blocks"]:
-        pb["pb_id"] = generate_id("pb-test")
+    if json_id in ("eb_id", ""):
+        input_json["sdp"]["execution_block"]["eb_id"] = generate_id("eb-test")
+
+    if json_id in ("pb_id", ""):
+        for pb in input_json["sdp"]["processing_blocks"]:
+            pb["pb_id"] = generate_id("pb-test")
     input_json = json.dumps(input_json)
     return input_json
+
+
+def get_assign_json_id(input_json: str, json_id: str = "") -> list[str]:
+    """
+    Method to get different eb_id and pb_id
+    :param input_json: json to utilised to update values.
+    """
+    input_json = json.loads(input_json)
+    if json_id == "eb_id":
+        return [input_json["sdp"]["execution_block"]["eb_id"]]
+
+    elif json_id == "pb_id":
+        return [pb["pb_id"] for pb in input_json["sdp"]["processing_blocks"]]
 
 
 def set_admin_mode_values_mccs():

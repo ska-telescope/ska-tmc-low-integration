@@ -52,7 +52,7 @@ def test_telescope_standby():
         )
 
         LOGGER.info("Tests complete.")
-
+    # pylint: disable=broad-exception-caught
     except Exception as e:
         LOGGER.exception("The exception is: %s", e)
         tear_down(**ON_OFF_DEVICE_COMMAND_DICT)

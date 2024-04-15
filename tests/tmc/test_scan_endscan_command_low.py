@@ -97,6 +97,7 @@ def test_scan_endscan_low(json_factory):
         assert telescope_control.is_in_valid_state(
             DEVICE_STATE_STANDBY_INFO, "State"
         )
+    # pylint: disable=broad-exception-caught
     except Exception as e:
         LOGGER.exception("The exception is: %s", e)
         tear_down(release_json, **ON_OFF_DEVICE_COMMAND_DICT)
