@@ -36,6 +36,7 @@ configure_logging(logging.DEBUG)
 LOGGER = logging.getLogger(__name__)
 
 
+# pylint: disable=unused-argument
 def pytest_sessionstart(session):
     """
     Pytest hook; prints info about tango version.
@@ -139,18 +140,18 @@ def change_event_callbacks() -> MockTangoEventCallbackGroup:
 @pytest.fixture()
 def tmc_low() -> Generator[TMCLow, None, None]:
     """Return TMC Low object"""
-    tmc_low = TMCLow()
-    yield tmc_low
-    tmc_low.tear_down()
+    tmc = TMCLow()
+    yield tmc
+    tmc.tear_down()
 
 
 @pytest.fixture()
 def central_node_low() -> Generator[CentralNodeWrapperLow, None, None]:
     """Return CentralNode for Low Telescope and calls tear down"""
-    central_node_low = CentralNodeWrapperLow()
-    yield central_node_low
+    central_node = CentralNodeWrapperLow()
+    yield central_node
     # this will call after test complete
-    central_node_low.tear_down()
+    central_node.tear_down()
 
 
 @pytest.fixture()
@@ -178,10 +179,10 @@ def central_node_real_csp_low() -> Generator[
     CentralNodeCspWrapperLow, None, None
 ]:
     """Return CentralNode for Low Telescope and calls tear down"""
-    central_node_low = CentralNodeCspWrapperLow()
-    yield central_node_low
+    central_node = CentralNodeCspWrapperLow()
+    yield central_node
     # this will call after test complete
-    central_node_low.tear_down()
+    central_node.tear_down()
 
 
 @pytest.fixture()
@@ -233,6 +234,7 @@ def wait_for_obsstate_state_change(
     return False
 
 
+# pylint: disable=redefined-outer-name
 @given("the Telescope is in ON state")
 def telescope_is_in_on_state(central_node_low, event_recorder):
     """Move the telescope to the ON state and verify the state change.

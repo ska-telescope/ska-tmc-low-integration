@@ -54,7 +54,6 @@ from tests.resources.test_support.constant_low import (
 )
 
 TIMEOUT = 20
-result, message = "", ""
 configure_logging(logging.DEBUG)
 LOGGER = logging.getLogger(__name__)
 
@@ -62,7 +61,7 @@ LOGGER = logging.getLogger(__name__)
 class TmcHelper:
     """TmcHelper class"""
 
-    def __init__(self, central_node, subarray_node, **kwargs) -> None:
+    def __init__(self, central_node, subarray_node) -> None:
         """
         Args:
             central_node (str) -> FQDN of Central Node
@@ -112,8 +111,10 @@ class TmcHelper:
 
         central_node = DeviceProxy(self.centralnode)
         LOGGER.info(
-            f"Before Sending TelescopeOn command {central_node}\
-            State is:{central_node.State()}"
+            "Before Sending TelescopeOn command %s\
+            State is: %s",
+            central_node,
+            central_node.State(),
         )
         central_node.TelescopeOn()
         device_to_on_list = [
@@ -143,8 +144,10 @@ class TmcHelper:
             device_proxy.SetDirectState(DevState.OFF)
 
         LOGGER.info(
-            f"After invoking TelescopeOff command {central_node} State is:\
-            {central_node.State()}"
+            "After invoking TelescopeOff command %s  State is:\
+            %s ",
+            central_node,
+            central_node.State(),
         )
 
     @sync_set_to_standby
@@ -167,15 +170,17 @@ class TmcHelper:
             device_proxy.ClearCommandCallInfo()
 
         LOGGER.info(
-            f"After invoking TelescopeStandBy command {central_node} State is:\
-            {central_node.State()}"
+            "After invoking TelescopeStandBy command %s  State is:\
+            %s ",
+            central_node,
+            central_node.State(),
         )
 
+    # **kwargs is used by decorator
+    # pylint: disable=unused-argument
     @sync_release_resources()
     def invoke_releaseResources(
-        self,
-        release_input_str: str,
-        **kwargs: dict,
+        self, release_input_str: str, **kwargs: dict
     ) -> Tuple[ResultCode, str]:
         """
         Invokes releaseResources
@@ -185,9 +190,11 @@ class TmcHelper:
         """
         central_node = DeviceProxy(self.centralnode)
         result, message = central_node.ReleaseResources(release_input_str)
-        LOGGER.info(f"ReleaseResources command is invoked on {central_node}")
+        LOGGER.info("ReleaseResources command is invoked on %s", central_node)
         return result, message
 
+    # **kwargs is used by decorator
+    # pylint: disable=unused-argument
     @sync_assign_resources()
     def compose_sub(
         self, assign_res_input: str, **kwargs: dict
@@ -202,6 +209,8 @@ class TmcHelper:
         LOGGER.info("Invoked AssignResources on CentralNode")
         return result, message
 
+    # **kwargs is used by decorator
+    # pylint: disable=unused-argument
     @sync_configure()
     def configure_subarray(self, configure_input_str: str, **kwargs: dict):
         """Invokes configure on subarray node"""
@@ -210,6 +219,8 @@ class TmcHelper:
         LOGGER.info("Invoked Configure on SubarrayNode")
         return result, message
 
+    # **kwargs is used by decorator
+    # pylint: disable=unused-argument
     @sync_scan()
     def scan(
         self, scan_input_str: str, **kwargs: dict
@@ -220,14 +231,18 @@ class TmcHelper:
         LOGGER.info("Invoked Scan on SubarrayNode")
         return result, message
 
+    # **kwargs is used by decorator
+    # pylint: disable=unused-argument
     @sync_end()
     def end(self, **kwargs: dict) -> Tuple[ResultCode, str]:
         """Invokes end command on subarray node"""
         subarray_node = DeviceProxy(self.subarray_node)
         result, message = subarray_node.End()
-        LOGGER.info(f"End command is invoked on {subarray_node}")
+        LOGGER.info("End command is invoked on %s", subarray_node)
         return result, message
 
+    # **kwargs is used by decorator
+    # pylint: disable=unused-argument
     @sync_abort()
     def invoke_abort(self, **kwargs: dict) -> Tuple[ResultCode, str]:
         """Invokes abort command on subarray node"""
@@ -236,6 +251,8 @@ class TmcHelper:
         LOGGER.info("Invoked Abort on SubarrayNode")
         return result, message
 
+    # **kwargs is used by decorator
+    # pylint: disable=unused-argument
     @sync_restart()
     def invoke_restart(self, **kwargs: dict) -> Tuple[ResultCode, str]:
         """Invokes restart command on subarray node"""
@@ -243,6 +260,8 @@ class TmcHelper:
         subarray_node.Restart()
         LOGGER.info("Invoked Restart on SubarrayNode")
 
+    # **kwargs is used by decorator
+    # pylint: disable=unused-argument
     @sync_assigning()
     def assign_resources(
         self, assign_res_input, **kwargs: dict
@@ -254,6 +273,8 @@ class TmcHelper:
         LOGGER.info("Invoked AssignResources on CentralNode")
         return result, message
 
+    # **kwargs is used by decorator
+    # pylint: disable=unused-argument
     @sync_configure_sub()
     def configure_sub(
         self, configure_input_str: str, **kwargs: dict
@@ -267,6 +288,8 @@ class TmcHelper:
         LOGGER.info("Invoked Configure on SubarrayNode")
         return result, message
 
+    # **kwargs is used by decorator
+    # pylint: disable=unused-argument
     @sync_endscan()
     def invoke_endscan(self, **kwargs: dict) -> Tuple[ResultCode, str]:
         """Invokes endscan command on subarray node"""
@@ -275,6 +298,8 @@ class TmcHelper:
         LOGGER.info("Invoked EndScan on SubarrayNode")
         return result, message
 
+    # **kwargs is used by decorator
+    # pylint: disable=unused-argument
     @sync_endscan_in_ready()
     def invoke_endscan_in_ready(
         self, **kwargs: dict
@@ -393,6 +418,7 @@ def tear_down(
 
     LOGGER.info("Tear Down Successful, raising an exception for failure")
     if raise_exception:
+        # pylint: disable=broad-exception-raised
         raise Exception(
             f"Test case failed and Subarray obsState was: "
             f"{subarray_node_obsstate}"

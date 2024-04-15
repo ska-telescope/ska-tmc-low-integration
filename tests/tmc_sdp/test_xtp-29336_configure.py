@@ -104,13 +104,14 @@ def invoke_configure(
     )
 
 
+# pylint: disable=unused-argument
 @then(
     parsers.parse(
         "the SDP subarray {subarray_id} transitions to READY obsState"
     )
 )
 def check_sdp_subarray_in_ready(
-    central_node_low, subarray_node_low, event_recorder, subarray_id
+    subarray_node_low, event_recorder, subarray_id
 ):
     """A method to check SDP subarray obsstate"""
     assert event_recorder.has_change_event_occurred(

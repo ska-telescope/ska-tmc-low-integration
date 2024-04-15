@@ -28,6 +28,7 @@ class Resource:
         attrs = device_proxy.get_attribute_list()
         if attr not in attrs:
             return "attribute not found"
+        # pylint: disable=protected-access
         attr_data_type = device_proxy._get_attribute_config(attr).data_type
         if attr_data_type == CmdArgType.DevEnum:
             return getattr(device_proxy, attr).name
@@ -47,9 +48,9 @@ class Resource:
 class ObjectComparison:
     """Class for comparing values"""
 
-    def __init__(self, object, value):
+    def __init__(self, obj, value):
         self.value = value
-        self.object = object
+        self.object = obj
 
     def equals(self, value):
         """Checks is the values provided equals to class value"""
@@ -60,11 +61,13 @@ class ObjectComparison:
                 assert self.value in value
             else:
                 assert self.value == value
+        # pylint: disable=broad-exception-caught
         except Exception as ex:
+            # pylint: disable=broad-exception-raised
             raise Exception(
                 f"{self.object} is asserted \
                     to be {value} but was instead {self.value} {ex}"
-            )
+            ) from ex
 
     def not_equals(self, value):
         """Checks is the values provided is not equals to class value"""
@@ -75,11 +78,13 @@ class ObjectComparison:
                 assert self.value not in value
             else:
                 assert self.value != value
+        # pylint: disable= broad-exception-caught
         except Exception as ex:
+            # pylint: disable=broad-exception-raised
             raise Exception(
                 f"{self.object} is asserted \
                     to be {value} but was instead {self.value} {ex}"
-            )
+            ) from ex
 
 
 # time keepers based on above resources
@@ -173,6 +178,7 @@ class Monitor:
                 future_shim = ""
                 if self.future_value is not None:
                     future_shim = f" to {self.future_value}"
+                # pylint: disable= broad-exception-raised
                 raise Exception(
                     f"Timed out waiting \
                         for {self.resource.device_name}.{self.attr} to\
@@ -191,13 +197,11 @@ class Monitor:
             return "timeout"
         return self.current_value
 
-    def wait_until_conditions_met(
-        self, timeout: int = 50, resolution: float = 0.1
-    ):
+    def wait_until_conditions_met(self, timeout: int = 50):
         """Waits until conditions is satisfies"""
         return self._wait(timeout)
 
-    def wait_until_value_changed(self, timeout=50, resolution=0.1):
+    def wait_until_value_changed(self, timeout=50):
         """Waits until values changed"""
         return self._wait(timeout)
 
@@ -210,6 +214,7 @@ class Monitor:
         while not self._compare(value):
             count_down -= 1
             if count_down == 0:
+                # pylint: disable= broad-exception-raised
                 raise Exception(
                     f"Timed out waiting\
                           for {self.resource.device_name}.{self.attr} to\
@@ -590,9 +595,8 @@ class Waiter:
             if isinstance(wait, AttributeWatcher):
                 timeout = timeout * resolution
             try:
-                result = wait.wait_until_conditions_met(
-                    timeout=timeout, resolution=resolution
-                )
+                result = wait.wait_until_conditions_met(timeout=timeout)
+            # pylint: disable= broad-exception-caught
             except Exception as ex:
                 self.timed_out = True
                 future_value_shim = ""
@@ -618,6 +622,7 @@ class Waiter:
                             {wait.current_value} after\
                                   {timeout_shim:.2f}s \n"
         if self.timed_out:
+            # pylint: disable= broad-exception-raised
             raise Exception(
                 f"timed out, the following\
                       timeouts occurred:\n{self.error_logs}\
@@ -629,6 +634,7 @@ class WaitForScan(Waiter):
     """Waits for scan command"""
 
     def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self.sdp_subarray1 = kwargs.get("sdp_subarray")
         self.csp_subarray1 = kwargs.get("csp_subarray")
         self.tmc_subarraynode1 = kwargs.get("tmc_subarraynode")
@@ -642,6 +648,7 @@ class WaitForScan(Waiter):
             Resource(kwargs.get("sdp_subarray"))
         ).for_a_change_on("obsState")
 
+    # pylint:disable=arguments-differ
     def wait(self, timeout):
         """Delay method for waitForScan class"""
         logging.info(
@@ -708,6 +715,11 @@ class AttributeWatcher:
         self.current_subscription = None
         self.original_polling = None
         self.waiting = False
+        self.start_time: float = 0.0
+        self.elapsed_time: float = 0.0
+        self.timeout: int = 0
+        self.desired = None
+        self._waiting: bool = False
         if predicate is None:
             self.predicate = self._default_predicate
         else:
@@ -763,9 +775,10 @@ class AttributeWatcher:
                 )
                 self.result_available.set()
 
-    def _handle_timeout(self, remaining_seconds: int, test):
+    def _handle_timeout(self):
         """This method handles timeout"""
         self.stop_listening()
+        # pylint: disable= broad-exception-raised
         raise Exception(
             f"Timed out waiting for an change on {self.device_proxy.name()}.\
             {self.attribute} to change from {self.previous_value} to \
@@ -788,16 +801,14 @@ class AttributeWatcher:
             self.device_proxy.poll_attribute(self.original_polling)
         self.device_proxy.unsubscribe_event(self.current_subscription)
 
-    def wait_until_value_changed_to(
-        self, desired, timeout: int = 2, resolution=None
-    ):
+    def wait_until_value_changed_to(self, desired, timeout: int = 2):
         """Waits for value changed to desired value"""
         self.desired = desired
         self.waiting = True
         self._wait(int(timeout))
         return self.elapsed_time
 
-    def wait_until_conditions_met(self, timeout: int = 2, resolution=None):
+    def wait_until_conditions_met(self, timeout: int = 2):
         """Waits until conditions is satisfied"""
         self._waiting = True
         self._wait(int(timeout))
