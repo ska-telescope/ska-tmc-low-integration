@@ -1,6 +1,7 @@
 """Test module for TMC-SDP End functionality"""
 import pytest
 from pytest_bdd import given, parsers, scenario, then, when
+from ska_tango_base.commands import ResultCode
 from ska_tango_base.control_model import ObsState
 
 from tests.resources.test_harness.helpers import (
@@ -51,6 +52,9 @@ def check_subarray_obs_state(
 
     event_recorder.subscribe_event(subarray_node_low.subarray_node, "obsState")
     event_recorder.subscribe_event(
+        subarray_node_low.subarray_node, "longRunningCommandResult"
+    )
+    event_recorder.subscribe_event(
         subarray_node_low.subarray_devices.get("sdp_subarray"), "obsState"
     )
     assign_input_json = update_eb_pb_ids(assign_input_json)
@@ -74,9 +78,14 @@ def check_subarray_obs_state(
 
 
 @when(parsers.parse("I issue End command to the subarray {subarray_id}"))
-def invoke_end(subarray_node_low):
+def invoke_end(subarray_node_low, event_recorder):
     """A method to invoke End command"""
-    subarray_node_low.end_observation()
+    _, unique_id = subarray_node_low.end_observation()
+    assert event_recorder.has_change_event_occurred(
+        subarray_node_low.subarray_node,
+        "longRunningCommandResult",
+        (unique_id[0], str(ResultCode.OK.value)),
+    )
 
 
 @then(

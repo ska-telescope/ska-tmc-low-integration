@@ -60,7 +60,9 @@ def test_recover_subarray_stuck_in_resourcing_low(
         json.dumps(INTERMEDIATE_STATE_DEFECT),
         is_json=True,
     )
-    _, unique_id = central_node_low.store_resources(assign_input_json)
+    _, unique_id = central_node_low.perform_action(
+        "AssignResources", assign_input_json
+    )
 
     assertion_data = event_recorder.has_change_event_occurred(
         central_node_low.central_node,
@@ -68,7 +70,7 @@ def test_recover_subarray_stuck_in_resourcing_low(
         (unique_id[0], Anything),
     )
     assert (
-        "Timeout has occured, command failed"
+        "Timeout has occurred, command failed"
         in assertion_data["attribute_value"][1]
     )
     assert event_recorder.has_change_event_occurred(
@@ -175,7 +177,9 @@ def test_abort_with_sdp_in_empty(
         json.dumps(failed_result_defect),
         is_json=True,
     )
-    _, unique_id = central_node_low.store_resources(assign_input_json)
+    _, unique_id = central_node_low.perform_action(
+        "AssignResources", assign_input_json
+    )
 
     assertion_data = event_recorder.has_change_event_occurred(
         central_node_low.central_node,

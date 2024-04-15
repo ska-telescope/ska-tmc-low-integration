@@ -65,12 +65,6 @@ class Waiter:
             )
         )
         self.waits.append(
-            watch(Resource(self.mccs_subarray)).to_become(
-                "State", changed_to="OFF"
-            )
-        )
-
-        self.waits.append(
             watch(Resource(self.central_node)).to_become(
                 "telescopeState", changed_to="OFF"
             )
@@ -417,9 +411,7 @@ class Waiter:
             if isinstance(wait, AttributeWatcher):
                 timeout = timeout * resolution
             try:
-                result = wait.wait_until_conditions_met(
-                    timeout=timeout, resolution=resolution
-                )
+                result = wait.wait_until_conditions_met(timeout=timeout)
             except Exception as ex:
                 self.timed_out = True
                 future_value_shim = ""

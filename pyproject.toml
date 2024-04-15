@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "ska-tmc-low-integration"
-version = "0.14.0"
+version = "0.14.1"
 description = "Repository for integration of TMC Low components"
 authors = ["Team Himalaya", "Team Sahyadri"]
 license = "BSD-3-Clause"
@@ -12,6 +12,10 @@ include = [
 [[tool.poetry.source]]
 name = 'ska-nexus'
 url = 'https://artefact.skao.int/repository/pypi-internal/simple'
+
+[[tool.poetry.source]]
+name = "PyPI-public"
+url = 'https://pypi.org/simple'
 
 [tool.poetry.dependencies]
 python = "^3.10"

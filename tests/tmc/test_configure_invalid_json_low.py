@@ -38,6 +38,9 @@ def given_tmc(central_node_low, event_recorder):
     event_recorder.subscribe_event(
         central_node_low.central_node, "telescopeState"
     )
+    event_recorder.subscribe_event(
+        central_node_low.subarray_node, "longRunningCommandResult"
+    )
     central_node_low.move_to_on()
     assert event_recorder.has_change_event_occurred(
         central_node_low.central_node,
@@ -53,12 +56,15 @@ def tmc_check_status(event_recorder, central_node_low, command_input_factory):
     assign_input_json = prepare_json_args_for_centralnode_commands(
         "assign_resources_low", command_input_factory
     )
-    central_node_low.store_resources(assign_input_json)
-    assert event_recorder.has_change_event_occurred(
-        central_node_low.subarray_node, "obsState", ObsState.RESOURCING
-    )
+    _, unique_id = central_node_low.store_resources(assign_input_json)
+
     assert event_recorder.has_change_event_occurred(
         central_node_low.subarray_node, "obsState", ObsState.IDLE
+    )
+    event_recorder.has_change_event_occurred(
+        central_node_low.subarray_node,
+        "longRunningCommandResult",
+        (unique_id[0], str(ResultCode.OK.value)),
     )
 
 
@@ -135,7 +141,7 @@ def invalid_command_rejection(invalid_json):
 
 
 @then("TMC subarray remains in IDLE obsState")
-def tmc_status(event_recorder, subarray_node_low):
+def tmc_status(subarray_node_low):
     """Ensure that the TMC subarray remains in the 'IDLE' observation state
     after rejection."""
     assert subarray_node_low.subarray_node.obsState == ObsState.IDLE
@@ -146,14 +152,14 @@ def tmc_status(event_recorder, subarray_node_low):
 command for the subarray with a valid json"
 )
 def tmc_accepts_next_commands(
-    subarray_node_low, command_input_factory, event_recorder, central_node_low
+    subarray_node_low, command_input_factory, event_recorder
 ):
     """Execute the Configure command with a valid JSON and verify successful
     execution."""
     configure_json = prepare_json_args_for_commands(
         "configure_low", command_input_factory
     )
-    LOGGER.info(f"Input argin for Configure: {configure_json}")
+    LOGGER.info("Input argin for Configure:%s", configure_json)
 
     # Invoke Configure() Command on TMC
     LOGGER.info("Invoking Configure command on TMC SubarrayNode")

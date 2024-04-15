@@ -4,10 +4,12 @@ import logging
 import os
 import time
 from os.path import dirname, join
+from typing import Generator
 
 import pytest
 import tango
-from pytest_bdd import given
+from pytest_bdd import given, parsers, then
+from ska_control_model import HealthState
 from ska_ser_logging import configure_logging
 from ska_tango_testing.mock.tango.event_callback import (
     MockTangoEventCallbackGroup,
@@ -27,12 +29,14 @@ from tests.resources.test_harness.subarray_node_low import (
 from tests.resources.test_harness.subarray_node_with_csp_low import (
     SubarrayNodeCspWrapperLow,
 )
+from tests.resources.test_harness.tmc_low import TMCLow
 from tests.resources.test_harness.utils.common_utils import JsonFactory
 
 configure_logging(logging.DEBUG)
 LOGGER = logging.getLogger(__name__)
 
 
+# pylint: disable=unused-argument
 def pytest_sessionstart(session):
     """
     Pytest hook; prints info about tango version.
@@ -134,16 +138,24 @@ def change_event_callbacks() -> MockTangoEventCallbackGroup:
 
 
 @pytest.fixture()
-def central_node_low() -> CentralNodeWrapperLow:
-    """Return CentralNode for Low Telescope and calls tear down"""
-    central_node_low = CentralNodeWrapperLow()
-    yield central_node_low
-    # this will call after test complete
-    central_node_low.tear_down()
+def tmc_low() -> Generator[TMCLow, None, None]:
+    """Return TMC Low object"""
+    tmc = TMCLow()
+    yield tmc
+    tmc.tear_down()
 
 
 @pytest.fixture()
-def subarray_node_low() -> SubarrayNodeWrapperLow:
+def central_node_low() -> Generator[CentralNodeWrapperLow, None, None]:
+    """Return CentralNode for Low Telescope and calls tear down"""
+    central_node = CentralNodeWrapperLow()
+    yield central_node
+    # this will call after test complete
+    central_node.tear_down()
+
+
+@pytest.fixture()
+def subarray_node_low() -> Generator[SubarrayNodeWrapperLow, None, None]:
     """Return SubarrayNode and calls tear down"""
     subarray = SubarrayNodeWrapperLow()
     yield subarray
@@ -152,7 +164,9 @@ def subarray_node_low() -> SubarrayNodeWrapperLow:
 
 
 @pytest.fixture()
-def subarray_node_real_csp_low() -> SubarrayNodeCspWrapperLow:
+def subarray_node_real_csp_low() -> Generator[
+    SubarrayNodeCspWrapperLow, None, None
+]:
     """Return SubarrayNode and calls tear down"""
     subarray = SubarrayNodeCspWrapperLow()
     yield subarray
@@ -161,12 +175,14 @@ def subarray_node_real_csp_low() -> SubarrayNodeCspWrapperLow:
 
 
 @pytest.fixture()
-def central_node_real_csp_low() -> CentralNodeCspWrapperLow:
+def central_node_real_csp_low() -> Generator[
+    CentralNodeCspWrapperLow, None, None
+]:
     """Return CentralNode for Low Telescope and calls tear down"""
-    central_node_low = CentralNodeCspWrapperLow()
-    yield central_node_low
+    central_node = CentralNodeCspWrapperLow()
+    yield central_node
     # this will call after test complete
-    central_node_low.tear_down()
+    central_node.tear_down()
 
 
 @pytest.fixture()
@@ -181,8 +197,17 @@ def simulator_factory() -> SimulatorFactory:
     return SimulatorFactory()
 
 
+@pytest.fixture(scope="module")
+def stored_unique_id():
+    """
+    store the unique_ids
+    :returns: empty list
+    """
+    return []
+
+
 @pytest.fixture()
-def event_recorder() -> EventRecorder:
+def event_recorder() -> Generator[EventRecorder, None, None]:
     """Return EventRecorder and clear events"""
     event_rec = EventRecorder()
     yield event_rec
@@ -209,6 +234,7 @@ def wait_for_obsstate_state_change(
     return False
 
 
+# pylint: disable=redefined-outer-name
 @given("the Telescope is in ON state")
 def telescope_is_in_on_state(central_node_low, event_recorder):
     """Move the telescope to the ON state and verify the state change.
@@ -229,3 +255,27 @@ def telescope_is_in_on_state(central_node_low, event_recorder):
         "telescopeState",
         DevState.ON,
     )
+
+
+@then(parsers.parse("the telescope health state is {telescope_health_state}"))
+def check_telescope_health_state(
+    central_node_low, event_recorder, telescope_health_state
+):
+    """A method to check CentralNode.telescopehealthState attribute
+    change after aggregation
+
+    Args:
+        central_node_low : A fixture for CentralNode tango device class
+        event_recorder: A fixture for EventRecorder class_
+        telescope_health_state (str): telescopehealthState value
+    """
+    event_recorder.subscribe_event(
+        central_node_low.central_node, "telescopeHealthState"
+    )
+
+    assert event_recorder.has_change_event_occurred(
+        central_node_low.central_node,
+        "telescopeHealthState",
+        HealthState[telescope_health_state],
+    ), f"Expected telescopeHealthState to be \
+        {HealthState[telescope_health_state]}"

@@ -3,7 +3,7 @@
 import json
 
 import pytest
-from ska_control_model import ObsState
+from ska_control_model import ObsState, ResultCode
 from ska_tango_testing.mock.placeholders import Anything
 from tango import DevState
 
@@ -16,7 +16,6 @@ from tests.resources.test_harness.helpers import (
     wait_and_validate_device_attribute_value,
 )
 from tests.resources.test_harness.utils.enums import SimulatorDeviceType
-from tests.resources.test_support.common_utils.result_code import ResultCode
 from tests.resources.test_support.constant_low import INTERMEDIATE_STATE_DEFECT
 
 
@@ -120,7 +119,7 @@ def test_assign_release_timeout_sdp(
     )
     assert unique_id[0].endswith("AssignResources")
     assert result[0] == ResultCode.QUEUED
-    exception_message = "Timeout has occured, command failed"
+    exception_message = "Timeout has occurred, command failed"
     assertion_data = event_recorder.has_change_event_occurred(
         central_node_low.central_node,
         attribute_name="longRunningCommandResult",
@@ -236,7 +235,9 @@ def test_assign_release_timeout_csp(
         json.dumps(INTERMEDIATE_STATE_DEFECT),
         is_json=True,
     )
-    _, unique_id = central_node_low.store_resources(assign_input_json)
+    _, unique_id = central_node_low.perform_action(
+        "AssignResources", assign_input_json
+    )
     ERROR_MESSAGE = "Timeout has occurred, command failed"
     assertion_data = event_recorder.has_change_event_occurred(
         central_node_low.central_node,

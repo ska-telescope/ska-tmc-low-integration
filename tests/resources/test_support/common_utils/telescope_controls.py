@@ -1,6 +1,12 @@
 """State Control module -local depedencies"""
-from tests.conftest import LOGGER
+import logging
+
+from ska_ser_logging import configure_logging
+
 from tests.resources.test_support.common_utils.common_helpers import Resource
+
+configure_logging(logging.DEBUG)
+LOGGER = logging.getLogger(__name__)
 
 
 class BaseTelescopeControl:
@@ -18,7 +24,7 @@ class BaseTelescopeControl:
             state_list = device_state_info.get(device)
             device_state = Resource(device).get(state_str)
             LOGGER.info(
-                f"Resource({device}).get('{state_str}') : {device_state}"
+                "Resource(%s).get('%s') :%s", device, state_str, device_state
             )
             state_result_list.append(
                 Resource(device).get(state_str) in state_list
@@ -33,8 +39,7 @@ def check_subarray1_availability(subarray_devname):
         "isSubarrayAvailable"
     )
     LOGGER.info(
-        f"{subarray_devname}.isSubarrayAvailable : "
-        + str(subarray1_availability)
+        "%s.isSubarrayAvailable : %s", subarray_devname, subarray1_availability
     )
 
     return subarray1_availability

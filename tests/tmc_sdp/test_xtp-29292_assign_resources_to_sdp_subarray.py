@@ -6,6 +6,7 @@ import json
 import pytest
 from pytest_bdd import given, parsers, scenario, then, when
 from ska_control_model import ObsState
+from ska_tango_base.commands import ResultCode
 
 from tests.resources.test_harness.helpers import update_eb_pb_ids
 from tests.resources.test_harness.utils.common_utils import (
@@ -60,16 +61,25 @@ def subarray_is_in_empty_obsstate(
     )
 )
 def assign_resources_to_subarray(
-    central_node_low, command_input_factory, receptors
+    central_node_low, command_input_factory, event_recorder, receptors
 ):
     """Method to assign resources to subarray."""
+    event_recorder.subscribe_event(
+        central_node_low.central_node, "longRunningCommandResult"
+    )
+
     input_json = prepare_json_args_for_centralnode_commands(
         "assign_resources_low", command_input_factory
     )
     receptors = receptors.replace('"', "").split(", ")
     input_json = update_receptors_in_assign_json(input_json, receptors)
     input_json = update_eb_pb_ids(input_json)
-    central_node_low.store_resources(input_json)
+    _, unique_id = central_node_low.store_resources(input_json)
+    assert event_recorder.has_change_event_occurred(
+        central_node_low.central_node,
+        "longRunningCommandResult",
+        (unique_id[0], str(ResultCode.OK.value)),
+    )
 
 
 @then(parsers.parse("the SDP subarray {subarray_id} must be in IDLE obsState"))

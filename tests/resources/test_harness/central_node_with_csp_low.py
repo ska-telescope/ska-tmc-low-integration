@@ -1,6 +1,6 @@
 import logging
 
-from ska_control_model import ObsState
+from ska_control_model import AdminMode, ObsState
 from ska_ser_logging import configure_logging
 from ska_tango_base.control_model import HealthState
 from tango import DeviceProxy, DevState
@@ -31,8 +31,8 @@ class CentralNodeCspWrapperLow(CentralNodeWrapperLow):
         put telescope in ON state
         """
         self.central_node.TelescopeOn()
-        self.csp_master.adminMode = 0
-        self.csp_subarray1.adminMode = 0
+        self.csp_master.adminMode = AdminMode.ONLINE
+        self.csp_subarray1.adminMode = AdminMode.ONLINE
         device_to_on_list = [
             self.subarray_devices.get("sdp_subarray"),
             self.subarray_devices.get("mccs_subarray"),
@@ -71,8 +71,11 @@ class CentralNodeCspWrapperLow(CentralNodeWrapperLow):
 
         """
         self.central_node.TelescopeOff()
-        device_to_on_list = [self.subarray_devices.get("sdp_subarray")]
-        for device in device_to_on_list:
+        device_to_off_list = [
+            self.subarray_devices.get("sdp_subarray"),
+            self.subarray_devices.get("mccs_subarray"),
+        ]
+        for device in device_to_off_list:
             device_proxy = DeviceProxy(device)
             device_proxy.SetDirectState(DevState.OFF)
 

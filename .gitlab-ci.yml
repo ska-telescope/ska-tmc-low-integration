@@ -23,12 +23,18 @@ stages:
 include:
   - project: 'ska-telescope/templates-repository'
     file: 'gitlab-ci/includes/python-lint.gitlab-ci.yml'
+  
+  - project: 'ska-telescope/templates-repository'
+    file: 'gitlab-ci/includes/release.gitlab-ci.yml'
 
   - project: 'ska-telescope/templates-repository'
     file: 'gitlab-ci/includes/helm-chart.gitlab-ci.yml'
 
   - project: 'ska-telescope/templates-repository'
     file: 'gitlab-ci/includes/docs-pages.gitlab-ci.yml'
+  
+  - project: 'ska-telescope/templates-repository'
+    file: 'gitlab-ci/includes/docs.gitlab-ci.yml'
 
   - project: 'ska-telescope/templates-repository'
     file: 'gitlab-ci/includes/k8s.gitlab-ci.yml'
@@ -42,6 +48,7 @@ include:
   - project: 'ska-telescope/templates-repository'
     file: 'gitlab-ci/includes/finaliser.gitlab-ci.yml'
 
+  
 on-demand-deploy:
   stage: on-demand
   tags:
@@ -97,9 +104,8 @@ k8s-test:
     - make k8s-install-chart
     - make k8s-wait
   after_script:
-    - pip3 install -U ska-ser-xray
+    - pip3 install -q -U ska-ser-xray
     - XRAY_TEST_RESULT_FILE="build/cucumber.json" make xray-publish
-  retry: 1
 
 k8s-test-tmc-with-csp:
   tags:
@@ -112,7 +118,6 @@ k8s-test-tmc-with-csp:
     MARK: 'tmc_csp'
     COUNT: 1
     CSP_SIMULATION_ENABLED: 'false'
-  retry: 1
 
 stop-k8s-test-tmc-with-csp:
   extends:
@@ -123,20 +128,27 @@ stop-k8s-test-tmc-with-csp:
 k8s-test-tmc-with-sdp:
   tags:
     - k8srunner
-  extends:
-    - k8s-test
   variables:
     TELESCOPE: 'SKA-low'
-    CLUSTER_DOMAIN: "svc.cluster.local"
     PORT: "10000"
     KUBE_NAMESPACE: 'ci-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-tmc-sdp'
     KUBE_NAMESPACE_SDP: 'ci-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-sdp'
     SERVICE_ACCOUNT: "ci-svc-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-tmc-sdp"
-    MARK: 'tmc_sdp'
     SDP_SIMULATION_ENABLED: 'false'
     TARANTA_ENABLED: 'true'  
-  retry: 1
-
+  script:
+    - make cred SERVICE_ACCOUNT=$SERVICE_ACCOUNT
+    - '[ -f .make/k8s.mk ] || (echo "File k8s.mk not included in Makefile; exit 1")'
+    - 'make help | grep k8s-test'
+    - make k8s-install-chart SDP_PROCCONTROL_REPLICAS=0
+    - make k8s-wait
+    - make k8s-test MARK='tmc_sdp_unhappy_path'
+    - make k8s-install-chart SDP_PROCCONTROL_REPLICAS=1
+    - make k8s-wait
+    - make k8s-test MARK='tmc_sdp'
+  after_script:
+    - pip3 install -q -U ska-ser-xray
+    - XRAY_TEST_RESULT_FILE="build/cucumber.json" make xray-publish
 
 stop-k8s-test-tmc-with-sdp:
   extends:
@@ -158,9 +170,8 @@ k8s-test-tmc-with-mccs:
     - make cred SERVICE_ACCOUNT=$SERVICE_ACCOUNT
     - '[ -f .make/k8s.mk ] || (echo "File k8s.mk not included in Makefile; exit 1")'
     - 'make help | grep k8s-test'
-    - make k8s-install-chart K8S_HELMFILE_ENV=tmc-integration
+    - make k8s-install-chart
     - make k8s-wait
-  retry: 1
 
 stop-k8s-test-tmc-with-mccs:
   extends:
@@ -209,4 +220,3 @@ stop-staging:
   when: manual
   rules:
     - if: $CI_COMMIT_TAG
-

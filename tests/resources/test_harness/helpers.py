@@ -7,7 +7,7 @@ from typing import Any
 
 import pytest
 import tango
-from ska_control_model import ObsState
+from ska_control_model import AdminMode, ObsState
 from ska_ser_logging import configure_logging
 from ska_tango_base.commands import ResultCode
 from ska_tango_base.control_model import HealthState
@@ -22,10 +22,13 @@ from tests.resources.test_harness.constant import (
     low_sdp_subarray1,
     low_sdp_subarray_leaf_node,
     mccs_controller,
+    mccs_pasdbus_prefix,
+    mccs_prefix,
     mccs_subarray1,
     mccs_subarray_leaf_node,
     tmc_low_subarraynode1,
 )
+from tests.resources.test_harness.event_recorder import EventRecorder
 from tests.resources.test_harness.utils.common_utils import JsonFactory
 from tests.resources.test_harness.utils.enums import SimulatorDeviceType
 from tests.resources.test_harness.utils.wait_helpers import Waiter, watch
@@ -117,10 +120,10 @@ def get_master_device_simulators(simulator_factory):
     sdp_master_sim = simulator_factory.get_or_create_simulator_device(
         SimulatorDeviceType.LOW_SDP_MASTER_DEVICE
     )
-    return (
-        csp_master_sim,
-        sdp_master_sim,
+    mccs_master_sim = simulator_factory.get_or_create_simulator_device(
+        SimulatorDeviceType.MCCS_MASTER_DEVICE
     )
+    return (csp_master_sim, sdp_master_sim, mccs_master_sim)
 
 
 def get_device_simulator_with_given_name(simulator_factory, devices):
@@ -133,6 +136,8 @@ def get_device_simulator_with_given_name(simulator_factory, devices):
         "sdp subarray": SimulatorDeviceType.LOW_SDP_DEVICE,
         "csp master": SimulatorDeviceType.LOW_CSP_MASTER_DEVICE,
         "sdp master": SimulatorDeviceType.LOW_SDP_MASTER_DEVICE,
+        "mccs master": SimulatorDeviceType.MCCS_MASTER_DEVICE,
+        "mccs subarray": SimulatorDeviceType.MCCS_SUBARRAY_DEVICE,
     }
     sim_device_proxy_list = []
     for device_name in devices:
@@ -269,6 +274,41 @@ def device_received_this_command(
     )
 
 
+def check_for_device_event(
+    device: DeviceProxy,
+    attr_name: str,
+    event_data: str,
+    event_recorder: EventRecorder,
+) -> bool:
+    """Method to check event from the device.
+
+    Args:
+        device (DeviceProxy): device proxy
+        attr_name (str): attribute name
+        event_data (str): event data to be searched
+        event_recorder(EventRecorder): event recorder instance
+        to check for events.
+    """
+    event_found: bool = False
+    timeout: int = 100
+    elapsed_time: float = 0
+    start_time: float = time.time()
+    while not event_found and elapsed_time < timeout:
+        assertion_data = event_recorder.has_change_event_occurred(
+            device,
+            attribute_name=attr_name,
+            attribute_value=(Anything, Anything),
+        )
+        if assertion_data["attribute_value"][0].endswith("AssignResources"):
+            if event_data in assertion_data["attribute_value"][1]:
+                event_found = True
+                return event_found
+
+        elapsed_time = time.time() - start_time
+
+    return event_found
+
+
 def get_recorded_commands(device: Any):
     """A method to get data from simulator device
 
@@ -321,29 +361,10 @@ def device_attribute_changed(
     return True
 
 
-def wait_for_attribute_update(
-    device, attribute_name: str, expected_id: str, expected_result: ResultCode
-):
-    """Wait for the attribute to reflect necessary changes."""
-    start_time = time.time()
-    elapsed_time = time.time() - start_time
-    while elapsed_time <= TIMEOUT:
-        unique_id, result = device.read_attribute(attribute_name).value
-        if expected_id in unique_id:
-            LOGGER.info("The attribute value is: %s, %s", unique_id, result)
-            return result == str(expected_result.value)
-        time.sleep(1)
-        elapsed_time = time.time() - start_time
-    return False
-
-
 def wait_for_updates_on_delay_model(csp_subarray_leaf_node) -> None:
     start_time = time.time()
     time_elapsed = 0
-    while (
-        csp_subarray_leaf_node.delayModel == "no_value"
-        and time_elapsed <= TIMEOUT
-    ):
+    while csp_subarray_leaf_node.delayModel == "" and time_elapsed <= TIMEOUT:
         time.sleep(1)
         time_elapsed = time.time() - start_time
     if time_elapsed > TIMEOUT:
@@ -357,11 +378,11 @@ def wait_for_updates_stop_on_delay_model(csp_subarray_leaf_node) -> None:
     start_time = time.time()
     time_elapsed = 0
     # delay_cadence for low is 300 sec and in attribute it will stay for
-    # 300 sec so after end required this time to set attribute to no_value,
+    # 300 sec so after end required this time to set attribute to "",
     # this will fix in PI22 till then wait is apply here
     required_delay_stop_time = 350
     while (
-        csp_subarray_leaf_node.delayModel != "no_value"
+        csp_subarray_leaf_node.delayModel != ""
         and time_elapsed <= required_delay_stop_time
     ):
         time.sleep(1)
@@ -369,7 +390,7 @@ def wait_for_updates_stop_on_delay_model(csp_subarray_leaf_node) -> None:
     LOGGER.info(f"time_elapsed: {time_elapsed}")
     if time_elapsed > required_delay_stop_time:
         raise Exception(
-            "Timeout while waiting for CspSubarrayLeafNode to generate \
+            "Timeout while waiting for CspSubarrayLeafNode to stop generating \
                 delay values."
         )
 
@@ -418,6 +439,42 @@ def wait_and_validate_device_attribute_value(
         error,
         count,
     )
+    return False
+
+
+def check_assigned_resources_attribute_value(
+    device: DeviceProxy,
+    attribute_name: str,
+    expected_value: str,
+    timeout: int = 10,
+) -> bool:
+    """
+    This function will verify if assignedResources attribute is set
+    as per expected value
+    :param device: Tango Device Proxy
+    :type device: DeviceProxy
+    :param attribute_name: device attribute name
+    :type attribute_name: str
+    :param expected_value: expected value of attribute to check
+    :type expected_value: str
+    :param timeout: no of sec to check if expected value changed for device
+    :type timeout: int
+    :rtype: bool
+    """
+    count = 0
+    while count <= timeout:
+        attribute_value = device.read_attribute(attribute_name).value
+        LOGGER.info(
+            "Assign Resource device value %s and expected value %s",
+            attribute_value,
+            expected_value,
+        )
+        if attribute_value and json.loads(attribute_value[0]) == json.loads(
+            expected_value
+        ):
+            return True
+        count += 1
+        time.sleep(1)
     return False
 
 
@@ -498,28 +555,70 @@ def generate_id(prefix: str) -> str:
     return f"{prefix}-{unique_id[:8]}-{unique_id[-5:]}"
 
 
-def update_eb_pb_ids(input_json: str) -> str:
+def update_eb_pb_ids(input_json: str, json_id: str = "") -> str:
     """
     Method to generate different eb_id and pb_id
     :param input_json: json to utilised to update values.
     """
     input_json = json.loads(input_json)
-    input_json["sdp"]["execution_block"]["eb_id"] = generate_id("eb-test")
-    for pb in input_json["sdp"]["processing_blocks"]:
-        pb["pb_id"] = generate_id("pb-test")
+    if json_id in ("eb_id", ""):
+        input_json["sdp"]["execution_block"]["eb_id"] = generate_id("eb-test")
+
+    if json_id in ("pb_id", ""):
+        for pb in input_json["sdp"]["processing_blocks"]:
+            pb["pb_id"] = generate_id("pb-test")
     input_json = json.dumps(input_json)
     return input_json
+
+
+def get_assign_json_id(input_json: str, json_id: str = "") -> list[str]:
+    """
+    Method to get different eb_id and pb_id
+    :param input_json: json to utilised to update values.
+    """
+    input_json = json.loads(input_json)
+    if json_id == "eb_id":
+        return [input_json["sdp"]["execution_block"]["eb_id"]]
+
+    elif json_id == "pb_id":
+        return [pb["pb_id"] for pb in input_json["sdp"]["processing_blocks"]]
 
 
 def set_admin_mode_values_mccs():
     """Set the adminMode values of MCCS devices."""
     if MCCS_SIMULATION_ENABLED.lower() == "false":
         controller = tango.DeviceProxy(mccs_controller)
-        if controller.adminMode != 0:
+        if controller.adminMode != AdminMode.ONLINE:
             db = tango.Database()
-            device_strings = db.get_device_exported("low-mccs/*")
+            pasd_bus_trls = db.get_device_exported(mccs_pasdbus_prefix)
+            for pasd_bus_trl in pasd_bus_trls:
+                pasdbus = tango.DeviceProxy(pasd_bus_trl)
+                if pasdbus.adminmode != AdminMode.ONLINE:
+                    pasdbus.adminmode = AdminMode.ONLINE
+                    time.sleep(0.1)
+
+            device_trls = db.get_device_exported(mccs_prefix)
             devices = []
-            for device_str in device_strings:
-                device = tango.DeviceProxy(device_str)
-                device.adminMode = 0
-                devices.append(device)
+            for device_trl in device_trls:
+                if "daq" in device_trl or "calibrationstore" in device_trl:
+                    continue
+                device = tango.DeviceProxy(device_trl)
+                if device.adminmode != AdminMode.ONLINE:
+                    device.adminmode = AdminMode.ONLINE
+                    devices.append(device)
+                    time.sleep(0.1)
+
+
+def updated_assign_str(assign_json: str, station_id: int) -> str:
+    """
+    Returns a json with updated values for the given keys
+    :returns: updated assign string
+    """
+    assign_json = json.loads(assign_json)
+
+    for subarray_beam in assign_json["mccs"]["subarray_beams"]:
+        for aperture in subarray_beam["apertures"]:
+            aperture["station_id"] = station_id
+
+    updated_assign_str = json.dumps(assign_json)
+    return updated_assign_str

@@ -1,7 +1,7 @@
 import logging
 from time import sleep
 
-from ska_control_model import ObsState
+from ska_control_model import AdminMode, ObsState
 from ska_ser_logging import configure_logging
 from ska_tango_base.control_model import HealthState
 from tango import DeviceProxy, DevState
@@ -19,12 +19,14 @@ from tests.resources.test_harness.constant import (
     mccs_controller,
     mccs_master_leaf_node,
     mccs_subarray1,
+    processor1,
     tmc_low_subarraynode1,
 )
 from tests.resources.test_harness.helpers import SIMULATED_DEVICES_DICT
 from tests.resources.test_harness.utils.common_utils import JsonFactory
 from tests.resources.test_harness.utils.sync_decorators import (
     sync_abort,
+    sync_assign_resources,
     sync_release_resources,
     sync_restart,
     sync_set_to_off,
@@ -52,8 +54,10 @@ class CentralNodeWrapperLow(object):
             "sdp_subarray": DeviceProxy(low_sdp_subarray1),
             "mccs_subarray": DeviceProxy(mccs_subarray1),
         }
+        self.subarray_device_by_id: dict = {"1": self.subarray_devices}
         self.csp_subarray1 = DeviceProxy(low_csp_subarray1)
         self.sdp_subarray1 = DeviceProxy(low_sdp_subarray1)
+        self.mccs_subarray1 = DeviceProxy(mccs_subarray1)
         self.sdp_master = DeviceProxy(low_sdp_master)
         self.csp_master = DeviceProxy(low_csp_master)
         self.mccs_master = DeviceProxy(mccs_controller)
@@ -87,6 +91,19 @@ class CentralNodeWrapperLow(object):
         self.mccs_subarray_leaf_node = DeviceProxy(
             f"ska_low/tm_leaf_node/mccs_subarray{subarray_id}"
         )
+        self.subarray_device_by_id[subarray_id] = self.subarray_devices
+        self.subarray_device_by_id[subarray_id].update(
+            {
+                "subarray_node": self.subarray_node,
+                "csp_subarray_leaf_node": self.csp_subarray_leaf_node,
+                "sdp_subarray_leaf_node": self.sdp_subarray_leaf_node,
+                "mccs_subarray_leaf_node": self.mccs_subarray_leaf_node,
+            }
+        )
+
+    def get_subarray_devices_by_id(self, subarray_id):
+        subarray_id = "{:02d}".format(int(subarray_id))
+        return self.subarray_device_by_id[subarray_id]
 
     @property
     def state(self) -> DevState:
@@ -237,6 +254,12 @@ class CentralNodeWrapperLow(object):
             LOGGER.info(
                 "Invoking TelescopeOn command with csp and sdp simulated"
             )
+            # Set adminMode to Online for mccs_master
+            if self.mccs_master.adminMode != AdminMode.ONLINE:
+                self.mccs_master.adminMode = AdminMode.ONLINE
+            # Set adminMode to Online for mccs_subarray
+            if self.mccs_subarray1.adminMode != AdminMode.ONLINE:
+                self.mccs_subarray1.adminMode = AdminMode.ONLINE
             self.central_node.TelescopeOn()
             self.set_value_with_csp_sdp_mocks(DevState.ON)
 
@@ -252,11 +275,11 @@ class CentralNodeWrapperLow(object):
                 "Invoking TelescopeOn command with sdp and mccss simulated"
             )
             # Set adminMode to Online for csp_master
-            if self.csp_master.adminMode != 0:
-                self.csp_master.adminMode = 0
+            if self.csp_master.adminMode != AdminMode.ONLINE:
+                self.csp_master.adminMode = AdminMode.ONLINE
             # Set adminMode to Online for csp_subarray
-            if self.csp_subarray1.adminMode != 0:
-                self.csp_subarray1.adminMode = 0
+            if self.csp_subarray1.adminMode != AdminMode.ONLINE:
+                self.csp_subarray1.adminMode = AdminMode.ONLINE
             self.central_node.TelescopeOn()
             self.set_values_with_sdp_mccs_mocks(DevState.ON)
         else:
@@ -302,6 +325,7 @@ class CentralNodeWrapperLow(object):
             self.central_node.TelescopeStandBy()
         sleep(0.15)
 
+    @sync_assign_resources(device_dict=device_dict_low)
     def store_resources(self, assign_json: str):
         """Invoke Assign Resource command on subarray Node
         Args:
@@ -437,3 +461,11 @@ class CentralNodeWrapperLow(object):
         if SIMULATED_DEVICES_DICT["all_mocks"]:
             self.csp_subarray1.SetDefective(RESET_DEFECT)
             self.sdp_subarray1.SetDefective(RESET_DEFECT)
+
+    def set_serial_number_of_cbf_processor(self):
+        """Sets serial number for cbf processor"""
+        if SIMULATED_DEVICES_DICT["sdp_and_mccs"]:
+            self.processor1 = DeviceProxy(processor1)
+            self.processor1.serialnumber = "XFL14SLO1LIF"
+            self.processor1.subscribetoallocator("low-cbf/allocator/0")
+            self.processor1.register()

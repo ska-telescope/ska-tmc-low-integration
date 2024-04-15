@@ -136,7 +136,7 @@ class TestConfigureErrorPropagation:
             (unique_id[0], Anything),
         )
         assert (
-            "Timeout has occured, command failed"
+            "Timeout has occurred, command failed"
             in assertion_data["attribute_value"][1]
         )
         assert (
