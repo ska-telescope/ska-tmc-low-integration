@@ -158,7 +158,7 @@ def test_abort_with_sdp_csp_in_empty(
         SimulatorDeviceType.MCCS_SUBARRAY_DEVICE
     )
 
-    # Set SDP into FAILED RESULT to change from RESOURCING to EMPTY
+    # Set SDP and CSP into FAILED RESULT to change from RESOURCING to EMPTY
     failed_result_defect = FAILED_RESULT_DEFECT
     failed_result_defect["target_obsstates"] = [
         ObsState.RESOURCING,
@@ -232,7 +232,11 @@ def test_abort_with_sdp_csp_in_empty(
 
 @pytest.mark.SKA_low
 def test_abort_with_mccs_in_empty(
-    event_recorder, central_node_low, command_input_factory, simulator_factory
+    event_recorder,
+    central_node_low,
+    subarray_node_low,
+    command_input_factory,
+    simulator_factory,
 ):
     """recover subarray when MCCS is in empty with abort."""
     event_recorder.subscribe_event(
@@ -244,15 +248,15 @@ def test_abort_with_mccs_in_empty(
     event_recorder.subscribe_event(
         central_node_low.central_node, "longRunningCommandResult"
     )
-    event_recorder.subscribe_event(central_node_low.subarray_node, "obsState")
+    event_recorder.subscribe_event(subarray_node_low.subarray_node, "obsState")
     event_recorder.subscribe_event(
-        central_node_low.subarray_devices["csp_subarray"], "obsState"
+        subarray_node_low.subarray_devices["csp_subarray"], "obsState"
     )
     event_recorder.subscribe_event(
-        central_node_low.subarray_devices["sdp_subarray"], "obsState"
+        subarray_node_low.subarray_devices["sdp_subarray"], "obsState"
     )
     event_recorder.subscribe_event(
-        central_node_low.subarray_devices["mccs_subarray"], "obsState"
+        subarray_node_low.subarray_devices["mccs_subarray"], "obsState"
     )
     central_node_low.move_to_on()
     assert event_recorder.has_change_event_occurred(
@@ -261,17 +265,20 @@ def test_abort_with_mccs_in_empty(
         DevState.ON,
     )
     csp_sim, sdp_sim = get_device_simulators(simulator_factory)
-    # Set SDP into FAILED RESULT to change from RESOURCING to EMPTY
+    # Set MCCS into FAILED RESULT to change from RESOURCING to EMPTY
     failed_result_defect = FAILED_RESULT_DEFECT
     failed_result_defect["target_obsstates"] = [
         ObsState.RESOURCING,
         ObsState.EMPTY,
     ]
-    mccs_device_proxy = central_node_low.subarray_devices.get("mccs_subarray")
-    mccs_device_proxy.SetDefective(json.dumps(failed_result_defect))
+    mccs_sim = simulator_factory.get_or_create_simulator_device(
+        SimulatorDeviceType.MCCS_SUBARRAY_DEVICE
+    )
+
+    mccs_sim.SetDefective(json.dumps(failed_result_defect))
 
     assert wait_and_validate_device_attribute_value(
-        mccs_device_proxy,
+        mccs_sim,
         "defective",
         json.dumps(failed_result_defect),
         is_json=True,
@@ -294,7 +301,7 @@ def test_abort_with_mccs_in_empty(
         ObsState.RESOURCING,
     )
     assert event_recorder.has_change_event_occurred(
-        mccs_device_proxy,
+        mccs_sim,
         "obsState",
         ObsState.RESOURCING,
     )
@@ -309,16 +316,26 @@ def test_abort_with_mccs_in_empty(
         ObsState.IDLE,
     )
     assert event_recorder.has_change_event_occurred(
-        mccs_device_proxy,
+        mccs_sim,
         "obsState",
         ObsState.EMPTY,
     )
-    mccs_device_proxy.SetDefective(json.dumps({"enabled": False}))
+    mccs_sim.SetDefective(json.dumps({"enabled": False}))
 
-    central_node_low.subarray_node.Abort()
+    subarray_node_low.subarray_node.Abort()
 
     assert event_recorder.has_change_event_occurred(
-        central_node_low.subarray_node,
+        csp_sim,
+        "obsState",
+        ObsState.ABORTED,
+    )
+    assert event_recorder.has_change_event_occurred(
+        sdp_sim,
+        "obsState",
+        ObsState.ABORTED,
+    )
+    assert event_recorder.has_change_event_occurred(
+        subarray_node_low.subarray_node,
         "obsState",
         ObsState.ABORTED,
     )
