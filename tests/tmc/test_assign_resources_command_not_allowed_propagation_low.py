@@ -75,7 +75,6 @@ class TestAssignCommandNotAllowedPropagation:
         )
 
     @pytest.mark.SKA_low
-    @pytest.mark.test
     def test_assign_command_not_allowed_propagation_sdp_ln_low(
         self,
         central_node_low,
@@ -119,10 +118,12 @@ class TestAssignCommandNotAllowedPropagation:
         # Setting Defects on Devices
         sdp_subarray_sim.SetDefective(COMMAND_NOT_ALLOWED_DEFECT)
         _, unique_id = central_node_low.store_resources(assign_input_json)
-        ERROR_MESSAGE = """Exception occurred on the following
-            devices: ska_low/tm_leaf_node/sdp_subarray01:
-            ska_tmc_common.exceptions.CommandNotAllowed:
-            Command is not allowed\n\n"""
+        ERROR_MESSAGE = (
+            "Exception occurred on the following devices:"
+            " ska_low/tm_leaf_node/sdp_subarray01:"
+            " ska_tmc_common.exceptions.CommandNotAllowed:"
+            " Command is not allowed\n\n"
+        )
         assertion_data = event_recorder.has_change_event_occurred(
             central_node_low.central_node,
             "longRunningCommandResult",
@@ -145,11 +146,8 @@ class TestAssignCommandNotAllowedPropagation:
     ):
         """Verify command not allowed exception propagation from MccsLeafNodes
         ."""
-        sdp_subarray_sim = simulator_factory.get_or_create_simulator_device(
-            SimulatorDeviceType.MCCS_SUBARRAY_DEVICE
-        )
-        mccs_subarray_sim = simulator_factory.get_or_create_simulator_device(
-            SimulatorDeviceType.LOW_SDP_DEVICE
+        mccs_controller_sim = simulator_factory.get_or_create_simulator_device(
+            SimulatorDeviceType.MCCS_MASTER_DEVICE
         )
 
         # Event Subscriptions
@@ -162,8 +160,6 @@ class TestAssignCommandNotAllowedPropagation:
         event_recorder.subscribe_event(
             central_node_low.central_node, "longRunningCommandResult"
         )
-        event_recorder.subscribe_event(mccs_subarray_sim, "obsState")
-        event_recorder.subscribe_event(sdp_subarray_sim, "obsState")
         # Preparing input arguments
         assign_input_json = prepare_json_args_for_centralnode_commands(
             "assign_resources_low", command_input_factory
@@ -177,19 +173,23 @@ class TestAssignCommandNotAllowedPropagation:
         )
 
         # Setting Defects on Devices
-        mccs_subarray_sim.SetDefective(COMMAND_NOT_ALLOWED_DEFECT)
+        mccs_controller_sim.SetDefective(COMMAND_NOT_ALLOWED_DEFECT)
         _, unique_id = central_node_low.store_resources(assign_input_json)
         # Constructing the error message
-        ERROR_MESSAGE = """Exception occurred on the following
-            devices: ska_low/tm_leaf_node/mccs_subarray01:
-            ska_tmc_common.exceptions.CommandNotAllowed:
-            Command is not allowed\n\n"""
         assertion_data = event_recorder.has_change_event_occurred(
             central_node_low.central_node,
             "longRunningCommandResult",
             (unique_id[0], Anything),
         )
-        assert ERROR_MESSAGE in assertion_data["attribute_value"][1]
+        assert (
+            "Exception occurred on the following devices:"
+            + " ska_low/tm_leaf_node/mccs_master:"
+            in assertion_data["attribute_value"][1]
+        )
+        assert (
+            "ska_tmc_common.exceptions.CommandNotAllowed"
+            in assertion_data["attribute_value"][1]
+        )
         event_recorder.has_change_event_occurred(
             central_node_low.central_node,
             "longRunningCommandResult",

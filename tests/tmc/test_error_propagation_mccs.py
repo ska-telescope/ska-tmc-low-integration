@@ -1,25 +1,12 @@
-"""
-Test case to verify error propagation and timeout functionality for the
- TMC-MCCS Configure command.
-This test case verifies that when the MCCS Subarray is identified as defective,
- and the Configure command is executed on the TMC Low, the Configure command
-   times out and reports an error.
-"""
-
+"""Test Error Propagation and Timeout for Configure command."""
 import pytest
-from pytest_bdd import given, scenario, then, when
 from ska_control_model import ObsState
 from ska_tango_testing.mock.placeholders import Anything
 from tango import DevState
 
 from tests.resources.test_harness.constant import (
-    INTERMEDIATE_CONFIGURING_STATE_DEFECT,
+    ERROR_PROPAGATION_DEFECT,
     mccs_subarray_leaf_node,
-)
-from tests.resources.test_harness.event_recorder import EventRecorder
-from tests.resources.test_harness.simulator_factory import SimulatorFactory
-from tests.resources.test_harness.subarray_node_low import (
-    SubarrayNodeWrapperLow,
 )
 from tests.resources.test_harness.utils.enums import SimulatorDeviceType
 from tests.resources.test_support.common_utils.tmc_helpers import (
@@ -27,110 +14,68 @@ from tests.resources.test_support.common_utils.tmc_helpers import (
 )
 
 
-@pytest.mark.SKA_low
-@scenario(
-    "../features/tmc/check_timeout_mccs.feature",
-    "Timeout Error Reported by TMC Low Configure Command for"
-    + " Defective MCCS Subarray",
-)
-def test_mccs_configure_command_timeout():
-    """
-    Test case to verify TMC-MCCS Configure Timeout functionality
-    """
+class TestConfigureErrorPropagation:
+    """Tests for testing error propagation for Configure command on LOW TMC."""
 
+    @pytest.mark.SKA_low
+    def test_configure_error_propagation_mccs_ln(
+        self,
+        subarray_node_low,
+        event_recorder,
+        simulator_factory,
+        command_input_factory,
+    ):
+        """Test timeout on Mccs Leaf Nodes for Configure command by inducing
+        fault into the system."""
+        mccs_subarray_sim = simulator_factory.get_or_create_simulator_device(
+            SimulatorDeviceType.MCCS_SUBARRAY_DEVICE
+        )
+        # Event Subscriptions
+        event_recorder.subscribe_event(
+            subarray_node_low.subarray_node, "State"
+        )
+        event_recorder.subscribe_event(
+            subarray_node_low.subarray_node, "obsState"
+        )
+        event_recorder.subscribe_event(
+            subarray_node_low.subarray_node, "longRunningCommandResult"
+        )
 
-@given("the telescope is is ON state")
-def check_telescope_is_in_on_state(
-    subarray_node_low: SubarrayNodeWrapperLow, event_recorder
-) -> None:
-    """
-    Ensure telescope is in ON state.
-    """
-    # Event Subscriptions
-    event_recorder.subscribe_event(subarray_node_low.subarray_node, "State")
-    subarray_node_low.move_to_on()
-    assert event_recorder.has_change_event_occurred(
-        subarray_node_low.subarray_node, "State", DevState.ON
-    )
+        # Preparing input files
+        configure_input_str = prepare_json_args_for_commands(
+            "configure_low", command_input_factory
+        )
+        subarray_node_low.move_to_on()
+        assert event_recorder.has_change_event_occurred(
+            subarray_node_low.subarray_node, "State", DevState.ON
+        )
 
+        subarray_node_low.force_change_of_obs_state("IDLE")
 
-@given("the TMC subarray is in the idle observation state")
-def check_subarray_obs_state(
-    subarray_node_low: SubarrayNodeWrapperLow,
-    event_recorder: EventRecorder,
-):
-    """
-    Method to check subarray is in IDLE observation state.
-    """
-    event_recorder.subscribe_event(subarray_node_low.subarray_node, "obsState")
-    subarray_node_low.force_change_of_obs_state("IDLE")
-    assert event_recorder.has_change_event_occurred(
-        subarray_node_low.subarray_node, "obsState", ObsState.IDLE
-    )
+        assert event_recorder.has_change_event_occurred(
+            subarray_node_low.subarray_node, "obsState", ObsState.IDLE
+        )
 
+        # Inducing Fault on Mccsleafnode
+        mccs_subarray_sim.SetDefective(ERROR_PROPAGATION_DEFECT)
 
-@when(
-    "the MCCS Subarray is identified as defective and configure command is "
-    + "executed on the TMC Low"
-)
-def invoke_configure_command_with_mccs_defective(
-    simulator_factory: SimulatorFactory,
-    command_input_factory,
-    subarray_node_low: SubarrayNodeWrapperLow,
-    event_recorder: EventRecorder,
-    stored_unique_id,
-):
-    """
-    Invoke the Configure command with the MCCS Subarray identified as defective
+        _, unique_id = subarray_node_low.execute_transition(
+            "Configure", configure_input_str
+        )
+        assert event_recorder.has_change_event_occurred(
+            subarray_node_low.subarray_node, "obsState", ObsState.CONFIGURING
+        )
 
-    This method prepares the input files, induces a fault in the MCCS Subarray
-      simulator,
-    and executes the Configure command on the TMC Low. It asserts that the
-      subarray is in the CONFIGURING observation state after the
-        command execution.
-    """
-    mccs_subarray_sim = simulator_factory.get_or_create_simulator_device(
-        SimulatorDeviceType.MCCS_SUBARRAY_DEVICE
-    )
-    # Preparing input files
-    configure_input_str = prepare_json_args_for_commands(
-        "configure_low", command_input_factory
-    )
-    # Inducing Fault
-    mccs_subarray_sim.SetDefective(INTERMEDIATE_CONFIGURING_STATE_DEFECT)
-
-    _, unique_id = subarray_node_low.execute_transition(
-        "Configure", configure_input_str
-    )
-    assert event_recorder.has_change_event_occurred(
-        subarray_node_low.subarray_node, "obsState", ObsState.CONFIGURING
-    )
-    stored_unique_id.append(unique_id[0])
-
-
-@then("the Configure command times out and reports an error")
-def configure_command_reports_timeout(
-    stored_unique_id,
-    subarray_node_low: SubarrayNodeWrapperLow,
-    event_recorder: EventRecorder,
-):
-    """
-    Verify that the Configure command times out and reports an error.
-
-    This method subscribes to the 'longRunningCommandResult' event and asserts
-      that the command times out and reports an error message indicating a
-        timeout has occurred.
-    """
-    event_recorder.subscribe_event(
-        subarray_node_low.subarray_node, "longRunningCommandResult"
-    )
-    assertion_data = event_recorder.has_change_event_occurred(
-        subarray_node_low.subarray_node,
-        "longRunningCommandResult",
-        (stored_unique_id[0], Anything),
-    )
-    assert (
-        "Timeout has occurred, command failed"
-        in assertion_data["attribute_value"][1]
-    )
-    assert mccs_subarray_leaf_node in assertion_data["attribute_value"][1]
+        assertion_data = event_recorder.has_change_event_occurred(
+            subarray_node_low.subarray_node,
+            "longRunningCommandResult",
+            (unique_id[0], Anything),
+        )
+        assert (
+            "Exception occurred on the following devices:"
+            + " ska_low/tm_leaf_node/mccs_subarray01:"
+            + " Exception occurred on device: low-mccs/subarray/01:"
+            + " . Event data is: [3, "
+            "]\n" in assertion_data["attribute_value"][1]
+        )
+        assert mccs_subarray_leaf_node in assertion_data["attribute_value"][1]
