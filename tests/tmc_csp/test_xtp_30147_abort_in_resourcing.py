@@ -13,10 +13,6 @@ from tests.resources.test_support.common_utils.tmc_helpers import (
 
 
 @pytest.mark.tmc_csp
-@pytest.mark.skip(
-    reason="CSP Subarray goes from RESTARTING to IDLE with the SKB-285 "
-    + "fix chart v0.11.1"
-)
 @scenario(
     "../features/tmc_csp/xtp-30147_abort_in_resourcing.feature",
     "Abort assigning using TMC",
@@ -77,7 +73,10 @@ def subarray_busy_assigning(
         "obsState",
         ObsState.RESOURCING,
     )
-    time.sleep(1)
+    # The sleep is added to allow Subarray Node time to update the device
+    # obsStates before invoking the Abort command. Without sleep, Subarray Node
+    # at times finds all devices in EMPTY and does not invoke Abort on them.
+    time.sleep(0.3)
 
 
 @when("I command it to Abort")

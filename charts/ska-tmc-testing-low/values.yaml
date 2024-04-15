@@ -108,24 +108,35 @@ ska-low-cbf:
     app: ska-tmc-low-integration
   enabled: false
   minikube: true
-  ska-low-cbf-conn:
-    enabled: false
-  ska-low-cbf-proc:
-    enabled: false
-    deviceServers:
-      processor:
-        instances: ["0","1","2"]  # 2x CNIC, 1x SUT
-        # TODO - check if the resources section is needed - in principle, it should be set in -proc chart
-        resources:
-          limits:
-            xilinx.com/fpga-xilinx_u55c_gen3x16_xdma_base_3-0: 0  # no FPGA hardware
-            memory: 512Mi  # reduced
+  labels:
+    app: ska-csp-lmc-low
+  cbf:
+    hardware_connections:
+      # psi-perentie1
+      - 'switch=p4_01  port=19/0  speed=100  alveo=XFL14SLO1LIF'
+      - 'switch=p4_01  port=21/0  speed=100  alveo=XFL1DKXBEVG2'
+      - 'switch=p4_01  port=23/0  speed=100  alveo=XFL1HOOQ1Y44'
+      - 'switch=p4_01  port=25/0  speed=100  alveo=XFL1LHN4TXO2'
+
+ska-low-cbf-proc:
+  deviceServers:
+    processor:
+      instances: ["0", "1"]
+      resources:
+        limits:
+          xilinx.com/fpga-xilinx_u55c_gen3x16_xdma_base_3-0: 0  # no FPGA hardware
+          memory: 512Mi  # reduced
 
 ska-csp-lmc-low:
   labels:
     app: ska-tmc-low-integration
   legacy_compatibility: true
   enabled: false
+  lowcsplmc:
+    image:
+      registry: registry.gitlab.com/ska-telescope/ska-csp-lmc-low
+      image: ska-csp-lmc-low
+      tag: 0.11.2
   deviceServers:
     cspcontroller:
       instances: ["controller"]
@@ -644,6 +655,7 @@ ska-low-mccs:
           logging_level_default: 5
           skuid_url: http://ska-ser-skuid-ska-ser-skuid-svc:9870/
           subarray_id: 1
+
   ska-low-mccs-pasd:
     deviceServers:
       fieldstations:
@@ -950,17 +962,6 @@ ska-low-mccs:
         daq-data:
           size: 250Mi
           storage_class: standard
-
-ska-low-cbf-proc:
-  labels:
-    app: ska-tmc-low-integration
-  deviceServers:
-    processor:
-      instances: ["0", "1"]
-      resources:
-        limits:
-          xilinx.com/fpga-xilinx_u55c_gen3x16_xdma_base_3-0: 0  # no FPGA hardware
-          memory: 512Mi  # reduced
 
 
 # SKUID
