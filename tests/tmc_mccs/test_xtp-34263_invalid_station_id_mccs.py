@@ -198,6 +198,3 @@ def tmc_subarray_remains_in_resourcing_obsstate(
         "obsState",
         ObsState.RESOURCING,
     )
-
-
-
