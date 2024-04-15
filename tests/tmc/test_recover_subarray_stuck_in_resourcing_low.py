@@ -301,22 +301,22 @@ def test_abort_with_mccs_in_empty(
         ObsState.RESOURCING,
     )
     assert event_recorder.has_change_event_occurred(
-        mccs_sim,
+        subarray_node_low.subarray_devices["mccs_subarray"],
         "obsState",
         ObsState.RESOURCING,
     )
     assert event_recorder.has_change_event_occurred(
-        sdp_sim,
+        subarray_node_low.subarray_devices["sdp_subarray"],
         "obsState",
         ObsState.IDLE,
     )
     assert event_recorder.has_change_event_occurred(
-        csp_sim,
+        subarray_node_low.subarray_devices["csp_subarray"],
         "obsState",
         ObsState.IDLE,
     )
     assert event_recorder.has_change_event_occurred(
-        mccs_sim,
+        subarray_node_low.subarray_devices["mccs_subarray"],
         "obsState",
         ObsState.EMPTY,
     )
