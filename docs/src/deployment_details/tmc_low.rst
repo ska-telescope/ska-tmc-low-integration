@@ -77,5 +77,63 @@ Configurable options
 
 * q. **mccs_subarray_ln_prefix** : This value is present under global, User can use this to change the FQDN prefix of MCCS Subarray Leaf Node.
 
+* r. **DelayCadence** :  This refers to the time difference (in seconds) between each publication of delay values to the `delayModel` attribute on the `CspSubarrayLeafNode`.
+
+* s. **DelayValidityPeriod** : This represents the duration (in seconds) for which delay values remain valid after being published.
+
+* t. **DelayModelTimeInAdvance** : This indicates the time in seconds by which delay values need to be available in advance.
+
+
+
+TMC Low Sub-system FQDN's:
+---------------------------
+Below are the FQDN's of the TMC Low components. For updated FQDN's kindly refer values.yaml in the TMC Low charts.
+
++------------------------------------------+------------------------------------------------------------------------+ 
+| TMC Low component                        |            FQDN                                                        | 
++==========================================+========================================================================+ 
+| Central Node                             |  ska_low/tm_central/central_node                                       |
++------------------------------------------+------------------------------------------------------------------------+
+| Subarray Node                            |  ska_low/tm_subarray_node/{id}                                         |
++------------------------------------------+------------------------------------------------------------------------+
+| CSP Subarray Leaf Node                   |  ska_low/tm_leaf_node/csp_subarray{id}                                 |
++------------------------------------------+------------------------------------------------------------------------+
+| SDP Subarray Leaf Node                   |  ska_low/tm_leaf_node/sdp_subarray{id}                                 |
++------------------------------------------+------------------------------------------------------------------------+
+| MCCS Subarray Leaf Node                  +  ska_low/tm_leaf_node/mccs_subarray{id}                                |    
++------------------------------------------+------------------------------------------------------------------------+
+| MCCS Master Leaf Node                    +  ska_low/tm_leaf_node/mccs_master                                      |
++------------------------------------------+------------------------------------------------------------------------+
+| SDP Master Leaf Node                     +  ska_low/tm_leaf_node/sdp_master                                       |
++------------------------------------------+------------------------------------------------------------------------+
+| CSP Master Leaf Node                     +  ska_low/tm_leaf_node/csp_master                                       |
++------------------------------------------+------------------------------------------------------------------------+
+
+
+**NOTE** : {id} is the identifier for the deployed subarray.
+           For instance, if two subarrays are deployed
+
+            Subarray 1 will be:
+           
+                Subarray Node : ska_low/tm_subarray_node/01
+           
+                CSP Subarray Leaf Node: ska_low/tm_leaf_node/csp_subarray01 
+           
+                SDP Subarray Leaf Node: ska_low/tm_leaf_node/sdp_subarray01
+           
+                MCCS Subarray Leaf Node: ska_low/tm_leaf_node/mccs_subarray01
+         
+            For Subarray 2:
+
+                Subarray Node : ska_low/tm_subarray_node/02
+         
+                CSP Subarray Leaf Node: ska_low/tm_leaf_node/csp_subarray02
+         
+                SDP Subarray Leaf Node: ska_low/tm_leaf_node/sdp_subarray02
+         
+                MCCS Subarray Leaf Node: ska_low/tm_leaf_node/mccs_subarray02
+
+
+
 
 

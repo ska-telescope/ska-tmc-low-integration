@@ -11,6 +11,10 @@ Added
 Fixed
 -----
 
+[master]
+*********
+* Bug SKB-296 is fixed
+
 [0.14.1]
 ************
 * Fixed SKB-300
