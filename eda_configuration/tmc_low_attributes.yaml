@@ -1,0 +1,90 @@
+b: <TANGO_DATABASEDS>.<KUBE_NAMESPACE>.svc.<CLUSTER_DOMAIN>:<TANGO_DATABASEDS_PORT>
+manager: low-eda/cm/01
+archiver: low-eda/es/01
+
+configuration:
+  - class: CentralNodeLow
+    attributes:
+      state:
+        code_push_event: true
+      healthState:
+        code_push_event: true
+      telescopestate:
+        code_push_event: true
+      telescopeHealthState:
+        code_push_event: true
+      telescopeAvailability:
+        code_push_event: true
+
+  - class: SubarrayNodeLow
+    attributes:
+      state:
+        code_push_event: true
+      healthState:
+        code_push_event: true
+      obsState:
+        code_push_event: true
+      isSubarrayAvailable:
+        code_push_event: true
+    
+  - class: CspMasterLeafNode
+    attributes:
+      state:
+        code_push_event: true
+      healthState:
+        code_push_event: true
+      isSubsystemAvailable:
+        code_push_event: true
+
+  - class: CspSubarrayLeafNodeLow 
+    attributes:
+      state:
+        code_push_event: true
+      healthState:
+        code_push_event: true
+      isSubsystemAvailable:
+        code_push_event: true
+      delayModel:
+        code_push_event: true
+      cspSubarrayObsState:
+        code_push_event: true
+
+  - class: SdpMasterLeafNode
+    attributes:
+      state:
+        code_push_event: true
+      healthState:
+        code_push_event: true
+      isSubsystemAvailable:
+        code_push_event: true
+
+  - class: SdpSubarrayLeafNode
+    attributes:
+      state:
+        code_push_event: true
+      healthState:
+        code_push_event: true
+      isSubsystemAvailable:
+        code_push_event: true
+      sdpSubarrayObsState:
+        code_push_event: true
+        
+  - class: MccsMasterLeafNode
+    attributes:
+      state:
+        code_push_event: true
+      healthState:
+        code_push_event: true
+      isSubsystemAvailable:
+        code_push_event: true
+
+  - class: MccsSubarrayLeafNode
+    attributes:
+      state:
+        code_push_event: true
+      healthState:
+        code_push_event: true
+      isSubsystemAvailable:
+        code_push_event: true
+      obsState:
+        code_push_event: true
