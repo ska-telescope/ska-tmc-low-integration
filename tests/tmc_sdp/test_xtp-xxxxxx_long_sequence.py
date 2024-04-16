@@ -21,7 +21,7 @@ from tests.resources.test_harness.helpers import (
 # )
 
 
-@pytest.mark.tmc_sdp
+@pytest.mark.tmc_sdp1
 @scenario(
     "../features/tmc_sdp/xtp_xxxxx_tmc_sdp_long_sequence.feature",
     "TMC Low executes configure-scan sequence of commands successfully",
