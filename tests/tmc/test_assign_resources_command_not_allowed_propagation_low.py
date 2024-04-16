@@ -175,7 +175,10 @@ class TestAssignCommandNotAllowedPropagation:
 
         # Setting Defects on Devices
         mccs_master_sim.SetDefective(COMMAND_NOT_ALLOWED_DEFECT)
-        _, unique_id = central_node_low.store_resources(assign_input_json)
+        # Execute Assign command and verify successful execution
+        _, unique_id = central_node_low.perform_action(
+            "AssignResources", assign_input_json
+        )
         # Constructing the error message
         assertion_data = event_recorder.has_change_event_occurred(
             central_node_low.central_node,
