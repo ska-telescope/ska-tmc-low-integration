@@ -395,7 +395,7 @@ class TestLowCentralNodeAssignResources:
         exception_message = (
             "Exception occurred on the following devices: "
             + f"{tmc_low_subarraynode1}: Exception occurred on the following "
-            + f"devices:\n{low_sdp_subarray_leaf_node}:"
+            + f"devices: {low_sdp_subarray_leaf_node}:"
             " Timeout has occurred, command failed\n"
         )
 
