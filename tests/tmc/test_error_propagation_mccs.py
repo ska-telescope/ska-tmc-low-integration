@@ -23,11 +23,11 @@ from tests.resources.test_support.common_utils.tmc_helpers import (
 
 @pytest.mark.SKA_low
 @scenario(
-    "../features/tmc/check_timeout_mccs.feature",
+    "../features/tmc/check_error_propagation_mccs.feature",
     "Error Propagation Reported by TMC Low Configure Command for"
     + " Defective MCCS Subarray",
 )
-def test_mccs_configure_command_timeout():
+def test_mccs_configure_command_error_propagation():
     """
     Test case to verify TMC-MCCS Error Propagation functionality.
     """
@@ -86,6 +86,7 @@ def invoke_configure_command_with_mccs_defective(
         "configure_low", command_input_factory
     )
     # Inducing Fault
+    #
     mccs_subarray_sim.SetDefective(ERROR_PROPAGATION_DEFECT)
 
     _, unique_id = subarray_node_low.execute_transition(
@@ -97,18 +98,21 @@ def invoke_configure_command_with_mccs_defective(
     stored_unique_id.append(unique_id[0])
 
 
-@then("the command fails and appropriate error message is reported")
-def configure_command_reports_timeout(
+@then(
+    "the command failure is reported by subarray with appropriate"
+    + " error message"
+)
+def configure_command_reports_error_propagate(
     stored_unique_id,
     subarray_node_low,
     event_recorder,
 ):
     """
-    Verify that the Configure command times out and reports an error.
+    Verify that the Configure command reports an error.
 
     This method subscribes to the 'longRunningCommandResult' event and asserts
       that the command times out and reports an error message indicating a
-        timeout has occurred.
+        error has propagated.
     """
     event_recorder.subscribe_event(
         subarray_node_low.subarray_node, "longRunningCommandResult"
@@ -122,7 +126,23 @@ def configure_command_reports_timeout(
         "Exception occurred on the following devices:"
         + " ska_low/tm_leaf_node/mccs_subarray01:"
         + " Exception occurred on device: low-mccs/subarray/01:"
-        + " . Event data is: [3, ']\n"
+        + " . Event data is: [3, ""]\n"
         in assertion_data["attribute_value"][1]
     )
     assert mccs_subarray_leaf_node in assertion_data["attribute_value"][1]
+
+
+@then("the TMC SubarrayNode remains in CONFIGURING obsState")
+def tmc_subarray_remains_in_resourcing_obsstate(
+    event_recorder, subarray_node_low
+):
+    """
+    Check that the TMC SubarrayNode remains in the CONFIGURING obsState
+    and subscribe to the obsState event.
+    """
+    event_recorder.subscribe_event(subarray_node_low.subarray_node, "obsState")
+    assert event_recorder.has_change_event_occurred(
+        subarray_node_low.subarray_node,
+        "obsState",
+        ObsState.CONFIGURING,
+    )
