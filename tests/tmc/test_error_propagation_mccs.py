@@ -12,7 +12,7 @@ from ska_tango_testing.mock.placeholders import Anything
 from tango import DevState
 
 from tests.resources.test_harness.constant import (
-    INTERMEDIATE_CONFIGURING_STATE_DEFECT,
+    ERROR_PROPAGATION_DEFECT,
     mccs_subarray_leaf_node,
 )
 from tests.resources.test_harness.utils.enums import SimulatorDeviceType
@@ -86,7 +86,7 @@ def invoke_configure_command_with_mccs_defective(
         "configure_low", command_input_factory
     )
     # Inducing Fault
-    mccs_subarray_sim.SetDefective(INTERMEDIATE_CONFIGURING_STATE_DEFECT)
+    mccs_subarray_sim.SetDefective(ERROR_PROPAGATION_DEFECT)
 
     _, unique_id = subarray_node_low.execute_transition(
         "Configure", configure_input_str
