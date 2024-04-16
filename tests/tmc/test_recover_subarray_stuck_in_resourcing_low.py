@@ -298,7 +298,8 @@ def test_abort_with_mccs_in_empty(
     )
     assert (
         "Exception occurred on the following devices:"
-        + " ska_low/tm_subarray_node/1"
+        + " ska_low/tm_subarray_node/1: "
+        + "Timeout has occurred, command failed"
         in assertion_data["attribute_value"][1]
     )
     assert event_recorder.has_change_event_occurred(
@@ -327,7 +328,12 @@ def test_abort_with_mccs_in_empty(
         ObsState.EMPTY,
     )
     mccs_sim.SetDefective(json.dumps({"enabled": False}))
-
+    assert wait_and_validate_device_attribute_value(
+        subarray_node_low.subarray_devices["mccs_subarray"],
+        "defective",
+        json.dumps({"enabled": False}),
+        is_json=True,
+    )
     subarray_node_low.subarray_node.Abort()
 
     assert event_recorder.has_change_event_occurred(
