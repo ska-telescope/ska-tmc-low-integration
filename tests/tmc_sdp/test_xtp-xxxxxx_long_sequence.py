@@ -73,6 +73,11 @@ def assign_resources_to_subarray(
         "longRunningCommandResult",
         (unique_id[0], str(ResultCode.OK.value)),
     )
+    assert event_recorder.has_change_event_occurred(
+        central_node_low.subarray_node,
+        "obsState",
+        ObsState.IDLE,
+    )
 
 
 @when(
