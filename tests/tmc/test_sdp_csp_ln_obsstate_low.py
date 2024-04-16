@@ -25,7 +25,7 @@ from tests.resources.test_support.constant_low import (
 
 @pytest.mark.skip(reason="Unskip after repository setup")
 @pytest.mark.SKA_low
-def test_csp_sdp_ln_obstate_low(json_factory, change_event_callbacks):
+def test_csp_sdp_ln_obstate_low(json_factory):
     """Verify timeout exception raised when csp set to defective."""
     assign_json = json_factory("command_assign_resource_low")
     release_json = json_factory("command_release_resource_low")
@@ -86,6 +86,7 @@ def test_csp_sdp_ln_obstate_low(json_factory, change_event_callbacks):
         )
 
         LOGGER.info("Tests complete.")
+    # pylint: disable=broad-exception-caught
     except Exception as e:
         LOGGER.exception("The exception is: %s", e)
         tear_down(release_json, **ON_OFF_DEVICE_COMMAND_DICT)

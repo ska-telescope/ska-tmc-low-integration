@@ -76,7 +76,7 @@ def test_assign_sn_entrypoint_low(json_factory):
 
 @pytest.mark.skip(reason="This test case needs pods deletion")
 @pytest.mark.SKA_low
-def test_release_sn_entrypoint_low(json_factory):
+def test_release_sn_entrypoint_low():
     """ReleaseResources is executed while pods are deleted."""
 
     tmcsubarraynode1 = DeviceProxy(tmc_subarraynode1)

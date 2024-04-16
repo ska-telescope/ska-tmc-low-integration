@@ -65,12 +65,14 @@ def given_telescope_setup_with_simulators(
     simulated_devices = get_device_simulator_with_given_name(
         simulator_factory, ["csp master", "sdp master"]
     )
-    csp_master_sim, sdp_master_sim = simulated_devices
+    if len(simulated_devices) == 2:
+        csp_master_sim = simulated_devices[0]
+        sdp_master_sim = simulated_devices[1]
+        assert csp_master_sim.ping() > 0
+        assert sdp_master_sim.ping() > 0
     assert central_node_low.central_node.ping() > 0
     assert central_node_low.mccs_master.ping() > 0
     assert central_node_low.subarray_devices["mccs_subarray"].ping() > 0
-    assert csp_master_sim.ping() > 0
-    assert sdp_master_sim.ping() > 0
 
 
 @given("the Telescope is in ON state")

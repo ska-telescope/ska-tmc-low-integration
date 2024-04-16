@@ -26,10 +26,7 @@ def given_the_sut(central_node_low, subarray_node_low, simulator_factory):
         simulator_factory: fixture for SimulatorFactory class,
         which provides simulated subarray and master devices
     """
-    (
-        _,
-        sdp_master_sim,
-    ) = get_master_device_simulators(simulator_factory)
+    (_, sdp_master_sim, _) = get_master_device_simulators(simulator_factory)
 
     assert central_node_low.central_node.ping() > 0
     assert central_node_low.sdp_master.ping() > 0

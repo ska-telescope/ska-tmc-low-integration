@@ -26,6 +26,7 @@ from tests.resources.test_harness.helpers import SIMULATED_DEVICES_DICT
 from tests.resources.test_harness.utils.common_utils import JsonFactory
 from tests.resources.test_harness.utils.sync_decorators import (
     sync_abort,
+    sync_assign_resources,
     sync_release_resources,
     sync_restart,
     sync_set_to_off,
@@ -53,6 +54,7 @@ class CentralNodeWrapperLow(object):
             "sdp_subarray": DeviceProxy(low_sdp_subarray1),
             "mccs_subarray": DeviceProxy(mccs_subarray1),
         }
+        self.subarray_device_by_id: dict = {"1": self.subarray_devices}
         self.csp_subarray1 = DeviceProxy(low_csp_subarray1)
         self.sdp_subarray1 = DeviceProxy(low_sdp_subarray1)
         self.mccs_subarray1 = DeviceProxy(mccs_subarray1)
@@ -89,6 +91,19 @@ class CentralNodeWrapperLow(object):
         self.mccs_subarray_leaf_node = DeviceProxy(
             f"ska_low/tm_leaf_node/mccs_subarray{subarray_id}"
         )
+        self.subarray_device_by_id[subarray_id] = self.subarray_devices
+        self.subarray_device_by_id[subarray_id].update(
+            {
+                "subarray_node": self.subarray_node,
+                "csp_subarray_leaf_node": self.csp_subarray_leaf_node,
+                "sdp_subarray_leaf_node": self.sdp_subarray_leaf_node,
+                "mccs_subarray_leaf_node": self.mccs_subarray_leaf_node,
+            }
+        )
+
+    def get_subarray_devices_by_id(self, subarray_id):
+        subarray_id = "{:02d}".format(int(subarray_id))
+        return self.subarray_device_by_id[subarray_id]
 
     @property
     def state(self) -> DevState:
@@ -310,6 +325,7 @@ class CentralNodeWrapperLow(object):
             self.central_node.TelescopeStandBy()
         sleep(0.15)
 
+    @sync_assign_resources(device_dict=device_dict_low)
     def store_resources(self, assign_json: str):
         """Invoke Assign Resource command on subarray Node
         Args:

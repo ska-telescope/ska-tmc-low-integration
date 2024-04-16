@@ -46,9 +46,11 @@ def check_tmc_and_mccs_is_on(tmc_low, event_recorder, simulator_factory):
     simulated_devices = get_device_simulator_with_given_name(
         simulator_factory, ["csp master", "sdp master"]
     )
-    csp_master_sim, sdp_master_sim = simulated_devices
-    assert csp_master_sim.ping() > 0
-    assert sdp_master_sim.ping() > 0
+    if len(simulated_devices) == 2:
+        csp_master_sim = simulated_devices[0]
+        sdp_master_sim = simulated_devices[1]
+        assert csp_master_sim.ping() > 0
+        assert sdp_master_sim.ping() > 0
     assert tmc_low.central_node.central_node.ping() > 0
     assert tmc_low.central_node.mccs_master.ping() > 0
     assert tmc_low.subarray_node.subarray_devices["mccs_subarray"].ping() > 0

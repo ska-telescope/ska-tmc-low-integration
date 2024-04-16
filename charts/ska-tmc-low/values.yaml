@@ -88,14 +88,14 @@ cspmasterleafnode:
   image:
     registry: artefact.skao.int
     image: ska-tmc-cspleafnodes
-    tag: 0.15.2
+    tag: 0.15.3
     pullPolicy: IfNotPresent
 
 cspsubarrayleafnode:
   image:
     registry: artefact.skao.int
     image: ska-tmc-cspleafnodes
-    tag: 0.15.2
+    tag: 0.15.3
     pullPolicy: IfNotPresent
 
 
@@ -148,8 +148,8 @@ deviceServers:
   cspsubarrayleafnode:
     enabled: true
     file: "data/cspsubarrayleafnode.yaml"
-    DelayCadence: 300
-    DelayValidityPeriod: 600
+    DelayCadence: 300.0
+    DelayValidityPeriod: 600.0
     DelayModelTimeInAdvance: 600
 
   mccsmasterleafnode:

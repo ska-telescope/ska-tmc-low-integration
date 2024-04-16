@@ -41,6 +41,12 @@ This project is integration of the TMC components for the `Square Kilometre Arra
    developer_guide/testing/pair_wise_test
    developer_guide/testing/test_harness
 
+.. toctree::
+   :maxdepth: 1
+   :caption: TMC Low Recovery
+
+   reovering_tmc/recovery
+
 Indices and tables
 ------------------
 * :ref:`genindex`

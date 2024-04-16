@@ -141,7 +141,7 @@ def invalid_command_rejection(invalid_json):
 
 
 @then("TMC subarray remains in IDLE obsState")
-def tmc_status(event_recorder, subarray_node_low):
+def tmc_status(subarray_node_low):
     """Ensure that the TMC subarray remains in the 'IDLE' observation state
     after rejection."""
     assert subarray_node_low.subarray_node.obsState == ObsState.IDLE
@@ -152,14 +152,14 @@ def tmc_status(event_recorder, subarray_node_low):
 command for the subarray with a valid json"
 )
 def tmc_accepts_next_commands(
-    subarray_node_low, command_input_factory, event_recorder, central_node_low
+    subarray_node_low, command_input_factory, event_recorder
 ):
     """Execute the Configure command with a valid JSON and verify successful
     execution."""
     configure_json = prepare_json_args_for_commands(
         "configure_low", command_input_factory
     )
-    LOGGER.info(f"Input argin for Configure: {configure_json}")
+    LOGGER.info("Input argin for Configure:%s", configure_json)
 
     # Invoke Configure() Command on TMC
     LOGGER.info("Invoking Configure command on TMC SubarrayNode")
