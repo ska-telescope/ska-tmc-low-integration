@@ -1,7 +1,7 @@
 Feature:  TMC Low executes long running sequences with real sdp devices
     Scenario Outline: TMC Low executes configure-scan sequence of commands successfully
 
-    Given Telescope is ON state
+    Given the Telescope is in ON state
     When I assign resources to TMC SubarrayNode <subarray_id>
     And configure and scan TMC SubarrayNode <subarray_id> for each <scan_types> and <scan_ids>
     And end the configuration on TMC SubarrayNode <subarray_id>
