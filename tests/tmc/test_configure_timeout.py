@@ -1,4 +1,4 @@
-"""Test Error Propagation and Timeout for Configure command."""
+"""Test Timeout for Configure command for SDP, CSP and MCCS Leaf Nodes."""
 import pytest
 from ska_control_model import ObsState
 from ska_tango_testing.mock.placeholders import Anything
