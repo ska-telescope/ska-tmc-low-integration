@@ -1,5 +1,4 @@
 Feature:  TMC Low executes long running sequences with real sdp devices
-    @tmc_sdp @Team_SAHYADRI @XTP-35244 @XTP-29381
     Scenario Outline: TMC Low executes configure-scan sequence of commands successfully
 
     Given Telescope is ON state
