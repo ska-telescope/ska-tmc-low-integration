@@ -121,7 +121,7 @@ class TestAssignCommandNotAllowedPropagation:
         )
         ERROR_MESSAGE = (
             "Exception occurred on the following devices:"
-            + f"{low_sdp_subarray_leaf_node}:"
+            + f" {low_sdp_subarray_leaf_node}:"
             " ska_tmc_common.exceptions.CommandNotAllowed:"
             " Command is not allowed\n\n"
         )
