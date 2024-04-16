@@ -91,9 +91,6 @@ class TestAssignCommandNotAllowedPropagation:
         sdp_subarray_sim = simulator_factory.get_or_create_simulator_device(
             SimulatorDeviceType.LOW_SDP_DEVICE
         )
-        mccs_subarray_sim = simulator_factory.get_or_create_simulator_device(
-            SimulatorDeviceType.MCCS_SUBARRAY_DEVICE
-        )
 
         # Event Subscriptions
         event_recorder.subscribe_event(
@@ -105,7 +102,6 @@ class TestAssignCommandNotAllowedPropagation:
         event_recorder.subscribe_event(
             central_node_low.central_node, "longRunningCommandResult"
         )
-        event_recorder.subscribe_event(mccs_subarray_sim, "obsState")
         event_recorder.subscribe_event(sdp_subarray_sim, "obsState")
         # Preparing input arguments
         assign_input_json = prepare_json_args_for_centralnode_commands(
@@ -126,8 +122,9 @@ class TestAssignCommandNotAllowedPropagation:
         )
         ERROR_MESSAGE = (
             "Exception occurred on the following devices:"
-            "\nska_low/tm_leaf_node/sdp_subarray01: ska_tmc_common."
-            "exceptions.CommandNotAllowed: Command is not allowed"
+            " ska_low/tm_leaf_node/sdp_subarray01:"
+            " ska_tmc_common.exceptions.CommandNotAllowed:"
+            " Command is not allowed\n\n"
         )
         assertion_data = event_recorder.has_change_event_occurred(
             central_node_low.central_node,
