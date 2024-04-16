@@ -4,7 +4,11 @@ import pytest
 from ska_tango_testing.mock.placeholders import Anything
 from tango import DevState
 
-from tests.resources.test_harness.constant import COMMAND_NOT_ALLOWED_DEFECT
+from tests.resources.test_harness.constant import (
+    COMMAND_NOT_ALLOWED_DEFECT,
+    low_sdp_subarray_leaf_node,
+    mccs_master_leaf_node,
+)
 from tests.resources.test_harness.utils.enums import SimulatorDeviceType
 from tests.resources.test_support.common_utils.result_code import ResultCode
 from tests.resources.test_support.common_utils.tmc_helpers import (
@@ -117,7 +121,7 @@ class TestAssignCommandNotAllowedPropagation:
         )
         ERROR_MESSAGE = (
             "Exception occurred on the following devices:"
-            " ska_low/tm_leaf_node/sdp_subarray01:"
+            + f"{low_sdp_subarray_leaf_node}:"
             " ska_tmc_common.exceptions.CommandNotAllowed:"
             " Command is not allowed\n\n"
         )
@@ -187,7 +191,7 @@ class TestAssignCommandNotAllowedPropagation:
         )
         assert (
             "Exception occurred on the following devices:"
-            + " ska_low/tm_leaf_node/mccs_master:"
+            + f" {mccs_master_leaf_node}:"
             in assertion_data["attribute_value"][1]
         )
         assert (

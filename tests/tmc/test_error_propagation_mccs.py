@@ -13,6 +13,7 @@ from tango import DevState
 
 from tests.resources.test_harness.constant import (
     ERROR_PROPAGATION_DEFECT,
+    mccs_subarray1,
     mccs_subarray_leaf_node,
 )
 from tests.resources.test_harness.utils.enums import SimulatorDeviceType
@@ -124,8 +125,9 @@ def configure_command_reports_error_propagate(
     )
     assert (
         "Exception occurred on the following devices:"
-        + " ska_low/tm_leaf_node/mccs_subarray01:"
-        + " Exception occurred on device: low-mccs/subarray/01:"
+        + f" {mccs_subarray_leaf_node}:"
+        + " Exception occurred on device:"
+        + f" {mccs_subarray1}:"
         + " . Event data is: [3, "
         "]\n" in assertion_data["attribute_value"][1]
     )
