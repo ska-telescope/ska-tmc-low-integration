@@ -3,9 +3,10 @@
 import json
 
 import pytest
-from pytest_bdd import parsers, scenario, then, when, given
+from pytest_bdd import given, parsers, scenario, then, when
 from ska_tango_base.commands import ResultCode
 from ska_tango_base.control_model import ObsState
+from tango import DevState
 
 from tests.resources.test_harness.helpers import (
     prepare_json_args_for_centralnode_commands,
@@ -30,6 +31,7 @@ def test_tmc_sdp_long_sequences():
     TMC Low executes configure-scan sequence of commands successfully
     """
 
+
 @given("the Telescope is in ON state")
 def telescope_is_in_on_state(central_node_low, event_recorder):
     """Move the telescope to the ON state and verify the state change.
@@ -50,6 +52,7 @@ def telescope_is_in_on_state(central_node_low, event_recorder):
         "telescopeState",
         DevState.ON,
     )
+
 
 @when(parsers.parse("I assign resources to TMC SubarrayNode {subarray_id}"))
 def assign_resources_to_subarray(
