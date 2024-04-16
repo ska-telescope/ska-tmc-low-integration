@@ -187,7 +187,7 @@ def test_abort_with_sdp_in_empty(
         (unique_id[0], Anything),
     )
     assert (
-        "Exception occurred on the following devices:\n"
+        "Exception occurred on the following devices: "
         f"ska_low/tm_leaf_node/{defective_device}01"
         in assertion_data["attribute_value"][1]
     )
