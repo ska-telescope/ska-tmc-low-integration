@@ -1,6 +1,6 @@
 """
-Test case to verify error propagation functionality for the
- TMC-MCCS Configure command.
+Test case to verify error propagation functionality for the Configure command
+ of Mccsleafnodes.
 This test case verifies that when the MCCS Subarray is identified as defective,
  and the Configure command is executed on the TMC Low, the Configure command
    reports an error.
