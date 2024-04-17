@@ -9,6 +9,9 @@ Feature:  TMC Low executes long running sequences with real sdp devices
     Then TMC SubarrayNode transitions to EMPTY ObsState
 
     Examples:
-        |subarray_id   |scan_types         |scan_ids       |
-        |1             |target:a           |1              |
-        |1             |science_A          |2              |
+        |subarray_id   | scan_types                                  | scan_ids    |
+        |1             |["science_A"]                                |["1"]        |
+        |1             |["science_A" , "target:a"]                   |["1","2"]    |
+        |1             |["science_A" , "science_A"]                  |["1","2"]    |
+        |1             |["science_A" , "science_A"]                  |["1","1"]    |
+        |1             |["science_A" , "target:a","callibration_B" ]|["1","2","3"]|
