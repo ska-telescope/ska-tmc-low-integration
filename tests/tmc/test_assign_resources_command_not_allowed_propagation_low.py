@@ -28,8 +28,8 @@ class TestAssignCommandNotAllowedPropagation:
         command_input_factory,
         simulator_factory,
     ):
-        """Verify command not allowed exception propagation from CSPLeafNodes
-        ."""
+        """Verify command not allowed exception propagation
+        from CSPLeafNodes."""
         csp_subarray_sim = simulator_factory.get_or_create_simulator_device(
             SimulatorDeviceType.LOW_CSP_DEVICE
         )
@@ -85,8 +85,8 @@ class TestAssignCommandNotAllowedPropagation:
         command_input_factory,
         simulator_factory,
     ):
-        """Verify command not allowed exception propagation from SDPLeafNodes
-        ."""
+        """Verify command not allowed exception propagation
+        from SDPLeafNodes."""
         sdp_subarray_sim = simulator_factory.get_or_create_simulator_device(
             SimulatorDeviceType.LOW_SDP_DEVICE
         )
@@ -145,8 +145,8 @@ class TestAssignCommandNotAllowedPropagation:
         command_input_factory,
         simulator_factory,
     ):
-        """Verify command not allowed exception propagation from MccsLeafNodes
-        ."""
+        """Verify command not allowed exception propagation
+        from MccsLeafNodes."""
         mccs_subarray_sim = simulator_factory.get_or_create_simulator_device(
             SimulatorDeviceType.LOW_SDP_DEVICE
         )

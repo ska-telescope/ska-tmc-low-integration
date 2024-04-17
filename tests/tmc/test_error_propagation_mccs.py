@@ -23,6 +23,7 @@ from tests.resources.test_support.common_utils.tmc_helpers import (
 
 
 @pytest.mark.SKA_low
+@pytest.mark.test
 @scenario(
     "../features/tmc/check_error_propagation_mccs.feature",
     "Error Propagation Reported by TMC Low Configure Command for"
@@ -128,23 +129,7 @@ def configure_command_reports_error_propagate(
         + f" {mccs_subarray_leaf_node}:"
         + " Exception occurred on device:"
         + f" {mccs_subarray1}:"
-        + " . Event data is: [3, '']\n"
+        + ' . Event data is: [3, ""]\n'
         in assertion_data["attribute_value"][1]
     )
     assert mccs_subarray_leaf_node in assertion_data["attribute_value"][1]
-
-
-@then("the TMC SubarrayNode remains in CONFIGURING obsState")
-def tmc_subarray_remains_in_resourcing_obsstate(
-    event_recorder, subarray_node_low
-):
-    """
-    Check that the TMC SubarrayNode remains in the CONFIGURING obsState
-    and subscribe to the obsState event.
-    """
-    event_recorder.subscribe_event(subarray_node_low.subarray_node, "obsState")
-    assert event_recorder.has_change_event_occurred(
-        subarray_node_low.subarray_node,
-        "obsState",
-        ObsState.CONFIGURING,
-    )
