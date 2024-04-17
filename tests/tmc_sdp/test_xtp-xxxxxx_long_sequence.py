@@ -1,6 +1,7 @@
 """Test TMC Low executes configure-scan sequence of commands successfully"""
 
 import json
+import time
 
 import pytest
 from pytest_bdd import given, parsers, scenario, then, when
@@ -21,6 +22,7 @@ from tests.resources.test_harness.helpers import (
 # )
 
 
+@pytest.mark.aki
 @pytest.mark.tmc_sdp1
 @scenario(
     "../features/tmc_sdp/xtp_xxxxx_tmc_sdp_long_sequence.feature",
@@ -56,15 +58,16 @@ def telescope_is_in_on_state(central_node_low, event_recorder):
 
 @when(parsers.parse("I assign resources to TMC SubarrayNode {subarray_id}"))
 def assign_resources_to_subarray(
-    central_node_low, command_input_factory, event_recorder
+    central_node_low, subarray_node_low, command_input_factory, event_recorder
 ):
     """Method to assign resources to subarray."""
     event_recorder.subscribe_event(
         central_node_low.central_node, "longRunningCommandResult"
     )
+    event_recorder.subscribe_event(subarray_node_low.subarray_node, "obsState")
 
     input_json = prepare_json_args_for_centralnode_commands(
-        "assign_resources_low", command_input_factory
+        "assign_resources_low_multiple_scan", command_input_factory
     )
     input_json = update_eb_pb_ids(input_json)
     _, unique_id = central_node_low.store_resources(input_json)
@@ -74,10 +77,13 @@ def assign_resources_to_subarray(
         (unique_id[0], str(ResultCode.OK.value)),
     )
     assert event_recorder.has_change_event_occurred(
-        central_node_low.subarray_node,
+        subarray_node_low.subarray_node,
         "obsState",
         ObsState.IDLE,
     )
+
+
+time.sleep(3)
 
 
 @when(
@@ -89,10 +95,10 @@ def assign_resources_to_subarray(
 def execute_configure_scan_sequence(
     subarray_node_low,
     event_recorder,
-    scan_types,
     command_input_factory,
-    subarray_id,
+    scan_types,
     scan_ids,
+    subarray_id,
 ):
     """A method to invoke Configure command"""
     event_recorder.subscribe_event(
@@ -111,6 +117,9 @@ def execute_configure_scan_sequence(
         "longRunningCommandResult",
         (unique_id[0], str(ResultCode.OK.value)),
     )
+    event_recorder.subscribe_event(
+        subarray_node_low.subarray_devices["sdp_subarray"], "obsState"
+    )
 
     assert event_recorder.has_change_event_occurred(
         subarray_node_low.subarray_devices["sdp_subarray"],
@@ -126,7 +135,9 @@ def execute_configure_scan_sequence(
 
     subarray_node_low.set_subarray_id(subarray_id)
     subarray_node_low.store_scan_data(json.dumps(scan_json))
-
+    event_recorder.subscribe_event(
+        subarray_node_low.subarray_devices["sdp_subarray"], "scanID"
+    )
     assert event_recorder.has_change_event_occurred(
         subarray_node_low.subarray_devices["sdp_subarray"],
         "scanID",
@@ -143,13 +154,16 @@ def execute_configure_scan_sequence(
         "obsState",
         ObsState.SCANNING,
     )
-
-
-@when(
-    parsers.parse(
-        "And end the configuration on TMC SubarrayNode {subarray_id}"
+    subarray_node_low.remove_scan_data()
+    # wait for scan duration to get over
+    assert event_recorder.has_change_event_occurred(
+        subarray_node_low.subarray_devices["sdp_subarray"],
+        "obsState",
+        ObsState.READY,
     )
-)
+
+
+@when(parsers.parse("end the configuration on TMC SubarrayNode {subarray_id}"))
 def invoke_end(subarray_node_low, event_recorder):
     """A method to invoke End command"""
     _, unique_id = subarray_node_low.end_observation()
@@ -183,9 +197,7 @@ def release_resources_to_subarray(
     )
 
 
-@then(
-    parsers.parse("TMC subarray {subarray_id} obsState transitions to EMPTY")
-)
+@then("TMC SubarrayNode transitions to EMPTY ObsState")
 def check_tmc_is_in_empty_obsstate(central_node_low, event_recorder):
     """Method to check TMC is is in EMPTY obsstate."""
     assert event_recorder.has_change_event_occurred(

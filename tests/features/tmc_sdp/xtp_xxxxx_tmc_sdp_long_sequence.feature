@@ -6,8 +6,9 @@ Feature:  TMC Low executes long running sequences with real sdp devices
     And configure and scan TMC SubarrayNode <subarray_id> for each <scan_types> and <scan_ids>
     And end the configuration on TMC SubarrayNode <subarray_id>
     And release the resources on TMC SubarrayNode <subarray_id>
-    Then TMC SubarrayNode <subarray_id> transitions to EMPTY ObsState
+    Then TMC SubarrayNode transitions to EMPTY ObsState
 
     Examples:
-            |subarray_id   | scan_ids      | scan_types    |
-            |1             |["1"]          |["science_A"]  |
+        |subarray_id   |scan_types         |scan_ids       |
+        |1             |target:a           |1              |
+        |1             |science_A          |2              |
