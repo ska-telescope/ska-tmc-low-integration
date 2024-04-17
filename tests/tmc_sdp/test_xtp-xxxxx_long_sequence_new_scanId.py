@@ -16,7 +16,7 @@ from tests.resources.test_harness.utils.common_utils import (
 )
 
 
-@pytest.mark.tmc_sdp1
+@pytest.mark.tmc_sdp
 @scenario(
     "../features/tmc_sdp/xtp_xxxxx_tmc_sdp_long_sequence.feature",
     "TMC Low executes multiple scan with same configuration successfully",
