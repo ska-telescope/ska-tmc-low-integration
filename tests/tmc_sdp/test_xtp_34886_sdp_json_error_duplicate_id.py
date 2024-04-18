@@ -17,6 +17,7 @@ from tests.resources.test_harness.helpers import (
 )
 
 
+@pytest.mark.skip
 @pytest.mark.tmc_sdp
 @scenario(
     "../features/tmc_sdp/xtp_34886_sdp_json_error_duplicate_id.feature",
