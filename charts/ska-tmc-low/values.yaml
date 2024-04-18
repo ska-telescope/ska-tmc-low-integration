@@ -101,14 +101,14 @@ cspsubarrayleafnode:
 
 mccsmasterleafnode:
   image:
-    registry: artefact.skao.int
+    registry: registry.gitlab.com/ska-telescope/ska-tmc/ska-tmc-subarraynode
     image: ska-tmc-mccsleafnodes
     tag: 0.3.0-dev.c116617dc
     pullPolicy: IfNotPresent
 
 mccssubarrayleafnode:
   image:
-    registry: artefact.skao.int
+    registry: registry.gitlab.com/ska-telescope/ska-tmc/ska-tmc-subarraynode
     image: ska-tmc-mccsleafnodes
     tag: 0.3.0-dev.c116617dc
     pullPolicy: IfNotPresent
