@@ -13,6 +13,7 @@ from tests.resources.test_harness.helpers import (
     check_subarray_instance,
     prepare_json_args_for_centralnode_commands,
     prepare_json_args_for_commands,
+    update_eb_pb_ids,
     update_scan_id,
     update_scan_type,
 )
@@ -114,8 +115,8 @@ def reassign_resources(
     assign_input_json = prepare_json_args_for_centralnode_commands(
         "assign_resources_low_multiple_scan", command_input_factory
     )
-
-    assign_str = json.loads(assign_input_json)
+    input_json = update_eb_pb_ids(assign_input_json)
+    assign_str = json.loads(input_json)
     # Here we are adding this to get an event of ObsState CONFIGURING from
     # SDP Subarray
     assign_str["sdp"]["processing_blocks"][0]["parameters"][

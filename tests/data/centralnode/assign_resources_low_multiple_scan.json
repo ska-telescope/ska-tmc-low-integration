@@ -41,7 +41,7 @@
         "receive_nodes": 1
       },
       "execution_block": {
-        "eb_id": "eb-test-20220916-00000",
+        "eb_id": "eb-test-20220918-00000",
         "context": {
   
         },
@@ -167,7 +167,7 @@
       },
       "processing_blocks": [
         {
-          "pb_id": "pb-test-20220916-00000",
+          "pb_id": "pb-test-20220918-00000",
           "script": {
             "kind": "realtime",
             "name": "test-receive-addresses",
