@@ -124,7 +124,6 @@ stop-k8s-test-tmc-with-csp:
     - stop-k8s-test
   variables:
     KUBE_NAMESPACE: 'ci-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-csp-low'
-  when: on_success
 
 k8s-test-tmc-with-sdp:
   tags:
@@ -156,7 +155,6 @@ stop-k8s-test-tmc-with-sdp:
     - stop-k8s-test
   variables:
     KUBE_NAMESPACE: 'ci-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-tmc-sdp'
-  when: on_success
 
 k8s-test-tmc-with-mccs:
   tags:
@@ -180,9 +178,6 @@ stop-k8s-test-tmc-with-mccs:
     - stop-k8s-test
   variables:
     KUBE_NAMESPACE: 'ci-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-mccs-low'
-  when: 
-    - on_success
-    - manual
 
 deploy-integration:
   rules:
