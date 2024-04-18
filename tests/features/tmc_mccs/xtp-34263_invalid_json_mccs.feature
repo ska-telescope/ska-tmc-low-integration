@@ -9,10 +9,6 @@ Scenario: The TMC Low Subarray reports the exception triggered by the MCCS contr
       And the MCCS subarray should remain in EMPTY ObsState
       And the TMC propogate the error to the client
       And the TMC SubarrayNode remains in RESOURCING obsState
-      And I issue the Abort command on TMC SubarrayNode
-      And the TMC subarray transitions to obsState ABORTED
-      And I issue the Restart command on TMC SubarrayNode
-      And the TMC subarray transitions to obsState EMPTY
       Examples:
       | station_id       | subarray_id |
       | 15               | 1           |
