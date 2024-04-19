@@ -23,7 +23,6 @@ from tests.resources.test_support.common_utils.tmc_helpers import (
 
 
 @pytest.mark.SKA_low
-@pytest.mark.test
 @scenario(
     "../features/tmc/check_error_propagation_mccs.feature",
     "Error Propagation Reported by TMC Low Configure Command for"
