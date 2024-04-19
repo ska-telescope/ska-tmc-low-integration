@@ -9,20 +9,6 @@ from ska_control_model import ObsState
 from tests.resources.test_harness.utils.wait_helpers import Waiter
 from tests.resources.test_support.common_utils.result_code import ResultCode
 
-
-def check_sdp_obsstate_in_ready(event_recorder, subarray_node) -> None:
-    """
-    SDP does not go to CONFIGURING in each CONFIGURE command
-    except very first CONFIGURE command after Assign .
-
-    """
-    assert event_recorder.has_change_event_occurred(
-        subarray_node.subarray_devices["sdp_subarray"],
-        "obsState",
-        ObsState.READY,
-    )
-
-
 def check_scan_successful(
     subarray_node, event_recorder, scan_id, unique_id
 ) -> None:
@@ -97,7 +83,7 @@ def check_configure_successful(
     """
     the_waiter = Waiter()
     the_waiter.set_wait_for_specific_obsstate(
-        "READY", [subarray_node.subarray_node["sdp_subarray"]]
+        "READY", [subarray_node.subarray_devices["sdp_subarray"]]
     )
     the_waiter.wait(100)
 

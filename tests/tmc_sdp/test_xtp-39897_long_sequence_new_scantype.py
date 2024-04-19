@@ -21,7 +21,6 @@ from tests.resources.test_harness.helpers import (
 from tests.resources.test_harness.utils.common_utils import (
     check_configure_successful,
     check_scan_successful,
-    check_sdp_obsstate_in_ready,
 )
 
 
@@ -73,7 +72,11 @@ def execute_configure_scan_sequence(
         )
 
         if configure_cycle == "initial":
-            check_sdp_obsstate_in_ready(event_recorder, subarray_node_low)
+            assert event_recorder.has_change_event_occurred(
+                subarray_node_low.subarray_devices["sdp_subarray"],
+                "obsState",
+                ObsState.READY,
+            )
             configure_cycle = "Next"
 
         check_configure_successful(
@@ -182,7 +185,11 @@ def execute_new_configure_scan_sequence(
             configure_json
         )
         if configure_cycle == "initial":
-            check_sdp_obsstate_in_ready(event_recorder, subarray_node_low)
+            assert event_recorder.has_change_event_occurred(
+                subarray_node_low.subarray_devices["sdp_subarray"],
+                "obsState",
+                ObsState.READY,
+            )
             configure_cycle = "Next"
 
         check_configure_successful(
