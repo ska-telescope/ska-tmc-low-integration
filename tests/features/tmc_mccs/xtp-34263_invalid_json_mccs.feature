@@ -16,7 +16,7 @@ Feature: Receive data from LFAA
 	#\\Note: Paragraph references are to the ICD.
 
 	
-	@XTP-34263 @XTP-34276 @XTP-28348 @Team_HIMALAYA
+	@XTP-34263 @XTP-34276 @Team_HIMALAYA
 	Scenario: The TMC Low Subarray reports the exception triggered by the MCCS controller when it encounters an invalid station ID.
 		Given a Telescope consisting of TMC-MCCS, emulated SDP and emulated CSP
 		And the Telescope is in the ON state

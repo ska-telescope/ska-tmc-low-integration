@@ -16,7 +16,7 @@ Feature: Receive data from LFAA
 	#\\Note: Paragraph references are to the ICD.
 
 	
-	@XTP-35236 @XTP-34276 @XTP-28348 @Team_HIMALAYA
+	@XTP-35236 @XTP-34276 @Team_HIMALAYA
 	Scenario: MCCS Controller report the error when one of the subarray beam is unavailable
 		Given a Telescope consisting of TMC,MCCS,emulated SDP and emulated CSP
 		And the telescope is in ON state

@@ -10,18 +10,12 @@ from tests.resources.test_harness.utils.wait_helpers import Waiter
 from tests.resources.test_support.common_utils.result_code import ResultCode
 
 
-def check_obsstate_sdp_in_first_configure(
-    event_recorder, subarray_node
-) -> None:
+def check_sdp_obsstate_in_ready(event_recorder, subarray_node) -> None:
     """
     SDP does not go to CONFIGURING in each CONFIGURE command
     except very first CONFIGURE command after Assign .
 
     """
-    wait_for_device_status_ready(
-        subarray_node.subarray_devices["sdp_subarray"]
-    )
-
     assert event_recorder.has_change_event_occurred(
         subarray_node.subarray_devices["sdp_subarray"],
         "obsState",
@@ -43,47 +37,55 @@ def check_scan_successful(
     """
     # Faced a delay while testing , hence adding waiter here.
 
-    wait_for_device_status_scanning(subarray_node.subarray_node)
+    the_waiter = Waiter()
+    the_waiter.set_wait_for_specific_obsstate(
+        "SCANNING", [subarray_node.subarray_node]
+    )
+    the_waiter.wait(200)
 
     assert event_recorder.has_change_event_occurred(
         subarray_node.subarray_node,
         "obsState",
         ObsState.SCANNING,
-        lookahead=20,
+        lookahead=10,
     )
     assert event_recorder.has_change_event_occurred(
         subarray_node.subarray_devices["sdp_subarray"],
         "obsState",
         ObsState.SCANNING,
-        lookahead=20,
+        lookahead=10,
     )
 
     assert event_recorder.has_change_event_occurred(
         subarray_node.subarray_devices["sdp_subarray"],
         "scanID",
         int(scan_id),
-        lookahead=20,
+        lookahead=10,
     )
 
-    wait_for_device_status_ready(
-        subarray_node.subarray_devices["sdp_subarray"]
+    the_waiter.set_wait_for_specific_obsstate(
+        "READY", [subarray_node.subarray_node]
     )
+    the_waiter.wait(100)
     assert event_recorder.has_change_event_occurred(
         subarray_node.subarray_devices["sdp_subarray"],
         "obsState",
         ObsState.READY,
-        lookahead=20,
+        lookahead=10,
     )
 
-    wait_for_device_status_ready(subarray_node.subarray_node)
+    the_waiter.set_wait_for_specific_obsstate(
+        "READY", [subarray_node.subarray_node]
+    )
+    the_waiter.wait(100)
     assert event_recorder.has_change_event_occurred(
-        subarray_node.subarray_node, "obsState", ObsState.READY, lookahead=20
+        subarray_node.subarray_node, "obsState", ObsState.READY, lookahead=10
     )
     assert event_recorder.has_change_event_occurred(
         subarray_node.subarray_node,
         "longRunningCommandResult",
         (unique_id[0], str(int(ResultCode.OK))),
-        lookahead=20,
+        lookahead=10,
     )
 
 
@@ -93,56 +95,34 @@ def check_configure_successful(
     """
     Adds check to verify if configure command is successful
     """
-    wait_for_device_status_ready(
-        subarray_node.subarray_devices["sdp_subarray"]
+    the_waiter = Waiter()
+    the_waiter.set_wait_for_specific_obsstate(
+        "READY", [subarray_node.subarray_node["sdp_subarray"]]
     )
+    the_waiter.wait(100)
 
-    wait_for_device_status_ready(subarray_node.subarray_node)
+    the_waiter.set_wait_for_specific_obsstate(
+        "READY", [subarray_node.subarray_node]
+    )
+    the_waiter.wait(100)
     assert event_recorder.has_change_event_occurred(
         subarray_node.subarray_node, "obsState", ObsState.READY, lookahead=10
     )
-
-    # For same configuration scantype no event is pushed
-    # https://gitlab.com/ska-telescope/sdp/ska-sdp-lmc/-/blob/master/src/ska_sdp_lmc/subarray/device.py#L548
 
     if scan_type != processed_scan_type:
         assert event_recorder.has_change_event_occurred(
             subarray_node.subarray_devices["sdp_subarray"],
             "scanType",
             scan_type,
-            lookahead=20,
+            lookahead=10,
         )
 
     assert event_recorder.has_change_event_occurred(
         subarray_node.subarray_node,
         "longRunningCommandResult",
         (unique_id[0], str(int(ResultCode.OK))),
-        lookahead=20,
+        lookahead=10,
     )
-
-
-def wait_for_device_status_ready(device_name: str) -> None:
-    """
-    Checks if given device is in READY obs-state
-
-     :param device_name: device name
-     :type device_name: str
-    """
-    the_waiter = Waiter()
-    the_waiter.set_wait_for_specific_obsstate("READY", [device_name])
-    the_waiter.wait(100)
-
-
-def wait_for_device_status_scanning(device_name: str) -> None:
-    """
-    Checks if given device is in SCANNING obs-state
-
-    :param device_name: device name
-    :type device_name: str
-    """
-    the_waiter = Waiter()
-    the_waiter.set_wait_for_specific_obsstate("SCANNING", [device_name])
-    the_waiter.wait(200)
 
 
 def get_subarray_input_json(slug):

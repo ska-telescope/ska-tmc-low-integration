@@ -3,6 +3,7 @@ TMC Low executes multiple scans with different resources and configurations
 """
 
 import json
+from ast import literal_eval
 
 import pytest
 from pytest_bdd import parsers, scenario, when
@@ -19,11 +20,12 @@ from tests.resources.test_harness.helpers import (
 )
 from tests.resources.test_harness.utils.common_utils import (
     check_configure_successful,
-    check_obsstate_sdp_in_first_configure,
     check_scan_successful,
+    check_sdp_obsstate_in_ready,
 )
 
 
+@pytest.mark.aki
 @pytest.mark.tmc_sdp
 @scenario(
     "../features/tmc_sdp/xtp_39894_tmc_sdp_long_sequence.feature",
@@ -36,7 +38,6 @@ def test_tmc_sdp_long_sequences():
     """
 
 
-# pylint: disable=eval-used
 @when(
     parsers.parse(
         "configure and scan TMC SubarrayNode {subarray_id} for "
@@ -63,7 +64,7 @@ def execute_configure_scan_sequence(
     configure_cycle = "initial"
     processed_scan_type = ""
 
-    combined_dict = dict(zip(eval(scan_ids), eval(scan_types)))
+    combined_dict = dict(zip(literal_eval(scan_ids), literal_eval(scan_types)))
 
     for scan_id, scan_type in combined_dict.items():
         configure_json = update_scan_type(configure_json, scan_type)
@@ -72,9 +73,7 @@ def execute_configure_scan_sequence(
         )
 
         if configure_cycle == "initial":
-            check_obsstate_sdp_in_first_configure(
-                event_recorder, subarray_node_low
-            )
+            check_sdp_obsstate_in_ready(event_recorder, subarray_node_low)
             configure_cycle = "Next"
 
         check_configure_successful(
@@ -173,7 +172,9 @@ def execute_new_configure_scan_sequence(
     configure_cycle = "initial"
     processed_scan_type = ""
 
-    combined_dict = dict(zip(eval(new_scan_ids), eval(new_scan_types)))
+    combined_dict = dict(
+        zip(literal_eval(new_scan_ids), literal_eval(new_scan_types))
+    )
 
     for scan_id, scan_type in combined_dict.items():
         configure_json = update_scan_type(configure_json, scan_type)
@@ -181,9 +182,7 @@ def execute_new_configure_scan_sequence(
             configure_json
         )
         if configure_cycle == "initial":
-            check_obsstate_sdp_in_first_configure(
-                event_recorder, subarray_node_low
-            )
+            check_sdp_obsstate_in_ready(event_recorder, subarray_node_low)
             configure_cycle = "Next"
 
         check_configure_successful(

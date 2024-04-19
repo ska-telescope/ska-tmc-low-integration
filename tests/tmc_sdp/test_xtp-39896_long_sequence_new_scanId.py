@@ -1,5 +1,7 @@
 """Test TMC Low executes multiple scan with same configuration successfully"""
 
+from ast import literal_eval
+
 import pytest
 from pytest_bdd import parsers, scenario, when
 
@@ -11,8 +13,8 @@ from tests.resources.test_harness.helpers import (
 )
 from tests.resources.test_harness.utils.common_utils import (
     check_configure_successful,
-    check_obsstate_sdp_in_first_configure,
     check_scan_successful,
+    check_sdp_obsstate_in_ready,
 )
 
 
@@ -28,7 +30,6 @@ def test_tmc_sdp_successive_scan_sequences():
     """
 
 
-# pylint: disable=eval-used
 @when(
     parsers.parse(
         "configure and scan TMC SubarrayNode {subarray_id} "
@@ -53,7 +54,7 @@ def execute_configure_scan_sequence(
     configure_cycle = "initial"
     processed_scan_type = ""
 
-    combined_dict = dict(zip(eval(scan_ids), eval(scan_types)))
+    combined_dict = dict(zip(literal_eval(scan_ids), literal_eval(scan_types)))
 
     for scan_id, scan_type in combined_dict.items():
         configure_json = update_scan_type(configure_json, scan_type)
@@ -61,9 +62,7 @@ def execute_configure_scan_sequence(
             configure_json
         )
         if configure_cycle == "initial":
-            check_obsstate_sdp_in_first_configure(
-                event_recorder, subarray_node_low
-            )
+            check_sdp_obsstate_in_ready(event_recorder, subarray_node_low)
             configure_cycle = "Next"
         check_configure_successful(
             subarray_node_low,
