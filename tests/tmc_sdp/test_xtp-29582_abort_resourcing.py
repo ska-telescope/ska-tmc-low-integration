@@ -7,9 +7,11 @@ from ska_control_model import ObsState
 from tango import DevState
 
 from tests.resources.test_harness.helpers import (
+    get_device_simulators,
     prepare_json_args_for_centralnode_commands,
     update_eb_pb_ids,
 )
+from tests.resources.test_harness.utils.enums import SimulatorDeviceType
 
 
 @pytest.mark.tmc_sdp
@@ -27,7 +29,11 @@ def test_tmc_sdp_abort_in_resourcing(subarray_node_low):
 
 @given("TMC and SDP subarray are busy assigning resources")
 def telescope_is_in_resourcing_obsstate(
-    subarray_node_low, event_recorder, command_input_factory, central_node_low
+    subarray_node_low,
+    event_recorder,
+    command_input_factory,
+    central_node_low,
+    simulator_factory,
 ):
     """A method to check if telescope in is resourcing obsSstate."""
     central_node_low.move_to_on()
@@ -39,6 +45,17 @@ def telescope_is_in_resourcing_obsstate(
         "telescopeState",
         DevState.ON,
     )
+    delay_command_params_str = '{"%s": %s}' % (
+        "AssignResources",
+        4,
+    )
+    mccs_subarray_sim = simulator_factory.get_or_create_simulator_device(
+        SimulatorDeviceType.MCCS_SUBARRAY_DEVICE
+    )
+    csp_sim, _ = get_device_simulators(simulator_factory)
+    csp_sim.SetDelay(delay_command_params_str)
+    mccs_subarray_sim.SetDelay(delay_command_params_str)
+
     assign_input_json = prepare_json_args_for_centralnode_commands(
         "assign_resources_low", command_input_factory
     )
