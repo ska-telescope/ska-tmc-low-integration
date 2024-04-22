@@ -52,8 +52,6 @@ def reassign_resources(
     )
     input_json = update_eb_pb_ids(assign_input_json)
     assign_str = json.loads(input_json)
-    # Here we are adding this to get an event of ObsState CONFIGURING from
-    # SDP Subarray
     assign_str["sdp"]["processing_blocks"][0]["parameters"][
         "time-to-ready"
     ] = 2

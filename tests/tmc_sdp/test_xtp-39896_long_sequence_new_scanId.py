@@ -46,7 +46,7 @@ def reexecute_scan_command(
     """A method to invoke scan command with new scan_id"""
     assert (
         central_node_low.subarray_devices["sdp_subarray"].ScanType
-        == scan_types
+        == scan_types[0]
     )
     scan_id = 10
     scan_json = prepare_json_args_for_commands(
