@@ -20,11 +20,11 @@ Feature:  TMC Low executes long running sequences with real sdp devices
 
 
 	@XTP-39896 @XTP-29227 @Team_HIMALAYA
-	Scenario: TMC Low executes multiple scan with same configuration successfully
+	Scenario: TMC Low executes multiple scans with same configuration successfully
 		Given the Telescope is in ON state
 		When I assign resources to TMC SubarrayNode <subarray_id>
 		And configure and scan TMC SubarrayNode <subarray_id> for each <scan_types> and <scan_ids>
-		And reperform scan with same configuration and new scan id
+		And reperform scan with same configuration <scan_types> and new scan id
 		And end the configuration on TMC SubarrayNode <subarray_id>
 		And release the resources on TMC SubarrayNode <subarray_id>
 		Then TMC SubarrayNode transitions to EMPTY ObsState

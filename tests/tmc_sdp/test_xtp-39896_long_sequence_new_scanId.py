@@ -4,6 +4,7 @@
 import pytest
 from pytest_bdd import parsers, scenario, when
 
+from tests.resources.test_harness.central_node_low import CentralNodeWrapperLow
 from tests.resources.test_harness.event_recorder import EventRecorder
 from tests.resources.test_harness.helpers import (
     prepare_json_args_for_commands,
@@ -21,7 +22,7 @@ from tests.resources.test_harness.utils.common_utils import (
 @pytest.mark.tmc_sdp
 @scenario(
     "../features/tmc_sdp/xtp_39894_tmc_sdp_long_sequence.feature",
-    "TMC Low executes multiple scan with same configuration successfully",
+    "TMC Low executes multiple scans with same configuration successfully",
 )
 def test_tmc_sdp_successive_scan_sequences():
     """
@@ -30,14 +31,23 @@ def test_tmc_sdp_successive_scan_sequences():
     """
 
 
-@when(parsers.parse("reperform scan with same configuration and new scan id"))
+@when(
+    parsers.parse(
+        "reperform scan with same configuration {scan_types} and new scan id"
+    )
+)
 def reexecute_scan_command(
+    central_node_low: CentralNodeWrapperLow,
     command_input_factory: JsonFactory,
     event_recorder: EventRecorder,
     subarray_node_low: SubarrayNodeWrapperLow,
+    scan_types: str,
 ):
     """A method to invoke scan command with new scan_id"""
-
+    assert (
+        central_node_low.subarray_devices["sdp_subarray"].ScanType
+        == scan_types
+    )
     scan_id = 10
     scan_json = prepare_json_args_for_commands(
         "scan_low", command_input_factory
