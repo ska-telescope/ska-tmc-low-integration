@@ -4,11 +4,16 @@
 import pytest
 from pytest_bdd import parsers, scenario, when
 
+from tests.resources.test_harness.event_recorder import EventRecorder
 from tests.resources.test_harness.helpers import (
     prepare_json_args_for_commands,
     update_scan_id,
 )
+from tests.resources.test_harness.subarray_node_low import (
+    SubarrayNodeWrapperLow,
+)
 from tests.resources.test_harness.utils.common_utils import (
+    JsonFactory,
     check_scan_successful,
 )
 
@@ -27,9 +32,9 @@ def test_tmc_sdp_successive_scan_sequences():
 
 @when(parsers.parse("reperform scan with same configuration and new scan id"))
 def reexecute_scan_command(
-    command_input_factory,
-    event_recorder,
-    subarray_node_low,
+    command_input_factory: JsonFactory,
+    event_recorder: EventRecorder,
+    subarray_node_low: SubarrayNodeWrapperLow,
 ):
     """A method to invoke scan command with new scan_id"""
 

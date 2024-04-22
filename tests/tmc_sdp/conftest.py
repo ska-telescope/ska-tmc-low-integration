@@ -6,6 +6,8 @@ from ska_tango_base.commands import ResultCode
 from ska_tango_base.control_model import ObsState
 from tango import DevState
 
+from tests.resources.test_harness.central_node_low import CentralNodeWrapperLow
+from tests.resources.test_harness.event_recorder import EventRecorder
 from tests.resources.test_harness.helpers import (
     check_subarray_instance,
     prepare_json_args_for_centralnode_commands,
@@ -14,7 +16,11 @@ from tests.resources.test_harness.helpers import (
     update_scan_id,
     update_scan_type,
 )
+from tests.resources.test_harness.subarray_node_low import (
+    SubarrayNodeWrapperLow,
+)
 from tests.resources.test_harness.utils.common_utils import (
+    JsonFactory,
     check_configure_successful,
     check_scan_successful,
 )
@@ -22,7 +28,8 @@ from tests.resources.test_harness.utils.common_utils import (
 
 @given("the Telescope is in ON state")
 def telescope_is_in_on_state(
-    central_node_low, subarray_node_low, event_recorder
+    central_node_low: CentralNodeWrapperLow,
+    event_recorder: EventRecorder,
 ):
     """Move the telescope to the ON state and verify the state change.
 
@@ -31,27 +38,8 @@ def telescope_is_in_on_state(
         class representing the central node.
         event_recorder (EventRecorder): An instance of the EventRecorder class
         for recording events.
-        subarray_node_low (SubarrayNodeLow):An instance of the SubarrayNodeLow
-        class representing the subarray node.
 
     """
-    event_recorder.subscribe_event(
-        central_node_low.central_node, "longRunningCommandResult"
-    )
-    event_recorder.subscribe_event(subarray_node_low.subarray_node, "obsState")
-    event_recorder.subscribe_event(
-        subarray_node_low.subarray_node, "longRunningCommandResult"
-    )
-    event_recorder.subscribe_event(
-        subarray_node_low.subarray_devices["sdp_subarray"], "obsState"
-    )
-    event_recorder.subscribe_event(
-        subarray_node_low.subarray_devices["sdp_subarray"], "scanType"
-    )
-    event_recorder.subscribe_event(
-        subarray_node_low.subarray_devices["sdp_subarray"], "scanID"
-    )
-
     central_node_low.move_to_on()
     event_recorder.subscribe_event(
         central_node_low.central_node, "telescopeState"
@@ -65,9 +53,39 @@ def telescope_is_in_on_state(
 
 @when(parsers.parse("I assign resources to TMC SubarrayNode {subarray_id}"))
 def assign_resources_to_subarray(
-    central_node_low, subarray_node_low, command_input_factory, event_recorder
+    central_node_low: CentralNodeWrapperLow,
+    subarray_node_low: SubarrayNodeWrapperLow,
+    command_input_factory: JsonFactory,
+    event_recorder: EventRecorder,
+    subarray_id: int,
 ):
     """Method to assign resources to subarray."""
+    central_node_low.set_subarray_id(subarray_id)
+    event_recorder.subscribe_event(
+        central_node_low.central_node, "longRunningCommandResult"
+    )
+    event_recorder.subscribe_event(subarray_node_low.subarray_node, "obsState")
+    event_recorder.subscribe_event(
+        subarray_node_low.subarray_node, "longRunningCommandResult"
+    )
+    event_recorder.subscribe_event(
+        central_node_low.get_subarray_devices_by_id(subarray_id).get(
+            "sdp_subarray"
+        ),
+        "obsState",
+    )
+    event_recorder.subscribe_event(
+        central_node_low.get_subarray_devices_by_id(subarray_id).get(
+            "sdp_subarray"
+        ),
+        "scanType",
+    )
+    event_recorder.subscribe_event(
+        central_node_low.get_subarray_devices_by_id(subarray_id).get(
+            "sdp_subarray"
+        ),
+        "scanID",
+    )
     input_json = prepare_json_args_for_centralnode_commands(
         "assign_resources_low_multiple_scan", command_input_factory
     )
@@ -98,12 +116,12 @@ def assign_resources_to_subarray(
     )
 )
 def execute_configure_scan_sequence(
-    subarray_node_low,
-    command_input_factory,
-    scan_ids,
-    event_recorder,
-    subarray_id,
-    scan_types,
+    subarray_node_low: SubarrayNodeWrapperLow,
+    command_input_factory: JsonFactory,
+    scan_ids: str,
+    event_recorder: EventRecorder,
+    subarray_id: int,
+    scan_types: str,
 ):
     """A method to invoke configure and scan  command"""
     event_recorder.subscribe_event(
@@ -155,7 +173,9 @@ def execute_configure_scan_sequence(
 
 
 @when(parsers.parse("end the configuration on TMC SubarrayNode {subarray_id}"))
-def invoke_end(subarray_node_low, event_recorder):
+def invoke_end(
+    subarray_node_low: SubarrayNodeWrapperLow, event_recorder: EventRecorder
+):
     """A method to invoke End command"""
     _, unique_id = subarray_node_low.end_observation()
     assert event_recorder.has_change_event_occurred(
@@ -172,7 +192,9 @@ def invoke_end(subarray_node_low, event_recorder):
 
 @when(parsers.parse("release the resources on TMC SubarrayNode {subarray_id}"))
 def release_resources_to_subarray(
-    central_node_low, command_input_factory, event_recorder
+    central_node_low: CentralNodeWrapperLow,
+    command_input_factory: JsonFactory,
+    event_recorder: EventRecorder,
 ):
     """Method to release resources to subarray."""
     release_input_json = prepare_json_args_for_centralnode_commands(
@@ -189,7 +211,9 @@ def release_resources_to_subarray(
 
 
 @then("TMC SubarrayNode transitions to EMPTY ObsState")
-def check_tmc_is_in_empty_obsstate(subarray_node_low, event_recorder):
+def check_tmc_is_in_empty_obsstate(
+    subarray_node_low: SubarrayNodeWrapperLow, event_recorder: EventRecorder
+):
     """Method to check TMC is is in EMPTY obsstate."""
     assert event_recorder.has_change_event_occurred(
         subarray_node_low.subarray_node,
