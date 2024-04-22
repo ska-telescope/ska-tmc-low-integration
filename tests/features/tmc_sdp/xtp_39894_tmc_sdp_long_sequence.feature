@@ -49,4 +49,4 @@ Feature:  TMC Low executes long running sequences with real sdp devices
 		
 		Examples:
 			|subarray_id  |scan_ids  |scan_types      |new_scan_ids   |new_scan_types |
-			|1            |  ["1"]   | ["science_A"]  | ["2"]         | ["target:a"]  |
+			|1            |["1"]     |["science_A"]   |["2"]          |["target:a"]   |

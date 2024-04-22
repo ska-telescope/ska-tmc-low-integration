@@ -87,6 +87,12 @@ def assign_resources_to_subarray(
 
 @when(
     parsers.parse(
+        "configure and scan TMC SubarrayNode {subarray_id} "
+        "for {new_scan_types} and {new_scan_ids}"
+    )
+)
+@when(
+    parsers.parse(
         "configure and scan TMC SubarrayNode {subarray_id} for "
         "each {scan_types} and {scan_ids}"
     )
