@@ -4,6 +4,7 @@ from ast import literal_eval
 
 import pytest
 from pytest_bdd import parsers, scenario, when
+from ska_tango_base.control_model import ObsState
 
 from tests.resources.test_harness.helpers import (
     check_subarray_instance,
@@ -11,7 +12,6 @@ from tests.resources.test_harness.helpers import (
     update_scan_id,
     update_scan_type,
 )
-from ska_tango_base.control_model import ObsState
 from tests.resources.test_harness.utils.common_utils import (
     check_configure_successful,
     check_scan_successful,
@@ -59,7 +59,6 @@ def execute_configure_scan_sequence(
         _, unique_id = subarray_node_low.store_configuration_data(
             configure_json
         )
-
 
         if configure_cycle == "initial":
             assert event_recorder.has_change_event_occurred(

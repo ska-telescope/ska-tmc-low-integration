@@ -4,6 +4,7 @@ from ast import literal_eval
 
 import pytest
 from pytest_bdd import parsers, scenario, when
+from ska_tango_base.control_model import ObsState
 
 from tests.resources.test_harness.helpers import (
     check_subarray_instance,
@@ -15,7 +16,7 @@ from tests.resources.test_harness.utils.common_utils import (
     check_configure_successful,
     check_scan_successful,
 )
-from ska_tango_base.control_model import ObsState
+
 
 @pytest.mark.tmc_sdp
 @scenario(
