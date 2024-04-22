@@ -66,8 +66,8 @@ def check_subarray_instance(device, subarray_id):
 def update_scan_type(configure_json: str, json_value: str) -> str:
     """
     Method to update json with different scan type
-    :param input_json: json to utilised to update values.
 
+    :param configure_json: json to utilised to update values.
     :param json_value: new json value to be updated in json
     """
     input_json = json.loads(configure_json)

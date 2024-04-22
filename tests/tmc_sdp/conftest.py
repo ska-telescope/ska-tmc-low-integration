@@ -3,13 +3,19 @@ from pytest_bdd import given, parsers, then, when
 from ska_tango_base.commands import ResultCode
 from ska_tango_base.control_model import ObsState
 from tango import DevState
-
+from ast import literal_eval
 from tests.resources.test_harness.helpers import (
+    check_subarray_instance,
     prepare_json_args_for_centralnode_commands,
+    prepare_json_args_for_commands,
     update_eb_pb_ids,
+    update_scan_id,
+    update_scan_type,
 )
-
-
+from tests.resources.test_harness.utils.common_utils import (
+    check_configure_successful,
+    check_scan_successful,
+)
 @given("the Telescope is in ON state")
 def telescope_is_in_on_state(
     central_node_low, subarray_node_low, event_recorder
@@ -21,6 +27,8 @@ def telescope_is_in_on_state(
         class representing the central node.
         event_recorder (EventRecorder): An instance of the EventRecorder class
         for recording events.
+        subarray_node_low (SubarrayNodeLow):An instance of the SubarrayNodeLow
+        class representing the subarray node.
 
     """
     event_recorder.subscribe_event(
@@ -72,6 +80,68 @@ def assign_resources_to_subarray(
         ObsState.IDLE,
     )
 
+@when(
+    parsers.parse(
+        "configure and scan TMC SubarrayNode {subarray_id} for "
+        "each {scan_types} and {scan_ids}"
+    )
+)
+def execute_configure_scan_sequence(
+    subarray_node_low,
+    command_input_factory,
+    scan_ids,
+    event_recorder,
+    subarray_id,
+    scan_types,
+):
+    """A method to invoke configure and scan  command"""
+    event_recorder.subscribe_event(
+        subarray_node_low.subarray_node, "longRunningCommandResult"
+    )
+    check_subarray_instance(subarray_node_low.subarray_node, subarray_id)
+    configure_json = prepare_json_args_for_commands(
+        "configure_low", command_input_factory
+    )
+
+    configure_cycle = "initial"
+    processed_scan_type = ""
+
+    combined_dict = dict(zip(literal_eval(scan_ids), literal_eval(scan_types)))
+
+    for scan_id, scan_type in combined_dict.items():
+        configure_json = update_scan_type(configure_json, scan_type)
+        _, unique_id = subarray_node_low.store_configuration_data(
+            configure_json
+        )
+
+        if configure_cycle == "initial":
+            assert event_recorder.has_change_event_occurred(
+                subarray_node_low.subarray_devices["sdp_subarray"],
+                "obsState",
+                ObsState.READY,
+            )
+            configure_cycle = "Next"
+
+        check_configure_successful(
+            subarray_node_low,
+            event_recorder,
+            unique_id,
+            scan_type,
+            processed_scan_type,
+        )
+
+        scan_json = prepare_json_args_for_commands(
+            "scan_low", command_input_factory
+        )
+        scan_json = update_scan_id(scan_json, scan_id)
+        _, unique_id = subarray_node_low.execute_transition(
+            "Scan", argin=scan_json
+        )
+        check_scan_successful(
+            subarray_node_low, event_recorder, scan_id, unique_id
+        )
+        processed_scan_type = scan_type
+
 
 @when(parsers.parse("end the configuration on TMC SubarrayNode {subarray_id}"))
 def invoke_end(subarray_node_low, event_recorder):
@@ -115,4 +185,8 @@ def check_tmc_is_in_empty_obsstate(subarray_node_low, event_recorder):
         "obsState",
         ObsState.EMPTY,
     )
-    assert subarray_node_low.subarray_devices["sdp_subarray"].Resources == "{}"
+    assert event_recorder.has_change_event_occurred(
+        subarray_node_low.subarray_devices["sdp_subarray"],
+        "obsState",
+        ObsState.EMPTY,
+    )

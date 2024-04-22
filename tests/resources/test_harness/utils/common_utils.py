@@ -15,7 +15,7 @@ def check_scan_successful(
 ) -> None:
     """
     1)SDP , TMC subarray  go to scanning
-    2)scan_id attribute from SDP sub-array reflects exact scan_id
+    2)scan_id attribute from SDP subarray reflects exact scan_id
     sent by TMC .This makes sure we are checking some more attributes
     from SDP .In future this can be extended to include other attribute
     verification as well.
