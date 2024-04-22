@@ -15,6 +15,7 @@ from tests.resources.test_harness.helpers import (
     update_eb_pb_ids,
 )
 
+
 @pytest.mark.tmc_sdp
 @scenario(
     "../features/tmc_sdp/xtp_39894_tmc_sdp_long_sequence.feature",
@@ -25,7 +26,6 @@ def test_tmc_sdp_long_sequences():
     """
     TMC Low executes multiple-scan with different resources and configurations
     """
-
 
 
 @when(

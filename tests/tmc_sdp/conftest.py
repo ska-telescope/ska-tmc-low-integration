@@ -1,9 +1,11 @@
 """TMC-SDP specific conftest"""
+from ast import literal_eval
+
 from pytest_bdd import given, parsers, then, when
 from ska_tango_base.commands import ResultCode
 from ska_tango_base.control_model import ObsState
 from tango import DevState
-from ast import literal_eval
+
 from tests.resources.test_harness.helpers import (
     check_subarray_instance,
     prepare_json_args_for_centralnode_commands,
@@ -16,6 +18,8 @@ from tests.resources.test_harness.utils.common_utils import (
     check_configure_successful,
     check_scan_successful,
 )
+
+
 @given("the Telescope is in ON state")
 def telescope_is_in_on_state(
     central_node_low, subarray_node_low, event_recorder
@@ -79,6 +83,7 @@ def assign_resources_to_subarray(
         "obsState",
         ObsState.IDLE,
     )
+
 
 @when(
     parsers.parse(
