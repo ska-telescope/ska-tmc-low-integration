@@ -48,7 +48,7 @@ def reassign_resources(
     """A method to move subarray into the IDLE ObsState"""
     central_node_low.set_subarray_id(subarray_id)
     assign_input_json = prepare_json_args_for_centralnode_commands(
-        "assign_resources_low_multiple_scan", command_input_factory
+        "assign_resources_low_multiple_scan2", command_input_factory
     )
     input_json = update_eb_pb_ids(assign_input_json)
     assign_str = json.loads(input_json)

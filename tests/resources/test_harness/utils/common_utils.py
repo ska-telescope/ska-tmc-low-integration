@@ -6,19 +6,12 @@ from typing import List
 
 from ska_control_model import ObsState
 
-from tests.resources.test_harness.event_recorder import EventRecorder
-from tests.resources.test_harness.subarray_node_low import (
-    SubarrayNodeWrapperLow,
-)
 from tests.resources.test_harness.utils.wait_helpers import Waiter
 from tests.resources.test_support.common_utils.result_code import ResultCode
 
 
 def check_scan_successful(
-    subarray_node: SubarrayNodeWrapperLow,
-    event_recorder: EventRecorder,
-    scan_id: str,
-    unique_id,
+    subarray_node, event_recorder, scan_id, unique_id
 ) -> None:
     """
     1)SDP , TMC subarray  go to scanning
@@ -83,11 +76,7 @@ def check_scan_successful(
 
 
 def check_configure_successful(
-    subarray_node: SubarrayNodeWrapperLow,
-    event_recorder: EventRecorder,
-    unique_id,
-    scan_type: str,
-    processed_scan_type: str,
+    subarray_node, event_recorder, unique_id, scan_type, processed_scan_type
 ) -> None:
     """
     Adds check to verify if configure command is successful

@@ -1,6 +1,8 @@
 """Test TMC Low executes multiple scan with same configuration successfully"""
 
 
+import json
+
 import pytest
 from pytest_bdd import parsers, scenario, when
 
@@ -44,9 +46,10 @@ def reexecute_scan_command(
     scan_types: str,
 ):
     """A method to invoke scan command with new scan_id"""
+    scan_types_list = json.loads(scan_types)
     assert (
         central_node_low.subarray_devices["sdp_subarray"].ScanType
-        == scan_types[0]
+        == scan_types_list[0]
     )
     scan_id = 10
     scan_json = prepare_json_args_for_commands(
