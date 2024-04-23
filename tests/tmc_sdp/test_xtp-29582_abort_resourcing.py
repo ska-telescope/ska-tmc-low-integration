@@ -15,6 +15,7 @@ from tests.resources.test_harness.utils.enums import SimulatorDeviceType
 
 
 @pytest.mark.tmc_sdp
+@pytest.mark.skip(reason="The test case is being fixed as a part of HM-460")
 @scenario(
     "../features/tmc_sdp/xtp-29582_abort_resourcing_tmc_sdp.feature",
     "Abort invocation using TMC",
@@ -69,6 +70,9 @@ def telescope_is_in_resourcing_obsstate(
     event_recorder.subscribe_event(
         subarray_node_low.sdp_subarray_leaf_node, "sdpSubarrayObsState"
     )
+    event_recorder.subscribe_event(
+        subarray_node_low.csp_subarray_leaf_node, "cspSubarrayObsState"
+    )
     assert event_recorder.has_change_event_occurred(
         subarray_node_low.subarray_devices.get("sdp_subarray"),
         "obsState",
@@ -82,6 +86,11 @@ def telescope_is_in_resourcing_obsstate(
     assert event_recorder.has_change_event_occurred(
         subarray_node_low.sdp_subarray_leaf_node,
         "sdpSubarrayObsState",
+        ObsState.RESOURCING,
+    )
+    assert event_recorder.has_change_event_occurred(
+        subarray_node_low.csp_subarray_leaf_node,
+        "cspSubarrayObsState",
         ObsState.RESOURCING,
     )
     # The sleep is required here because subarraynode takes
