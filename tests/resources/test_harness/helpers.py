@@ -54,6 +54,41 @@ device_dict = {
 }
 
 
+def check_subarray_instance(device, subarray_id):
+    """
+    Method to check subarray instance
+    """
+    subarray = str(device).split("/")
+    subarray_instance = subarray[-1][-2]
+    assert subarray_instance == subarray_id
+
+
+def update_scan_type(configure_json: str, json_value: str) -> str:
+    """
+    Method to update json with different scan type
+
+    :param configure_json: json to utilised to update values.
+    :param json_value: new json value to be updated in json
+    """
+    input_json = json.loads(configure_json)
+    input_json["sdp"]["scan_type"] = json_value
+    input_json = json.dumps(input_json)
+    return input_json
+
+
+def update_scan_id(input_json: str, scan_id: int) -> str:
+    """
+    Method to update scan_id in input json..
+    :param input_json: json to utilised to update values.
+
+    :param json_value: new json value to be updated in json
+    """
+    input_json = json.loads(input_json)
+    input_json["scan_id"] = int(scan_id)
+    updated_json = json.dumps(input_json)
+    return updated_json
+
+
 def check_subarray_obs_state(obs_state=None, timeout=50):
     LOGGER.info(
         f"{tmc_low_subarraynode1}.obsState : "
