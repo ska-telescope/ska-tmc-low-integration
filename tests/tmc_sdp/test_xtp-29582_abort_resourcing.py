@@ -15,7 +15,6 @@ from tests.resources.test_harness.utils.enums import SimulatorDeviceType
 
 
 @pytest.mark.tmc_sdp
-@pytest.mark.skip(reason="The test case is being fixed as a part of HM-460")
 @scenario(
     "../features/tmc_sdp/xtp-29582_abort_resourcing_tmc_sdp.feature",
     "Abort invocation using TMC",
