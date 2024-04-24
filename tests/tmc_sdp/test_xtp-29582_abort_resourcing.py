@@ -69,6 +69,9 @@ def telescope_is_in_resourcing_obsstate(
     event_recorder.subscribe_event(
         subarray_node_low.sdp_subarray_leaf_node, "sdpSubarrayObsState"
     )
+    event_recorder.subscribe_event(
+        subarray_node_low.csp_subarray_leaf_node, "cspSubarrayObsState"
+    )
     assert event_recorder.has_change_event_occurred(
         subarray_node_low.subarray_devices.get("sdp_subarray"),
         "obsState",
@@ -82,6 +85,11 @@ def telescope_is_in_resourcing_obsstate(
     assert event_recorder.has_change_event_occurred(
         subarray_node_low.sdp_subarray_leaf_node,
         "sdpSubarrayObsState",
+        ObsState.RESOURCING,
+    )
+    assert event_recorder.has_change_event_occurred(
+        subarray_node_low.csp_subarray_leaf_node,
+        "cspSubarrayObsState",
         ObsState.RESOURCING,
     )
     # The sleep is required here because subarraynode takes
