@@ -88,10 +88,6 @@ def subarray_is_in_configuring_obsstate(
         "sdpSubarrayObsState",
         ObsState.CONFIGURING,
     )
-    LOGGER.info(
-        "SDP SUBARRAY OBS STATE %s",
-        subarray_node_low.subarray_devices["sdp_subarray"].obsState,
-    )
     assert event_recorder.has_change_event_occurred(
         subarray_node_low.subarray_devices["sdp_subarray"],
         "obsState",
