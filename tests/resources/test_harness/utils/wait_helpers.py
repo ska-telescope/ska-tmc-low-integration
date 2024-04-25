@@ -1,4 +1,5 @@
 import logging
+from datetime import datetime
 
 from ska_ser_logging import configure_logging
 
@@ -429,6 +430,11 @@ class Waiter:
                     future_value_shim,
                     timeout_shim,
                     ex,
+                )
+                LOGGER.error(
+                    "Exception occurred at %s with error: %s",
+                    datetime.utcnow().strftime("%d/%m/%Y %H:%M:%S:%f"),
+                    self.error_logs,
                 )
             else:
                 timeout_shim = (timeout - result) * resolution
