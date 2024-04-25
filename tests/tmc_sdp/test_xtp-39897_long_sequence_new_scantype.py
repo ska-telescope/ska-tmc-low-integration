@@ -74,5 +74,5 @@ def reassign_resources(
         central_node_low.central_node,
         "longRunningCommandResult",
         (unique_id[0], str(int(ResultCode.OK))),
-        lookahead=10,
+        lookahead=15,
     )
