@@ -118,6 +118,8 @@ k8s-test-tmc-with-csp:
     MARK: 'tmc_csp'
     COUNT: 1
     CSP_SIMULATION_ENABLED: 'false'
+  environment:
+    on_stop: stop-k8s-test-tmc-with-csp
 
 stop-k8s-test-tmc-with-csp:
   extends:
@@ -149,6 +151,8 @@ k8s-test-tmc-with-sdp:
   after_script:
     - pip3 install -q -U ska-ser-xray
     - XRAY_TEST_RESULT_FILE="build/cucumber.json" make xray-publish
+  environment:
+    on_stop: stop-k8s-test-tmc-with-sdp
 
 stop-k8s-test-tmc-with-sdp:
   extends:
@@ -172,6 +176,8 @@ k8s-test-tmc-with-mccs:
     - 'make help | grep k8s-test'
     - make k8s-install-chart
     - make k8s-wait
+  environment:
+    on_stop: stop-k8s-test-tmc-with-mccs
 
 stop-k8s-test-tmc-with-mccs:
   extends:
