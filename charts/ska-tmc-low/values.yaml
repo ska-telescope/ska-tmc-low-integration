@@ -74,7 +74,7 @@ subarraynode:
   image:
     registry: artefact.skao.int
     image: ska-tmc-subarraynode
-    tag: 0.17.1
+    tag: 0.17.4-dev.c69f28b88
     pullPolicy: IfNotPresent
 
 sdpleafnodes:
