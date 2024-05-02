@@ -52,7 +52,7 @@ include:
 on-demand-deploy:
   stage: on-demand
   tags:
-    - k8srunner
+    - ska-k8s
   variables:
     SERVICE_ACCOUNT: "ci-svc-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA"
     KUBE_NAMESPACE: "ci-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-on-demand"
@@ -75,7 +75,7 @@ on-demand-deploy:
 on-demand-destroy:
   stage: on-demand
   tags:
-    - k8srunner
+    - ska-k8s
   variables:
     SERVICE_ACCOUNT: "ci-svc-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA"
     KUBE_NAMESPACE: "ci-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-on-demand"
@@ -92,8 +92,6 @@ on-demand-destroy:
   allow_failure: true
 
 k8s-test:
-  tags:
-    - k8srunner
   variables:
     KUBE_NAMESPACE: 'ci-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA'
     SERVICE_ACCOUNT: "ci-svc-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA"
@@ -108,8 +106,6 @@ k8s-test:
     - XRAY_TEST_RESULT_FILE="build/cucumber.json" make xray-publish
 
 k8s-test-tmc-with-csp:
-  tags:
-    - k8srunner
   extends:
     - k8s-test
   variables:
@@ -118,6 +114,9 @@ k8s-test-tmc-with-csp:
     MARK: 'tmc_csp'
     COUNT: 1
     CSP_SIMULATION_ENABLED: 'false'
+  environment:
+    name: test/$CI_COMMIT_REF_SLUG
+    on_stop: stop-k8s-test-tmc-with-csp
 
 stop-k8s-test-tmc-with-csp:
   extends:
@@ -127,7 +126,7 @@ stop-k8s-test-tmc-with-csp:
 
 k8s-test-tmc-with-sdp:
   tags:
-    - k8srunner
+    - ska-k8s
   variables:
     TELESCOPE: 'SKA-low'
     PORT: "10000"
@@ -149,6 +148,9 @@ k8s-test-tmc-with-sdp:
   after_script:
     - pip3 install -q -U ska-ser-xray
     - XRAY_TEST_RESULT_FILE="build/cucumber.json" make xray-publish
+  environment:
+    name: test/$CI_COMMIT_REF_SLUG
+    on_stop: stop-k8s-test-tmc-with-sdp
 
 stop-k8s-test-tmc-with-sdp:
   extends:
@@ -157,8 +159,6 @@ stop-k8s-test-tmc-with-sdp:
     KUBE_NAMESPACE: 'ci-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-tmc-sdp'
 
 k8s-test-tmc-with-mccs:
-  tags:
-    - k8srunner
   extends:
     - k8s-test
   variables:
@@ -172,6 +172,9 @@ k8s-test-tmc-with-mccs:
     - 'make help | grep k8s-test'
     - make k8s-install-chart
     - make k8s-wait
+  environment:
+    name: test/$CI_COMMIT_REF_SLUG
+    on_stop: stop-k8s-test-tmc-with-mccs
 
 stop-k8s-test-tmc-with-mccs:
   extends:
