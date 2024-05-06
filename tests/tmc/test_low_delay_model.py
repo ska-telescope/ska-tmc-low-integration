@@ -6,10 +6,12 @@ The scenario includes steps to set up the TMC, configure the subarray,
 and checks whether CspSubarrayLeafNode starts generating delay value.
 """
 import json
+import logging
 
 import pytest
 from pytest_bdd import given, scenario, then, when
 from ska_control_model import ObsState
+from ska_ser_logging import configure_logging
 from ska_tango_base.commands import ResultCode
 from tango import DevState
 
@@ -18,6 +20,9 @@ from tests.resources.test_harness.helpers import (
     prepare_json_args_for_centralnode_commands,
     prepare_json_args_for_commands,
 )
+
+configure_logging(logging.DEBUG)
+LOGGER = logging.getLogger(__name__)
 
 
 @pytest.mark.SKA_low
@@ -124,10 +129,17 @@ def invoke_end_command(subarray_node_low, event_recorder) -> None:
 @then("CSP Subarray Leaf Node stops generating delay values")
 def check_if_delay_values_are_not_generating(subarray_node_low) -> None:
     """Check if delay values are stopped generating."""
-    delay_model_after_end = (
+    delay_model_json_after_end = json.loads(
         subarray_node_low.csp_subarray_leaf_node.read_attribute(
             "delayModel"
         ).value
     )
-    delay_model_json_after_end = json.loads(delay_model_after_end)
-    assert delay_model_json_after_end == json.dumps(INITIAL_LOW_DELAY_JSON)
+    LOGGER.info(
+        f"type delay_model_json_after_end: {type(delay_model_json_after_end)}"
+    )
+    LOGGER.info(
+        f"value delay_model_json_after_end: {delay_model_json_after_end}"
+    )
+    LOGGER.info(f"type INITIAL_LOW_DELAY_JSON: {type(INITIAL_LOW_DELAY_JSON)}")
+    LOGGER.info(f"value INITIAL_LOW_DELAY_JSON: {INITIAL_LOW_DELAY_JSON}")
+    assert delay_model_json_after_end == INITIAL_LOW_DELAY_JSON
