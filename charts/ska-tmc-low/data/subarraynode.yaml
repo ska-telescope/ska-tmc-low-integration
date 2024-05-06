@@ -51,6 +51,9 @@ server:
           - name: "CommandTimeout"
             values:
               - "40"
+          - name: "LowCspAssignResourcesInterfaceURL"
+            values:
+              - "https://schema.skao.int/ska-low-csp-assignresources/3.0"
   {{- end}}
 depends_on:
   - device: sys/database/2
