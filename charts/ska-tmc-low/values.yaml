@@ -130,7 +130,7 @@ deviceServers:
   subarraynode:
     enabled: true
     file: "data/subarraynode.yaml"
-    LowCspAssignResourcesInterfaceURL: "https://schema.skao.int/ska-low-csp-assignresources/0.0"
+    LowCspAssignResourcesInterfaceURL: "https://schema.skao.int/ska-low-csp-assignresources/3.0"
 
   sdpsubarrayleafnode:
     enabled: true
