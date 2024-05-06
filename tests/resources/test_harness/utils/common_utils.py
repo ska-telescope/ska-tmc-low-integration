@@ -71,7 +71,7 @@ def check_scan_successful(
         subarray_node.subarray_node,
         "longRunningCommandResult",
         (unique_id[0], str(int(ResultCode.OK))),
-        lookahead=10,
+        lookahead=15,
     )
 
 

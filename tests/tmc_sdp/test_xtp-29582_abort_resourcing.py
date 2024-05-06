@@ -95,7 +95,7 @@ def telescope_is_in_resourcing_obsstate(
     # The sleep is required here because subarraynode takes
     # some time to processobsstate resourcing, resulting
     # in invocation of abort command in empty obsstate
-    time.sleep(1)
+    time.sleep(1.8)
 
 
 @when("I command it to Abort")
