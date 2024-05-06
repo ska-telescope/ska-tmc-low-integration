@@ -8,8 +8,6 @@ from pytest_bdd import given, scenario, then, when
 from ska_control_model import ObsState
 from tango import DevState
 
-from tests.resources.test_harness.constant import tmc_low_subarraynode1
-from tests.resources.test_support.common_utils.common_helpers import Waiter
 from tests.resources.test_support.common_utils.result_code import ResultCode
 from tests.resources.test_support.common_utils.tmc_helpers import (
     prepare_json_args_for_centralnode_commands,
@@ -119,6 +117,8 @@ def check_scan_completion(
         "obsState",
         ObsState.SCANNING,
     )
-    the_waiter = Waiter()
-    the_waiter.set_wait_for_specific_obsstate("READY", [tmc_low_subarraynode1])
-    the_waiter.wait(200)
+    assert event_recorder.has_change_event_occurred(
+        subarray_node_low.subarray_node,
+        "obsState",
+        ObsState.READY,
+    )

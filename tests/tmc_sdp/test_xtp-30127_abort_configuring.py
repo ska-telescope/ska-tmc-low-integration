@@ -53,7 +53,7 @@ def subarray_is_in_configuring_obsstate(
     # receive an event of ObsState CONFIGURING from SDP Subarray
     assign_str["sdp"]["processing_blocks"][0]["parameters"][
         "time-to-ready"
-    ] = 2
+    ] = 10
     assert event_recorder.has_change_event_occurred(
         central_node_low.central_node,
         "telescopeState",
@@ -81,13 +81,13 @@ def subarray_is_in_configuring_obsstate(
         ObsState.CONFIGURING,
     )
     assert event_recorder.has_change_event_occurred(
-        subarray_node_low.subarray_node,
-        "obsState",
+        subarray_node_low.sdp_subarray_leaf_node,
+        "sdpSubarrayObsState",
         ObsState.CONFIGURING,
     )
     assert event_recorder.has_change_event_occurred(
-        subarray_node_low.sdp_subarray_leaf_node,
-        "sdpSubarrayObsState",
+        subarray_node_low.subarray_node,
+        "obsState",
         ObsState.CONFIGURING,
     )
 

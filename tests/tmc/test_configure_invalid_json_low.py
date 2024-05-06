@@ -121,17 +121,17 @@ def invalid_command_rejection(invalid_json):
     # asserting validations message as per invalid json
     if invalid_json == "csp_key_missing":
         assert (
-            "Malformed input string. The key: `csp` is missing."
+            "Validation 'Low TMC configure 3.2' Missing key: 'csp'"
             in pytest.command_result[1][0]
         )
     elif invalid_json == "sdp_key_missing":
         assert (
-            "Malformed input string. The key: `sdp` is missing."
+            "Validation 'Low TMC configure 3.2' Missing key: 'sdp'"
             in pytest.command_result[1][0]
         )
     elif invalid_json == "tmc_key_missing":
         assert (
-            "Malformed input string. The key: `tmc` is missing."
+            "Malformed input string. Missing key: 'tmc'"
             in pytest.command_result[1][0]
         )
     elif invalid_json == "scan_duration_key_missing":

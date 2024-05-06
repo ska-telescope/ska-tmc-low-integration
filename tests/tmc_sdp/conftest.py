@@ -182,6 +182,7 @@ def invoke_end(
         subarray_node_low.subarray_node,
         "longRunningCommandResult",
         (unique_id[0], str(ResultCode.OK.value)),
+        lookahead=10,
     )
     assert event_recorder.has_change_event_occurred(
         subarray_node_low.subarray_devices["sdp_subarray"],
@@ -207,6 +208,7 @@ def release_resources_to_subarray(
         central_node_low.central_node,
         "longRunningCommandResult",
         (unique_id[0], str(ResultCode.OK.value)),
+        lookahead=10,
     )
 
 
