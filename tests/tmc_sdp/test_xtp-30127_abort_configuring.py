@@ -1,6 +1,5 @@
 """Test TMC-SDP Abort functionality in Configuring obstate"""
 import json
-import logging
 
 import pytest
 from pytest_bdd import given, parsers, scenario, then, when
@@ -12,8 +11,6 @@ from tests.resources.test_harness.helpers import (
     prepare_json_args_for_commands,
     update_eb_pb_ids,
 )
-
-LOGGER = logging.getLogger(__name__)
 
 
 @pytest.mark.tmc_sdp

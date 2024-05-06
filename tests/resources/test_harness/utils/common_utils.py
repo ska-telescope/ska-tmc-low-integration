@@ -100,7 +100,7 @@ def check_configure_successful(
             subarray_node.subarray_devices["sdp_subarray"],
             "scanType",
             scan_type,
-            lookahead=15,
+            lookahead=10,
         )
 
     assert event_recorder.has_change_event_occurred(
