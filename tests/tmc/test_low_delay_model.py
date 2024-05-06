@@ -5,17 +5,18 @@ Telescope Monitoring and Control (TMC) system
 The scenario includes steps to set up the TMC, configure the subarray,
 and checks whether CspSubarrayLeafNode starts generating delay value.
 """
+import json
+
 import pytest
 from pytest_bdd import given, scenario, then, when
 from ska_control_model import ObsState
 from ska_tango_base.commands import ResultCode
 from tango import DevState
 
+from tests.resources.test_harness.constant import INITIAL_LOW_DELAY_JSON
 from tests.resources.test_harness.helpers import (
     prepare_json_args_for_centralnode_commands,
     prepare_json_args_for_commands,
-    wait_for_updates_on_delay_model,
-    wait_for_updates_stop_on_delay_model,
 )
 
 
@@ -94,26 +95,38 @@ def invoke_configure_command(
 @then("CSP Subarray Leaf Node starts generating delay values")
 def check_if_delay_values_are_generating(subarray_node_low) -> None:
     """Check if delay values are generating."""
-    wait_for_updates_on_delay_model(subarray_node_low.csp_subarray_leaf_node)
-    assert subarray_node_low.csp_subarray_leaf_node.delayModel != ""
+    generated_delay_json = (
+        subarray_node_low.csp_subarray_leaf_node.read_attribute(
+            "delayModel"
+        ).value
+    )
+    delay_json = json.loads(generated_delay_json)
+    assert delay_json != json.dumps(INITIAL_LOW_DELAY_JSON)
 
 
 @when("I end the observation")
 def invoke_end_command(subarray_node_low, event_recorder) -> None:
     """Invoke End command."""
-    subarray_node_low.end_observation()
+    _, unique_id = subarray_node_low.end_observation()
     event_recorder.subscribe_event(subarray_node_low.subarray_node, "obsState")
     assert event_recorder.has_change_event_occurred(
         subarray_node_low.subarray_node,
         "obsState",
         ObsState.IDLE,
     )
+    assert event_recorder.has_change_event_occurred(
+        subarray_node_low.subarray_node,
+        "longRunningCommandResult",
+        (unique_id[0], str(ResultCode.OK.value)),
+    )
 
 
 @then("CSP Subarray Leaf Node stops generating delay values")
 def check_if_delay_values_are_not_generating(subarray_node_low) -> None:
     """Check if delay values are generating."""
-    wait_for_updates_stop_on_delay_model(
-        subarray_node_low.csp_subarray_leaf_node
+    delay_json_after_end = (
+        subarray_node_low.csp_subarray_leaf_node.read_attribute(
+            "delayModel"
+        ).value
     )
-    assert subarray_node_low.csp_subarray_leaf_node.delayModel == ""
+    assert delay_json_after_end == INITIAL_LOW_DELAY_JSON
