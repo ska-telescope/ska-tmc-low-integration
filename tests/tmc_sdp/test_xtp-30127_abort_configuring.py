@@ -76,7 +76,7 @@ def subarray_is_in_configuring_obsstate(
         configure_input_json=configure_input_json,
     )
     assert event_recorder.has_change_event_occurred(
-        subarray_node_low.subarray_node,
+        subarray_node_low.subarray_devices["sdp_subarray"],
         "obsState",
         ObsState.CONFIGURING,
     )
@@ -86,7 +86,7 @@ def subarray_is_in_configuring_obsstate(
         ObsState.CONFIGURING,
     )
     assert event_recorder.has_change_event_occurred(
-        subarray_node_low.subarray_devices["sdp_subarray"],
+        subarray_node_low.subarray_node,
         "obsState",
         ObsState.CONFIGURING,
     )

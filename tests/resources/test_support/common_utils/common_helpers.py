@@ -25,6 +25,9 @@ class Resource:
     def get(self, attr):
         """Method for getting attributes"""
         device_proxy = DeviceProxy(self.device_name)
+        # Set timeout to 5 sec.
+        # Sometimes read attribute timeout with default 3 sec time
+        device_proxy.set_timeout_millis(5000)
         attrs = device_proxy.get_attribute_list()
         if attr not in attrs:
             return "attribute not found"

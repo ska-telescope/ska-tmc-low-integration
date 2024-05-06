@@ -52,6 +52,9 @@ def subarray_busy_assigning(
         central_node_low.csp_subarray_leaf_node, "cspSubarrayObsState"
     )
     event_recorder.subscribe_event(
+        central_node_low.sdp_subarray_leaf_node, "sdpSubarrayObsState"
+    )
+    event_recorder.subscribe_event(
         central_node_low.subarray_devices.get("csp_subarray"),
         "obsState",
     )
@@ -71,10 +74,15 @@ def subarray_busy_assigning(
         "obsState",
         ObsState.RESOURCING,
     )
+    assert event_recorder.has_change_event_occurred(
+        central_node_low.sdp_subarray_leaf_node,
+        "sdpSubarrayObsState",
+        ObsState.RESOURCING,
+    )
     # The sleep is added to allow Subarray Node time to update the device
     # obsStates before invoking the Abort command. Without sleep, Subarray Node
     # at times finds all devices in EMPTY and does not invoke Abort on them.
-    time.sleep(0.8)
+    time.sleep(1)
 
 
 @when("I command it to Abort")
