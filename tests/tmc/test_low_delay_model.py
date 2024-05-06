@@ -95,13 +95,13 @@ def invoke_configure_command(
 @then("CSP Subarray Leaf Node starts generating delay values")
 def check_if_delay_values_are_generating(subarray_node_low) -> None:
     """Check if delay values are generating."""
-    generated_delay_json = (
+    generated_delay_model = (
         subarray_node_low.csp_subarray_leaf_node.read_attribute(
             "delayModel"
         ).value
     )
-    delay_json = json.loads(generated_delay_json)
-    assert delay_json != json.dumps(INITIAL_LOW_DELAY_JSON)
+    generated_delay_model_json = json.loads(generated_delay_model)
+    assert generated_delay_model_json != json.dumps(INITIAL_LOW_DELAY_JSON)
 
 
 @when("I end the observation")
@@ -123,10 +123,11 @@ def invoke_end_command(subarray_node_low, event_recorder) -> None:
 
 @then("CSP Subarray Leaf Node stops generating delay values")
 def check_if_delay_values_are_not_generating(subarray_node_low) -> None:
-    """Check if delay values are generating."""
-    delay_json_after_end = (
+    """Check if delay values are stopped generating."""
+    delay_model_after_end = (
         subarray_node_low.csp_subarray_leaf_node.read_attribute(
             "delayModel"
         ).value
     )
-    assert delay_json_after_end == INITIAL_LOW_DELAY_JSON
+    delay_model_json_after_end = json.loads(delay_model_after_end)
+    assert delay_model_json_after_end == json.dumps(INITIAL_LOW_DELAY_JSON)
