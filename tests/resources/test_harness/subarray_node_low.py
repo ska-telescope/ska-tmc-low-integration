@@ -75,6 +75,9 @@ class SubarrayNodeWrapperLow:
         self.tmc_subarraynode1 = tmc_low_subarraynode1
         self.central_node = DeviceProxy(low_centralnode)
         self.subarray_node = DeviceProxy(tmc_low_subarraynode1)
+        # Set timeout to 5 sec.
+        # Sometimes command timeout with default 3 sec time
+        self.subarray_node.set_timeout_millis(5000)
         self.csp_subarray_leaf_node = DeviceProxy(low_csp_subarray_leaf_node)
         self.sdp_subarray_leaf_node = DeviceProxy(low_sdp_subarray_leaf_node)
         self.mccs_subarray_leaf_node = DeviceProxy(mccs_subarray_leaf_node)

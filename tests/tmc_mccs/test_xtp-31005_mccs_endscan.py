@@ -112,11 +112,11 @@ def subarray_in_scanning_obsstate(
         + "{subarray_id}"
     )
 )
-def invoke_scan(
+def invoke_endscan(
     subarray_node_low,
     subarray_id,
 ):
-    """Invokes Scan command on TMC"""
+    """Invokes EndScan command on TMC"""
     subarray_node_low.set_subarray_id(subarray_id)
     subarray_node_low.remove_scan_data()
 

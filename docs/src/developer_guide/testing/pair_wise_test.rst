@@ -38,10 +38,10 @@ To test with tmc_sdp execute the command `make k8s-test MARK=tmc_sdp SDP_SIMULAT
 Negative Scenario implemented
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-* ``HealthState.DEGRADED Scenario`` - Testing TMC-SDP to verification of the TelescopeHealthState transition
-- in the Telescope Monitoring and Control TMC system based on the health state changes of the SDP Controller. 
-- The scenario simulates a telescope setup consisting of Real SDP, and 
-- simulated devices for the CSP and the MCCS.
+* ``HealthState.DEGRADED Scenario`` 
+        - Testing TMC-SDP to verification of the TelescopeHealthState transition
+        - In the Telescope Monitoring and Control TMC system based on the health state changes of the SDP Controller. 
+        - The scenario simulates a telescope setup consisting of Real SDP, and simulated devices for the CSP and the MCCS.
 
 Long command sequence implementation
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -114,10 +114,10 @@ To test with tmc_mccs execute the command `make k8s-test MARK=tmc_mccs MCCS_SIMU
 Negative Scenario implemented
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-* ``HealthState.DEGRADED Scenario`` - Testing TMC-MCCS to verification of the TelescopeHealthState transition
-- in the Telescope Monitoring and Control TMC system based on the health state changes of the SDP Controller. 
-- The scenario simulates a telescope setup consisting of Real MCCS, and 
-- simulated devices for the CSP and the SDP.
+* ``HealthState.DEGRADED Scenario`` 
+        - Testing TMC-MCCS to verification of the TelescopeHealthState transition
+        - in the Telescope Monitoring and Control TMC system based on the health state changes of the SDP Controller. 
+        - The scenario simulates a telescope setup consisting of Real MCCS, and simulated devices for the CSP and the SDP.
 
 * ``Handling Invalid Station Id in MCCS controller`` - The TMC Low Subarray reports the exception triggered by the MCCS controller when it encounters an invalid station ID.
 

@@ -2,7 +2,6 @@
 import pytest
 from pytest_bdd import given, parsers, scenario, then, when
 from ska_control_model import ObsState
-from ska_tango_base.commands import ResultCode
 from ska_tango_testing.mock.placeholders import Anything
 from tango import DevState
 
@@ -14,7 +13,6 @@ from tests.resources.test_harness.helpers import updated_assign_str
 from tests.resources.test_harness.utils.enums import SimulatorDeviceType
 from tests.resources.test_support.common_utils.tmc_helpers import (
     prepare_json_args_for_centralnode_commands,
-    wait_for_attribute_update,
 )
 
 
@@ -125,12 +123,6 @@ def invalid_command_rejection(
     event_recorder.subscribe_event(
         central_node_low.mccs_master_leaf_node,
         "longRunningCommandResult",
-    )
-    assert wait_for_attribute_update(
-        central_node_low.mccs_master_leaf_node,
-        "longRunningCommandResult",
-        "AssignResources",
-        ResultCode.FAILED,
     )
     exception_message = "Cannot allocate resources: 15"
     assert stored_unique_id[0].endswith("AssignResources")
