@@ -15,6 +15,13 @@ Fixed
 *********
 * Bug SKB-296 is fixed
 
+[0.15.0]
+************
+* Integrate TMC SubarrayNode latest image with SKB-355 bug fix
+* Utilised ska-csp-lmc-low v0.13.1 for SKB-355 bug verification via XTP-29657
+* Integrate TMC CspSubarrayLeafNode latest image v0.162 with SKB-329, SKB-328 and SKB-327 bug fix
+* Affected BDD test case - XTP-32140
+
 [0.14.1]
 ************
 * Fixed SKB-300
