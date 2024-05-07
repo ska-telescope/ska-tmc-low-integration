@@ -87,8 +87,8 @@ def tmc_assign_resources_invoke(
     )
 
     input_json = update_eb_pb_ids(input_json)
-    pytest.result, pytest.unique_id = central_node_low.store_resources(
-        input_json
+    pytest.result, pytest.unique_id = central_node_low.perform_action(
+        "AssignResources", input_json
     )
 
 
