@@ -47,6 +47,12 @@ This project is integration of the TMC components for the `Square Kilometre Arra
 
    reovering_tmc/recovery
 
+.. toctree::
+   :maxdepth: 1
+   :caption: Mocked Device Testing:
+
+   developer_guide/testing//mocks_devices_tests
+
 Indices and tables
 ------------------
 * :ref:`genindex`
