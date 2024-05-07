@@ -102,6 +102,7 @@ k8s-test:
     - make k8s-install-chart
     - make k8s-wait
   after_script:
+    - kubectl get all,pvc,ingress -n $KUBE_NAMESPACE
     - pip3 install -q -U ska-ser-xray
     - XRAY_TEST_RESULT_FILE="build/cucumber.json" make xray-publish
 
@@ -146,6 +147,7 @@ k8s-test-tmc-with-sdp:
     - make k8s-wait
     - make k8s-test MARK='tmc_sdp'
   after_script:
+    - kubectl get all,pvc,ingress -n $KUBE_NAMESPACE
     - pip3 install -q -U ska-ser-xray
     - XRAY_TEST_RESULT_FILE="build/cucumber.json" make xray-publish
   environment:
