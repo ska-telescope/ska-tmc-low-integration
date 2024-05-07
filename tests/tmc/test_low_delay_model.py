@@ -30,7 +30,6 @@ configure_logging(logging.DEBUG)
 LOGGER = logging.getLogger(__name__)
 
 
-@pytest.mark.delay
 @pytest.mark.SKA_low
 @scenario(
     "../features/tmc/check_low_delay_model.feature",
