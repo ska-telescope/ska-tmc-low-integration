@@ -109,14 +109,17 @@ def sdp_subarray_reports_unavailability(central_node_low, event_recorder):
         + " cannot start processing blocks.\n"
     )
     event_recorder.subscribe_event(
-        central_node_low.sdp_subarray_leaf_node,
+        central_node_low.central_node,
         "longRunningCommandResult",
     )
     assertion_data = event_recorder.has_change_event_occurred(
-        central_node_low.sdp_subarray_leaf_node,
-        "longRunningCommandResult",
-        (pytest.unique_id[0], Anything),
+        central_node_low.central_node,
+        attribute_name="longRunningCommandResult",
+        attribute_value=(pytest.unique_id[0], Anything),
     )
+
+    assert "AssignResources" in assertion_data["attribute_value"][0]
+    assert exception_message in assertion_data["attribute_value"][1]
     LOGGER.info(pytest.result[0])
     LOGGER.info(pytest.unique_id[0])
     LOGGER.info(assertion_data)
