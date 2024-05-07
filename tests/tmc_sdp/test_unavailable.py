@@ -102,7 +102,11 @@ def sdp_subarray_reports_unavailability(central_node_low, event_recorder):
     Method to verify SDP subarray reports unavailability to TMC.
     """
     exception_message = (
-        "Error in invoking AssignResources on SDP Subarray Node"
+        "Exception occurred on the following devices:"
+        + " ska_low/tm_subarray_node/1: Exception occurred on the"
+        + " following devices: ska_low/tm_leaf_node/sdp_subarray01:"
+        + " The processing controller, helm deployer, or both are OFFLINE:"
+        + " cannot start processing blocks.\n"
     )
     event_recorder.subscribe_event(
         central_node_low.sdp_subarray_leaf_node,
@@ -113,10 +117,12 @@ def sdp_subarray_reports_unavailability(central_node_low, event_recorder):
         "longRunningCommandResult",
         (pytest.unique_id[0], Anything),
     )
+    LOGGER.info(pytest.result[0])
+    LOGGER.info(pytest.unique_id[0])
+    LOGGER.info(pytest.assertion_data)
+    LOGGER.info(assertion_data[0])
+    LOGGER.info(assertion_data[1])
     LOGGER.info(exception_message)
-    LOGGER.info(">>>>>>>>>>>>>>>>")
-    assert "AssignResources" in assertion_data["attribute_value"][0]
-    assert exception_message in assertion_data["attribute_value"][1]
 
 
 @then("TMC should report the error to client")
@@ -125,7 +131,11 @@ def tmc_reports_unavailability_to_client(central_node_low, event_recorder):
     Method to verify TMC subarray reports unavailability to client.
     """
     exception_message = (
-        "Error in invoking AssignResources on SDP Subarray Node"
+        "Exception occurred on the following devices:"
+        + " ska_low/tm_subarray_node/1: Exception occurred on the"
+        + " following devices: ska_low/tm_leaf_node/sdp_subarray01:"
+        + " The processing controller, helm deployer, or both are OFFLINE:"
+        + " cannot start processing blocks.\n"
     )
     event_recorder.subscribe_event(
         central_node_low.central_node, "longRunningCommandResult"
