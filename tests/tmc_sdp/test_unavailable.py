@@ -5,7 +5,7 @@ import pytest
 from pytest_bdd import given, parsers, scenario, then, when
 from ska_control_model import ObsState
 from ska_tango_testing.mock.placeholders import Anything
-from tango import DeviceProxy, DevState
+from tango import DevState
 
 from tests.resources.test_harness.helpers import update_eb_pb_ids
 from tests.resources.test_support.common_utils.tmc_helpers import (
@@ -72,7 +72,6 @@ def RestartDevice():
     This Method Restart the Device server of SDP component
     Proc control already not present
     """
-    pass
 
 
 @when(parsers.parse("I assign resources to the subarray {subarray_id}"))
