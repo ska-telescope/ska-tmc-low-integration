@@ -101,7 +101,8 @@ CUSTOM_VALUES =	--set tmc-low.deviceServers.mocks.is_simulated.sdp=$(SDP_SIMULAT
 	--set global.sdp_master=$(SDP_MASTER)\
 	--set global.sdp_subarray_prefix=$(SDP_SUBARRAY_PREFIX)\
 	--set ska-sdp.proccontrol.replicas=$(SDP_PROCCONTROL_REPLICAS)\
-	--set ska-sdp.helmdeploy.namespace=$(KUBE_NAMESPACE_SDP)
+	--set ska-sdp.helmdeploy.namespace=$(KUBE_NAMESPACE_SDP)\
+	--set ska-sdp.lmc.loadBalancer=true 
 endif
 
 K8S_CHART_PARAMS = --set global.minikube=$(MINIKUBE) \
@@ -109,9 +110,9 @@ K8S_CHART_PARAMS = --set global.minikube=$(MINIKUBE) \
 	--set ska-tango-base.display=$(DISPLAY) \
 	--set ska-tango-base.xauthority=$(XAUTHORITY) \
 	--set ska-tango-base.jive.enabled=$(JIVE) \
-	--set global.exposeAllDS=false \
+	--set global.exposeAllDS=true \
 	--set global.cluster_domain=$(CLUSTER_DOMAIN) \
-	--set global.operator=true \
+	--set global.operator=false \
 	--set ska-taranta.enabled=$(TARANTA_ENABLED)\
 	--set tmc-low.subarray_count=$(SUBARRAY_COUNT)\
 	$(CUSTOM_VALUES)
