@@ -17,12 +17,15 @@ from ska_telmodel.schema import validate as telmodel_validate
 from tango import DevState
 
 from tests.resources.test_harness.constant import (
+    DELAY_CADENCE,
     INITIAL_LOW_DELAY_JSON,
     LOW_DELAYMODEL_VERSION,
+    VALIDITY_PERIOD_SEC,
 )
 from tests.resources.test_harness.helpers import (
     prepare_json_args_for_centralnode_commands,
     prepare_json_args_for_commands,
+    wait_and_validate_device_attribute_value,
 )
 
 configure_logging(logging.DEBUG)
@@ -138,10 +141,9 @@ def invoke_end_command(subarray_node_low, event_recorder) -> None:
 @then("CSP Subarray Leaf Node stops generating delay values")
 def check_if_delay_values_are_not_generating(subarray_node_low) -> None:
     """Check if delay values are stopped generating."""
-    delay_model_json_after_end = json.loads(
-        subarray_node_low.csp_subarray_leaf_node.read_attribute(
-            "delayModel"
-        ).value
+    assert wait_and_validate_device_attribute_value(
+        subarray_node_low.csp_subarray_leaf_node,
+        "delayModel",
+        json.dumps(INITIAL_LOW_DELAY_JSON),
+        is_json=True,
     )
-    LOGGER.info("Delay model json:%s", delay_model_json_after_end)
-    assert delay_model_json_after_end == INITIAL_LOW_DELAY_JSON
