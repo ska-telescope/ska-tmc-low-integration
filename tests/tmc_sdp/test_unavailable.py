@@ -1,4 +1,5 @@
 """Test TMC-SDP Negative Scenarios Unavailable subsystem"""
+import logging
 import os
 
 import pytest
@@ -12,7 +13,10 @@ from tests.resources.test_support.common_utils.tmc_helpers import (
     prepare_json_args_for_centralnode_commands,
 )
 
+LOGGER = logging.getLogger(__name__)
 
+
+@pytest.mark.test
 @pytest.mark.tmc_sdp_unhappy_path
 @scenario(
     "../features/tmc_sdp/xtp-34890_sdp_component_unavailable.feature",
@@ -101,14 +105,16 @@ def sdp_subarray_reports_unavailability(central_node_low, event_recorder):
         "Error in invoking AssignResources on SDP Subarray Node"
     )
     event_recorder.subscribe_event(
-        central_node_low.subarray_devices["sdp_subarray"],
+        central_node_low.sdp_subarray_leaf_node,
         "longRunningCommandResult",
     )
     assertion_data = event_recorder.has_change_event_occurred(
-        central_node_low.subarray_devices["sdp_subarray"],
+        central_node_low.sdp_subarray_leaf_node,
         "longRunningCommandResult",
         (pytest.unique_id[0], Anything),
     )
+    LOGGER.info(exception_message)
+    LOGGER.info(">>>>>>>>>>>>>>>>")
     assert "AssignResources" in assertion_data["attribute_value"][0]
     assert exception_message in assertion_data["attribute_value"][1]
 
