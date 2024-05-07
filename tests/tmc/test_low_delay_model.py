@@ -17,10 +17,8 @@ from ska_telmodel.schema import validate as telmodel_validate
 from tango import DevState
 
 from tests.resources.test_harness.constant import (
-    DELAY_CADENCE,
     INITIAL_LOW_DELAY_JSON,
     LOW_DELAYMODEL_VERSION,
-    VALIDITY_PERIOD_SEC,
 )
 from tests.resources.test_harness.helpers import (
     prepare_json_args_for_centralnode_commands,
