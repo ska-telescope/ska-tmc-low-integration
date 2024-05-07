@@ -29,6 +29,7 @@ from tests.resources.test_harness.helpers import (
 configure_logging(logging.DEBUG)
 LOGGER = logging.getLogger(__name__)
 
+
 @pytest.mark.delay
 @pytest.mark.SKA_low
 @scenario(
