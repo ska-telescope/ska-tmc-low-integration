@@ -65,7 +65,6 @@ JIVE ?= false# Enable jive
 TARANTA ?= false
 MINIKUBE ?= false ## Minikube or not
 FAKE_DEVICES ?= false ## Install fake devices or not
-
 ITANGO_DOCKER_IMAGE = $(CAR_OCI_REGISTRY_HOST)/ska-tango-images-tango-itango:9.3.10
 
 # Test runner - run to completion job in K8s
@@ -110,9 +109,9 @@ K8S_CHART_PARAMS = --set global.minikube=$(MINIKUBE) \
 	--set ska-tango-base.display=$(DISPLAY) \
 	--set ska-tango-base.xauthority=$(XAUTHORITY) \
 	--set ska-tango-base.jive.enabled=$(JIVE) \
-	--set global.exposeAllDS=true \
+	--set global.exposeAllDS=false\
 	--set global.cluster_domain=$(CLUSTER_DOMAIN) \
-	--set global.operator=false \
+	--set global.operator=true \
 	--set ska-taranta.enabled=$(TARANTA_ENABLED)\
 	--set tmc-low.subarray_count=$(SUBARRAY_COUNT)\
 	$(CUSTOM_VALUES)
