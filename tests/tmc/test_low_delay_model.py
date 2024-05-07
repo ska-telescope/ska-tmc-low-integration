@@ -134,12 +134,5 @@ def check_if_delay_values_are_not_generating(subarray_node_low) -> None:
             "delayModel"
         ).value
     )
-    LOGGER.info(
-        "type delay_model_json_after_end:%s", type(delay_model_json_after_end)
-    )
-    LOGGER.info(
-        "value delay_model_json_after_end:%s", delay_model_json_after_end
-    )
-    LOGGER.info("type INITIAL_LOW_DELAY_JSON:%s", type(INITIAL_LOW_DELAY_JSON))
-    LOGGER.info("value INITIAL_LOW_DELAY_JSON:%s", INITIAL_LOW_DELAY_JSON)
+    LOGGER.info("Delay model json:%s", delay_model_json_after_end)
     assert delay_model_json_after_end == INITIAL_LOW_DELAY_JSON
