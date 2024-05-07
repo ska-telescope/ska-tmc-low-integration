@@ -13,9 +13,13 @@ from pytest_bdd import given, scenario, then, when
 from ska_control_model import ObsState
 from ska_ser_logging import configure_logging
 from ska_tango_base.commands import ResultCode
+from ska_telmodel.schema import validate as telmodel_validate
 from tango import DevState
 
-from tests.resources.test_harness.constant import INITIAL_LOW_DELAY_JSON
+from tests.resources.test_harness.constant import (
+    INITIAL_LOW_DELAY_JSON,
+    LOW_DELAYMODEL_VERSION,
+)
 from tests.resources.test_harness.helpers import (
     prepare_json_args_for_centralnode_commands,
     prepare_json_args_for_commands,
@@ -107,6 +111,11 @@ def check_if_delay_values_are_generating(subarray_node_low) -> None:
     )
     generated_delay_model_json = json.loads(generated_delay_model)
     assert generated_delay_model_json != json.dumps(INITIAL_LOW_DELAY_JSON)
+    telmodel_validate(
+        version=LOW_DELAYMODEL_VERSION,
+        config=generated_delay_model_json,
+        strictness=2,
+    )
 
 
 @when("I end the observation")

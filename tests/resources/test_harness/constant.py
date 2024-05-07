@@ -160,6 +160,7 @@ SIMULATOR_DEVICE_FQDN_DICT = {
     SimulatorDeviceType.MCCS_SUBARRAY_DEVICE: [mccs_subarray1],
 }
 
+LOW_DELAYMODEL_VERSION = "https://schema.skao.int/ska-low-csp-delaymodel/1.0"
 
 INITIAL_LOW_DELAY_JSON = {
     "interface": "",
