@@ -119,7 +119,7 @@ def sdp_subarray_reports_unavailability(central_node_low, event_recorder):
     )
     LOGGER.info(pytest.result[0])
     LOGGER.info(pytest.unique_id[0])
-    LOGGER.info(pytest.assertion_data)
+    LOGGER.info(assertion_data)
     LOGGER.info(assertion_data[0])
     LOGGER.info(assertion_data[1])
     LOGGER.info(exception_message)

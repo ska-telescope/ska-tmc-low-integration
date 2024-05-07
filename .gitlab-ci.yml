@@ -130,6 +130,7 @@ k8s-test-tmc-with-sdp:
   variables:
     TELESCOPE: 'SKA-low'
     PORT: "10000"
+    CI_KEEP_NAMESPACE : true
     KUBE_NAMESPACE: 'ci-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-tmc-sdp'
     KUBE_NAMESPACE_SDP: 'ci-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-sdp'
     SERVICE_ACCOUNT: "ci-svc-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-tmc-sdp"
@@ -143,6 +144,7 @@ k8s-test-tmc-with-sdp:
     - make k8s-wait
     - make k8s-wait KUBE_APP="ska-sdp"
     - make k8s-test MARK='test'
+    
   after_script:
     - pip3 install -q -U ska-ser-xray
     - XRAY_TEST_RESULT_FILE="build/cucumber.json" make xray-publish
