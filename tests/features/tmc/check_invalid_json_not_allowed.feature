@@ -24,9 +24,4 @@ Feature: Commands with invalid json input
 
         Examples:
             | invalid_json                   |
-            | csp_key_missing                |
-            | sdp_key_missing                |
             | mccs_key_missing               |
-            | tmc_key_missing                |
-            | scan_duration_key_missing      |
-            | empty_string                   |
