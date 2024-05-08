@@ -10,7 +10,6 @@ import json
 import pytest
 from pytest_bdd import given, scenario, then, when
 from ska_control_model import ObsState
-from ska_ser_logging import configure_logging
 from ska_tango_base.commands import ResultCode
 from ska_telmodel.schema import validate as telmodel_validate
 from tango import DevState
