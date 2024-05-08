@@ -6,6 +6,7 @@ The scenario includes steps to set up the TMC, configure the subarray,
 and checks whether CspSubarrayLeafNode starts generating delay value.
 """
 import json
+
 import pytest
 from pytest_bdd import given, scenario, then, when
 from ska_control_model import ObsState
