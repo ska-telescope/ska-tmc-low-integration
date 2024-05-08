@@ -157,6 +157,7 @@ stop-k8s-test-tmc-with-sdp:
     - stop-k8s-test
   variables:
     KUBE_NAMESPACE: 'ci-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-tmc-sdp'
+    SDP_SIMULATION_ENABLED: 'false'
 
 k8s-test-tmc-with-mccs:
   extends:
