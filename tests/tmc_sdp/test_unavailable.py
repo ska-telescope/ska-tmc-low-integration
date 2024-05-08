@@ -134,14 +134,13 @@ def tmc_reports_unavailability_to_client(central_node_low, event_recorder):
         + " The processing controller, helm deployer, or both are OFFLINE:"
         + " cannot start processing blocks.\n"
     )
-    event_recorder.subscribe_event(
-        central_node_low.central_node, "longRunningCommandResult"
-    )
+
     assertion_data = event_recorder.has_change_event_occurred(
-        central_node_low.subarray_node,
-        "longRunningCommandResult",
-        (pytest.unique_id[0], Anything),
+        central_node_low.central_node,
+        attribute_name="longRunningCommandResult",
+        attribute_value=(pytest.unique_id[0], Anything),
     )
+
     assert "AssignResources" in assertion_data["attribute_value"][0]
     assert exception_message in assertion_data["attribute_value"][1]
 
