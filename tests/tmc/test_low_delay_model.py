@@ -6,8 +6,6 @@ The scenario includes steps to set up the TMC, configure the subarray,
 and checks whether CspSubarrayLeafNode starts generating delay value.
 """
 import json
-import logging
-
 import pytest
 from pytest_bdd import given, scenario, then, when
 from ska_control_model import ObsState
@@ -25,9 +23,6 @@ from tests.resources.test_harness.helpers import (
     prepare_json_args_for_commands,
     wait_and_validate_device_attribute_value,
 )
-
-configure_logging(logging.DEBUG)
-LOGGER = logging.getLogger(__name__)
 
 
 @pytest.mark.SKA_low
