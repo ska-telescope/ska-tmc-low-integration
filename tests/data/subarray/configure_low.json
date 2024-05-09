@@ -52,6 +52,7 @@
     },
     "csp": {
       "interface": "https://schema.skao.int/ska-low-csp-configure/3.1",
+      "subarray": {"subarray_name": "science period 23"},
       "common": {
         "config_id": "sbi-mvp01-20200325-00001-target:a"
       },
