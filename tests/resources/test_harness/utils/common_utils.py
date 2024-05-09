@@ -9,6 +9,8 @@ from ska_control_model import ObsState
 from tests.resources.test_harness.utils.wait_helpers import Waiter
 from tests.resources.test_support.common_utils.result_code import ResultCode
 
+TIMEOUT = 200
+
 
 def check_scan_successful(
     subarray_node, event_recorder, scan_id, unique_id
@@ -27,7 +29,7 @@ def check_scan_successful(
     the_waiter.set_wait_for_specific_obsstate(
         "SCANNING", [subarray_node.subarray_node]
     )
-    the_waiter.wait(200)
+    the_waiter.wait(TIMEOUT)
 
     assert event_recorder.has_change_event_occurred(
         subarray_node.subarray_node,
@@ -52,7 +54,7 @@ def check_scan_successful(
     the_waiter.set_wait_for_specific_obsstate(
         "READY", [subarray_node.subarray_node]
     )
-    the_waiter.wait(100)
+    the_waiter.wait(TIMEOUT)
     assert event_recorder.has_change_event_occurred(
         subarray_node.subarray_devices["sdp_subarray"],
         "obsState",
@@ -63,7 +65,7 @@ def check_scan_successful(
     the_waiter.set_wait_for_specific_obsstate(
         "READY", [subarray_node.subarray_node]
     )
-    the_waiter.wait(100)
+    the_waiter.wait(TIMEOUT)
     assert event_recorder.has_change_event_occurred(
         subarray_node.subarray_node, "obsState", ObsState.READY, lookahead=10
     )
@@ -85,12 +87,12 @@ def check_configure_successful(
     the_waiter.set_wait_for_specific_obsstate(
         "READY", [subarray_node.subarray_devices["sdp_subarray"]]
     )
-    the_waiter.wait(100)
+    the_waiter.wait(TIMEOUT)
 
     the_waiter.set_wait_for_specific_obsstate(
         "READY", [subarray_node.subarray_node]
     )
-    the_waiter.wait(100)
+    the_waiter.wait(TIMEOUT)
     assert event_recorder.has_change_event_occurred(
         subarray_node.subarray_node, "obsState", ObsState.READY, lookahead=10
     )
