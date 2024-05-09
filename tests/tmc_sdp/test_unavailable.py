@@ -1,5 +1,4 @@
 """Test TMC-SDP Negative Scenarios Unavailable subsystem"""
-import logging
 import os
 
 import pytest
@@ -13,10 +12,7 @@ from tests.resources.test_support.common_utils.tmc_helpers import (
     prepare_json_args_for_centralnode_commands,
 )
 
-LOGGER = logging.getLogger(__name__)
 
-
-@pytest.mark.test
 @pytest.mark.tmc_sdp_unhappy_path
 @scenario(
     "../features/tmc_sdp/xtp-34890_sdp_component_unavailable.feature",
