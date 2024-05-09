@@ -48,12 +48,12 @@
     },
     "sdp": {
       "interface": "https://schema.skao.int/ska-sdp-configure/0.4",
-      "scan_type": "science_A"
+      "scan_type": "target:a"
     },
     "csp": {
       "interface": "https://schema.skao.int/ska-low-csp-configure/3.1",
       "common": {
-        "config_id": "sbi-mvp01-20200325-00001-science_A"
+        "config_id": "sbi-mvp01-20200325-00001-target:a"
       },
       "lowcbf": {
         "stations": {
@@ -102,6 +102,9 @@
           "stn_beams": [
             {
               "stn_beam_id": 1,
+              "host": [[0, "192.168.0.1"]],
+              "port": [[0, 9000, 1]],
+              "mac": [[0, "02-03-04-0a-0b-0c"]],
               "integration_ms": 849
             }
           ]
