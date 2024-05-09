@@ -13,6 +13,7 @@ from tests.resources.test_support.common_utils.tmc_helpers import (
 )
 
 
+@pytest.mark.test
 @pytest.mark.tmc_sdp_unhappy_path
 @scenario(
     "../features/tmc_sdp/xtp-34890_sdp_component_unavailable.feature",
