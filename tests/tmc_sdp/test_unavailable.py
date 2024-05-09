@@ -97,9 +97,31 @@ def tmc_assign_resources_invoke(
 
 
 @then("SDP subarray report the unavailability of SDP Component")
-def sdp_subarray_reports_unavailability(central_node_low, event_recorder):
+def sdp_subarray_reports_unavailability(event_recorder, central_node_low):
     """
     Method to verify SDP subarray reports unavailability to TMC.
+    """
+    event_recorder.subscribe_event(
+        central_node_low.central_node,
+        "longRunningCommandResult",
+    )
+    exception_message = (
+        " The processing controller, helm deployer, or both are OFFLINE:"
+        + " cannot start processing blocks.\n"
+    )
+    pytest.assertion_data = event_recorder.has_change_event_occurred(
+        central_node_low.central_node,
+        attribute_name="longRunningCommandResult",
+        attribute_value=(pytest.unique_id[0], Anything),
+    )
+    assert "AssignResources" in pytest.assertion_data["attribute_value"][0]
+    assert exception_message in pytest.assertion_data["attribute_value"][1]
+
+
+@then("TMC should report the error to client")
+def tmc_reports_unavailability_to_client():
+    """
+    Method to verify TMC subarray reports unavailability to client.
     """
     exception_message = (
         "Exception occurred on the following devices:"
@@ -108,25 +130,9 @@ def sdp_subarray_reports_unavailability(central_node_low, event_recorder):
         + " The processing controller, helm deployer, or both are OFFLINE:"
         + " cannot start processing blocks.\n"
     )
-    event_recorder.subscribe_event(
-        central_node_low.central_node,
-        "longRunningCommandResult",
-    )
-    assertion_data = event_recorder.has_change_event_occurred(
-        central_node_low.central_node,
-        attribute_name="longRunningCommandResult",
-        attribute_value=(pytest.unique_id[0], Anything),
-    )
 
-    assert "AssignResources" in assertion_data["attribute_value"][0]
-    assert exception_message in assertion_data["attribute_value"][1]
-
-
-@then("TMC should report the error to client")
-def tmc_reports_unavailability_to_client():
-    """
-    Method to verify TMC subarray reports unavailability to client.
-    """
+    assert "AssignResources" in pytest.assertion_data["attribute_value"][0]
+    assert exception_message in pytest.assertion_data["attribute_value"][1]
 
 
 @then(parsers.parse("the TMC SubarrayNode {subarray_id} stuck in RESOURCING"))
