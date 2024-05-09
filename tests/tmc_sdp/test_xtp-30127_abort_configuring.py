@@ -63,9 +63,15 @@ def subarray_is_in_configuring_obsstate(
     event_recorder.subscribe_event(
         subarray_node_low.subarray_devices.get("sdp_subarray"), "obsState"
     )
+    event_recorder.subscribe_event(
+        subarray_node_low.subarray_devices.get("csp_subarray"), "obsState"
+    )
     event_recorder.subscribe_event(subarray_node_low.subarray_node, "obsState")
     event_recorder.subscribe_event(
         subarray_node_low.sdp_subarray_leaf_node, "sdpSubarrayObsState"
+    )
+    event_recorder.subscribe_event(
+        subarray_node_low.csp_subarray_leaf_node, "cspSubarrayObsState"
     )
     configure_input_json = prepare_json_args_for_commands(
         "configure_low", command_input_factory
