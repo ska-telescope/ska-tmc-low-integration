@@ -131,11 +131,6 @@ ska-csp-lmc-low:
     app: ska-tmc-low-integration
   legacy_compatibility: true
   enabled: false
-  lowcsplmc:
-    image:
-      registry: harbor.skao.int/staging
-      image: ska-csp-lmc-low
-      tag: 0.13.1
   deviceServers:
     cspcontroller:
       instances: ["controller"]
