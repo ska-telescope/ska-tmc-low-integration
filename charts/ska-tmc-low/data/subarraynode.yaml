@@ -4,7 +4,6 @@ domain: subarray
 instances: ["01"]
 entrypoints:
   - name: "ska_tmc_subarraynode.subarray_node_low.SubarrayNodeLow"
-{{- $csp_assign_interface := .Values.deviceServers.subarraynode.LowCspAssignResourcesInterfaceURL }}
 server:
   name: "subarray_node_low"
   instances:
@@ -52,9 +51,6 @@ server:
           - name: "CommandTimeout"
             values:
               - "40"
-          - name: "LowCspAssignResourcesInterfaceURL"
-            values:
-              - "{{ $csp_assign_interface }}"
   {{- end}}
 depends_on:
   - device: sys/database/2
