@@ -4,7 +4,11 @@ domain: subarray
 instances: ["01"]
 entrypoints:
   - name: "ska_tmc_subarraynode.subarray_node_low.SubarrayNodeLow"
-{{- $csp_assign_interface := .Values.deviceServers.subarraynode.LowCspAssignResourcesInterfaceURL }}
+{{- $csp_assign_interface := .Values.deviceServers.subarraynode.CspAssignResourcesInterfaceURL }}
+{{- $csp_scan_interface := .Values.deviceServers.subarraynode.CspScanInterfaceURL }}
+{{- $sdp_scan_interface := .Values.deviceServers.subarraynode.SdpScanInterfaceURL }}
+{{- $mccs_configure_interface := .Values.deviceServers.subarraynode.MccsConfigureInterfaceURL }}
+
 server:
   name: "subarray_node_low"
   instances:
@@ -52,9 +56,18 @@ server:
           - name: "CommandTimeout"
             values:
               - "40"
-          - name: "LowCspAssignResourcesInterfaceURL"
+          - name: "CspAssignResourcesInterfaceURL"
             values:
               - "{{ $csp_assign_interface }}"
+          - name: "CspScanInterfaceURL"
+            values:
+              - "{{ $csp_scan_interface }}"
+          - name: "SdpScanInterfaceURL"
+            values:
+              - "{{ $sdp_scan_interface }}"
+          - name: "MccsConfigureInterfaceURL"
+            values:
+              - "{{ $mccs_configure_interface }}"
   {{- end}}
 depends_on:
   - device: sys/database/2
