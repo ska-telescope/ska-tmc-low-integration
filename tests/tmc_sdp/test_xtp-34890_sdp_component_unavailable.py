@@ -13,7 +13,6 @@ from tests.resources.test_support.common_utils.tmc_helpers import (
 )
 
 
-@pytest.mark.test
 @pytest.mark.tmc_sdp_unhappy_path
 @scenario(
     "../features/tmc_sdp/xtp-34890_sdp_component_unavailable.feature",
@@ -68,10 +67,9 @@ def subarray_is_in_empty_obsstate(
 
 
 @when("one of the SDP's component subsystem is made unavailable")
-def RestartDevice():
+def sdp_proc_controller_unavailable():
     """
-    This Method Restart the Device server of SDP component
-    Proc control already not present
+    Proc control is made unavailable in gitlab script
     """
 
 
