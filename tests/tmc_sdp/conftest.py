@@ -148,6 +148,7 @@ def execute_configure_scan_sequence(
                 subarray_node_low.subarray_devices["sdp_subarray"],
                 "obsState",
                 ObsState.READY,
+                lookahead=10,
             )
             configure_cycle = "Next"
 
