@@ -59,6 +59,13 @@ ska-tango-base:
 
 # TMC-low
 tmc-low:
+  resources:
+    requests:
+      cpu: 200m # 0.5 CPU
+      memory: 500Mi # 1 GB mem
+    limits:
+      cpu: 500m # 1 CPU
+      memory: 1024Mi # 2 GB mem
   labels:
     app: ska-tmc-low-integration
   enabled: true
@@ -69,6 +76,7 @@ tmc-low:
         sdp: true
         mccs: true
         csp: true
+
 
 ska-sdp:
   legacy_compatibility: true
@@ -81,7 +89,7 @@ ska-sdp:
   data-pvc:
     create:
       enabled: true
-      size: 500Mi
+      size: 5Gi
       storageClassName: nfss1
   ska-sdp-qa:
     kafka:
