@@ -105,7 +105,7 @@ def sync_assign_resources(device_dict):
     return decorator_sync_assign_resources
 
 
-def sync_abort(device_dict, timeout=500):
+def sync_abort(device_dict, timeout=1000):
     # define as a decorator
     def decorator_sync_abort(func):
         @functools.wraps(func)
