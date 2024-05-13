@@ -126,7 +126,6 @@ stop-k8s-test-tmc-with-csp:
     - stop-k8s-test
   variables:
     KUBE_NAMESPACE: 'ci-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-csp-low'
-    CSP_SIMULATION_ENABLED: 'false'
 
 k8s-test-tmc-with-sdp:
   tags:
@@ -144,8 +143,8 @@ k8s-test-tmc-with-sdp:
     - '[ -f .make/k8s.mk ] || (echo "File k8s.mk not included in Makefile; exit 1")'
     - 'make help | grep k8s-test'
     - make k8s-wait
-    - make k8s-wait KUBE_APP="test"
-    - make k8s-test MARK='tmc_sdp'
+    - make k8s-wait KUBE_APP="ska-sdp"
+    - make k8s-test MARK='test'
     - kubectl get all,pvc,ingress -n $KUBE_NAMESPACE
   after_script:
     - pip3 install -q -U ska-ser-xray
