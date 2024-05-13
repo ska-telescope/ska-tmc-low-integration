@@ -117,6 +117,7 @@ k8s-test-tmc-with-csp:
     MARK: 'tmc_csp'
     COUNT: 1
     CSP_SIMULATION_ENABLED: 'false'
+    CI_KEEP_NAMESPACE: 'true'
   environment:
     name: test/$CI_COMMIT_REF_SLUG
     on_stop: stop-k8s-test-tmc-with-csp

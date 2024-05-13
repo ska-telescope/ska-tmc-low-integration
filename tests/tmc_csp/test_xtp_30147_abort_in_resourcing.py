@@ -98,6 +98,15 @@ def csp_subarray_in_aborted_obs_state(subarray_node_low, event_recorder):
         subarray_node_low.subarray_devices.get("csp_subarray"),
         "obsState",
     )
+    event_recorder.subscribe_event(
+        subarray_node_low.csp_subarray_leaf_node,
+        "cspSubarrayObsState",
+    )
+    assert event_recorder.has_change_event_occurred(
+        subarray_node_low.csp_subarray_leaf_node,
+        "cspSubarrayObsState",
+        ObsState.ABORTED,
+    )
     assert event_recorder.has_change_event_occurred(
         subarray_node_low.subarray_devices.get("csp_subarray"),
         "obsState",
@@ -109,6 +118,24 @@ def csp_subarray_in_aborted_obs_state(subarray_node_low, event_recorder):
 @then("the TMC subarray node obsState transitions to ABORTED")
 def subarray_in_aborted_obs_state(subarray_node_low, event_recorder):
     """Subarray Node in ABORTED obsState."""
+    event_recorder.subscribe_event(
+        subarray_node_low.subarray_devices.get("sdp_subarray"),
+        "obsState",
+    )
+    event_recorder.subscribe_event(
+        subarray_node_low.sdp_subarray_leaf_node, "sdpSubarrayObsState"
+    )
+    assert event_recorder.has_change_event_occurred(
+        subarray_node_low.sdp_subarray_leaf_node,
+        "sdpSubarrayObsState",
+        ObsState.ABORTED,
+    )
+    assert event_recorder.has_change_event_occurred(
+        subarray_node_low.subarray_devices.get("sdp_subarray"),
+        "obsState",
+        ObsState.ABORTED,
+        lookahead=10,
+    )
     assert event_recorder.has_change_event_occurred(
         subarray_node_low.subarray_node,
         "obsState",
