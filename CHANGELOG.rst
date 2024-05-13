@@ -18,7 +18,8 @@ Fixed
 
 [0.15.0]
 ************
-* Integrate TMC SubarrayNode latest image with SKB-355 bug fix
+* Integrate TMC SubarrayNode latest image with SKB-355 and Bug fix 
+  for interface URL for CSP, SDP and MCCS Scan and Configure commands.
 * Utilised ska-csp-lmc-low v0.13.1 for SKB-355 bug verification via XTP-29657
 * Integrate TMC CspSubarrayLeafNode latest image v0.162 with SKB-329, SKB-328 and SKB-327 bug fix
 * Affected BDD test case - XTP-32140
