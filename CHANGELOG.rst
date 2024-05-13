@@ -14,6 +14,7 @@ Fixed
 [master]
 *********
 * Bug SKB-296 is fixed
+* Bug SKB-187 is fixed
 
 [0.14.1]
 ************
