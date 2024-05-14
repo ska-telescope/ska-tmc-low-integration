@@ -10,7 +10,7 @@ MCCS_SIMULATION_ENABLED = os.getenv("MCCS_SIMULATION_ENABLED")
 if MCCS_SIMULATION_ENABLED.lower() == "false":
     TIMEOUT = 600  # MCCS lower level devices take more time to turn on and off
 else:
-    TIMEOUT = 200
+    TIMEOUT = 500
 
 
 def sync_set_to_on(device_dict: dict):
