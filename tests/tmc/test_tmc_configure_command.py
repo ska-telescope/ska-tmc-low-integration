@@ -58,7 +58,6 @@ def given_subarray_in_idle(
     event_recorder,
 ):
     """Set up a subarray in the IDLE obsState."""
-    event_recorder.subscribe_event(central_node_low.subarray_node, "obsState")
     event_recorder.subscribe_event(
         central_node_low.central_node, "longRunningCommandResult"
     )
@@ -96,6 +95,7 @@ def send_configure(
 
 @then("the subarray must be in the READY obsState")
 def check_configure_completion(
+    central_node_low,
     subarray_node_low,
     event_recorder,
 ):
@@ -133,7 +133,7 @@ def check_configure_completion(
         ObsState.READY,
     )
     assert event_recorder.has_change_event_occurred(
-        subarray_node_low.subarray_node,
+        central_node_low.subarray_node,
         "obsState",
         ObsState.READY,
         lookahead=10,
