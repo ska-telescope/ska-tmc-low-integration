@@ -4,6 +4,7 @@ ALARM_HANDLER_FQDN= "alarm/handler/01"
 CAR_OCI_REGISTRY_HOST:=artefact.skao.int
 PROJECT = ska-tmc-low-integration
 TANGO_HOST ?= tango-databaseds:10000## TANGO_HOST connection to the Tango DS
+TANGO_HOST_NAME ?= tango-databaseds
 TELESCOPE ?= SKA-low
 KUBE_NAMESPACE ?= ska-tmc-low-integration
 KUBE_NAMESPACE_SDP ?= ska-tmc-integration-sdp
@@ -45,8 +46,8 @@ K8S_CHART ?= $(HELM_CHART)
 CLUSTER_DOMAIN ?= cluster.local
 PORT ?= 10000
 SUBARRAY_COUNT ?= 1
-SDP_MASTER ?= tango://$(TANGO_HOST).$(KUBE_NAMESPACE).svc.$(CLUSTER_DOMAIN):$(PORT)/low-sdp/control/0
-SDP_SUBARRAY_PREFIX ?= tango://$(TANGO_HOST).$(KUBE_NAMESPACE).svc.$(CLUSTER_DOMAIN):$(PORT)/low-sdp/subarray
+SDP_MASTER ?= low-sdp/control/0
+SDP_SUBARRAY_PREFIX ?= low-sdp/subarray
 CSP_MASTER ?= tango://$(TANGO_HOST).$(KUBE_NAMESPACE).svc.$(CLUSTER_DOMAIN):$(PORT)/low-csp/control/0
 CSP_SUBARRAY_PREFIX ?= tango://$(TANGO_HOST).$(KUBE_NAMESPACE).svc.$(CLUSTER_DOMAIN):$(PORT)/low-csp/subarray
 CI_REGISTRY ?= gitlab.com
@@ -63,7 +64,6 @@ JIVE ?= false# Enable jive
 TARANTA ?= false
 MINIKUBE ?= false ## Minikube or not
 FAKE_DEVICES ?= false ## Install fake devices or not
-TANGO_HOST ?= tango-databaseds:10000## TANGO_HOST connection to the Tango DS
 
 ITANGO_DOCKER_IMAGE = $(CAR_OCI_REGISTRY_HOST)/ska-tango-images-tango-itango:9.3.10
 
@@ -97,10 +97,11 @@ endif
 ifeq ($(SDP_SIMULATION_ENABLED),false)
 CUSTOM_VALUES =	--set tmc-low.deviceServers.mocks.is_simulated.sdp=$(SDP_SIMULATION_ENABLED)\
 	--set ska-sdp.enabled=true \
-	--set global.sdp_master="$(SDP_MASTER)"\
-	--set global.sdp_subarray_prefix="$(SDP_SUBARRAY_PREFIX)"\
+	--set global.sdp_master=$(SDP_MASTER)\
+	--set global.sdp_subarray_prefix=$(SDP_SUBARRAY_PREFIX)\
 	--set ska-sdp.proccontrol.replicas=$(SDP_PROCCONTROL_REPLICAS)\
-	--set ska-sdp.helmdeploy.namespace=$(KUBE_NAMESPACE_SDP)
+	--set ska-sdp.helmdeploy.namespace=$(KUBE_NAMESPACE_SDP)\
+	--set ska-sdp.lmc.loadBalancer=true 
 endif
 
 K8S_CHART_PARAMS = --set global.minikube=$(MINIKUBE) \
