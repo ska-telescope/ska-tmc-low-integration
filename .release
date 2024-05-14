@@ -1,6 +1,12 @@
-release=0.14.1
-tag=0.14.1
+release=0.15.0
+tag=0.15.0
 tag_description=
 **Charts:**
 **1. ska-tmc-low-integration 0.14.1**
         a. Fixed SKB-300."
+**2. REL-1296: ska-tmc-low chart 0.15.0**
+        a.Integrate TMC SubarrayNode latest image with SKB-355 and Bug fix 
+          for interface URL for CSP, SDP and MCCS Scan and Configure commands.
+        b.Utilised ska-csp-lmc-low v0.13.1 for SKB-355 bug verification via XTP-29657
+        c.Integrate TMC CspSubarrayLeafNode latest image v0.162 with SKB-329, SKB-328 and SKB-327 bug fix
+           i.Affected BDD test case - XTP-32140

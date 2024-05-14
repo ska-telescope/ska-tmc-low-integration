@@ -159,3 +159,29 @@ SIMULATOR_DEVICE_FQDN_DICT = {
     SimulatorDeviceType.MCCS_MASTER_DEVICE: [mccs_controller],
     SimulatorDeviceType.MCCS_SUBARRAY_DEVICE: [mccs_subarray1],
 }
+
+LOW_DELAYMODEL_VERSION = "https://schema.skao.int/ska-low-csp-delaymodel/1.0"
+
+INITIAL_LOW_DELAY_JSON = {
+    "interface": "",
+    "start_validity_sec": 0.1,
+    "cadence_sec": 0.1,
+    "validity_period_sec": 0.1,
+    "config_id": "",
+    "station_beam": 1,
+    "subarray": 1,
+    "station_beam_delays": [
+        {
+            "station_id": 1,
+            "substation_id": 1,
+            "xypol_coeffs_ns": [],
+            "ypol_offset_ns": 0.0,
+        },
+        {
+            "station_id": 1,
+            "substation_id": 1,
+            "xypol_coeffs_ns": [],
+            "ypol_offset_ns": 0.0,
+        },
+    ],
+}
