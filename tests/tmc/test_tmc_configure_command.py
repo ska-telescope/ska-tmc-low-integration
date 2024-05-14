@@ -135,4 +135,5 @@ def check_configure_completion(
         subarray_node_low.subarray_node,
         "obsState",
         ObsState.READY,
+        lookahead=10,
     )
