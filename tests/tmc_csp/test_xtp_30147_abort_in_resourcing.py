@@ -12,13 +12,6 @@ from tests.resources.test_support.common_utils.tmc_helpers import (
 )
 
 
-@pytest.mark.skip(reason="Random Failure")
-# Random Failure:
-# 1.CSP Subarray goes to IDLE before Abort, so the assertion
-# CSP SA obsState Resourcing fails
-# 2.SubarrrayNode while invoking Abort command timeout CORBA occurs,
-# assertion with obsState ABORTED with timeout given in test case.
-# Test passes with retry
 @pytest.mark.tmc_csp
 @scenario(
     "../features/tmc_csp/xtp-30147_abort_in_resourcing.feature",
