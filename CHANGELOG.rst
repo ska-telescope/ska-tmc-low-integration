@@ -23,6 +23,7 @@ Fixed
 * Utilised ska-csp-lmc-low v0.13.1 for SKB-355 bug verification via XTP-29657
 * Integrate TMC CspSubarrayLeafNode latest image v0.162 with SKB-329, SKB-328 and SKB-327 bug fix
 * Affected BDD test case - XTP-32140
+* Updated randomly failing test cases - TMC configure with mocks, TMC-SDP Abort in Configuring, TMC-CSP abort in Resouring
 
 [0.14.1]
 ************
