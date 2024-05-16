@@ -77,7 +77,6 @@ tmc-low:
         mccs: true
         csp: true
 
-
 ska-sdp:
   legacy_compatibility: true
   enabled: false
@@ -89,7 +88,7 @@ ska-sdp:
   data-pvc:
     create:
       enabled: true
-      size: 5Gi
+      size: 500Mi
       storageClassName: nfss1
   ska-sdp-qa:
     kafka:
@@ -139,11 +138,6 @@ ska-csp-lmc-low:
     app: ska-tmc-low-integration
   legacy_compatibility: true
   enabled: false
-  lowcsplmc:
-    image:
-      registry: registry.gitlab.com/ska-telescope/ska-csp-lmc-low
-      image: ska-csp-lmc-low
-      tag: 0.11.2
   deviceServers:
     cspcontroller:
       instances: ["controller"]

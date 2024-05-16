@@ -53,7 +53,7 @@ def subarray_is_in_configuring_obsstate(
     # receive an event of ObsState CONFIGURING from SDP Subarray
     assign_str["sdp"]["processing_blocks"][0]["parameters"][
         "time-to-ready"
-    ] = 10
+    ] = 60
     assert event_recorder.has_change_event_occurred(
         central_node_low.central_node,
         "telescopeState",
@@ -63,9 +63,15 @@ def subarray_is_in_configuring_obsstate(
     event_recorder.subscribe_event(
         subarray_node_low.subarray_devices.get("sdp_subarray"), "obsState"
     )
+    event_recorder.subscribe_event(
+        subarray_node_low.subarray_devices.get("csp_subarray"), "obsState"
+    )
     event_recorder.subscribe_event(subarray_node_low.subarray_node, "obsState")
     event_recorder.subscribe_event(
         subarray_node_low.sdp_subarray_leaf_node, "sdpSubarrayObsState"
+    )
+    event_recorder.subscribe_event(
+        subarray_node_low.csp_subarray_leaf_node, "cspSubarrayObsState"
     )
     configure_input_json = prepare_json_args_for_commands(
         "configure_low", command_input_factory
@@ -87,6 +93,16 @@ def subarray_is_in_configuring_obsstate(
     )
     assert event_recorder.has_change_event_occurred(
         subarray_node_low.subarray_node,
+        "obsState",
+        ObsState.CONFIGURING,
+    )
+    assert event_recorder.has_change_event_occurred(
+        subarray_node_low.csp_subarray_leaf_node,
+        "cspSubarrayObsState",
+        ObsState.CONFIGURING,
+    )
+    assert event_recorder.has_change_event_occurred(
+        subarray_node_low.subarray_devices["csp_subarray"],
         "obsState",
         ObsState.CONFIGURING,
     )

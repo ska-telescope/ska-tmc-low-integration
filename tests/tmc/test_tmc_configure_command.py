@@ -58,7 +58,6 @@ def given_subarray_in_idle(
     event_recorder,
 ):
     """Set up a subarray in the IDLE obsState."""
-    event_recorder.subscribe_event(central_node_low.subarray_node, "obsState")
     event_recorder.subscribe_event(
         central_node_low.central_node, "longRunningCommandResult"
     )
@@ -90,17 +89,51 @@ def send_configure(
     configure_input_json = prepare_json_args_for_commands(
         "configure_low", command_input_factory
     )
-    subarray_node_low.execute_transition("Configure", configure_input_json)
+    subarray_node_low.store_configuration_data(configure_input_json)
 
 
 @then("the subarray must be in the READY obsState")
 def check_configure_completion(
+    central_node_low,
     subarray_node_low,
     event_recorder,
 ):
     """Verify that the subarray is in the READY obsState."""
+    event_recorder.subscribe_event(
+        subarray_node_low.subarray_devices.get("sdp_subarray"), "obsState"
+    )
+    event_recorder.subscribe_event(
+        subarray_node_low.subarray_devices.get("csp_subarray"), "obsState"
+    )
+    event_recorder.subscribe_event(
+        subarray_node_low.csp_subarray_leaf_node, "cspSubarrayObsState"
+    )
+    event_recorder.subscribe_event(
+        subarray_node_low.sdp_subarray_leaf_node, "sdpSubarrayObsState"
+    )
     assert event_recorder.has_change_event_occurred(
-        subarray_node_low.subarray_node,
+        subarray_node_low.csp_subarray_leaf_node,
+        "cspSubarrayObsState",
+        ObsState.READY,
+    )
+    assert event_recorder.has_change_event_occurred(
+        subarray_node_low.sdp_subarray_leaf_node,
+        "sdpSubarrayObsState",
+        ObsState.READY,
+    )
+    assert event_recorder.has_change_event_occurred(
+        subarray_node_low.subarray_devices.get("csp_subarray"),
         "obsState",
         ObsState.READY,
+    )
+    assert event_recorder.has_change_event_occurred(
+        subarray_node_low.subarray_devices.get("sdp_subarray"),
+        "obsState",
+        ObsState.READY,
+    )
+    assert event_recorder.has_change_event_occurred(
+        central_node_low.subarray_node,
+        "obsState",
+        ObsState.READY,
+        lookahead=10,
     )

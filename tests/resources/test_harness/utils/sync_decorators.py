@@ -10,7 +10,7 @@ MCCS_SIMULATION_ENABLED = os.getenv("MCCS_SIMULATION_ENABLED")
 if MCCS_SIMULATION_ENABLED.lower() == "false":
     TIMEOUT = 600  # MCCS lower level devices take more time to turn on and off
 else:
-    TIMEOUT = 200
+    TIMEOUT = 500
 
 
 def sync_set_to_on(device_dict: dict):
@@ -105,7 +105,7 @@ def sync_assign_resources(device_dict):
     return decorator_sync_assign_resources
 
 
-def sync_abort(device_dict, timeout=500):
+def sync_abort(device_dict, timeout=1000):
     # define as a decorator
     def decorator_sync_abort(func):
         @functools.wraps(func)

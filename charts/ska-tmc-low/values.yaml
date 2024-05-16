@@ -74,7 +74,7 @@ subarraynode:
   image:
     registry: artefact.skao.int
     image: ska-tmc-subarraynode
-    tag: 0.17.4
+    tag: 0.17.6
     pullPolicy: IfNotPresent
 
 sdpleafnodes:
@@ -95,7 +95,7 @@ cspsubarrayleafnode:
   image:
     registry: artefact.skao.int
     image: ska-tmc-cspleafnodes
-    tag: 0.16.0
+    tag: 0.16.2
     pullPolicy: IfNotPresent
 
 
@@ -130,6 +130,10 @@ deviceServers:
   subarraynode:
     enabled: true
     file: "data/subarraynode.yaml"
+    CspAssignResourcesInterfaceURL: "https://schema.skao.int/ska-low-csp-assignresources/3.0"
+    CspScanInterfaceURL: "https://schema.skao.int/ska-low-csp-scan/2.0"
+    SdpScanInterfaceURL: "https://schema.skao.int/ska-sdp-scan/0.4"
+    MccsConfigureInterfaceURL: "https://schema.skao.int/ska-low-mccs-configure/1.0"
 
   sdpsubarrayleafnode:
     enabled: true
