@@ -11,6 +11,7 @@ from tests.resources.test_support.common_utils.tmc_helpers import (
 )
 
 
+@pytest.mark.skip
 @pytest.mark.skip(reason="Random failure")
 # Random failure, SubarrayNode timed out, CORBA command timeout while
 # invoking Abort command
