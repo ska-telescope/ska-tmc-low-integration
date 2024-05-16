@@ -4,9 +4,8 @@ import json
 
 import pytest
 from ska_control_model import ObsState, ResultCode
-from ska_tango_base.faults import StateModelError
 from ska_tango_testing.mock.placeholders import Anything
-from tango import DevState
+from tango import DevFailed, DevState
 
 from tests.resources.test_harness.constant import (
     COMMAND_FAILED_WITH_EXCEPTION_OBSSTATE_EMPTY,
@@ -175,7 +174,7 @@ def test_release_exception_propagation(
         json.dumps(INTERMEDIATE_STATE_DEFECT),
         is_json=True,
     )
-    with pytest.raises(StateModelError):
+    with pytest.raises(DevFailed):
         central_node_low.perform_action("ReleaseResources", release_input_json)
 
 
