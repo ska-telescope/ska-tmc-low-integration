@@ -4,6 +4,7 @@ import json
 
 import pytest
 from ska_control_model import ObsState, ResultCode
+from ska_tango_base.faults import StateModelError
 from ska_tango_testing.mock.placeholders import Anything
 from tango import DevState
 
@@ -174,27 +175,8 @@ def test_release_exception_propagation(
         json.dumps(INTERMEDIATE_STATE_DEFECT),
         is_json=True,
     )
-    result, unique_id = central_node_low.perform_action(
-        "ReleaseResources", release_input_json
-    )
-    assert unique_id[0].endswith("ReleaseResources")
-    assert result[0] == ResultCode.QUEUED
-    exception_message = (
-        "Exception occurred on the following devices:"
-        + " ska_low/tm_subarray_node/1:"
-        + " Exception occurred on the following devices:"
-    )
-
-    event_recorder.has_change_event_occurred(
-        central_node_low.subarray_node,
-        "longRunningCommandResult",
-        (unique_id[0], exception_message),
-    )
-    event_recorder.has_change_event_occurred(
-        central_node_low.subarray_node,
-        "longRunningCommandResult",
-        (unique_id[0], str(ResultCode.FAILED.value)),
-    )
+    with pytest.raises(StateModelError):
+        central_node_low.perform_action("ReleaseResources", release_input_json)
 
 
 @pytest.mark.SKA_low
