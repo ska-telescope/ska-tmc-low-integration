@@ -5,7 +5,7 @@ import json
 import pytest
 from ska_control_model import ObsState, ResultCode
 from ska_tango_testing.mock.placeholders import Anything
-from tango import DevState
+from tango import DevFailed, DevState
 
 from tests.resources.test_harness.constant import (
     COMMAND_FAILED_WITH_EXCEPTION_OBSSTATE_EMPTY,
@@ -185,27 +185,12 @@ def test_release_exception_propagation(
         "obsState",
         ObsState.RESOURCING,
     )
-    result, unique_id = central_node_low.perform_action(
-        "ReleaseResources", release_input_json
-    )
-    assert unique_id[0].endswith("ReleaseResources")
-    assert result[0] == ResultCode.QUEUED
-    exception_message = (
-        "Exception occurred on the following devices:"
-        + " ska_low/tm_subarray_node/1:"
-        + " Exception occurred on the following devices:"
-    )
-
-    event_recorder.has_change_event_occurred(
-        central_node_low.subarray_node,
-        "longRunningCommandResult",
-        (unique_id[0], exception_message),
-    )
-    event_recorder.has_change_event_occurred(
-        central_node_low.subarray_node,
-        "longRunningCommandResult",
-        (unique_id[0], str(ResultCode.FAILED.value)),
-    )
+    with pytest.raises(
+        DevFailed,
+        match="ReleaseResources command not "
+        + "permitted in observation state 1",
+    ):
+        central_node_low.perform_action("ReleaseResources", release_input_json)
 
 
 @pytest.mark.SKA_low
