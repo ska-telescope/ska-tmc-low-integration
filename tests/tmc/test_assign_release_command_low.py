@@ -5,7 +5,7 @@ import json
 import pytest
 from ska_control_model import ObsState, ResultCode
 from ska_tango_testing.mock.placeholders import Anything
-from tango import DevFailed, DevState
+from tango import DevState
 
 from tests.resources.test_harness.constant import (
     COMMAND_FAILED_WITH_EXCEPTION_OBSSTATE_EMPTY,
@@ -168,14 +168,44 @@ def test_release_exception_propagation(
     central_node_low.perform_action("AssignResources", assign_input_json)
 
     csp_sim.SetDefective(json.dumps(INTERMEDIATE_STATE_DEFECT))
+
     assert wait_and_validate_device_attribute_value(
         csp_sim,
         "defective",
         json.dumps(INTERMEDIATE_STATE_DEFECT),
         is_json=True,
     )
-    with pytest.raises(DevFailed):
-        central_node_low.perform_action("ReleaseResources", release_input_json)
+    assert event_recorder.has_change_event_occurred(
+        central_node_low.subarray_node,
+        "obsState",
+        ObsState.RESOURCING,
+    )
+    assert event_recorder.has_change_event_occurred(
+        central_node_low.csp_subarray1,
+        "obsState",
+        ObsState.RESOURCING,
+    )
+    result, unique_id = central_node_low.perform_action(
+        "ReleaseResources", release_input_json
+    )
+    assert unique_id[0].endswith("ReleaseResources")
+    assert result[0] == ResultCode.QUEUED
+    exception_message = (
+        "Exception occurred on the following devices:"
+        + " ska_low/tm_subarray_node/1:"
+        + " Exception occurred on the following devices:"
+    )
+
+    event_recorder.has_change_event_occurred(
+        central_node_low.subarray_node,
+        "longRunningCommandResult",
+        (unique_id[0], exception_message),
+    )
+    event_recorder.has_change_event_occurred(
+        central_node_low.subarray_node,
+        "longRunningCommandResult",
+        (unique_id[0], str(ResultCode.FAILED.value)),
+    )
 
 
 @pytest.mark.SKA_low
