@@ -112,6 +112,7 @@ def subarray_node_in_scanning(subarray_node_low, event_recorder):
         subarray_node_low.mccs_subarray1,
         "obsState",
         ObsState.SCANNING,
+        lookahead=10,
     )
 
 
