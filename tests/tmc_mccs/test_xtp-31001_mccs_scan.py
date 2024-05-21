@@ -127,6 +127,7 @@ def mccs_subarray_in_ready(subarray_node_low, event_recorder):
         subarray_node_low.mccs_subarray1,
         "obsState",
         ObsState.READY,
+        lookahead=10,
     )
 
 
