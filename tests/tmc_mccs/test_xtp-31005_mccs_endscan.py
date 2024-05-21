@@ -63,6 +63,9 @@ def subarray_in_scanning_obsstate(
         central_node_low.central_node, "longRunningCommandResult"
     )
     event_recorder.subscribe_event(
+        subarray_node_low.mccs_subarray1, "obsState"
+    )
+    event_recorder.subscribe_event(
         subarray_node_low.subarray_node, "longRunningCommandResult"
     )
     assert subarray_node_low.subarray_node.obsState == ObsState.EMPTY
@@ -104,6 +107,12 @@ def subarray_in_scanning_obsstate(
     assert event_recorder.has_change_event_occurred(
         subarray_node_low.subarray_node, "obsState", ObsState.SCANNING
     )
+    assert event_recorder.has_change_event_occurred(
+        subarray_node_low.mccs_subarray1,
+        "obsState",
+        ObsState.SCANNING,
+        lookahead=10,
+    )
 
 
 @when(
@@ -124,13 +133,12 @@ def invoke_endscan(
 @then("the MCCS subarray is transitioned to ObsState READY")
 def mccs_subarray_in_ready(subarray_node_low, event_recorder):
     """Checks if MCCS Subarray's obsState attribute value is READY"""
-    event_recorder.subscribe_event(
-        subarray_node_low.mccs_subarray1, "obsState"
-    )
+
     assert event_recorder.has_change_event_occurred(
         subarray_node_low.mccs_subarray1,
         "obsState",
         ObsState.READY,
+        lookahead=20,
     )
 
 
