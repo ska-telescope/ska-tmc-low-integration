@@ -86,6 +86,7 @@ def given_subarray_in_ready(
         central_node_low.subarray_node,
         "obsState",
         ObsState.READY,
+        lookahead=10,
     )
     event_recorder.has_change_event_occurred(
         subarray_node_low.subarray_node,
