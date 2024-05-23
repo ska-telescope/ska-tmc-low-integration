@@ -1,6 +1,5 @@
 import json
 import logging
-from datetime import datetime, timezone
 from time import sleep
 
 from ska_control_model import ObsState
