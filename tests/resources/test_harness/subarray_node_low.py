@@ -1,6 +1,6 @@
 import json
 import logging
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from time import sleep
 
 from ska_control_model import ObsState
@@ -441,7 +441,10 @@ class SubarrayNodeWrapperLow:
         try:
             input_json["scan_id"] = scan_id
             # temporary to add start_time
-            input_json["start_time"] = datetime.now(timezone.utc).isoformat()
+            input_json["start_time"] = (
+                datetime.now(timezone.utc) + timedelta(seconds=3)
+            ).isoformat()
+
         except Exception as e:
             LOGGER.exception("Exception occurred while setting scan id: %s", e)
             raise
