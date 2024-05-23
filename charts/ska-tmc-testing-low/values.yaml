@@ -79,13 +79,13 @@ ska-sdp:
   enabled: false
   lmc:
     prefix: low
-    nsubarray: 2
+    nsubarray: 1
   console:
     enabled: true
   data-pvc:
     create:
       enabled: true
-      size: 500Mi
+      size: 100Mi
       storageClassName: nfss1
   ska-sdp-qa:
     kafka:
