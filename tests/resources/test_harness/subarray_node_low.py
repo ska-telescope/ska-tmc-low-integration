@@ -440,8 +440,6 @@ class SubarrayNodeWrapperLow:
         input_json = json.loads(input_str)
         try:
             input_json["scan_id"] = scan_id
-            # temporary to add start_time
-            input_json["start_time"] = datetime.now(timezone.utc).isoformat()
         except Exception as e:
             LOGGER.exception("Exception occurred while setting scan id: %s", e)
             raise
