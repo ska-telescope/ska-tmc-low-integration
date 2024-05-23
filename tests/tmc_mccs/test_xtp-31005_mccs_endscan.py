@@ -103,7 +103,7 @@ def subarray_in_scanning_obsstate(
     input_str = prepare_json_args_for_commands(
         "scan_low", command_input_factory
     )
-    subarray_node_low.set_scan_id_and_start_time(1, input_str)
+    input_str = subarray_node_low.set_scan_id_and_start_time(1, input_str)
     subarray_node_low.store_scan_data(input_str)
     assert event_recorder.has_change_event_occurred(
         subarray_node_low.subarray_node, "obsState", ObsState.SCANNING
