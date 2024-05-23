@@ -50,7 +50,7 @@ from tests.resources.test_support.common_utils.common_helpers import Resource
 
 configure_logging(logging.DEBUG)
 LOGGER = logging.getLogger(__name__)
-
+RFC_FORMAT = "%Y-%m-%dT%H:%M:%S.%fZ"
 device_dict = {
     # TODO use this as as list when multiple subarray considered in testing
     "sdp_subarray": low_sdp_subarray1,
@@ -443,7 +443,7 @@ class SubarrayNodeWrapperLow:
             # temporary to add start_time
             input_json["start_time"] = (
                 datetime.now(timezone.utc) + timedelta(seconds=3)
-            ).isoformat()
+            ).strftime(RFC_FORMAT)
 
         except Exception as e:
             LOGGER.exception("Exception occurred while setting scan id: %s", e)
