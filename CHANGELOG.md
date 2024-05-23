@@ -19,6 +19,7 @@ Fixed
 [0.15.1]
 ************
 * Updated Central node version to 0.15.0
+* Updated Subarray Node version to 0.18.1 with MCCS scan command issue fix.
   
 [0.15.0]
 ************

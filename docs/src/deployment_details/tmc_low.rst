@@ -82,7 +82,16 @@ Configurable options
 * s. **DelayValidityPeriod** : This represents the duration (in seconds) for which delay values remain valid after being published.
 
 * t. **DelayModelTimeInAdvance** : This indicates the time in seconds by which delay values need to be available in advance.
-
+* u. **CspAssignResourcesInterfaceURL** : Interface version for CSP assign resources command. 
+                                    This value is present under Subarray Node.Currently defaults to "https://schema.skao.int/ska-low-csp-assignresources/3.0"
+* v. **CspScanInterfaceURL** :Interface version for CSP scan command. 
+                                    This value is present under Subarray Node.Currently defaults to "https://schema.skao.int/ska-low-csp-scan/2.0"
+* w **SdpScanInterfaceURL**:Interface version for SDP scan command. 
+                                    This value is present under Subarray Node.Currently defaults to "https://schema.skao.int/ska-sdp-scan/0.4"
+* x **MccsConfigureInterfaceURL**:Interface version for MCCS configure command. 
+                                    This value is present under Subarray Node.Currently defaults to "https://schema.skao.int/ska-low-mccs-configure/1.0"
+* y **MccsScanInterfaceURL**:Interface version for MCCS scan command. 
+                                    This value is present under Subarray Node.Currently defaults to "https://schema.skao.int/ska-low-mccs-scan/3.0"
 
 
 TMC Low Sub-system FQDN's:
