@@ -435,7 +435,7 @@ class SubarrayNodeWrapperLow:
         # Adding a small sleep to allow the systems to clean up processes
         sleep(1)
 
-    def set_scan_id(self, scan_id: int, input_str: str) -> str:
+    def set_scan_id_and_start_time(self, scan_id: int, input_str: str) -> str:
         """Set the scan_id for the scan input json."""
         input_json = json.loads(input_str)
         try:
