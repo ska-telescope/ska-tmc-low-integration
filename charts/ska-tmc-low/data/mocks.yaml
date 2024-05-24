@@ -11,7 +11,7 @@ entrypoints:
   - name: "ska_tmc_common.test_helpers.helper_mccs_controller_device.HelperMCCSController"
   - name: "ska_tmc_common.test_helpers.helper_mccs_subarray_device.HelperMccsSubarrayDevice"
 server:
-  name: "csp_mocks"
+  name: "mocks"
   instances:
     {{- $isSimulatedCsp := .Values.deviceServers.mocks.is_simulated.csp }}
     {{- $isSimulatedSdp := .Values.deviceServers.mocks.is_simulated.sdp }}
