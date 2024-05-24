@@ -1,7 +1,7 @@
 name: "mocks-{{.Release.Name}}"
 function: testing
 domain: mocks
-instances: ["01"]
+instances: ["01","02","03","04","05","06"]
 entrypoints:
   - name: "ska_tmc_common.test_helpers.helper_subarray_device.HelperSubArrayDevice"
   - name: "ska_tmc_common.test_helpers.helper_base_device.HelperBaseDevice"
@@ -11,40 +11,51 @@ entrypoints:
   - name: "ska_tmc_common.test_helpers.helper_mccs_controller_device.HelperMCCSController"
   - name: "ska_tmc_common.test_helpers.helper_mccs_subarray_device.HelperMccsSubarrayDevice"
 server:
-  name: "mocks"
+  name: "csp_mocks"
   instances:
     {{- $isSimulatedCsp := .Values.deviceServers.mocks.is_simulated.csp }}
     {{- $isSimulatedSdp := .Values.deviceServers.mocks.is_simulated.sdp }}
     {{- $isSimulatedMccs := .Values.deviceServers.mocks.is_simulated.mccs }}
+    {{- if eq $isSimulatedCsp true }}
     - name: "01"
       classes:
-        {{- if eq $isSimulatedCsp true }}
         - name: "HelperCspMasterDevice"
           devices:
           - name: "low-csp/control/0"
+    - name: "02"
+      classes: 
         - name: "HelperCspSubarray"
           devices:
           - name: "low-csp/subarray/01"
           - name: "low-csp/subarray/02"
-        {{- end }}
-        {{- if eq $isSimulatedSdp true }}
+    {{- end }}
+    {{- if eq $isSimulatedSdp true }}
+    - name: "03"
+      classes:
         - name: "HelperBaseDevice"
           devices:
           - name: "low-sdp/control/0"
+    - name: "04"
+      classes:
         - name: "HelperSdpSubarray"
           devices:
           - name: "low-sdp/subarray/01"
           - name: "low-sdp/subarray/02"
-        {{- end }}
-        {{- if eq $isSimulatedMccs true }}
+    {{- end }}
+    {{- if eq $isSimulatedMccs true }}
+    - name: "05"
+      classes:
         - name: "HelperMCCSController"
           devices:
           - name: "low-mccs/control/control"
+    - name: "06"
+      classes:
         - name: "HelperMccsSubarrayDevice"
           devices:
           - name: "low-mccs/subarray/01"
           - name: "low-mccs/subarray/02"
-        {{- end }}
+    {{- end }}
+
 depends_on:
   - device: sys/database/2
 image:
