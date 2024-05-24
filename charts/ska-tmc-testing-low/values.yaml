@@ -655,6 +655,8 @@ ska-low-mccs:
           subarray_id: 1
 
   ska-low-mccs-pasd:
+    labels:
+      app: ska-tmc-low-integration
     deviceServers:
       fieldstations:
         ci-1:
@@ -829,6 +831,8 @@ ska-low-mccs:
           host: pasd-simulator-ci-2
           port: 9502
   ska-low-mccs-spshw:
+    labels:
+      app: ska-tmc-low-integration
     deviceServers:
       calibrationstores:
         ci-1:
