@@ -111,8 +111,6 @@ ska-low-cbf:
     app: ska-tmc-low-integration
   enabled: false
   minikube: true
-  labels:
-    app: ska-csp-lmc-low
   cbf:
     hardware_connections:
       # psi-perentie1
@@ -122,6 +120,8 @@ ska-low-cbf:
       - 'switch=p4_01  port=25/0  speed=100  alveo=XFL1LHN4TXO2'
 
 ska-low-cbf-proc:
+  labels:
+    app: ska-tmc-low-integration
   deviceServers:
     processor:
       instances: ["0", "1"]
