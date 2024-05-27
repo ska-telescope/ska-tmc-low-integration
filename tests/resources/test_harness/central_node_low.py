@@ -273,13 +273,13 @@ class CentralNodeWrapperLow(object):
                 self.central_node, "longRunningCommandResult"
             )
             _, unique_id = self.central_node.TelescopeOn()
+
+            self.set_values_with_csp_mccs_mocks(DevState.ON)
             assert event_recorder.has_change_event_occurred(
                 self.central_node,
                 "longRunningCommandResult",
                 (unique_id[0], str(ResultCode.OK.value)),
             )
-
-            self.set_values_with_csp_mccs_mocks(DevState.ON)
 
         elif SIMULATED_DEVICES_DICT["sdp_and_mccs"]:
             LOGGER.info(
