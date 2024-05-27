@@ -22,6 +22,7 @@ from tests.resources.test_harness.constant import (
     processor1,
     tmc_low_subarraynode1,
 )
+from tests.resources.test_harness.event_recorder import EventRecorder
 from tests.resources.test_harness.helpers import SIMULATED_DEVICES_DICT
 from tests.resources.test_harness.utils.common_utils import JsonFactory
 from tests.resources.test_harness.utils.sync_decorators import (
@@ -265,14 +266,15 @@ class CentralNodeWrapperLow(object):
 
         elif SIMULATED_DEVICES_DICT["csp_and_mccs"]:
             LOGGER.info(
-                "Invoking Tmove_to_onelescopeOn command with csp and MCCS simulated"
+                "Invoking TelescopeOn command with csp and MCCS simulated"
             )
+            event_recorder = EventRecorder()
             event_recorder.subscribe_event(
-                central_node_low.central_node, "longRunningCommandResult"
+                self.central_node, "longRunningCommandResult"
             )
             _, unique_id = self.central_node.TelescopeOn()
             assert event_recorder.has_change_event_occurred(
-                central_node_low.central_node,
+                self.central_node,
                 "longRunningCommandResult",
                 (unique_id[0], str(ResultCode.OK.value)),
             )
