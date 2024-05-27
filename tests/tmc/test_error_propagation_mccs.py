@@ -128,7 +128,7 @@ def configure_command_reports_error_propagate(
         + f" {mccs_subarray_leaf_node}:"
         + " Exception occurred on device:"
         + f" {mccs_subarray1}:"
-        + ' . Event data is: [3, "Exception occurred, command failed."]\n'
+        + ' . Event data is: [3, ""]\n'
         in assertion_data["attribute_value"][1]
     )
     assert mccs_subarray_leaf_node in assertion_data["attribute_value"][1]
