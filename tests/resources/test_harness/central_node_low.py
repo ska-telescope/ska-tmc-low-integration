@@ -1,7 +1,7 @@
 import logging
 from time import sleep
 
-from ska_control_model import AdminMode, ObsState
+from ska_control_model import AdminMode, ObsState, ResultCode
 from ska_ser_logging import configure_logging
 from ska_tango_base.control_model import HealthState
 from tango import DeviceProxy, DevState
@@ -265,9 +265,18 @@ class CentralNodeWrapperLow(object):
 
         elif SIMULATED_DEVICES_DICT["csp_and_mccs"]:
             LOGGER.info(
-                "Invoking TelescopeOn command with csp and MCCS simulated"
+                "Invoking Tmove_to_onelescopeOn command with csp and MCCS simulated"
             )
-            self.central_node.TelescopeOn()
+            event_recorder.subscribe_event(
+                central_node_low.central_node, "longRunningCommandResult"
+            )
+            _, unique_id = self.central_node.TelescopeOn()
+            assert event_recorder.has_change_event_occurred(
+                central_node_low.central_node,
+                "longRunningCommandResult",
+                (unique_id[0], str(ResultCode.OK.value)),
+            )
+
             self.set_values_with_csp_mccs_mocks(DevState.ON)
 
         elif SIMULATED_DEVICES_DICT["sdp_and_mccs"]:
