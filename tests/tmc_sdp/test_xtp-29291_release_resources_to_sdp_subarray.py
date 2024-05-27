@@ -29,6 +29,7 @@ def test_tmc_sdp_availablity(central_node_low):
     """ "A method to define TMC and SDP."""
     assert central_node_low.central_node.ping() > 0
     assert central_node_low.subarray_devices["sdp_subarray"].ping() > 0
+    assert central_node_low.is_proccontrol_online()
 
 
 @given(parsers.parse("a subarray {subarray_id} in the IDLE obsState"))

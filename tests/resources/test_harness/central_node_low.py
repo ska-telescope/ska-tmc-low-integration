@@ -1,4 +1,6 @@
+import json
 import logging
+import time
 from time import sleep
 
 from ska_control_model import AdminMode, ObsState, ResultCode
@@ -37,6 +39,7 @@ from tests.resources.test_support.common_utils.common_helpers import Resource
 
 configure_logging(logging.DEBUG)
 LOGGER = logging.getLogger(__name__)
+TIMEOUT = 200
 
 
 class CentralNodeWrapperLow(object):
@@ -481,3 +484,14 @@ class CentralNodeWrapperLow(object):
             self.processor1.serialnumber = "XFL14SLO1LIF"
             self.processor1.subscribetoallocator("low-cbf/allocator/0")
             self.processor1.register()
+
+    def is_proccontrol_online(self):
+        start_time = time.time()
+        elapsed_time = 0
+        component_status: dict = json.loads(self.sdp_master.components)
+        while component_status["proccontrol"]["status"] != "ONLINE":
+            if elapsed_time > TIMEOUT:
+                return False
+            time.sleep(1)
+            elapsed_time = time.time() - start_time
+        return True
