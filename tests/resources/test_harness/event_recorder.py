@@ -29,7 +29,7 @@ class EventRecorder(object):
         self.subscribed_devices = []
 
     def subscribe_event(
-        self, device: Any, attribute_name: str, timeout: float = 100.0
+        self, device: Any, attribute_name: str, timeout: float = 300.0
     ):
         """Subscribe for change event for given attribute
         Args:
