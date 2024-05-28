@@ -485,11 +485,15 @@ class CentralNodeWrapperLow(object):
             self.processor1.subscribetoallocator("low-cbf/allocator/0")
             self.processor1.register()
 
-    def is_proccontrol_online(self):
+    def is_sdp_components_online(self):
         start_time = time.time()
         elapsed_time = 0
         component_status: dict = json.loads(self.sdp_master.components)
-        while component_status["proccontrol"]["status"] != "ONLINE":
+        statuses: list = [
+            value["status"] for _, value in component_status.keys()
+        ]
+        status: set = set(statuses)
+        while status != {"ONLINE"}:
             if elapsed_time > TIMEOUT:
                 return False
             time.sleep(1)
