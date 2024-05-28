@@ -175,5 +175,5 @@ test-requirements:
 k8s-pre-test: test-requirements
 
 check_pvc:
-	- kubectl get pvc -n $KUBE_NAMESPACE_SDP | grep "test-pvc"
-    - kubectl get pvc | grep "test-pvc"
+	-kubectl get pvc -n $KUBE_NAMESPACE_SDP | grep "test-pvc"
+	-kubectl get pvc | grep "test-pvc"
