@@ -77,6 +77,8 @@ tmc-low:
 ska-sdp:
   legacy_compatibility: true
   enabled: false
+  helmdeploy:
+    releasePrefix: "test"
   lmc:
     prefix: low
     nsubarray: 1
@@ -105,6 +107,7 @@ ska-sdp:
             cpu: 100m
   ska-tango-base:
     enabled: false
+
 
 ska-low-cbf:
   labels:
