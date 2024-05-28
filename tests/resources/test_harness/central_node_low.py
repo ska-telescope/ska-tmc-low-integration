@@ -490,7 +490,7 @@ class CentralNodeWrapperLow(object):
         elapsed_time = 0
         component_status: dict = json.loads(self.sdp_master.components)
         statuses: list = [
-            value["status"] for _, value in component_status.keys()
+            value["status"] for _, value in component_status.items()
         ]
         status: set = set(statuses)
         while status != {"ONLINE"}:
