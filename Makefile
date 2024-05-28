@@ -7,7 +7,7 @@ TANGO_HOST ?= tango-databaseds:10000## TANGO_HOST connection to the Tango DS
 TANGO_HOST_NAME ?= tango-databaseds
 TELESCOPE ?= SKA-low
 KUBE_NAMESPACE ?= ska-tmc-low-integration
-KUBE_NAMESPACE_SDP ?= ska-tmc-integration
+KUBE_NAMESPACE_SDP ?= ska-tmc-integration-sdp
 CSP_SIMULATION_ENABLED ?= true
 SDP_SIMULATION_ENABLED ?= true
 MCCS_SIMULATION_ENABLED ?= true
@@ -173,7 +173,3 @@ cred:
 test-requirements:
 	@poetry export --without-hashes --dev --format requirements.txt --output tests/requirements.txt
 k8s-pre-test: test-requirements
-
-check_pvc:
-	-kubectl get pvc -n $(KUBE_NAMESPACE_SDP) | grep "test-pvc"
-	-kubectl get pvc | grep "test-pvc"
