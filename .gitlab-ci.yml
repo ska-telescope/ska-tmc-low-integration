@@ -142,14 +142,14 @@ k8s-test-tmc-with-sdp:
     - make k8s-wait 
     - make k8s-wait KUBE_APP="ska-sdp"
     - kubectl get pods,pvc -n $KUBE_NAMESPACE_SDP
-    - make cred KUBE_NAMESPACE=$(KUBE_NAMESPACE_SDP)
+    - make cred K8S_NAMESPACES=$(KUBE_NAMESPACE_SDP) KUBE_NAMESPACE=$(KUBE_NAMESPACE_SDP)
     - make k8s-wait KUBE_NAMESPACE=$(KUBE_NAMESPACE_SDP) KUBE_APP="ska-sdp"
     - make k8s-test MARK='tmc_sdp_unhappy_path'
     - make k8s-install-chart SDP_PROCCONTROL_REPLICAS=1
     - make k8s-wait
     - make k8s-wait KUBE_APP="ska-sdp"
     - kubectl get pods,pvc -n $KUBE_NAMESPACE_SDP
-    - make cred KUBE_NAMESPACE=$(KUBE_NAMESPACE_SDP)
+    - make cred K8S_NAMESPACES=$(KUBE_NAMESPACE_SDP) KUBE_NAMESPACE=$(KUBE_NAMESPACE_SDP)
     - make k8s-wait KUBE_NAMESPACE=$(KUBE_NAMESPACE_SDP) KUBE_APP="ska-sdp"
     - make k8s-test MARK='tmc_sdp'
   after_script:
