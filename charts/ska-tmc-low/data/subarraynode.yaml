@@ -68,6 +68,10 @@ server:
           - name: "MccsConfigureInterfaceURL"
             values:
               - "{{ $mccs_configure_interface }}"
+          - name: "MccsScanInterfaceURL"
+            values:
+              - "{{ $mccs_scan_interface }}"             
+
   {{- end}}
 depends_on:
   - device: sys/database/2

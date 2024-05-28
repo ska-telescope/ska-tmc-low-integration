@@ -134,6 +134,7 @@ deviceServers:
     CspScanInterfaceURL: "https://schema.skao.int/ska-low-csp-scan/2.0"
     SdpScanInterfaceURL: "https://schema.skao.int/ska-sdp-scan/0.4"
     MccsConfigureInterfaceURL: "https://schema.skao.int/ska-low-mccs-configure/1.0"
+    MccsScanInterfaceURL: "https://schema.skao.int/ska-low-mccs-scan/3.0"
 
   sdpsubarrayleafnode:
     enabled: true
