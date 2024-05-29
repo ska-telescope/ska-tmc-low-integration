@@ -157,6 +157,7 @@ k8s-test-tmc-with-sdp:
   environment:
     name: test/$CI_COMMIT_REF_SLUG
     on_stop: stop-k8s-test-tmc-with-sdp
+  when: manual
 
 stop-k8s-test-tmc-with-sdp:
   extends:
