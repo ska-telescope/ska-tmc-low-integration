@@ -59,10 +59,6 @@ ska-tango-base:
 
 # TMC-low
 tmc-low:
-  resources:
-    requests:
-      cpu: 200m # 0.5 CPU
-      memory: 500Mi # 1 GB mem
   labels:
     app: ska-tmc-low-integration
   enabled: true
