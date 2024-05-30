@@ -53,6 +53,12 @@ This project is integration of the TMC components for the `Square Kilometre Arra
 
    developer_guide/testing//mocks_devices_tests
 
+.. toctree::
+   :maxdepth: 1
+   :caption: Releases
+
+   CHANGELOG.rst
+   
 Indices and tables
 ------------------
 * :ref:`genindex`

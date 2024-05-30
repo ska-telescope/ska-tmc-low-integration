@@ -72,7 +72,6 @@ server:
           - name: "MccsScanInterfaceURL"
             values:
               - "{{ $mccs_scan_interface }}"             
-
   {{- end}}
 depends_on:
   - device: sys/database/2

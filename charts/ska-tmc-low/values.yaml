@@ -67,7 +67,7 @@ centralnode:
   image:
     registry: artefact.skao.int
     image: ska-tmc-centralnode
-    tag: 0.11.10
+    tag: 0.15.0
     pullPolicy: IfNotPresent
 
 subarraynode:
@@ -115,10 +115,11 @@ mccssubarrayleafnode:
 
 resources:
   limits:
-    memory: 500Mi
+    cpu: 1000m
+    memory: 1024Mi
   requests:
-    cpu: 100m
-    memory: 128Mi
+    cpu: 200m
+    memory: 200Mi
 
 
 deviceServers:

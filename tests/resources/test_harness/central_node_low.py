@@ -1,7 +1,9 @@
+import json
 import logging
+import time
 from time import sleep
 
-from ska_control_model import AdminMode, ObsState
+from ska_control_model import AdminMode, ObsState, ResultCode
 from ska_ser_logging import configure_logging
 from ska_tango_base.control_model import HealthState
 from tango import DeviceProxy, DevState
@@ -22,6 +24,7 @@ from tests.resources.test_harness.constant import (
     processor1,
     tmc_low_subarraynode1,
 )
+from tests.resources.test_harness.event_recorder import EventRecorder
 from tests.resources.test_harness.helpers import SIMULATED_DEVICES_DICT
 from tests.resources.test_harness.utils.common_utils import JsonFactory
 from tests.resources.test_harness.utils.sync_decorators import (
@@ -36,6 +39,7 @@ from tests.resources.test_support.common_utils.common_helpers import Resource
 
 configure_logging(logging.DEBUG)
 LOGGER = logging.getLogger(__name__)
+TIMEOUT = 200
 
 
 class CentralNodeWrapperLow(object):
@@ -267,8 +271,18 @@ class CentralNodeWrapperLow(object):
             LOGGER.info(
                 "Invoking TelescopeOn command with csp and MCCS simulated"
             )
-            self.central_node.TelescopeOn()
+            event_recorder = EventRecorder()
+            event_recorder.subscribe_event(
+                self.central_node, "longRunningCommandResult"
+            )
+            _, unique_id = self.central_node.TelescopeOn()
+
             self.set_values_with_csp_mccs_mocks(DevState.ON)
+            assert event_recorder.has_change_event_occurred(
+                self.central_node,
+                "longRunningCommandResult",
+                (unique_id[0], str(ResultCode.OK.value)),
+            )
 
         elif SIMULATED_DEVICES_DICT["sdp_and_mccs"]:
             LOGGER.info(
@@ -470,3 +484,18 @@ class CentralNodeWrapperLow(object):
             self.processor1.serialnumber = "XFL14SLO1LIF"
             self.processor1.subscribetoallocator("low-cbf/allocator/0")
             self.processor1.register()
+
+    def is_sdp_components_online(self):
+        start_time = time.time()
+        elapsed_time = 0
+        component_status: dict = json.loads(self.sdp_master.components)
+        statuses: list = [
+            value["status"] for _, value in component_status.items()
+        ]
+        status: set = set(statuses)
+        while status != {"ONLINE"}:
+            if elapsed_time > TIMEOUT:
+                return False
+            time.sleep(1)
+            elapsed_time = time.time() - start_time
+        return True

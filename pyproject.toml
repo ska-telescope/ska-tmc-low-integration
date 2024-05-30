@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "ska-tmc-low-integration"
-version = "0.15.0"
+version = "0.15.1"
 description = "Repository for integration of TMC Low components"
 authors = ["Team Himalaya", "Team Sahyadri"]
 license = "BSD-3-Clause"
@@ -54,6 +54,7 @@ sphinx-autodoc-typehints = "^1.19.3"
 sphinxcontrib-plantuml = "^0.22"
 typing_extensions  = "^4.3.0"
 sphinx-rtd-theme = "^1.2.2"
+recommonmark = "^0.7.1"
 
 [tool.flake8]
 rst-directives = "literalinclude"
