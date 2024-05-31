@@ -253,7 +253,7 @@ class CentralNodeWrapperLow(object):
             assert self.event_recorder.has_change_event_occurred(
                 self.subarray_node,
                 "longRunningCommandResult",
-                (unique_id[0], str(ResultCode.OK.value)),
+                (unique_id[0], str(ResultCode.STARTED.value)),
             )
             _, unique_id = self.subarray_restart()
             assert self.event_recorder.has_change_event_occurred(
