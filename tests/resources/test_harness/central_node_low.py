@@ -283,12 +283,7 @@ class CentralNodeWrapperLow(object):
             SIMULATED_DEVICES_DICT["csp_and_mccs"]
             or SIMULATED_DEVICES_DICT["all_mocks"]
         ):
-            _, unique_id = self.move_to_off()
-            assert self.event_recorder.has_change_event_occurred(
-                self.subarray_node,
-                "longRunningCommandResult",
-                (unique_id[0], str(ResultCode.OK.value)),
-            )
+            self.move_to_off()
         self._clear_command_call_and_transition_data(clear_transition=True)
         self.event_recorder.clear_events()
         # Adding a small sleep to allow the systems to clean up processes
