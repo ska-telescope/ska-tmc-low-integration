@@ -272,7 +272,7 @@ class CentralNodeWrapperLow(object):
             LOGGER.info("Calling Release Resource on centralnode")
             _, unique_id = self.invoke_release_resources(self.release_input)
             assert self.event_recorder.has_change_event_occurred(
-                self.subarray_node,
+                self.central_node,
                 "longRunningCommandResult",
                 (unique_id[0], str(ResultCode.OK.value)),
             )
