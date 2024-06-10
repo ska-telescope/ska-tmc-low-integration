@@ -12,6 +12,7 @@ from tests.resources.test_harness.constant import (
     COMMAND_FAILED_WITH_EXCEPTION_OBSSTATE_EMPTY,
 )
 from tests.resources.test_harness.helpers import (
+    check_for_device_event,
     get_device_simulators,
     prepare_json_args_for_centralnode_commands,
     wait_and_validate_device_attribute_value,
@@ -239,10 +240,11 @@ def test_assign_release_timeout_csp(
         "AssignResources", assign_input_json
     )
     ERROR_MESSAGE = "Timeout has occurred, command failed"
-    assertion_data = event_recorder.has_change_event_occurred(
+
+    assert check_for_device_event(
         central_node_low.central_node,
         "longRunningCommandResult",
-        (unique_id[0], Anything),
+        ERROR_MESSAGE,
+        event_recorder,
+        unique_id=unique_id[0],
     )
-    logger.debug(assertion_data)
-    assert ERROR_MESSAGE in assertion_data["attribute_value"][1]

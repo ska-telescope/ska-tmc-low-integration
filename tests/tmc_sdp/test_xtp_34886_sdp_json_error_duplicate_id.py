@@ -239,6 +239,7 @@ def check_sdp_error(
         "longRunningCommandResult",
         exception_message,
         event_recorder,
+        command_name="AssignResources",
     )
 
 
