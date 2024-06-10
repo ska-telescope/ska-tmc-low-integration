@@ -1,6 +1,7 @@
 """Test cases for AssignResources and ReleaseResources
  Command for low"""
 import json
+import logging
 
 import pytest
 from ska_control_model import ObsState, ResultCode
@@ -17,6 +18,8 @@ from tests.resources.test_harness.helpers import (
 )
 from tests.resources.test_harness.utils.enums import SimulatorDeviceType
 from tests.resources.test_support.constant_low import INTERMEDIATE_STATE_DEFECT
+
+logger = logging.getLogger("ska-tmc")
 
 
 @pytest.mark.SKA_low
@@ -241,5 +244,5 @@ def test_assign_release_timeout_csp(
         "longRunningCommandResult",
         (unique_id[0], Anything),
     )
-    print(assertion_data)
+    logger.debug(assertion_data)
     assert ERROR_MESSAGE in assertion_data["attribute_value"][1]
