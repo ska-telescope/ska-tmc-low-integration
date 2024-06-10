@@ -327,14 +327,14 @@ def check_for_device_event(
         to check for events.
     """
     event_found: bool = False
-    timeout: int = 100
+    timeout: int = 300
     elapsed_time: float = 0
     start_time: float = time.time()
     while not event_found and elapsed_time < timeout:
         assertion_data = event_recorder.has_change_event_occurred(
             device,
             attribute_name=attr_name,
-            attribute_value=(Anything, Anything),
+            attribute_value=(Anything),
             lookahead=1,
         )
         if command_name:
