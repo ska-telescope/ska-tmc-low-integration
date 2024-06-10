@@ -345,10 +345,10 @@ def check_for_device_event(
             is_command_event = (
                 assertion_data["attribute_value"][0] == unique_id
             )
-            if is_command_event:
-                if event_data in assertion_data["attribute_value"][1]:
-                    event_found = True
-                    return event_found
+        if is_command_event:
+            if event_data in assertion_data["attribute_value"][1]:
+                event_found = True
+                return event_found
 
         elapsed_time = time.time() - start_time
 
