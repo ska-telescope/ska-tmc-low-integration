@@ -193,6 +193,7 @@ def test_release_exception_propagation(
         central_node_low.perform_action("ReleaseResources", release_input_json)
 
 
+@pytest.mark.new
 @pytest.mark.SKA_low
 def test_assign_release_timeout_csp(
     central_node_low,
@@ -240,4 +241,5 @@ def test_assign_release_timeout_csp(
         "longRunningCommandResult",
         (unique_id[0], Anything),
     )
+    print(assertion_data)
     assert ERROR_MESSAGE in assertion_data["attribute_value"][1]

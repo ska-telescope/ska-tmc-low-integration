@@ -89,7 +89,6 @@ ska-sdp:
     kafka:
       resources:
         limits:
-          cpu: 200m
           memory: 100Mi
         requests:
           cpu: 100m
