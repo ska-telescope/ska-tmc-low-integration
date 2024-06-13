@@ -43,7 +43,6 @@ ska-taranta:
         cpu: 200m # 100m = 0.2 CPU
         memory: 200Mi # 200Mi = 0.2 GB mem
       limits:
-        cpu: 1000m # 1000m = 1 CPU
         memory: 1024Mi # 1024Mi = 1 GB mem
 
 ska-tango-base:
@@ -126,7 +125,7 @@ ska-low-cbf-proc:
       resources:
         limits:
           xilinx.com/fpga-xilinx_u55c_gen3x16_xdma_base_3-0: 0  # no FPGA hardware
-          memory: 512Mi  # reduced
+          memory: 200Mi  # reduced
 
 ska-csp-lmc-low:
   labels:
