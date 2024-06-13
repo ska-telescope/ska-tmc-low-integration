@@ -8,6 +8,7 @@ from tests.resources.test_harness.constant import (
     low_sdp_subarray_leaf_node,
     mccs_master_leaf_node,
 )
+from tests.resources.test_harness.helpers import check_for_device_event
 from tests.resources.test_harness.utils.enums import SimulatorDeviceType
 from tests.resources.test_support.common_utils.result_code import ResultCode
 from tests.resources.test_support.common_utils.tmc_helpers import (
@@ -64,13 +65,13 @@ class TestAssignCommandNotAllowedPropagation:
             "The invocation of the AssignResources command is "
             + "failed on Csp Subarray Device low-csp/subarray/01"
         )
-        assertion_data = event_recorder.has_change_event_occurred(
+        assert check_for_device_event(
             central_node_low.central_node,
             "longRunningCommandResult",
-            (unique_id[0], Anything),
-            lookahead=12,
+            ERROR_MESSAGE,
+            event_recorder,
+            unique_id=unique_id[0],
         )
-        assert ERROR_MESSAGE in assertion_data["attribute_value"][1]
         event_recorder.has_change_event_occurred(
             central_node_low.central_node,
             "longRunningCommandResult",
