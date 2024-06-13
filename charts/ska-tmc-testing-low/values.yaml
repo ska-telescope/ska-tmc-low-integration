@@ -123,9 +123,11 @@ ska-low-cbf-proc:
     processor:
       instances: ["0", "1"]
       resources:
+        requests:
+          memory: 100Mi
         limits:
           xilinx.com/fpga-xilinx_u55c_gen3x16_xdma_base_3-0: 0  # no FPGA hardware
-          memory: 200Mi  # reduced
+          memory: 300Mi  # reduced
 
 ska-csp-lmc-low:
   labels:
