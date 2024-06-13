@@ -6,6 +6,7 @@ from pytest_bdd import given, parsers, scenario, then, when
 from ska_control_model import ObsState
 from tango import DevState
 
+from tests.conftest import LOGGER
 from tests.resources.test_support.common_utils.result_code import ResultCode
 from tests.resources.test_support.common_utils.tmc_helpers import (
     prepare_json_args_for_centralnode_commands,
@@ -115,8 +116,13 @@ def tmc_subarray_idle(subarray_node_low, event_recorder):
         "the correct resources {station_ids} are assigned to the MCCS subarray"
     )
 )
-def mccs_subarray_assignedresources(central_node_low, station_ids):
+def mccs_subarray_assignedresources(
+    central_node_low, station_ids, subarray_node_low
+):
     """Method to check whether resources are assigned"""
+    LOGGER.info(
+        "MY assigned >is %s", subarray_node_low.subarray_node.assignedResources
+    )
     station_id = json.loads(
         central_node_low.subarray_devices["mccs_subarray"].assignedResources
     )["station_ids"]
