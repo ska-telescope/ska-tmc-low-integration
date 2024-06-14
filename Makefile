@@ -10,7 +10,7 @@ KUBE_NAMESPACE ?= ska-tmc-low-integration
 KUBE_NAMESPACE_SDP ?= ska-tmc-integration-sdp
 CSP_SIMULATION_ENABLED ?= true
 SDP_SIMULATION_ENABLED ?= true
-MCCS_SIMULATION_ENABLED ?= 
+MCCS_SIMULATION_ENABLED ?= true
 SDP_PROCCONTROL_REPLICAS ?= 1
 K8S_TIMEOUT ?= 600s
 PYTHON_LINT_TARGET ?= tests/
@@ -51,6 +51,8 @@ SDP_SUBARRAY_PREFIX ?= low-sdp/subarray
 CSP_MASTER ?= tango://$(TANGO_HOST).$(KUBE_NAMESPACE).svc.$(CLUSTER_DOMAIN):$(PORT)/low-csp/control/0
 CSP_SUBARRAY_PREFIX ?= tango://$(TANGO_HOST).$(KUBE_NAMESPACE).svc.$(CLUSTER_DOMAIN):$(PORT)/low-csp/subarray
 CI_REGISTRY ?= gitlab.com
+MCCS_MASTER?= tango://$(TANGO_HOST).$(KUBE_NAMESPACE).svc.$(CLUSTER_DOMAIN):$(PORT)/low-mccs/control/control
+MCCS_SUBARRAY_PREFIX ?= tango://$(TANGO_HOST).$(KUBE_NAMESPACE).svc.$(CLUSTER_DOMAIN):$(PORT)/low-mccs/subarray/
 
 K8S_TEST_IMAGE_TO_TEST ?= artefact.skao.int/ska-tango-images-tango-itango:9.3.12## docker image that will be run for testing purpose
 TARANTA_ENABLED ?= false
@@ -91,6 +93,8 @@ endif
 
 ifeq ($(MCCS_SIMULATION_ENABLED),false)
 CUSTOM_VALUES =	--set tmc-low.deviceServers.mocks.is_simulated.mccs=$(MCCS_SIMULATION_ENABLED)\
+	--set global.mccs_master=$(MCCS_MASTER)\
+	--set global.mccs_subarray_prefix=$(MCCS_SUBARRAY_PREFIX)\
 	--set ska-low-mccs.enabled=true
 endif
 
