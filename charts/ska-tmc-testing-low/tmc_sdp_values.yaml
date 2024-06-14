@@ -1,6 +1,3 @@
-global:
-  sdp_master:
-
 tmc-low:
   deviceServers:
     mocks:
