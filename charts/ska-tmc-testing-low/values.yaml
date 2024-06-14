@@ -126,7 +126,7 @@ ska-low-cbf-proc:
         requests:
           memory: 100Mi
         limits:
-          amd.com/xilinx_u55c_gen3x16_xdma_base_3-0: 0  # no FPGA hardware
+          xilinx.com/fpga-xilinx_u55c_gen3x16_xdma_base_3-0: 0  # no FPGA hardware
           memory: 300Mi  # reduced
 
 ska-csp-lmc-low:
@@ -139,7 +139,7 @@ ska-csp-lmc-low:
       instances: ["controller"]
       file: "data/controller_cbf_only.yaml"
     cspsubarray:
-      instances: ["subarray1"]
+      instances: ["subarray1", "subarray2", "subarray3", "subarray4"]
       file: "data/subarray_cbf_only.yaml"
 
 ska-low-mccs:
