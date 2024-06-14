@@ -195,7 +195,7 @@ mccs-deployment:
   before_script:
     - make cred SERVICE_ACCOUNT=$MCCS_SERVICE_ACCOUNT
   script:
-    - make k8s-install-chart KUBE_NAMESPACE=$KUBE_NAMESPACE HELM_RELEASE=$MCCS_HELM_RELEASE K8S_CHART=$K8S_MCCS_CHART
+    - make k8s-install-chart-car KUBE_NAMESPACE=$KUBE_NAMESPACE HELM_RELEASE=$MCCS_HELM_RELEASE K8S_CHART=$K8S_MCCS_CHART
     - make k8s-wait
   environment:
     name: test/$CI_COMMIT_REF_SLUG
