@@ -183,6 +183,40 @@ k8s-test-tmc-with-mccs:
     name: test/$CI_COMMIT_REF_SLUG
     on_stop: stop-k8s-test-tmc-with-mccs
 
+mccs-deployment:
+  stage: test
+  tags:
+    - ska-k8s
+  variables:
+    KUBE_NAMESPACE: "ci-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-mccs"
+    MCCS_SERVICE_ACCOUNT: "ci-svc-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-mccs"
+    MCCS_HELM_RELEASE: "0.13.0"
+    K8S_MCCS_CHART: "ska-low-mccs"
+  before_script:
+    - make cred SERVICE_ACCOUNT=$MCCS_SERVICE_ACCOUNT
+  script:
+    - make k8s-install-chart-car KUBE_NAMESPACE=$KUBE_NAMESPACE
+      HELM_RELEASE=$MCCS_HELM_RELEASE K8S_CHART=$K8S_MCCS_CHART
+    - make k8s-wait
+  environment:
+    name: test/$CI_COMMIT_REF_SLUG
+    on_stop: stop-k8s-dish-lmc-001
+    action: stop
+  allow_failure: true
+
+stop-mccs-deployment:
+  stage: test
+  extends:
+    - stop-k8s-test
+  variables:
+    KUBE_NAMESPACE: "ci-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-mccs"
+    MCCS_HELM_RELEASE: "0.13.0"
+    K8S_MCCS_CHART: "ska-low-mccs"
+  script:
+    - make k8s-do-uninstall-chart KUBE_NAMESPACE=$KUBE_NAMESPACE HELM_RELEASE=$MCCS_HELM_RELEASE K8S_CHART=$K8S_MCCS_CHART
+    - kubectl -n $KUBE_NAMESPACE delete pods,svc,sa,daemonsets,deployments,replicasets,statefulsets,cronjobs,jobs,ingresses,configmaps --all
+    - kubectl delete namespace $KUBE_NAMESPACE
+
 stop-k8s-test-tmc-with-mccs:
   extends:
     - stop-k8s-test
