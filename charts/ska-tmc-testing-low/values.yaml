@@ -51,7 +51,7 @@ ska-tango-base:
     replicas: 1
     enabled: false
   tangorest:
-    enabled: false
+    enabled: true
     replicas: 1
   tangodb:
     use_pv: false
