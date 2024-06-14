@@ -6,4 +6,4 @@ tmc-low:
 ska-sdp:
   enabled: true
   lmc:
-    load_balancer: true
+    loadBalancer: true
