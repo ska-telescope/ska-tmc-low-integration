@@ -82,25 +82,19 @@ endif
 PYTHON_VARS_AFTER_PYTEST ?= -m '$(MARK)' $(ADD_ARGS) $(FILE) -x --count=$(COUNT)
 
 ifeq ($(CSP_SIMULATION_ENABLED),false)
-CUSTOM_VALUES =	--set tmc-low.deviceServers.mocks.is_simulated.csp=$(CSP_SIMULATION_ENABLED)\
-	--set ska-csp-lmc-low.enabled=true\
-	--set ska-low-cbf.enabled=true\
-	--set ska-low-cbf.ska-low-cbf-proc.enabled=true
+CUSTOM_VALUES =	-f charts/ska-tmc-testing-low/tmc_csp_values.yaml
 endif
 
 ifeq ($(MCCS_SIMULATION_ENABLED),false)
-CUSTOM_VALUES =	--set tmc-low.deviceServers.mocks.is_simulated.mccs=$(MCCS_SIMULATION_ENABLED)\
-	--set ska-low-mccs.enabled=true
+CUSTOM_VALUES =	-f charts/ska-tmc-testing-low/tmc_mccs_values.yaml
 endif
 
 ifeq ($(SDP_SIMULATION_ENABLED),false)
-CUSTOM_VALUES =	--set tmc-low.deviceServers.mocks.is_simulated.sdp=$(SDP_SIMULATION_ENABLED)\
-	--set ska-sdp.enabled=true \
+CUSTOM_VALUES =	-f charts/ska-tmc-testing-low/tmc_sdp_values.yaml \
 	--set global.sdp_master=$(SDP_MASTER)\
 	--set global.sdp_subarray_prefix=$(SDP_SUBARRAY_PREFIX)\
 	--set ska-sdp.proccontrol.replicas=$(SDP_PROCCONTROL_REPLICAS)\
-	--set ska-sdp.helmdeploy.namespace=$(KUBE_NAMESPACE_SDP)\
-	--set ska-sdp.lmc.loadBalancer=true 
+	--set ska-sdp.helmdeploy.namespace=$(KUBE_NAMESPACE_SDP)
 endif
 
 K8S_CHART_PARAMS = --set global.minikube=$(MINIKUBE) \
