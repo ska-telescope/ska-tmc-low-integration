@@ -200,7 +200,7 @@ mccs-deployment:
     - make k8s-wait
   environment:
     name: test/$CI_COMMIT_REF_SLUG
-    on_stop: stop-k8s-dish-lmc-001
+    on_stop: stop-mccs-deployment
     action: stop
   allow_failure: true
 
