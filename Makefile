@@ -14,7 +14,7 @@ MCCS_SIMULATION_ENABLED ?= true
 SDP_PROCCONTROL_REPLICAS ?= 1
 K8S_TIMEOUT ?= 600s
 PYTHON_LINT_TARGET ?= tests/
-
+MCCS_DEPLOY ?= false
 DEPLOYMENT_TYPE = $(shell echo $(TELESCOPE) | cut -d '-' -f2)
 MARK ?= $(shell echo $(TELESCOPE) | sed "s/-/_/g") ## What -m opt to pass to pytest
 # run one test with FILE=acceptance/test_subarray_node.py::test_check_internal_model_according_to_the_tango_ecosystem_deployed
@@ -108,6 +108,7 @@ CUSTOM_VALUES =	--set tmc-low.deviceServers.mocks.is_simulated.sdp=$(SDP_SIMULAT
 	--set ska-sdp.lmc.loadBalancer=true 
 endif
 
+ifeq ($(MCCS_DEPLOY),false)
 K8S_CHART_PARAMS = --set global.minikube=$(MINIKUBE) \
 	--set global.tango_host=$(TANGO_HOST) \
 	--set ska-tango-base.display=$(DISPLAY) \
@@ -119,7 +120,24 @@ K8S_CHART_PARAMS = --set global.minikube=$(MINIKUBE) \
 	--set ska-taranta.enabled=$(TARANTA_ENABLED)\
 	--set tmc-low.subarray_count=$(SUBARRAY_COUNT)\
 	$(CUSTOM_VALUES)
+endif
 
+ifeq ($(MCCS_DEPLOY),true)
+K8S_CHART_PARAMS = --set global.minikube=$(MINIKUBE) \
+	--set global.tango_host=$(TANGO_HOST) \
+	--set ska-tango-base.display=$(DISPLAY) \
+	--set ska-tango-base.xauthority=$(XAUTHORITY) \
+	--set ska-tango-base.jive.enabled=$(JIVE) \
+	--set global.exposeAllDS=false \
+	--set global.cluster_domain=$(CLUSTER_DOMAIN) \
+	--set global.operator=false \
+	--set ska-taranta.enabled=$(TARANTA_ENABLED)\
+	--set tmc-low.enabled=false \
+	--set tmc-low.deviceServers.mocks.is_simulated.mccs=$(MCCS_SIMULATION_ENABLED)\
+	--set global.mccs_master=$(MCCS_MASTER)\
+	--set global.mccs_subarray_prefix=$(MCCS_SUBARRAY_PREFIX)\
+	--set ska-low-mccs.enabled=true
+endif
 PYTHON_VARS_BEFORE_PYTEST ?= PYTHONPATH=.:./src \
 							 TANGO_HOST=$(TANGO_HOST) \
 							 TELESCOPE=$(TELESCOPE) \
