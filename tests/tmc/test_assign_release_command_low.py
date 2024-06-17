@@ -5,7 +5,7 @@ import json
 import pytest
 from ska_control_model import ObsState, ResultCode
 from ska_tango_testing.mock.placeholders import Anything
-from tango import DevState
+from tango import DevFailed, DevState
 
 from tests.resources.test_harness.constant import (
     COMMAND_FAILED_WITH_EXCEPTION_OBSSTATE_EMPTY,
@@ -168,33 +168,29 @@ def test_release_exception_propagation(
     central_node_low.perform_action("AssignResources", assign_input_json)
 
     csp_sim.SetDefective(json.dumps(INTERMEDIATE_STATE_DEFECT))
+
     assert wait_and_validate_device_attribute_value(
         csp_sim,
         "defective",
         json.dumps(INTERMEDIATE_STATE_DEFECT),
         is_json=True,
     )
-    result, unique_id = central_node_low.perform_action(
-        "ReleaseResources", release_input_json
-    )
-    assert unique_id[0].endswith("ReleaseResources")
-    assert result[0] == ResultCode.QUEUED
-    exception_message = (
-        "Exception occurred on the following devices:"
-        + " ska_low/tm_subarray_node/1:"
-        + " Exception occurred on the following devices:"
-    )
-
-    event_recorder.has_change_event_occurred(
+    assert event_recorder.has_change_event_occurred(
         central_node_low.subarray_node,
-        "longRunningCommandResult",
-        (unique_id[0], exception_message),
+        "obsState",
+        ObsState.RESOURCING,
     )
-    event_recorder.has_change_event_occurred(
-        central_node_low.subarray_node,
-        "longRunningCommandResult",
-        (unique_id[0], str(ResultCode.FAILED.value)),
+    assert event_recorder.has_change_event_occurred(
+        central_node_low.csp_subarray1,
+        "obsState",
+        ObsState.RESOURCING,
     )
+    with pytest.raises(
+        DevFailed,
+        match="ReleaseResources command not "
+        + "permitted in observation state 1",
+    ):
+        central_node_low.perform_action("ReleaseResources", release_input_json)
 
 
 @pytest.mark.SKA_low
@@ -239,6 +235,7 @@ def test_assign_release_timeout_csp(
         "AssignResources", assign_input_json
     )
     ERROR_MESSAGE = "Timeout has occurred, command failed"
+
     assertion_data = event_recorder.has_change_event_occurred(
         central_node_low.central_node,
         "longRunningCommandResult",

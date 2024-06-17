@@ -67,14 +67,14 @@ centralnode:
   image:
     registry: artefact.skao.int
     image: ska-tmc-centralnode
-    tag: 0.11.10
+    tag: 0.15.0
     pullPolicy: IfNotPresent
 
 subarraynode:
   image:
     registry: artefact.skao.int
     image: ska-tmc-subarraynode
-    tag: 0.17.6
+    tag: 0.18.1
     pullPolicy: IfNotPresent
 
 sdpleafnodes:
@@ -117,8 +117,8 @@ resources:
   limits:
     memory: 500Mi
   requests:
-    cpu: 100m
-    memory: 128Mi
+    cpu: 200m
+    memory: 200Mi
 
 
 deviceServers:
@@ -134,6 +134,7 @@ deviceServers:
     CspScanInterfaceURL: "https://schema.skao.int/ska-low-csp-scan/2.0"
     SdpScanInterfaceURL: "https://schema.skao.int/ska-sdp-scan/0.4"
     MccsConfigureInterfaceURL: "https://schema.skao.int/ska-low-mccs-configure/1.0"
+    MccsScanInterfaceURL: "https://schema.skao.int/ska-low-mccs-scan/3.0"
 
   sdpsubarrayleafnode:
     enabled: true

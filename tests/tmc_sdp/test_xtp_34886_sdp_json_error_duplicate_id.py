@@ -59,6 +59,7 @@ def given_a_tmc_sdp(
     assert central_node_low.central_node.ping() > 0
     assert central_node_low.sdp_master.ping() > 0
     assert central_node_low.subarray_devices["sdp_subarray"].ping() > 0
+    assert central_node_low.are_sdp_components_online()
 
 
 @given(
@@ -238,6 +239,7 @@ def check_sdp_error(
         "longRunningCommandResult",
         exception_message,
         event_recorder,
+        command_name="AssignResources",
     )
 
 

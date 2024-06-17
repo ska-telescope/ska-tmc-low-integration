@@ -47,10 +47,10 @@ MCCS_NAMESPACE ?= $(KUBE_NAMESPACE)
 CLUSTER_DOMAIN ?= cluster.local
 PORT ?= 10000
 SUBARRAY_COUNT ?= 1
-SDP_MASTER ?= low-sdp/control/0
-SDP_SUBARRAY_PREFIX ?= low-sdp/subarray
-CSP_MASTER ?= tango://$(TANGO_HOST).$(KUBE_NAMESPACE).svc.$(CLUSTER_DOMAIN):$(PORT)/low-csp/control/0
-CSP_SUBARRAY_PREFIX ?= tango://$(TANGO_HOST).$(KUBE_NAMESPACE).svc.$(CLUSTER_DOMAIN):$(PORT)/low-csp/subarray
+SDP_MASTER ?= tango://$(TANGO_HOST_NAME).$(KUBE_NAMESPACE).svc.$(CLUSTER_DOMAIN):$(PORT)/low-sdp/control/0
+SDP_SUBARRAY_PREFIX ?= tango://$(TANGO_HOST_NAME).$(KUBE_NAMESPACE).svc.$(CLUSTER_DOMAIN):$(PORT)/low-sdp/subarray
+CSP_MASTER ?= tango://$(TANGO_HOST_NAME).$(KUBE_NAMESPACE).svc.$(CLUSTER_DOMAIN):$(PORT)/low-csp/control/0
+CSP_SUBARRAY_PREFIX ?= tango://$(TANGO_HOST_NAME).$(KUBE_NAMESPACE).svc.$(CLUSTER_DOMAIN):$(PORT)/low-csp/subarray
 CI_REGISTRY ?= gitlab.com
 MCCS_MASTER?= tango://$(TANGO_HOST_NAME).$(MCCS_NAMESPACE).svc.$(CLUSTER_DOMAIN):$(PORT)/low-mccs/control/control
 MCCS_SUBARRAY_PREFIX ?= tango://$(TANGO_HOST_NAME).$(MCCS_NAMESPACE).svc.$(CLUSTER_DOMAIN):$(PORT)/low-mccs/subarray
@@ -86,10 +86,7 @@ endif
 PYTHON_VARS_AFTER_PYTEST ?= -m '$(MARK)' $(ADD_ARGS) $(FILE) -x --count=$(COUNT)
 
 ifeq ($(CSP_SIMULATION_ENABLED),false)
-CUSTOM_VALUES =	--set tmc-low.deviceServers.mocks.is_simulated.csp=$(CSP_SIMULATION_ENABLED)\
-	--set ska-csp-lmc-low.enabled=true\
-	--set ska-low-cbf.enabled=true\
-	--set ska-low-cbf.ska-low-cbf-proc.enabled=true
+CUSTOM_VALUES =	-f charts/ska-tmc-testing-low/tmc_csp_values.yaml
 endif
 
 ifeq ($(MCCS_SIMULATION_ENABLED),false)
@@ -99,13 +96,11 @@ CUSTOM_VALUES =	--set tmc-low.deviceServers.mocks.is_simulated.mccs=$(MCCS_SIMUL
 endif
 
 ifeq ($(SDP_SIMULATION_ENABLED),false)
-CUSTOM_VALUES =	--set tmc-low.deviceServers.mocks.is_simulated.sdp=$(SDP_SIMULATION_ENABLED)\
-	--set ska-sdp.enabled=true \
+CUSTOM_VALUES =	-f charts/ska-tmc-testing-low/tmc_sdp_values.yaml \
 	--set global.sdp_master=$(SDP_MASTER)\
 	--set global.sdp_subarray_prefix=$(SDP_SUBARRAY_PREFIX)\
 	--set ska-sdp.proccontrol.replicas=$(SDP_PROCCONTROL_REPLICAS)\
-	--set ska-sdp.helmdeploy.namespace=$(KUBE_NAMESPACE_SDP)\
-	--set ska-sdp.lmc.loadBalancer=true 
+	--set ska-sdp.helmdeploy.namespace=$(KUBE_NAMESPACE_SDP)
 endif
 
 ifeq ($(MCCS_DEPLOY),false)
@@ -116,7 +111,7 @@ K8S_CHART_PARAMS = --set global.minikube=$(MINIKUBE) \
 	--set ska-tango-base.jive.enabled=$(JIVE) \
 	--set global.exposeAllDS=false \
 	--set global.cluster_domain=$(CLUSTER_DOMAIN) \
-	--set global.operator=false \
+	--set global.operator=true \
 	--set ska-taranta.enabled=$(TARANTA_ENABLED)\
 	--set tmc-low.subarray_count=$(SUBARRAY_COUNT)\
 	$(CUSTOM_VALUES)

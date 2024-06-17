@@ -7,6 +7,7 @@ entrypoints:
 {{- $csp_assign_interface := .Values.deviceServers.subarraynode.CspAssignResourcesInterfaceURL }}
 {{- $csp_scan_interface := .Values.deviceServers.subarraynode.CspScanInterfaceURL }}
 {{- $sdp_scan_interface := .Values.deviceServers.subarraynode.SdpScanInterfaceURL }}
+{{- $mccs_scan_interface := .Values.deviceServers.subarraynode.MccsScanInterfaceURL}}
 {{- $mccs_configure_interface := .Values.deviceServers.subarraynode.MccsConfigureInterfaceURL }}
 
 server:
@@ -68,6 +69,9 @@ server:
           - name: "MccsConfigureInterfaceURL"
             values:
               - "{{ $mccs_configure_interface }}"
+          - name: "MccsScanInterfaceURL"
+            values:
+              - "{{ $mccs_scan_interface }}"             
   {{- end}}
 depends_on:
   - device: sys/database/2

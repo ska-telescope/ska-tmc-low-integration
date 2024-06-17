@@ -70,6 +70,7 @@ class TestAssignCommandNotAllowedPropagation:
             (unique_id[0], Anything),
         )
         assert ERROR_MESSAGE in assertion_data["attribute_value"][1]
+
         event_recorder.has_change_event_occurred(
             central_node_low.central_node,
             "longRunningCommandResult",
