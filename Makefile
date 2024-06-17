@@ -2,6 +2,7 @@
 # CAR_OCI_REGISTRY_USER and PROJECT below.
 ALARM_HANDLER_FQDN= "alarm/handler/01"
 CAR_OCI_REGISTRY_HOST:=artefact.skao.int
+CI_KEEP_NAMESPACE = true
 PROJECT = ska-tmc-low-integration
 TANGO_HOST ?= tango-databaseds:10000## TANGO_HOST connection to the Tango DS
 TANGO_HOST_NAME ?= tango-databaseds
