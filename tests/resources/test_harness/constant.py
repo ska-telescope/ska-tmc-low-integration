@@ -1,13 +1,16 @@
 """Define Constants
 """
 import json
-
+import os
 from ska_control_model import ObsState, ResultCode
 
 from tests.resources.test_harness.utils.enums import (
     FaultType,
     SimulatorDeviceType,
 )
+
+MCCS_CONTROL = os.getenv("MCCS_CONTROL")
+MCCS_SUBARRAY_PREFIX = os.getenv("MCCS_SUBARRAY_PREFIX")
 
 COMMAND_FAILED_WITH_EXCEPTION_OBSSTATE_IDLE = {
     "enabled": True,
@@ -127,10 +130,10 @@ low_csp_subarray2 = "low-csp/subarray/02"
 low_csp_subarray3 = "low-csp/subarray/03"
 low_sdp_master = "low-sdp/control/0"
 low_csp_master = "low-csp/control/0"
-mccs_controller = "low-mccs/control/control"
-mccs_subarray1 = "low-mccs/subarray/01"
-mccs_subarray2 = "low-mccs/subarray/02"
-mccs_subarray3 = "low-mccs/subarray/03"
+mccs_controller = MCCS_CONTROL
+mccs_subarray1 = MCCS_SUBARRAY_PREFIX+"/01"
+mccs_subarray2 = MCCS_SUBARRAY_PREFIX+"/02"
+mccs_subarray3 = MCCS_SUBARRAY_PREFIX+"/03"
 processor1 = "low-cbf/processor/0.0.0"
 mccs_pasdbus_prefix = "low-mccs/pasdbus/*"
 mccs_prefix = "low-mccs/*"
