@@ -151,6 +151,7 @@ ska-low-mccs:
     app: ska-tmc-low-integration
   legacy_compatibility: true
   enabled: true
+  namespaceOverride: "dummy"
   deviceServers:
     antennas:
       antennas-ci-1:

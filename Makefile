@@ -42,7 +42,7 @@ HELM_CHART=ska-tmc-testing-$(DEPLOYMENT_TYPE)
 UMBRELLA_CHART_PATH ?= charts/$(HELM_CHART)/
 K8S_CHARTS ?= ska-tmc-$(DEPLOYMENT_TYPE) ska-tmc-testing-$(DEPLOYMENT_TYPE)## list of charts
 K8S_CHART ?= $(HELM_CHART)
-MCCS_NAMESPACE ?= $(KUBE_NAMESPACE)
+MCCS_NAMESPACE ?= $(KUBE_NAMESPACE)-mccs
 CLUSTER_DOMAIN ?= cluster.local
 PORT ?= 10000
 SUBARRAY_COUNT ?= 1
@@ -95,7 +95,8 @@ ifeq ($(MCCS_SIMULATION_ENABLED),false)
 CUSTOM_VALUES =	--set tmc-low.deviceServers.mocks.is_simulated.mccs=$(MCCS_SIMULATION_ENABLED)\
 	--set global.mccs_master=$(MCCS_MASTER)\
 	--set global.mccs_subarray_prefix=$(MCCS_SUBARRAY_PREFIX)\
-	--set ska-low-mccs.enabled=true
+	--set ska-low-mccs.enabled=true\
+	--set ska-low-mccs.namespaceOverride = $(MCCS_NAMESPACE) 
 endif
 
 ifeq ($(SDP_SIMULATION_ENABLED),false)
