@@ -200,6 +200,7 @@ mccs-deployment:
     - make cred SERVICE_ACCOUNT=$MCCS_SERVICE_ACCOUNT
   script:
     - make k8s-install-chart-car KUBE_NAMESPACE=$KUBE_NAMESPACE HELM_RELEASE=$MCCS_HELM_RELEASE K8S_CHART=$K8S_MCCS_CHART K8S_HELM_REPOSITORY=$K8S_HELM_REPOSITORY K8S_CHART_PARAMS='--version=0.13.0 -f charts/ska-tmc-testing-low/tmc_mccs.yaml'
+    - make k8s-wait
   environment:
     name: test/$CI_COMMIT_REF_SLUG
     on_stop: stop-mccs-deployment
