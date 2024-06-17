@@ -96,7 +96,7 @@ CUSTOM_VALUES =	--set tmc-low.deviceServers.mocks.is_simulated.mccs=$(MCCS_SIMUL
 	--set global.mccs_master=$(MCCS_MASTER)\
 	--set global.mccs_subarray_prefix=$(MCCS_SUBARRAY_PREFIX)\
 	--set ska-low-mccs.enabled=true\
-	--set ska-low-mccs.namespaceOverride = $(MCCS_NAMESPACE) 
+	--set ska-low-mccs.namespaceOverride=$(MCCS_NAMESPACE) 
 endif
 
 ifeq ($(SDP_SIMULATION_ENABLED),false)
