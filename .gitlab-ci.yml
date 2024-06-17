@@ -186,12 +186,6 @@ k8s-test-tmc-with-mccs:
     name: test/$CI_COMMIT_REF_SLUG
     on_stop: stop-k8s-test-tmc-with-mccs
 
-To deploy a Helm chart from the specified repository and write a working GitLab CI job, we need to ensure that all the necessary steps and variables are correctly set up in the gitlab-ci.yaml file. The job script should pull the Helm chart from the repository, set up the necessary Kubernetes credentials, and deploy the chart.
-
-Here is the revised version of the gitlab-ci.yaml job for deploying the Helm chart:
-
-yaml
-
 mccs-deployment:
   stage: test
   tags:
