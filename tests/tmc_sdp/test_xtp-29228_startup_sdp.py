@@ -34,6 +34,7 @@ def given_a_tmc(central_node_low, simulator_factory):
     assert central_node_low.sdp_master.ping() > 0
     assert central_node_low.subarray_devices["sdp_subarray"].ping() > 0
     assert csp_master_sim.ping() > 0
+    assert central_node_low.are_sdp_components_online()
 
 
 @when("I start up the telescope")

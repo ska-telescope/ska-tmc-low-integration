@@ -58,6 +58,9 @@ def subarray_in_ready_obsstate(
 ):
     """Checks if SubarrayNode's obsState attribute value is READY"""
     event_recorder.subscribe_event(subarray_node_low.subarray_node, "obsState")
+    event_recorder.subscribe_event(
+        subarray_node_low.mccs_subarray1, "obsState"
+    )
     assert subarray_node_low.subarray_node.obsState == ObsState.EMPTY
 
     central_node_low.set_subarray_id(1)
@@ -95,7 +98,9 @@ def invoke_scan(
     input_str = prepare_json_args_for_commands(
         "scan_low", command_input_factory
     )
-    input_str = subarray_node_low.set_scan_id(int(scan_id), input_str)
+    input_str = subarray_node_low.set_scan_id_and_start_time(
+        int(scan_id), input_str
+    )
     subarray_node_low.store_scan_data(input_str)
 
 
@@ -105,6 +110,12 @@ def subarray_node_in_scanning(subarray_node_low, event_recorder):
     assert event_recorder.has_change_event_occurred(
         subarray_node_low.subarray_node, "obsState", ObsState.SCANNING
     )
+    assert event_recorder.has_change_event_occurred(
+        subarray_node_low.mccs_subarray1,
+        "obsState",
+        ObsState.SCANNING,
+        lookahead=10,
+    )
 
 
 @then(
@@ -113,13 +124,12 @@ def subarray_node_in_scanning(subarray_node_low, event_recorder):
 )
 def mccs_subarray_in_ready(subarray_node_low, event_recorder):
     """Checks if MCCS Subarray's obsState attribute value is READY"""
-    event_recorder.subscribe_event(
-        subarray_node_low.mccs_subarray1, "obsState"
-    )
+
     assert event_recorder.has_change_event_occurred(
         subarray_node_low.mccs_subarray1,
         "obsState",
         ObsState.READY,
+        lookahead=20,
     )
 
 

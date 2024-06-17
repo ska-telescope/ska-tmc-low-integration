@@ -30,6 +30,7 @@ def test_tmc_sdp_configure(central_node_low):
     """
     assert central_node_low.central_node.ping() > 0
     assert central_node_low.subarray_devices["sdp_subarray"].ping() > 0
+    assert central_node_low.are_sdp_components_online()
 
 
 # @given -> ../conftest.py
