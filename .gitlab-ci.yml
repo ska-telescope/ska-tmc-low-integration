@@ -198,6 +198,7 @@ mccs-deployment:
     - make cred SERVICE_ACCOUNT=$MCCS_SERVICE_ACCOUNT
   script:
     - make k8s-install-chart
+    - make k8s-wait
   environment:
     name: test/$CI_COMMIT_REF_SLUG
     on_stop: stop-mccs-deployment
