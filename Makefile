@@ -51,8 +51,8 @@ SDP_SUBARRAY_PREFIX ?= low-sdp/subarray
 CSP_MASTER ?= tango://$(TANGO_HOST).$(KUBE_NAMESPACE).svc.$(CLUSTER_DOMAIN):$(PORT)/low-csp/control/0
 CSP_SUBARRAY_PREFIX ?= tango://$(TANGO_HOST).$(KUBE_NAMESPACE).svc.$(CLUSTER_DOMAIN):$(PORT)/low-csp/subarray
 CI_REGISTRY ?= gitlab.com
-MCCS_MASTER?= tango://$(TANGO_HOST).$(MCCS_NAMESPACE).svc.$(CLUSTER_DOMAIN):$(PORT)/low-mccs/control/control
-MCCS_SUBARRAY_PREFIX ?= tango://$(TANGO_HOST).$(MCCS_NAMESPACE).svc.$(CLUSTER_DOMAIN):$(PORT)/low-mccs/subarray
+MCCS_MASTER?= tango://$(TANGO_HOST_NAME).$(MCCS_NAMESPACE).svc.$(CLUSTER_DOMAIN):$(PORT)/low-mccs/control/control
+MCCS_SUBARRAY_PREFIX ?= tango://$(TANGO_HOST_NAME).$(MCCS_NAMESPACE).svc.$(CLUSTER_DOMAIN):$(PORT)/low-mccs/subarray
 
 K8S_TEST_IMAGE_TO_TEST ?= artefact.skao.int/ska-tango-images-tango-itango:9.3.12## docker image that will be run for testing purpose
 TARANTA_ENABLED ?= false
