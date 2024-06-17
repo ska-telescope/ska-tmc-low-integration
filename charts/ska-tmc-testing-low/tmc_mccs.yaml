@@ -9,7 +9,7 @@ ska-low-mccs:
   labels:
     app: ska-tmc-low-integration
   legacy_compatibility: true
-  enabled: false
+  enabled: true
   deviceServers:
     antennas:
       antennas-ci-1:
