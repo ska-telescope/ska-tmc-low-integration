@@ -49,7 +49,7 @@ def check_tmc_and_sdp_is_on(central_node_low, event_recorder):
         "State",
         DevState.ON,
     )
-    assert central_node_low.is_sdp_components_online()
+    assert central_node_low.are_sdp_components_online()
 
 
 @given("simulated CSP and MCCS in ON States")

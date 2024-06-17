@@ -576,7 +576,7 @@ class CentralNodeWrapperLow(object):
             self.processor1.subscribetoallocator("low-cbf/allocator/0")
             self.processor1.register()
 
-    def is_sdp_components_online(self):
+    def are_sdp_components_online(self):
         start_time = time.time()
         elapsed_time = 0
         component_status: dict = json.loads(self.sdp_master.components)
