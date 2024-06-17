@@ -2,6 +2,7 @@
 """
 import json
 import os
+
 from ska_control_model import ObsState, ResultCode
 
 from tests.resources.test_harness.utils.enums import (
@@ -131,9 +132,9 @@ low_csp_subarray3 = "low-csp/subarray/03"
 low_sdp_master = "low-sdp/control/0"
 low_csp_master = "low-csp/control/0"
 mccs_controller = MCCS_CONTROL
-mccs_subarray1 = MCCS_SUBARRAY_PREFIX+"/01"
-mccs_subarray2 = MCCS_SUBARRAY_PREFIX+"/02"
-mccs_subarray3 = MCCS_SUBARRAY_PREFIX+"/03"
+mccs_subarray1 = MCCS_SUBARRAY_PREFIX + "/01"
+mccs_subarray2 = MCCS_SUBARRAY_PREFIX + "/02"
+mccs_subarray3 = MCCS_SUBARRAY_PREFIX + "/03"
 processor1 = "low-cbf/processor/0.0.0"
 mccs_pasdbus_prefix = "low-mccs/pasdbus/*"
 mccs_prefix = "low-mccs/*"
