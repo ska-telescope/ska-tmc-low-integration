@@ -20,6 +20,8 @@ Fixed
 ************
 * Updated Central node version to 0.15.0
 * Updated Subarray Node version to 0.18.1 with MCCS scan command issue to fix SKB-395
+* Added "MccsScanInterfaceURL" property that can be configured during deployment to set MCCS Scan interface url.
+
 
 [0.15.0]
 ************

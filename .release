@@ -3,6 +3,6 @@ tag=0.15.1
 tag_description=
 **Charts:**
 **1. ska-tmc-low-integration 0.15.1**
-        a. Updated CentralNode version to 0.15.0
-**2. REL-1296: ska-tmc-low chart 0.15.1**
-        a.Updated CentralNode version to 0.15.0
+        a. Updated Central node version to 0.15.0.
+        b. Updated Subarray Node version to 0.18.1 with MCCS scan command issue to fix SKB-395.
+        c. Added "MccsScanInterfaceURL" property that can be configured during deployment to set MCCS Scan interface url.
