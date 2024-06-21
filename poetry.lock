@@ -1284,26 +1284,28 @@ reference = 'ska-nexus'
 
 [[package]]
 name = "ska-telmodel"
-version = "1.15.1"
+version = "1.16.0"
 description = "SKA telescope model library"
 category = "main"
 optional = false
-python-versions = ">=3.10.0,<4.0.0"
+python-versions = "^3.10.0"
+develop = false
 
 [package.dependencies]
-appdirs = ">=1.4.4,<2.0.0"
-astropy = ">=5.2.2,<6.0.0"
-docopt = ">=0.6.2,<0.7.0"
-python-gitlab = ">=3.8.0,<4.0.0"
-pyyaml = ">=6.0,<7.0"
-schema = ">=0.7.5,<0.8.0"
-simpleeval = ">=0.9.13,<0.10.0"
-toolz = ">=0.12.0,<0.13.0"
+appdirs = "^1.4.4"
+astropy = "^5.2.2"
+docopt = "^0.6.2"
+python-gitlab = "^3.8.0"
+pyyaml = "^6.0"
+schema = "^0.7.5"
+simpleeval = "^0.9.13"
+toolz = "^0.12.0"
 
 [package.source]
-type = "legacy"
-url = "https://artefact.skao.int/repository/pypi-internal/simple"
-reference = 'ska-nexus'
+type = "git"
+url = "https://gitlab.com/ska-telescope/ska-telmodel.git"
+reference = "ct-1328-update-make-csp-config"
+resolved_reference = "ae36af4243e33be5f661e783d8fd9f8eca54169d"
 
 [[package]]
 name = "sniffio"
@@ -1670,7 +1672,7 @@ reference = "PyPI-public"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.10"
-content-hash = "bc5cbf6706a74931a2b44dd7ea17ab69bfa4d93669c31fd324eca1927f7712ee"
+content-hash = "1ee55c33a5ffea9ad4c81736973159add1f3f591eaa7f0133663000d553ffd7f"
 
 [metadata.files]
 alabaster = [
@@ -2443,10 +2445,7 @@ ska-tango-testing = [
     {file = "ska_tango_testing-0.6.2-py3-none-any.whl", hash = "sha256:d8d41fccb774dbc82378a15938ba363e8d830f941af1faf1a0a152f4388ef217"},
     {file = "ska_tango_testing-0.6.2.tar.gz", hash = "sha256:4b525430b7aaad16a8b0caba0600d64066a4535ef362ac71b55926cb6ca05315"},
 ]
-ska-telmodel = [
-    {file = "ska_telmodel-1.15.1-py3-none-any.whl", hash = "sha256:77a782934d59603c0a428273ac2475f571a738c4645c12850e0ce7a746955539"},
-    {file = "ska_telmodel-1.15.1.tar.gz", hash = "sha256:9ad3af1d6d386940e375ecaa94faa2496c3b1fab1acd03fe214914c15c309197"},
-]
+ska-telmodel = []
 sniffio = [
     {file = "sniffio-1.3.1-py3-none-any.whl", hash = "sha256:2f6da418d1f1e0fddd844478f41680e794e6051915791a034ff65e5f100525a2"},
     {file = "sniffio-1.3.1.tar.gz", hash = "sha256:f4324edc670a0f49750a81b895f35c3adb843cca46f0530f79fc1babb23789dc"},
