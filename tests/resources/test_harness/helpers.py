@@ -314,6 +314,8 @@ def check_for_device_event(
     attr_name: str,
     event_data: str,
     event_recorder: EventRecorder,
+    command_name: str = "",
+    unique_id: str = "",
 ) -> bool:
     """Method to check event from the device.
 
@@ -325,16 +327,25 @@ def check_for_device_event(
         to check for events.
     """
     event_found: bool = False
-    timeout: int = 100
+    timeout: int = 300
     elapsed_time: float = 0
     start_time: float = time.time()
     while not event_found and elapsed_time < timeout:
         assertion_data = event_recorder.has_change_event_occurred(
             device,
             attribute_name=attr_name,
-            attribute_value=(Anything, Anything),
+            attribute_value=(Anything),
+            lookahead=1,
         )
-        if assertion_data["attribute_value"][0].endswith("AssignResources"):
+        if command_name:
+            is_command_event = assertion_data["attribute_value"][0].endswith(
+                command_name
+            )
+        elif unique_id:
+            is_command_event = (
+                assertion_data["attribute_value"][0] == unique_id
+            )
+        if is_command_event:
             if event_data in assertion_data["attribute_value"][1]:
                 event_found = True
                 return event_found

@@ -115,8 +115,7 @@ mccssubarrayleafnode:
 
 resources:
   limits:
-    cpu: 1000m
-    memory: 1024Mi
+    memory: 500Mi
   requests:
     cpu: 200m
     memory: 200Mi

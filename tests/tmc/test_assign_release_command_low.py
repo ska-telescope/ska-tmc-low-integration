@@ -235,6 +235,7 @@ def test_assign_release_timeout_csp(
         "AssignResources", assign_input_json
     )
     ERROR_MESSAGE = "Timeout has occurred, command failed"
+
     assertion_data = event_recorder.has_change_event_occurred(
         central_node_low.central_node,
         "longRunningCommandResult",

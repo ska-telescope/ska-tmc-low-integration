@@ -19,8 +19,10 @@ Fixed
 [0.15.1]
 ************
 * Updated Central node version to 0.15.0
-* Updated Subarray Node version to 0.18.1 with MCCS scan command issue fix.
-  
+* Updated Subarray Node version to 0.18.1 with MCCS scan command issue to fix SKB-395
+* Added "MccsScanInterfaceURL" property that can be configured during deployment to set MCCS Scan interface url.
+
+
 [0.15.0]
 ************
 * Integrate TMC SubarrayNode latest image with SKB-355 and Bug fix 

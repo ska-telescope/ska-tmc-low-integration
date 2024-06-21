@@ -75,6 +75,13 @@ class CentralNodeWrapperLow(object):
         self.assign_input = self.json_factory.create_centralnode_configuration(
             "assign_resources_low"
         )
+        self.event_recorder = EventRecorder()
+        self.event_recorder.subscribe_event(
+            self.central_node, "longRunningCommandResult"
+        )
+        self.event_recorder.subscribe_event(
+            self.subarray_node, "longRunningCommandResult"
+        )
 
     def set_subarray_id(self, subarray_id):
         self.subarray_node = DeviceProxy(
@@ -168,35 +175,57 @@ class CentralNodeWrapperLow(object):
         """
         if SIMULATED_DEVICES_DICT["all_mocks"]:
             LOGGER.info("Invoking TelescopeOff command with all Mocks")
-            self.central_node.TelescopeOff()
+            _, unique_id = self.central_node.TelescopeOff()
             self.set_values_with_all_mocks(DevState.OFF)
+            assert self.event_recorder.has_change_event_occurred(
+                self.central_node,
+                "longRunningCommandResult",
+                (unique_id[0], str(ResultCode.OK.value)),
+            )
 
         elif SIMULATED_DEVICES_DICT["csp_and_sdp"]:
             LOGGER.info(
                 "Invoking TelescopeOff command with csp and sdp simulated"
             )
-            self.central_node.TelescopeOff()
+            _, unique_id = self.central_node.TelescopeOff()
             self.set_value_with_csp_sdp_mocks(DevState.OFF)
-
+            assert self.event_recorder.has_change_event_occurred(
+                self.central_node,
+                "longRunningCommandResult",
+                (unique_id[0], str(ResultCode.OK.value)),
+            )
         elif SIMULATED_DEVICES_DICT["csp_and_mccs"]:
             LOGGER.info(
                 "Invoking TelescopeOff command with csp and mccs simulated"
             )
-            self.central_node.TelescopeOff()
+            _, unique_id = self.central_node.TelescopeOff()
             self.set_values_with_csp_mccs_mocks(DevState.OFF)
-
+            assert self.event_recorder.has_change_event_occurred(
+                self.central_node,
+                "longRunningCommandResult",
+                (unique_id[0], str(ResultCode.OK.value)),
+            )
         elif SIMULATED_DEVICES_DICT["sdp_and_mccs"]:
             LOGGER.info(
                 "Invoking TelescopeOff command with sdp and mccs simulated"
             )
-            self.central_node.TelescopeOff()
+            _, unique_id = self.central_node.TelescopeOff()
             self.set_values_with_sdp_mccs_mocks(DevState.OFF)
-
+            assert self.event_recorder.has_change_event_occurred(
+                self.central_node,
+                "longRunningCommandResult",
+                (unique_id[0], str(ResultCode.OK.value)),
+            )
         else:
             LOGGER.info(
                 "Invoke TelescopeOff command with all real sub-systems"
             )
-            self.central_node.TelescopeOff()
+            _, unique_id = self.central_node.TelescopeOff()
+            assert self.event_recorder.has_change_event_occurred(
+                self.central_node,
+                "longRunningCommandResult",
+                (unique_id[0], str(ResultCode.OK.value)),
+            )
 
     def _clear_command_call_and_transition_data(self, clear_transition=False):
         """Clears the command call data"""
@@ -220,13 +249,33 @@ class CentralNodeWrapperLow(object):
             ObsState.RESOURCING,
         ]:
             LOGGER.info("Calling Abort and Restart on SubarrayNode")
-            self.subarray_abort()
-            self.subarray_restart()
+            _, unique_id = self.subarray_abort()
+            assert self.event_recorder.has_change_event_occurred(
+                self.subarray_node,
+                "longRunningCommandResult",
+                (unique_id[0], str(ResultCode.STARTED.value)),
+            )
+            _, unique_id = self.subarray_restart()
+            assert self.event_recorder.has_change_event_occurred(
+                self.subarray_node,
+                "longRunningCommandResult",
+                (unique_id[0], str(ResultCode.OK.value)),
+            )
         elif self.subarray_node.obsState == ObsState.ABORTED:
-            self.subarray_restart()
+            _, unique_id = self.subarray_restart()
+            assert self.event_recorder.has_change_event_occurred(
+                self.subarray_node,
+                "longRunningCommandResult",
+                (unique_id[0], str(ResultCode.OK.value)),
+            )
         elif self.subarray_node.obsState == ObsState.IDLE:
             LOGGER.info("Calling Release Resource on centralnode")
-            self.invoke_release_resources(self.release_input)
+            _, unique_id = self.invoke_release_resources(self.release_input)
+            assert self.event_recorder.has_change_event_occurred(
+                self.central_node,
+                "longRunningCommandResult",
+                (unique_id[0], str(ResultCode.OK.value)),
+            )
 
         if SIMULATED_DEVICES_DICT["sdp_and_mccs"]:
             self.set_standby()
@@ -236,6 +285,7 @@ class CentralNodeWrapperLow(object):
         ):
             self.move_to_off()
         self._clear_command_call_and_transition_data(clear_transition=True)
+        self.event_recorder.clear_events()
         # Adding a small sleep to allow the systems to clean up processes
         sleep(0.15)
 
@@ -251,8 +301,13 @@ class CentralNodeWrapperLow(object):
         LOGGER.info(f"Received simulated devices: {SIMULATED_DEVICES_DICT}")
         if SIMULATED_DEVICES_DICT["all_mocks"]:
             LOGGER.info("Invoking TelescopeOn command with all Mocks")
-            self.central_node.TelescopeOn()
+            _, unique_id = self.central_node.TelescopeOn()
             self.set_values_with_all_mocks(DevState.ON)
+            assert self.event_recorder.has_change_event_occurred(
+                self.central_node,
+                "longRunningCommandResult",
+                (unique_id[0], str(ResultCode.OK.value)),
+            )
 
         elif SIMULATED_DEVICES_DICT["csp_and_sdp"]:
             LOGGER.info(
@@ -264,21 +319,22 @@ class CentralNodeWrapperLow(object):
             # Set adminMode to Online for mccs_subarray
             if self.mccs_subarray1.adminMode != AdminMode.ONLINE:
                 self.mccs_subarray1.adminMode = AdminMode.ONLINE
-            self.central_node.TelescopeOn()
+            _, unique_id = self.central_node.TelescopeOn()
             self.set_value_with_csp_sdp_mocks(DevState.ON)
+            assert self.event_recorder.has_change_event_occurred(
+                self.central_node,
+                "longRunningCommandResult",
+                (unique_id[0], str(ResultCode.OK.value)),
+            )
 
         elif SIMULATED_DEVICES_DICT["csp_and_mccs"]:
             LOGGER.info(
                 "Invoking TelescopeOn command with csp and MCCS simulated"
             )
-            event_recorder = EventRecorder()
-            event_recorder.subscribe_event(
-                self.central_node, "longRunningCommandResult"
-            )
             _, unique_id = self.central_node.TelescopeOn()
 
             self.set_values_with_csp_mccs_mocks(DevState.ON)
-            assert event_recorder.has_change_event_occurred(
+            assert self.event_recorder.has_change_event_occurred(
                 self.central_node,
                 "longRunningCommandResult",
                 (unique_id[0], str(ResultCode.OK.value)),
@@ -294,11 +350,21 @@ class CentralNodeWrapperLow(object):
             # Set adminMode to Online for csp_subarray
             if self.csp_subarray1.adminMode != AdminMode.ONLINE:
                 self.csp_subarray1.adminMode = AdminMode.ONLINE
-            self.central_node.TelescopeOn()
+            _, unique_id = self.central_node.TelescopeOn()
             self.set_values_with_sdp_mccs_mocks(DevState.ON)
+            assert self.event_recorder.has_change_event_occurred(
+                self.central_node,
+                "longRunningCommandResult",
+                (unique_id[0], str(ResultCode.OK.value)),
+            )
         else:
             LOGGER.info("Invoke TelescopeOn command with all real sub-systems")
-            self.central_node.TelescopeOn()
+            _, unique_id = self.central_node.TelescopeOn()
+            assert self.event_recorder.has_change_event_occurred(
+                self.central_node,
+                "longRunningCommandResult",
+                (unique_id[0], str(ResultCode.OK.value)),
+            )
 
     def set_standby(self):
         """
@@ -309,34 +375,59 @@ class CentralNodeWrapperLow(object):
         LOGGER.info("Putting Telescope in Standby state")
         if SIMULATED_DEVICES_DICT["all_mocks"]:
             LOGGER.info("Invoking TelescopeStandby commands with all Mocks")
-            self.central_node.TelescopeStandBy()
+            _, unique_id = self.central_node.TelescopeStandBy()
+            assert self.event_recorder.has_change_event_occurred(
+                self.central_node,
+                "longRunningCommandResult",
+                (unique_id[0], str(ResultCode.OK.value)),
+            )
             self.set_values_with_all_mocks(DevState.STANDBY)
 
         elif SIMULATED_DEVICES_DICT["csp_and_sdp"]:
             LOGGER.info(
                 "Invoking TelescopeStandby command with csp and sdp simulated"
             )
-            self.central_node.TelescopeStandBy()
+            _, unique_id = self.central_node.TelescopeStandBy()
             self.set_value_with_csp_sdp_mocks(DevState.STANDBY)
+            assert self.event_recorder.has_change_event_occurred(
+                self.central_node,
+                "longRunningCommandResult",
+                (unique_id[0], str(ResultCode.OK.value)),
+            )
 
         elif SIMULATED_DEVICES_DICT["csp_and_mccs"]:
             LOGGER.info(
                 "Invoking TelescopeStandby command with csp and mccs simulated"
             )
-            self.central_node.TelescopeStandBy()
+            _, unique_id = self.central_node.TelescopeStandBy()
             self.set_values_with_csp_mccs_mocks(DevState.STANDBY)
+            assert self.event_recorder.has_change_event_occurred(
+                self.central_node,
+                "longRunningCommandResult",
+                (unique_id[0], str(ResultCode.OK.value)),
+            )
 
         elif SIMULATED_DEVICES_DICT["sdp_and_mccs"]:
             LOGGER.info(
                 "Invoking TelescopeStandby command with sdp and mccs simulated"
             )
-            self.central_node.TelescopeStandBy()
+            _, unique_id = self.central_node.TelescopeStandBy()
             self.set_values_with_sdp_mccs_mocks(DevState.STANDBY)
+            assert self.event_recorder.has_change_event_occurred(
+                self.central_node,
+                "longRunningCommandResult",
+                (unique_id[0], str(ResultCode.OK.value)),
+            )
         else:
             LOGGER.info(
                 "Invoke TelescopeStandby command with all real sub-systems"
             )
-            self.central_node.TelescopeStandBy()
+            _, unique_id = self.central_node.TelescopeStandBy()
+            assert self.event_recorder.has_change_event_occurred(
+                self.central_node,
+                "longRunningCommandResult",
+                (unique_id[0], str(ResultCode.OK.value)),
+            )
         sleep(0.15)
 
     @sync_assign_resources(device_dict=device_dict_low)
@@ -485,7 +576,7 @@ class CentralNodeWrapperLow(object):
             self.processor1.subscribetoallocator("low-cbf/allocator/0")
             self.processor1.register()
 
-    def is_sdp_components_online(self):
+    def are_sdp_components_online(self):
         start_time = time.time()
         elapsed_time = 0
         component_status: dict = json.loads(self.sdp_master.components)
