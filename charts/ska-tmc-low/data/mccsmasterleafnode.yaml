@@ -25,10 +25,6 @@ server:
         - name: "LoggingLevelDefault"
           values:
             - "5"
-        - name: "polled_attr"
-          values:
-            - "assignedresources"
-            - "3000"
 depends_on:
   - device: sys/database/2
 image:
