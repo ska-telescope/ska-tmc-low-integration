@@ -596,6 +596,39 @@ def get_assign_json_id(input_json: str, json_id: str = "") -> list[str]:
         return [pb["pb_id"] for pb in input_json["sdp"]["processing_blocks"]]
 
 
+def retry_communication(
+    device_proxy: tango.Deviceproxy, timeout: int = 30
+) -> None:
+    """
+    Retry communication with the backend.
+
+    NOTE: This is to be used for devices that do not know if the backend is
+    avaliable at the time of the call. For example the daq_handler backend
+    gRPC server may not be ready when we try to start communicating.
+    In this case we will retry connection.
+
+    :param device_proxy: A 'tango.DeviceProxy' to the backend device.
+    :param timeout: A max time in seconds before we give up trying
+    """
+    tick = 2
+    if device_proxy.adminMode != AdminMode.ONLINE:
+        terminate_time = time.time() + timeout
+        while time.time() < terminate_time:
+            try:
+                device_proxy.adminMode = AdminMode.ONLINE
+                break
+            except tango.DevFailed:
+                device_name = device_proxy.dev_name()
+                message = f"{device_name} failed to communicate with backend."
+                print(message)
+                time.sleep(tick)
+        assert device_proxy.adminMode == AdminMode.ONLINE
+    else:
+        device_name = device_proxy.dev_name()
+        message = f"Device {device_name} is already ONLINE, nothing to do."
+        print(message)
+
+
 def set_admin_mode_values_mccs():
     """Set the adminMode values of MCCS devices."""
     if MCCS_SIMULATION_ENABLED.lower() == "false":
@@ -612,13 +645,19 @@ def set_admin_mode_values_mccs():
             device_trls = db.get_device_exported(mccs_prefix)
             devices = []
             for device_trl in device_trls:
-                if "daq" in device_trl or "calibrationstore" in device_trl:
-                    continue
                 device = tango.DeviceProxy(device_trl)
-                if device.adminmode != AdminMode.ONLINE:
-                    device.adminmode = AdminMode.ONLINE
-                    devices.append(device)
-                    time.sleep(0.1)
+                devices.append(device)
+                if "daq" in device_trl or "calibrationstore" in device_trl:
+                    # In these devices we can have a corba timeout due to
+                    # start_communicating being a fast command and the server
+                    # not being ready during initial deployment.
+                    # For example DAQ is configured with a `wait_for_ready`
+                    # flag, but due to the limitation Of 3 seconds
+                    # from corba it gives up after 3 seconds.
+                    retry_communication(device, 30)
+            if device.adminmode != AdminMode.ONLINE:
+                device.adminmode = AdminMode.ONLINE
+                time.sleep(0.1)
 
 
 def updated_assign_str(assign_json: str, station_id: int) -> str:
