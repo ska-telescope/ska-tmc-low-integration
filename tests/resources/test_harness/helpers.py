@@ -596,9 +596,7 @@ def get_assign_json_id(input_json: str, json_id: str = "") -> list[str]:
         return [pb["pb_id"] for pb in input_json["sdp"]["processing_blocks"]]
 
 
-def retry_communication(
-    device_proxy: tango.Deviceproxy, timeout: int = 30
-) -> None:
+def retry_communication(device_proxy: DeviceProxy, timeout: int = 30) -> None:
     """
     Retry communication with the backend.
 
