@@ -601,9 +601,9 @@ def retry_communication(device_proxy: DeviceProxy, timeout: int = 30) -> None:
     Retry communication with the backend.
 
     NOTE: This is to be used for devices that do not know if the backend is
-    avaliable at the time of the call. For example the daq_handler backend
+    available at the time of the call. For example, the daq_handler backend
     gRPC server may not be ready when we try to start communicating.
-    In this case we will retry connection.
+    In this case, we will retry connection.
 
     :param device_proxy: A 'tango.DeviceProxy' to the backend device.
     :param timeout: A max time in seconds before we give up trying
@@ -616,15 +616,17 @@ def retry_communication(device_proxy: DeviceProxy, timeout: int = 30) -> None:
                 device_proxy.adminMode = AdminMode.ONLINE
                 break
             except tango.DevFailed:
-                device_name = device_proxy.dev_name()
-                message = f"{device_name} failed to communicate with backend."
-                print(message)
+                print(
+                    f"{device_proxy.dev_name()} failed to communicate "
+                    "with backend."
+                )
                 time.sleep(tick)
         assert device_proxy.adminMode == AdminMode.ONLINE
     else:
-        device_name = device_proxy.dev_name()
-        message = f"Device {device_name} is already ONLINE, nothing to do."
-        print(message)
+        print(
+            f"Device {device_proxy.dev_name()} is already ONLINE, "
+            "nothing to do."
+        )
 
 
 def set_admin_mode_values_mccs():
@@ -636,8 +638,8 @@ def set_admin_mode_values_mccs():
             pasd_bus_trls = db.get_device_exported(mccs_pasdbus_prefix)
             for pasd_bus_trl in pasd_bus_trls:
                 pasdbus = tango.DeviceProxy(pasd_bus_trl)
-                if pasdbus.adminmode != AdminMode.ONLINE:
-                    pasdbus.adminmode = AdminMode.ONLINE
+                if pasdbus.adminMode != AdminMode.ONLINE:
+                    pasdbus.adminMode = AdminMode.ONLINE
                     time.sleep(0.1)
 
             device_trls = db.get_device_exported(mccs_prefix)
@@ -646,16 +648,12 @@ def set_admin_mode_values_mccs():
                 device = tango.DeviceProxy(device_trl)
                 devices.append(device)
                 if "daq" in device_trl or "calibrationstore" in device_trl:
-                    # In these devices we can have a corba timeout due to
-                    # start_communicating being a fast command and the server
-                    # not being ready during initial deployment.
-                    # For example DAQ is configured with a `wait_for_ready`
-                    # flag, but due to the limitation Of 3 seconds
-                    # from corba it gives up after 3 seconds.
+                    # Use the retry_communication function for these devices
                     retry_communication(device, 30)
-            if device.adminmode != AdminMode.ONLINE:
-                device.adminmode = AdminMode.ONLINE
-                time.sleep(0.1)
+                else:
+                    if device.adminMode != AdminMode.ONLINE:
+                        device.adminMode = AdminMode.ONLINE
+                        time.sleep(0.1)
 
 
 def updated_assign_str(assign_json: str, station_id: int) -> str:
