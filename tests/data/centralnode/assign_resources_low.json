@@ -1,5 +1,5 @@
 {
-  "interface": "https://schema.skao.int/ska-low-tmc-assignresources/3.2",
+  "interface": "https://schema.skao.int/ska-low-tmc-assignresources/4.0",
   "transaction_id": "txn-....-00001",
   "subarray_id": 1,
   "mccs": {
@@ -11,23 +11,25 @@
           {
             "station_id": 1,
             "aperture_id": "AP001.01"
-          },
-          {
-            "station_id": 1,
-            "aperture_id": "AP001.02"
-          },
-          {
-            "station_id": 2,
-            "aperture_id": "AP002.01"
-          },
-          {
-            "station_id": 2,
-            "aperture_id": "AP002.02"
           }
         ],
-        "number_of_channels": 32
+        "number_of_channels": 8
       }
     ]
+  },
+  "csp": {
+    "pss": {
+      "pss_beam_ids": [
+        1,
+        2,
+        3
+      ]
+    },
+    "pst": {
+      "pst_beam_ids": [
+        1
+      ]
+    }
   },
   "sdp": {
     "interface": "https://schema.skao.int/ska-sdp-assignres/0.4",
@@ -43,7 +45,7 @@
     "execution_block": {
       "eb_id": "eb-test-20220916-00000",
       "context": {
-
+        
       },
       "max_length": 3600.0,
       "beams": [
@@ -168,7 +170,7 @@
           "sbi-mvp01-20210623-00000"
         ],
         "parameters": {
-
+          
         }
       }
     ]
