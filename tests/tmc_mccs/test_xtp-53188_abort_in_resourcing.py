@@ -9,7 +9,7 @@ from tests.resources.test_support.common_utils.tmc_helpers import (
 )
 
 
-@pytest.mark.tmc_mccs1
+@pytest.mark.tmc_mccs
 @scenario(
     "../features/tmc_mccs/xtp-53188_abort_in_resourcing.feature",
     "Abort assigning using TMC",
@@ -73,10 +73,6 @@ def abort_subarray(subarray_node_low):
 @then("the MCCS subarray should go into an aborted obsstate")
 def mccs_subarray_in_aborted_obs_state(subarray_node_low, event_recorder):
     """MCCS Subarray in ABORTED obsState."""
-    event_recorder.subscribe_event(
-        subarray_node_low.subarray_devices.get("mccs_subarray"),
-        "obsState",
-    )
     assert event_recorder.has_change_event_occurred(
         subarray_node_low.subarray_devices.get("mccs_subarray"),
         "obsState",
@@ -88,12 +84,6 @@ def mccs_subarray_in_aborted_obs_state(subarray_node_low, event_recorder):
 @then("the TMC subarray obsState is transitioned to ABORTED")
 def subarray_in_aborted_obs_state(subarray_node_low, event_recorder):
     """Subarray Node in ABORTED obsState."""
-    assert event_recorder.has_change_event_occurred(
-        subarray_node_low.subarray_devices.get("mccs_subarray"),
-        "obsState",
-        ObsState.ABORTED,
-        lookahead=10,
-    )
     assert event_recorder.has_change_event_occurred(
         subarray_node_low.subarray_node,
         "obsState",

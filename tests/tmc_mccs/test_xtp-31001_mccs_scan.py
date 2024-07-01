@@ -98,9 +98,7 @@ def invoke_scan(
     input_str = prepare_json_args_for_commands(
         "scan_low", command_input_factory
     )
-    input_str = subarray_node_low.set_scan_id_and_start_time(
-        int(scan_id), input_str
-    )
+    input_str = subarray_node_low.set_scan_id(int(scan_id), input_str)
     subarray_node_low.store_scan_data(input_str)
 
 
