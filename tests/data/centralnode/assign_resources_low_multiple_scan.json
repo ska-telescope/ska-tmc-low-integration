@@ -1,5 +1,5 @@
 {
-    "interface": "https://schema.skao.int/ska-low-tmc-assignresources/3.2",
+    "interface": "https://schema.skao.int/ska-low-tmc-assignresources/4.0",
     "transaction_id": "txn-....-00001",
     "subarray_id": 1,
     "mccs": {
@@ -25,7 +25,7 @@
               "aperture_id": "AP002.02"
             }
           ],
-          "number_of_channels": 32
+          "number_of_channels": 8
         }
       ]
     },
