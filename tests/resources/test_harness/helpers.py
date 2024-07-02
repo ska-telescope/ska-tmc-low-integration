@@ -648,12 +648,10 @@ def set_admin_mode_values_mccs():
                 device = tango.DeviceProxy(device_trl)
                 devices.append(device)
                 if "daq" in device_trl or "calibrationstore" in device_trl:
-                    # Use the retry_communication function for these devices
                     retry_communication(device, 30)
-                else:
-                    if device.adminMode != AdminMode.ONLINE:
-                        device.adminMode = AdminMode.ONLINE
-                        time.sleep(0.1)
+                if device.adminMode != AdminMode.ONLINE:
+                    device.adminMode = AdminMode.ONLINE
+                    time.sleep(0.1)
 
 
 def updated_assign_str(assign_json: str, station_id: int) -> str:
