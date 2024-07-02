@@ -67,7 +67,7 @@ centralnode:
   image:
     registry: registry.gitlab.com/ska-telescope/ska-tmc/ska-tmc-centralnode
     image: ska-tmc-centralnode
-    tag: 0.15.0-dev.ca2ed69cb
+    tag: 0.15.2-dev.c9e46da42
     pullPolicy: IfNotPresent
 
 subarraynode:
