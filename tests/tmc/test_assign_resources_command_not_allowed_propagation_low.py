@@ -1,13 +1,20 @@
 """Test cases for AssignResources Command not allowed for LOW."""
+import json
+
 import pytest
-from ska_tango_testing.mock.placeholders import Anything
+from assertpy import assert_that
+from ska_tango_testing.integration import TangoEventTracer, log_events
 from tango import DevState
 
+from tests.resources.test_harness.central_node_low import CentralNodeWrapperLow
 from tests.resources.test_harness.constant import (
     COMMAND_NOT_ALLOWED_DEFECT,
+    TIMEOUT,
     low_sdp_subarray_leaf_node,
     mccs_master_leaf_node,
 )
+from tests.resources.test_harness.simulator_factory import SimulatorFactory
+from tests.resources.test_harness.utils.common_utils import JsonFactory
 from tests.resources.test_harness.utils.enums import SimulatorDeviceType
 from tests.resources.test_support.common_utils.result_code import ResultCode
 from tests.resources.test_support.common_utils.tmc_helpers import (
@@ -22,10 +29,10 @@ class TestAssignCommandNotAllowedPropagation:
     @pytest.mark.SKA_low
     def test_assign_command_not_allowed_propagation_csp_ln_low(
         self,
-        central_node_low,
-        event_recorder,
-        command_input_factory,
-        simulator_factory,
+        central_node_low: CentralNodeWrapperLow,
+        event_tracer: TangoEventTracer,
+        simulator_factory: SimulatorFactory,
+        command_input_factory: JsonFactory,
     ):
         """Verify command not allowed exception propagation from CSPLeafNodes
         ."""
@@ -34,10 +41,10 @@ class TestAssignCommandNotAllowedPropagation:
         )
 
         # Event Subscriptions
-        event_recorder.subscribe_event(
+        event_tracer.subscribe_event(
             central_node_low.central_node, "telescopeState"
         )
-        event_recorder.subscribe_event(
+        event_tracer.subscribe_event(
             central_node_low.central_node, "longRunningCommandResult"
         )
 
@@ -47,7 +54,12 @@ class TestAssignCommandNotAllowedPropagation:
         )
 
         central_node_low.move_to_on()
-        assert event_recorder.has_change_event_occurred(
+        assert_that(event_tracer).described_as(
+            "FAILED ASSUMPTION AFTER ON COMMAND: "
+            "Central Node device"
+            f"({central_node_low.central_node.dev_name()}) "
+            "is expected to be in TelescopeState ON",
+        ).within_timeout(TIMEOUT).has_change_event_occurred(
             central_node_low.central_node,
             "telescopeState",
             DevState.ON,
@@ -60,30 +72,36 @@ class TestAssignCommandNotAllowedPropagation:
             "AssignResources", assign_input_json
         )
 
-        ERROR_MESSAGE = (
+        exception_message = (
             "The invocation of the AssignResources command is "
             + "failed on Csp Subarray Device low-csp/subarray/01"
         )
-        assertion_data = event_recorder.has_change_event_occurred(
-            central_node_low.central_node,
-            "longRunningCommandResult",
-            (unique_id[0], Anything),
+        log_events(
+            {central_node_low.central_node: ["longRunningCommandResult"]}
         )
-        assert ERROR_MESSAGE in assertion_data["attribute_value"][1]
-
-        event_recorder.has_change_event_occurred(
-            central_node_low.central_node,
-            "longRunningCommandResult",
-            (unique_id[0], str(ResultCode.FAILED.value)),
+        result = event_tracer.query_events(
+            lambda e: e.has_device(central_node_low.central_node)
+            and e.has_attribute("longRunningCommandResult")
+            and e.current_value[0] == unique_id[0]
+            and json.loads(e.current_value[1])[0] == ResultCode.FAILED
+            and exception_message in json.loads(e.current_value[1])[1],
+            timeout=TIMEOUT,
         )
+        assert_that(result).described_as(
+            "FAILED ASSUMPTION ATER ASSIGN RESOURCES: "
+            "Central Node device"
+            f"({central_node_low.central_node.dev_name()}) "
+            "is expected have longRunningCommandResult"
+            "(ResultCode.FAILED,exception)",
+        ).is_length(1)
 
     @pytest.mark.SKA_low
     def test_assign_command_not_allowed_propagation_sdp_ln_low(
         self,
-        central_node_low,
-        event_recorder,
-        command_input_factory,
-        simulator_factory,
+        central_node_low: CentralNodeWrapperLow,
+        event_tracer: TangoEventTracer,
+        simulator_factory: SimulatorFactory,
+        command_input_factory: JsonFactory,
     ):
         """Verify command not allowed exception propagation from SDPLeafNodes
         ."""
@@ -92,23 +110,28 @@ class TestAssignCommandNotAllowedPropagation:
         )
 
         # Event Subscriptions
-        event_recorder.subscribe_event(
+        event_tracer.subscribe_event(
             central_node_low.central_node, "telescopeState"
         )
-        event_recorder.subscribe_event(
+        event_tracer.subscribe_event(
             central_node_low.subarray_node, "obsState"
         )
-        event_recorder.subscribe_event(
+        event_tracer.subscribe_event(
             central_node_low.central_node, "longRunningCommandResult"
         )
-        event_recorder.subscribe_event(sdp_subarray_sim, "obsState")
+        event_tracer.subscribe_event(sdp_subarray_sim, "obsState")
         # Preparing input arguments
         assign_input_json = prepare_json_args_for_centralnode_commands(
             "assign_resources_low", command_input_factory
         )
 
         central_node_low.move_to_on()
-        assert event_recorder.has_change_event_occurred(
+        assert_that(event_tracer).described_as(
+            "FAILED ASSUMPTION AFTER ON COMMAND: "
+            "Central Node device"
+            f"({central_node_low.central_node.dev_name()}) "
+            "is expected to be in TelescopeState ON",
+        ).within_timeout(TIMEOUT).has_change_event_occurred(
             central_node_low.central_node,
             "telescopeState",
             DevState.ON,
@@ -119,31 +142,38 @@ class TestAssignCommandNotAllowedPropagation:
         _, unique_id = central_node_low.perform_action(
             "AssignResources", assign_input_json
         )
-        ERROR_MESSAGE = (
+        log_events(
+            {central_node_low.central_node: ["longRunningCommandResult"]}
+        )
+        exception_message = (
             "Exception occurred on the following devices:"
             + f" {low_sdp_subarray_leaf_node}:"
             " ska_tmc_common.exceptions.CommandNotAllowed:"
             " Command is not allowed\n\n"
         )
-        assertion_data = event_recorder.has_change_event_occurred(
-            central_node_low.central_node,
-            "longRunningCommandResult",
-            (unique_id[0], Anything),
+        result = event_tracer.query_events(
+            lambda e: e.has_device(central_node_low.central_node)
+            and e.has_attribute("longRunningCommandResult")
+            and e.current_value[0] == unique_id[0]
+            and json.loads(e.current_value[1])[0] == ResultCode.FAILED
+            and exception_message in json.loads(e.current_value[1])[1],
+            timeout=TIMEOUT,
         )
-        assert ERROR_MESSAGE in assertion_data["attribute_value"][1]
-        event_recorder.has_change_event_occurred(
-            central_node_low.central_node,
-            "longRunningCommandResult",
-            (unique_id[0], str(ResultCode.FAILED.value)),
-        )
+        assert_that(result).described_as(
+            "FAILED ASSUMPTION ATER ASSIGN RESOURCES: "
+            "Central Node device"
+            f"({central_node_low.central_node.dev_name()}) "
+            "is expected have longRunningCommandResult"
+            "(ResultCode.FAILED,exception)",
+        ).is_length(1)
 
     @pytest.mark.SKA_low
     def test_assign_command_not_allowed_propagation_mccs_ln_low(
         self,
-        central_node_low,
-        event_recorder,
-        command_input_factory,
-        simulator_factory,
+        central_node_low: CentralNodeWrapperLow,
+        event_tracer: TangoEventTracer,
+        simulator_factory: SimulatorFactory,
+        command_input_factory: JsonFactory,
     ):
         """Verify command not allowed exception propagation
         from MccsLeafNodes."""
@@ -155,23 +185,28 @@ class TestAssignCommandNotAllowedPropagation:
         )
 
         # Event Subscriptions
-        event_recorder.subscribe_event(
+        event_tracer.subscribe_event(
             central_node_low.central_node, "telescopeState"
         )
-        event_recorder.subscribe_event(
+        event_tracer.subscribe_event(
             central_node_low.subarray_node, "obsState"
         )
-        event_recorder.subscribe_event(
+        event_tracer.subscribe_event(
             central_node_low.central_node, "longRunningCommandResult"
         )
-        event_recorder.subscribe_event(mccs_subarray_sim, "obsState")
+        event_tracer.subscribe_event(mccs_subarray_sim, "obsState")
         # Preparing input arguments
         assign_input_json = prepare_json_args_for_centralnode_commands(
             "assign_resources_low", command_input_factory
         )
 
         central_node_low.move_to_on()
-        assert event_recorder.has_change_event_occurred(
+        assert_that(event_tracer).described_as(
+            "FAILED ASSUMPTION AFTER ON COMMAND: "
+            "Central Node device"
+            f"({central_node_low.central_node.dev_name()}) "
+            "is expected to be in TelescopeState ON",
+        ).within_timeout(TIMEOUT).has_change_event_occurred(
             central_node_low.central_node,
             "telescopeState",
             DevState.ON,
@@ -184,22 +219,26 @@ class TestAssignCommandNotAllowedPropagation:
             "AssignResources", assign_input_json
         )
         # Constructing the error message
-        assertion_data = event_recorder.has_change_event_occurred(
-            central_node_low.central_node,
-            "longRunningCommandResult",
-            (unique_id[0], Anything),
-        )
-        assert (
+        exception_message = (
             "Exception occurred on the following devices:"
-            + f" {mccs_master_leaf_node}:"
-            in assertion_data["attribute_value"][1]
+            + f"{mccs_master_leaf_node}:"
         )
-        assert (
-            "ska_tmc_common.exceptions.CommandNotAllowed"
-            in assertion_data["attribute_value"][1]
+
+        exception_message2 = "ska_tmc_common.exceptions.CommandNotAllowed"
+        result = event_tracer.query_events(
+            lambda e: e.has_device(central_node_low.central_node)
+            and e.has_attribute("longRunningCommandResult")
+            and e.current_value[0] == unique_id[0]
+            and json.loads(e.current_value[1])[0] == ResultCode.FAILED
+            and exception_message in json.loads(e.current_value[1])[1]
+            and exception_message2 in json.loads(e.current_value[1])[1],
+            timeout=TIMEOUT,
         )
-        event_recorder.has_change_event_occurred(
-            central_node_low.central_node,
-            "longRunningCommandResult",
-            (unique_id[0], str(ResultCode.FAILED.value)),
-        )
+
+        assert_that(result).described_as(
+            "FAILED ASSUMPTION AFTER ASSIGN RESOURCES: "
+            "Central Node device"
+            f"({central_node_low.central_node.dev_name()}) "
+            "is expected have longRunningCommandResult"
+            "(ResultCode.FAILED,exception)",
+        ).is_length(1)

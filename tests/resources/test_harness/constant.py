@@ -9,6 +9,7 @@ from tests.resources.test_harness.utils.enums import (
     SimulatorDeviceType,
 )
 
+TIMEOUT = 50
 COMMAND_FAILED_WITH_EXCEPTION_OBSSTATE_IDLE = {
     "enabled": True,
     "fault_type": FaultType.FAILED_RESULT,

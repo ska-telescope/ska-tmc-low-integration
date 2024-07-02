@@ -3,7 +3,7 @@ ObsState for low"""
 import json
 
 import pytest
-from ska_control_model import ObsState
+from ska_control_model import ObsState,ResultCode
 from ska_tango_testing.mock.placeholders import Anything
 from tango import DevState
 
@@ -16,39 +16,61 @@ from tests.resources.test_harness.utils.enums import SimulatorDeviceType
 from tests.resources.test_support.constant_low import (
     FAILED_RESULT_DEFECT,
     INTERMEDIATE_STATE_DEFECT,
+    TIMEOUT
 )
 
+from assertpy import assert_that
+from tests.resources.test_harness.utils.common_utils import JsonFactory
+from tests.resources.test_harness.central_node_low import CentralNodeWrapperLow
+from ska_tango_testing.integration import TangoEventTracer, log_events
+from tests.resources.test_harness.simulator_factory import SimulatorFactory
 
 @pytest.mark.SKA_low
 def test_recover_subarray_stuck_in_resourcing_low(
-    event_recorder, central_node_low, command_input_factory, simulator_factory
+        central_node_low: CentralNodeWrapperLow,
+        event_tracer: TangoEventTracer,
+        simulator_factory: SimulatorFactory,
+        command_input_factory: JsonFactory,
 ):
     """AssignResources and ReleaseResources is executed."""
-    event_recorder.subscribe_event(
+    event_tracer.subscribe_event(
         central_node_low.central_node, "telescopeState"
     )
     assign_input_json = prepare_json_args_for_centralnode_commands(
         "assign_resources_low", command_input_factory
     )
-    event_recorder.subscribe_event(
+    event_tracer.subscribe_event(
         central_node_low.central_node, "longRunningCommandResult"
     )
-    event_recorder.subscribe_event(central_node_low.subarray_node, "obsState")
-    event_recorder.subscribe_event(
+    event_tracer.subscribe_event(central_node_low.subarray_node, "obsState")
+    event_tracer.subscribe_event(
         central_node_low.subarray_devices["csp_subarray"], "obsState"
     )
-    event_recorder.subscribe_event(
+    event_tracer.subscribe_event(
         central_node_low.subarray_devices["sdp_subarray"], "obsState"
     )
-    event_recorder.subscribe_event(
+    event_tracer.subscribe_event(
         central_node_low.subarray_devices["mccs_subarray"], "obsState"
     )
+    log_events({
+        central_node_low.central_node: "longRunningCommandResult",
+        central_node_low.subarray_node: "obsState",
+        central_node_low.subarray_devices["csp_subarray"]: "obsState",
+        central_node_low.subarray_devices["sdp_subarray"]: "obsState",
+        central_node_low.subarray_devices["mccs_subarray"]: "obsState"
+    })
     central_node_low.move_to_on()
-    assert event_recorder.has_change_event_occurred(
-        central_node_low.central_node,
-        "telescopeState",
-        DevState.ON,
-    )
+    assert_that(event_tracer).described_as(
+            "FAILED ASSUMPTION AFTER ON COMMAND: "
+            "Central Node device"
+            f"({central_node_low.central_node.dev_name()}) "
+            "is expected to be in TelescopeState ON",
+        ).within_timeout(TIMEOUT).has_change_event_occurred(
+            central_node_low.central_node,
+            "telescopeState",
+            DevState.ON,
+        )
+
     csp_sim, sdp_sim = get_device_simulators(simulator_factory)
     mccs_sim = simulator_factory.get_or_create_simulator_device(
         SimulatorDeviceType.MCCS_SUBARRAY_DEVICE
@@ -63,98 +85,161 @@ def test_recover_subarray_stuck_in_resourcing_low(
     _, unique_id = central_node_low.perform_action(
         "AssignResources", assign_input_json
     )
+    exception_message = "Timeout has occurred, command failed"
+    result = event_tracer.query_events(
+        lambda e: e.has_device(central_node_low.subarray_node)
+        and e.has_attribute("longRunningCommandResult")
+        and e.current_value[0] == unique_id[0]
+        and json.loads(e.current_value[1])[0] == ResultCode.FAILED
+        and exception_message in json.loads(e.current_value[1])[1],
+        timeout=TIMEOUT,
+    )
 
-    assertion_data = event_recorder.has_change_event_occurred(
-        central_node_low.central_node,
-        "longRunningCommandResult",
-        (unique_id[0], Anything),
-    )
-    assert (
-        "Timeout has occurred, command failed"
-        in assertion_data["attribute_value"][1]
-    )
-    assert event_recorder.has_change_event_occurred(
-        central_node_low.subarray_node,
-        "obsState",
-        ObsState.RESOURCING,
-    )
-    assert event_recorder.has_change_event_occurred(
-        central_node_low.subarray_devices["sdp_subarray"],
-        "obsState",
-        ObsState.RESOURCING,
-    )
-    assert event_recorder.has_change_event_occurred(
-        csp_sim,
-        "obsState",
-        ObsState.IDLE,
-    )
-    assert event_recorder.has_change_event_occurred(
-        mccs_sim,
-        "obsState",
-        ObsState.IDLE,
-    )
+    assert_that(result).described_as(
+        'FAILED ASSUMPTION AFTER ASSIGN_RESOURCES: '
+        "Central Node device"
+        f"({central_node_low.subarray_node.dev_name()}) "
+        "is expected have longRunningCommandResult"
+        "(ResultCode.FAILED,exception)",
+    ).is_length(1)
+    
+    assert_that(event_tracer).described_as(
+            "FAILED ASSUMPTION AFTER ASSIGN_RESOURCES COMMAND: "
+            "Subarray Node device"
+            f"({central_node_low.subarray_node.dev_name()}) "
+            "is expected to be in RESOURCING obstate",
+        ).within_timeout(TIMEOUT).has_change_event_occurred(
+            central_node_low.subarray_node,
+            "obsState",
+            ObsState.RESOURCING,
+        )
+    assert_that(event_tracer).described_as(
+            "FAILED ASSUMPTION AFTER ASSIGN_RESOURCES COMMAND: "
+            "SDP Subarray device"
+            f"({central_node_low.subarray_devices['sdp_subarray'].dev_name()})"
+            "is expected to be in RESOURCING obstate",
+        ).within_timeout(TIMEOUT).has_change_event_occurred(
+            central_node_low.subarray_devices["sdp_subarray"],
+            "obsState",
+            ObsState.RESOURCING,
+        )
+    assert_that(event_tracer).described_as(
+            "FAILED ASSUMPTION AFTER ASSIGN_RESOURCES COMMAND: "
+            "CSP Subarray device"
+            f"({csp_sim.dev_name()})"
+            "is expected to be in IDLE obstate",
+        ).within_timeout(TIMEOUT).has_change_event_occurred(
+            csp_sim,
+            "obsState",
+            ObsState.IDLE,
+        )
+    assert_that(event_tracer).described_as(
+            "FAILED ASSUMPTION AFTER ASSIGN_RESOURCES COMMAND: "
+            "CSP Subarray device"
+            f"({mccs_sim.dev_name()})"
+            "is expected to be in IDLE obstate",
+        ).within_timeout(TIMEOUT).has_change_event_occurred(
+            mccs_sim,
+            "obsState",
+            ObsState.IDLE,
+        )
+
     sdp_sim.SetDefective(json.dumps({"enabled": False}))
     sdp_sim.SetDirectObsState(ObsState.EMPTY)
     csp_sim.ReleaseAllResources()
     mccs_sim.ReleaseAllResources()
 
-    assert event_recorder.has_change_event_occurred(
-        sdp_sim,
-        "obsState",
-        ObsState.EMPTY,
-    )
-    assert event_recorder.has_change_event_occurred(
-        mccs_sim,
-        "obsState",
-        ObsState.EMPTY,
-    )
-    assert event_recorder.has_change_event_occurred(
-        csp_sim,
-        "obsState",
-        ObsState.EMPTY,
-    )
-    assert event_recorder.has_change_event_occurred(
-        central_node_low.subarray_node,
-        "obsState",
-        ObsState.EMPTY,
-    )
+    assert_that(event_tracer).described_as(
+            "FAILED ASSUMPTION AFTER RELEASE_RESOURCES COMMAND: "
+            "SDP Subarray device"
+            f"({central_node_low.subarray_devices['sdp_subarray'].dev_name()})"
+            "is expected to be in EMPTY obstate",
+        ).within_timeout(TIMEOUT).has_change_event_occurred(
+            central_node_low.subarray_devices["sdp_subarray"],
+            "obsState",
+            ObsState.EMPTY,
+        )
+    assert_that(event_tracer).described_as(
+            "FAILED ASSUMPTION AFTER RELEASE_RESOURCES COMMAND: "
+            "CSP Subarray device"
+            f"({csp_sim.dev_name()})"
+            "is expected to be in EMPTY obstate",
+        ).within_timeout(TIMEOUT).has_change_event_occurred(
+            csp_sim,
+            "obsState",
+            ObsState.EMPTY,
+        )
+    assert_that(event_tracer).described_as(
+            "FAILED ASSUMPTION AFTER RELEASE_RESOURCES COMMAND: "
+            "MCCS Subarray device"
+            f"({mccs_sim.dev_name()})"
+            "is expected to be in EMPTY obstate",
+        ).within_timeout(TIMEOUT).has_change_event_occurred(
+            mccs_sim,
+            "obsState",
+            ObsState.EMPTY,
+        )
+    assert_that(event_tracer).described_as(
+            "FAILED ASSUMPTION AFTER RELEASE_RESOURCES COMMAND: "
+            "Subarray Node device"
+            f"({central_node_low.subarray_node.dev_name()}) "
+            "is expected to be in EMPTY obstate",
+        ).within_timeout(TIMEOUT).has_change_event_occurred(
+            central_node_low.subarray_node,
+            "obsState",
+            ObsState.EMPTY,
+        )
 
 
 @pytest.mark.SKA_low
 @pytest.mark.parametrize("defective_device", ["csp_subarray", "sdp_subarray"])
 def test_abort_with_sdp_csp_in_empty(
-    event_recorder,
-    central_node_low,
-    command_input_factory,
-    simulator_factory,
-    defective_device,
+        central_node_low: CentralNodeWrapperLow,
+        event_tracer: TangoEventTracer,
+        simulator_factory: SimulatorFactory,
+        command_input_factory: JsonFactory,
+        defective_device: str
 ):
     """recover subarray when SDP and CSP is in empty with abort."""
-    event_recorder.subscribe_event(
+    event_tracer.subscribe_event(
         central_node_low.central_node, "telescopeState"
     )
     assign_input_json = prepare_json_args_for_centralnode_commands(
         "assign_resources_low", command_input_factory
     )
-    event_recorder.subscribe_event(
+    event_tracer.subscribe_event(
         central_node_low.central_node, "longRunningCommandResult"
     )
-    event_recorder.subscribe_event(central_node_low.subarray_node, "obsState")
-    event_recorder.subscribe_event(
+    event_tracer.subscribe_event(central_node_low.subarray_node, "obsState")
+    event_tracer.subscribe_event(
         central_node_low.subarray_devices["csp_subarray"], "obsState"
     )
-    event_recorder.subscribe_event(
+    event_tracer.subscribe_event(
         central_node_low.subarray_devices["sdp_subarray"], "obsState"
     )
-    event_recorder.subscribe_event(
+    event_tracer.subscribe_event(
         central_node_low.subarray_devices["mccs_subarray"], "obsState"
     )
-    central_node_low.move_to_on()
-    assert event_recorder.has_change_event_occurred(
-        central_node_low.central_node,
-        "telescopeState",
-        DevState.ON,
+    log_events(
+        
+        {
+            central_node_low.central_node: ["telescopeState", "longRunningCommandResult"],
+            central_node_low.subarray_node: "obsState",
+            central_node_low.subarray_devices["sdp_subarray"]: "obsState",
+            central_node_low.subarray_devices["mccs_subarray"]: "obsState"
+        }
     )
+    central_node_low.move_to_on()
+    assert_that(event_tracer).described_as(
+            "FAILED ASSUMPTION AFTER ON COMMAND: "
+            "Central Node device"
+            f"({central_node_low.central_node.dev_name()}) "
+            "is expected to be in TelescopeState ON",
+        ).within_timeout(TIMEOUT).has_change_event_occurred(
+            central_node_low.central_node,
+            "telescopeState",
+            DevState.ON,
+        )
     csp_sim, sdp_sim = get_device_simulators(simulator_factory)
     mccs_sim = simulator_factory.get_or_create_simulator_device(
         SimulatorDeviceType.MCCS_SUBARRAY_DEVICE
@@ -181,57 +266,105 @@ def test_abort_with_sdp_csp_in_empty(
         "AssignResources", assign_input_json
     )
 
-    assertion_data = event_recorder.has_change_event_occurred(
-        central_node_low.central_node,
-        "longRunningCommandResult",
-        (unique_id[0], Anything),
-    )
-    assert (
-        "Exception occurred on the following devices: "
+    exception_message =(
+                "Exception occurred on the following devices: "
         f"ska_low/tm_leaf_node/{defective_device}01"
-        in assertion_data["attribute_value"][1]
     )
-    assert event_recorder.has_change_event_occurred(
-        central_node_low.subarray_node,
-        "obsState",
-        ObsState.RESOURCING,
+    
+    result = event_tracer.query_events(
+        lambda e: e.has_device(central_node_low.subarray_node)
+        and e.has_attribute("longRunningCommandResult")
+        and e.current_value[0] == unique_id[0]
+        and json.loads(e.current_value[1])[0] == ResultCode.FAILED
+        and exception_message in json.loads(e.current_value[1])[1],
+        timeout=TIMEOUT,
     )
-    assert event_recorder.has_change_event_occurred(
-        defective_device_proxy,
-        "obsState",
-        ObsState.RESOURCING,
-    )
-    assert event_recorder.has_change_event_occurred(
-        defective_device_proxy,
-        "obsState",
-        ObsState.EMPTY,
-    )
+
+    assert_that(result).described_as(
+        'FAILED ASSUMPTION AFTER ASSIGN_RESOURCES: '
+        "Central Node device"
+        f"({central_node_low.subarray_node.dev_name()}) "
+        "is expected have longRunningCommandResult"
+        "(ResultCode.FAILED,exception)",
+    ).is_length(1)
+    assert_that(event_tracer).described_as(
+            "FAILED ASSUMPTION AFTER ASSIGN_RESOURCES COMMAND: "
+            "Subarray Node device"
+            f"({central_node_low.subarray_node.dev_name()}) "
+            "is expected to be in RESOURCING obstate",
+        ).within_timeout(TIMEOUT).has_change_event_occurred(
+            central_node_low.subarray_node,
+            "obsState",
+            ObsState.RESOURCING,
+        )
+    assert_that(event_tracer).described_as(
+            "FAILED ASSUMPTION AFTER ASSIGN_RESOURCES COMMAND: "
+            "Subarray device"
+            f"({defective_device_proxy.dev_name()})"
+            "is expected to be in RESOURCING obstate",
+        ).within_timeout(TIMEOUT).has_change_event_occurred(
+            defective_device_proxy,
+            "obsState",
+            ObsState.RESOURCING,
+        )
+    assert_that(event_tracer).described_as(
+            "FAILED ASSUMPTION AFTER ASSIGN_RESOURCES COMMAND: "
+            "Subarray device"
+            f"({defective_device_proxy.dev_name()})"
+            "is expected to be in EMPTY obstate",
+        ).within_timeout(TIMEOUT).has_change_event_occurred(
+            defective_device_proxy,
+            "obsState",
+            ObsState.EMPTY,
+        )
+
     if defective_device_proxy.dev_name() != csp_sim.dev_name():
-        assert event_recorder.has_change_event_occurred(
+        assert_that(event_tracer).described_as(
+            "FAILED ASSUMPTION AFTER ASSIGN_RESOURCES COMMAND: "
+            "CSP Subarray device"
+            f"({csp_sim.dev_name()})"
+            "is expected to be in IDLE obstate",
+        ).within_timeout(TIMEOUT).has_change_event_occurred(
             csp_sim,
             "obsState",
             ObsState.IDLE,
         )
     elif defective_device_proxy.dev_name() != sdp_sim.dev_name():
-        assert event_recorder.has_change_event_occurred(
+        assert_that(event_tracer).described_as(
+            "FAILED ASSUMPTION AFTER ASSIGN_RESOURCES COMMAND: "
+            "SDP Subarray device"
+            f"({sdp_sim.dev_name()})"
+            "is expected to be in IDLE obstate",
+        ).within_timeout(TIMEOUT).has_change_event_occurred(
             sdp_sim,
             "obsState",
             ObsState.IDLE,
         )
-    assert event_recorder.has_change_event_occurred(
-        mccs_sim,
-        "obsState",
-        ObsState.IDLE,
-    )
+    assert_that(event_tracer).described_as(
+            "FAILED ASSUMPTION AFTER ASSIGN_RESOURCES COMMAND: "
+            "MCCS Subarray device"
+            f"({mccs_sim.dev_name()})"
+            "is expected to be in IDLE obstate",
+        ).within_timeout(TIMEOUT).has_change_event_occurred(
+            mccs_sim,
+            "obsState",
+            ObsState.IDLE,
+        )
+
     defective_device_proxy.SetDefective(json.dumps({"enabled": False}))
 
     central_node_low.subarray_node.Abort()
+    assert_that(event_tracer).described_as(
+            "FAILED ASSUMPTION AFTER ABORT COMMAND: "
+            "Subarray Node device"
+            f"({central_node_low.subarray_node.dev_name()}) "
+            "is expected to be in ABORTED obstate",
+        ).within_timeout(TIMEOUT).has_change_event_occurred(
+            central_node_low.subarray_node,
+            "obsState",
+            ObsState.ABORTED,
+        )
 
-    assert event_recorder.has_change_event_occurred(
-        central_node_low.subarray_node,
-        "obsState",
-        ObsState.ABORTED,
-    )
 
 
 @pytest.mark.SKA_low
@@ -291,17 +424,28 @@ def test_abort_with_mccs_in_empty(
         "AssignResources", assign_input_json
     )
 
-    assertion_data = event_recorder.has_change_event_occurred(
-        central_node_low.central_node,
-        "longRunningCommandResult",
-        (unique_id[0], Anything),
-    )
-    assert (
-        "Exception occurred on the following devices:"
+
+    exception_message = ("Exception occurred on the following devices:"
         + " ska_low/tm_subarray_node/1: "
-        + "Timeout has occurred, command failed"
-        in assertion_data["attribute_value"][1]
+        + "Timeout has occurred, command failed")
+    
+    result = event_tracer.query_events(
+        lambda e: e.has_device(central_node_low.subarray_node)
+        and e.has_attribute("longRunningCommandResult")
+        and e.current_value[0] == unique_id[0]
+        and json.loads(e.current_value[1])[0] == ResultCode.FAILED
+        and exception_message in json.loads(e.current_value[1])[1],
+        timeout=TIMEOUT,
     )
+
+    assert_that(result).described_as(
+        'FAILED ASSUMPTION AFTER ASSIGN_RESOURCES: '
+        "Central Node device"
+        f"({central_node_low.subarray_node.dev_name()}) "
+        "is expected have longRunningCommandResult"
+        "(ResultCode.FAILED,exception)",
+    ).is_length(1)
+    
     assert event_recorder.has_change_event_occurred(
         subarray_node_low.subarray_node,
         "obsState",
