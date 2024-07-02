@@ -1,6 +1,6 @@
 """Test TMC-MCCS Abort functionality in IDLE-READY obstate"""
 import pytest
-from pytest_bdd import given, parsers, scenario, then, when
+from pytest_bdd import given, parsers, scenario, then
 from ska_control_model import ObsState
 from tango import DevState
 
@@ -103,12 +103,7 @@ def subarray_is_in_given_obsstate(
         )
 
 
-@when("I command it to Abort")
-def invoke_abort(subarray_node_low):
-    """
-    This method invokes abort command on tmc subarray
-    """
-    subarray_node_low.abort_subarray()
+# @when -> ../conftest.py
 
 
 @then("the MCCS subarray should go into an aborted obsstate")
@@ -116,6 +111,11 @@ def mccs_subarray_is_in_aborted_obsstate(subarray_node_low, event_recorder):
     """
     Method to check MCCS subarray is in ABORTED obsstate
     """
+    assert event_recorder.has_change_event_occurred(
+        subarray_node_low.subarray_devices.get("mccs_subarray"),
+        "obsState",
+        ObsState.ABORTING,
+    )
     assert event_recorder.has_change_event_occurred(
         subarray_node_low.subarray_devices.get("mccs_subarray"),
         "obsState",
@@ -128,6 +128,11 @@ def tmc_subarray_is_in_aborted_obsstate(subarray_node_low, event_recorder):
     """
     Method to check if TMC subarray is in ABORTED obsstate
     """
+    assert event_recorder.has_change_event_occurred(
+        subarray_node_low.subarray_node,
+        "obsState",
+        ObsState.ABORTING,
+    )
     assert event_recorder.has_change_event_occurred(
         subarray_node_low.subarray_node,
         "obsState",

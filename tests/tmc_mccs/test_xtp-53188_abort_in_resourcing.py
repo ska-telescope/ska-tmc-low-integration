@@ -1,6 +1,6 @@
 """Module for TMC-MCCS Abort command tests"""
 import pytest
-from pytest_bdd import given, scenario, then, when
+from pytest_bdd import given, scenario, then
 from ska_control_model import ObsState
 from tango import DevState
 
@@ -64,15 +64,18 @@ def subarray_busy_assigning(
     )
 
 
-@when("I command it to Abort")
-def abort_subarray(subarray_node_low):
-    """Abort command invoked on Subarray Node"""
-    subarray_node_low.execute_transition("Abort")
+# @when -> ../conftest.py
 
 
 @then("the MCCS subarray should go into an aborted obsstate")
 def mccs_subarray_in_aborted_obs_state(subarray_node_low, event_recorder):
     """MCCS Subarray in ABORTED obsState."""
+    assert event_recorder.has_change_event_occurred(
+        subarray_node_low.subarray_devices.get("mccs_subarray"),
+        "obsState",
+        ObsState.ABORTING,
+        lookahead=10,
+    )
     assert event_recorder.has_change_event_occurred(
         subarray_node_low.subarray_devices.get("mccs_subarray"),
         "obsState",
@@ -84,6 +87,12 @@ def mccs_subarray_in_aborted_obs_state(subarray_node_low, event_recorder):
 @then("the TMC subarray obsState is transitioned to ABORTED")
 def subarray_in_aborted_obs_state(subarray_node_low, event_recorder):
     """Subarray Node in ABORTED obsState."""
+    assert event_recorder.has_change_event_occurred(
+        subarray_node_low.subarray_node,
+        "obsState",
+        ObsState.ABORTING,
+        lookahead=10,
+    )
     assert event_recorder.has_change_event_occurred(
         subarray_node_low.subarray_node,
         "obsState",

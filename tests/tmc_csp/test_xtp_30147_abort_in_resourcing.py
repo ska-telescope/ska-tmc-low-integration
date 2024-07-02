@@ -2,7 +2,7 @@
 import time
 
 import pytest
-from pytest_bdd import given, scenario, then, when
+from pytest_bdd import given, scenario, then
 from ska_control_model import ObsState
 from tango import DevState
 
@@ -90,10 +90,7 @@ def subarray_busy_assigning(
     time.sleep(1)
 
 
-@when("I command it to Abort")
-def abort_subarray(subarray_node_low):
-    """Abort command invoked on Subarray Node"""
-    subarray_node_low.execute_transition("Abort")
+# @when -> ../conftest.py
 
 
 @then("the CSP subarray should go into an aborted obsState")

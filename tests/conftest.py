@@ -8,7 +8,7 @@ from typing import Generator
 
 import pytest
 import tango
-from pytest_bdd import given, parsers, then
+from pytest_bdd import given, parsers, then, when
 from ska_control_model import HealthState
 from ska_ser_logging import configure_logging
 from ska_tango_testing.mock.tango.event_callback import (
@@ -279,3 +279,11 @@ def check_telescope_health_state(
         HealthState[telescope_health_state],
     ), f"Expected telescopeHealthState to be \
         {HealthState[telescope_health_state]}"
+
+
+@when("I command it to Abort")
+def invoke_abort(subarray_node_low):
+    """
+    This method invokes abort command on tmc subarray
+    """
+    subarray_node_low.abort_subarray()
