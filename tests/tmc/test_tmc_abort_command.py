@@ -4,9 +4,16 @@ Abort command of a Low Telescope Subarray in the Telescope Monitoring
 and Control (TMC) system.
 """
 import pytest
+from assertpy import assert_that
 from pytest_bdd import given, parsers, scenario, then, when
 from ska_control_model import ObsState, ResultCode
+from ska_tango_testing.integration import TangoEventTracer, log_events
 
+from tests.resources.test_harness.constant import TIMEOUT
+from tests.resources.test_harness.subarray_node_low import (
+    SubarrayNodeWrapperLow,
+)
+from tests.resources.test_harness.utils.common_utils import JsonFactory
 from tests.resources.test_support.common_utils.tmc_helpers import (
     set_subarray_to_given_obs_state,
 )
@@ -33,13 +40,23 @@ def test_tmc_abort_command_in_intermediate_obs_state():
 
 
 @given(parsers.parse("a Subarray in {obs_state} obsState"))
-def given_tmc(subarray_node_low, event_recorder, obs_state):
+def given_tmc(
+    subarray_node_low: SubarrayNodeWrapperLow,
+    event_tracer: TangoEventTracer,
+    obs_state: str,
+):
     """Set up a TMC and ensure it is in the given ObsState."""
-    event_recorder.subscribe_event(subarray_node_low.subarray_node, "obsState")
+    event_tracer.subscribe_event(subarray_node_low.subarray_node, "obsState")
+    log_events({subarray_node_low.subarray_node: "obsState"})
     subarray_node_low.move_to_on()
     subarray_node_low.force_change_of_obs_state(obs_state)
-
-    assert event_recorder.has_change_event_occurred(
+    assert_that(event_tracer).described_as(
+        'FAILED ASSUMPTION IN "GIVEN STEP: '
+        f'"a Subarray in {obs_state} obsState"'
+        "Subarray Node device"
+        f"({subarray_node_low.subarray_node.dev_name()}) "
+        f"is expected to be in {obs_state} obstate",
+    ).within_timeout(TIMEOUT).has_change_event_occurred(
         subarray_node_low.subarray_node,
         "obsState",
         ObsState[obs_state],
@@ -48,16 +65,25 @@ def given_tmc(subarray_node_low, event_recorder, obs_state):
 
 @given(parsers.parse("a Subarray in intermediate obsState {obs_state}"))
 def given_tmc_in_intermediate_obsstate(
-    subarray_node_low, event_recorder, obs_state, command_input_factory
+    subarray_node_low: SubarrayNodeWrapperLow,
+    event_tracer: TangoEventTracer,
+    obs_state: str,
+    command_input_factory: JsonFactory,
 ):
     """Set up a TMC and ensure it is in the given ObsState."""
-    event_recorder.subscribe_event(subarray_node_low.subarray_node, "obsState")
+    event_tracer.subscribe_event(subarray_node_low.subarray_node, "obsState")
+    log_events({subarray_node_low.subarray_node: "obsState"})
     subarray_node_low.move_to_on()
     set_subarray_to_given_obs_state(
-        subarray_node_low, obs_state, event_recorder, command_input_factory
+        subarray_node_low, obs_state, event_tracer, command_input_factory
     )
-
-    assert event_recorder.has_change_event_occurred(
+    assert_that(event_tracer).described_as(
+        'FAILED ASSUMPTION IN "GIVEN STEP: '
+        f'"a Subarray in intermediate obsState {obs_state}"'
+        "Subarray Node device"
+        f"({subarray_node_low.subarray_node.dev_name()}) "
+        f"is expected to be in {obs_state} obstate",
+    ).within_timeout(TIMEOUT).has_change_event_occurred(
         subarray_node_low.subarray_node,
         "obsState",
         ObsState[obs_state],
@@ -66,7 +92,7 @@ def given_tmc_in_intermediate_obsstate(
 
 @when("I Abort it")
 def invoke_abort_command(
-    subarray_node_low,
+    subarray_node_low: SubarrayNodeWrapperLow,
 ):
     """Send a Abort command to the subarray."""
     result_code, _ = subarray_node_low.execute_transition("Abort")
@@ -75,19 +101,27 @@ def invoke_abort_command(
 
 @then(parsers.parse("the Subarray transitions to ABORTED obsState"))
 def check_obs_state(
-    subarray_node_low,
-    event_recorder,
+    subarray_node_low: SubarrayNodeWrapperLow,
+    event_tracer: TangoEventTracer,
 ):
     """Verify that the subarray is in the ABORTED obsState."""
-    assert event_recorder.has_change_event_occurred(
+    assert_that(event_tracer).described_as(
+        'FAILED ASSUMPTION IN "THEN STEP: '
+        f'"the Subarray transitions to ABORTED obsState"'
+        "Subarray Node device"
+        f"({subarray_node_low.subarray_node.dev_name()}) "
+        f"is expected to be in ABORTING obstate",
+    ).within_timeout(TIMEOUT).has_change_event_occurred(
         subarray_node_low.subarray_node,
         "obsState",
         ObsState.ABORTING,
-        lookahead=15,
     )
-    assert event_recorder.has_change_event_occurred(
-        subarray_node_low.subarray_node,
-        "obsState",
-        ObsState.ABORTED,
-        lookahead=15,
+    assert_that(event_tracer).described_as(
+        'FAILED ASSUMPTION IN "THEN STEP: '
+        f'"the Subarray transitions to ABORTED obsState"'
+        "Subarray Node device"
+        f"({subarray_node_low.subarray_node.dev_name()}) "
+        f"is expected to be in ABORTED obstate",
+    ).within_timeout(TIMEOUT).has_change_event_occurred(
+        subarray_node_low.subarray_node, "obsState", ObsState.ABORTED
     )
