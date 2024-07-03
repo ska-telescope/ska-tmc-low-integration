@@ -435,7 +435,29 @@ class SubarrayNodeWrapperLow:
         sleep(1)
 
     def set_scan_id(self, scan_id: int, input_str: str) -> str:
-        """Set the scan_id for the scan input json."""
+        """
+        Set the scan_id for the scan input JSON.
+
+        This method updates the scan input JSON string with the provided
+          scan_id.
+
+        Parameters:
+        ----------
+        scan_id : int
+            The scan ID to set in the JSON input.
+        input_str : str
+            The JSON input string representing scan data.
+
+        Returns:
+        -------
+        str
+            The updated JSON string with the new scan_id.
+
+        Raises:
+        ------
+        Exception
+            If there is an error while updating the scan_id in the JSON input.
+        """
         input_json = json.loads(input_str)
         try:
             input_json["scan_id"] = scan_id

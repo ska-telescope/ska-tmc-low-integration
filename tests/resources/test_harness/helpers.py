@@ -638,6 +638,8 @@ def set_admin_mode_values_mccs():
             pasd_bus_trls = db.get_device_exported(mccs_pasdbus_prefix)
             for pasd_bus_trl in pasd_bus_trls:
                 pasdbus = tango.DeviceProxy(pasd_bus_trl)
+                # Set pasdbus to ONLINE to ensure MCCS devices can be
+                # set to ONLINE
                 if pasdbus.adminMode != AdminMode.ONLINE:
                     pasdbus.adminMode = AdminMode.ONLINE
                     time.sleep(0.1)
@@ -646,7 +648,14 @@ def set_admin_mode_values_mccs():
             devices = []
             for device_trl in device_trls:
                 device = tango.DeviceProxy(device_trl)
+
                 if "daq" in device_trl or "calibrationstore" in device_trl:
+                    # In these devices we can have a corba timeout due to
+                    # start_communicating being a fast command and the
+                    # server not being ready during initial deployment.
+                    #  For example DAQ is configured with a `wait_for_ready`
+                    # flag, but due to the limitation of 3 seconds from corba
+                    # it gives up after 3 seconds.
                     retry_communication(device, 30)
                 if device.adminMode != AdminMode.ONLINE:
                     device.adminMode = AdminMode.ONLINE
