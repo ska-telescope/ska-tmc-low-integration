@@ -7,7 +7,6 @@ from tango import DevState
 from tests.resources.test_harness.helpers import (
     prepare_json_args_for_centralnode_commands,
     prepare_json_args_for_commands,
-    update_eb_pb_ids,
 )
 
 
@@ -29,10 +28,8 @@ def subarray_is_in_scanning_obsstate(
     event_recorder,
     command_input_factory,
     subarray_node_low,
-    subarray_id,
 ):
     """ "A method to check if telescope in is SCANNING obsSstate."""
-    subarray_node_low.set_subarray_id(subarray_id)
     central_node_low.move_to_on()
     event_recorder.subscribe_event(
         central_node_low.central_node, "telescopeState"
@@ -45,8 +42,6 @@ def subarray_is_in_scanning_obsstate(
     assign_input_json = prepare_json_args_for_centralnode_commands(
         "assign_resources_low", command_input_factory
     )
-    assign_input_json = update_eb_pb_ids(assign_input_json)
-
     configure_input_json = prepare_json_args_for_commands(
         "configure_low", command_input_factory
     )

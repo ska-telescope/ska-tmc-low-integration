@@ -1,4 +1,6 @@
 """Module for TMC-MCCS Abort command tests"""
+import time
+
 import pytest
 from pytest_bdd import given, scenario, then
 from ska_control_model import ObsState
@@ -9,7 +11,7 @@ from tests.resources.test_support.common_utils.tmc_helpers import (
 )
 
 
-@pytest.mark.tmc_mccs
+@pytest.mark.tmc_mccs1
 @scenario(
     "../features/tmc_mccs/xtp-53188_abort_in_resourcing.feature",
     "Abort assigning using TMC",
@@ -39,7 +41,6 @@ def subarray_busy_assigning(
         "telescopeState",
         DevState.ON,
     )
-
     input_json = prepare_json_args_for_centralnode_commands(
         "assign_resources_low", command_input_factory
     )
@@ -51,6 +52,9 @@ def subarray_busy_assigning(
         central_node_low.subarray_devices.get("mccs_subarray"),
         "obsState",
     )
+    event_recorder.subscribe_event(
+        central_node_low.mccs_subarray_leaf_node, "obsState"
+    )
     assert event_recorder.has_change_event_occurred(
         central_node_low.subarray_node,
         "obsState",
@@ -59,16 +63,30 @@ def subarray_busy_assigning(
     assert event_recorder.has_change_event_occurred(
         central_node_low.subarray_devices.get("mccs_subarray"),
         "obsState",
-        "RESOURCING_IDLE",
+        ObsState.RESOURCING,
     )
+    assert event_recorder.has_change_event_occurred(
+        central_node_low.mccs_subarray_leaf_node,
+        "obsState",
+        ObsState.RESOURCING,
+    )
+    # The sleep is added to allow Subarray Node time to update the device
+    # obsStates before invoking the Abort command. Without sleep, Subarray Node
+    # at times finds all devices in EMPTY and does not invoke Abort on them.
+    time.sleep(1)
 
 
 # @when -> ../conftest.py
 
 
-@then("the MCCS subarray should go into an aborted obsstate")
+@then("the MCCS subarray should go into an ABORTING obsstate")
 def mccs_subarray_in_aborted_obs_state(subarray_node_low, event_recorder):
     """MCCS Subarray in ABORTED obsState."""
+    assert event_recorder.has_change_event_occurred(
+        subarray_node_low.csp_subarray_leaf_node,
+        "cspSubarrayObsState",
+        ObsState.ABORTING,
+    )
     assert event_recorder.has_change_event_occurred(
         subarray_node_low.subarray_devices.get("mccs_subarray"),
         "obsState",
@@ -86,6 +104,12 @@ def mccs_subarray_in_aborted_obs_state(subarray_node_low, event_recorder):
 @then("the TMC subarray obsState is transitioned to ABORTED")
 def subarray_in_aborted_obs_state(subarray_node_low, event_recorder):
     """Subarray Node in ABORTED obsState."""
+    assert event_recorder.has_change_event_occurred(
+        subarray_node_low.mccs_subarray_leaf_node,
+        "obsState",
+        ObsState.ABORTED,
+        lookahead=10,
+    )
     assert event_recorder.has_change_event_occurred(
         subarray_node_low.subarray_node,
         "obsState",

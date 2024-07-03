@@ -11,7 +11,7 @@ from tests.resources.test_harness.helpers import (
 )
 
 
-@pytest.mark.tmc_mccs1
+@pytest.mark.tmc_mccs
 @scenario(
     "../features/tmc_mccs/xtp-53192_abort_in_configuring.feature",
     "Abort configuring MCCS using TMC",
