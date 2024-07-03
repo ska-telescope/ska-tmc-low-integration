@@ -7,7 +7,6 @@ from tango import DevState
 from tests.resources.test_harness.helpers import (
     prepare_json_args_for_centralnode_commands,
     prepare_json_args_for_commands,
-    update_eb_pb_ids,
 )
 from tests.resources.test_support.common_utils.result_code import ResultCode
 
