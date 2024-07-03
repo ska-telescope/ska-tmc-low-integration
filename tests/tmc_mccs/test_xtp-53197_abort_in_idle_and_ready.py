@@ -12,7 +12,7 @@ from tests.resources.test_harness.helpers import (
 from tests.resources.test_support.common_utils.result_code import ResultCode
 
 
-@pytest.mark.tmc_mccs
+@pytest.mark.tmc_mccs1
 @scenario(
     "../features/tmc_mccs/xtp-53197_abort_idle_ready.feature",
     "Abort resourced MCCS and TMC subarray",
