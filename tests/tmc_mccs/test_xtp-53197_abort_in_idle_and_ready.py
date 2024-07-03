@@ -30,7 +30,6 @@ def subarray_is_in_given_obsstate(
     command_input_factory,
     obsstate,
     subarray_node_low,
-    subarray_id,
 ):
     """A method to check if telescope in is given obsSstate."""
     central_node_low.move_to_on()
