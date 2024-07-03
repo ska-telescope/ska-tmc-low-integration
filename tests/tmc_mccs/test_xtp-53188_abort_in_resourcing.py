@@ -51,14 +51,13 @@ def subarray_busy_assigning(
         central_node_low.subarray_devices.get("mccs_subarray"),
         "obsState",
     )
-
     assert event_recorder.has_change_event_occurred(
-        central_node_low.subarray_devices.get("mccs_subarray"),
+        central_node_low.subarray_node,
         "obsState",
         ObsState.RESOURCING,
     )
     assert event_recorder.has_change_event_occurred(
-        central_node_low.subarray_node,
+        central_node_low.subarray_devices.get("mccs_subarray"),
         "obsState",
         ObsState.RESOURCING,
     )
@@ -77,9 +76,9 @@ def mccs_subarray_in_aborted_obs_state(subarray_node_low, event_recorder):
         lookahead=10,
     )
     assert event_recorder.has_change_event_occurred(
-        subarray_node_low.subarray_devices.get("mccs_subarray"),
+        subarray_node_low.subarray_node,
         "obsState",
-        ObsState.ABORTED,
+        ObsState.ABORTING,
         lookahead=10,
     )
 
@@ -90,11 +89,11 @@ def subarray_in_aborted_obs_state(subarray_node_low, event_recorder):
     assert event_recorder.has_change_event_occurred(
         subarray_node_low.subarray_node,
         "obsState",
-        ObsState.ABORTING,
+        ObsState.ABORTED,
         lookahead=10,
     )
     assert event_recorder.has_change_event_occurred(
-        subarray_node_low.subarray_node,
+        subarray_node_low.subarray_devices.get("mccs_subarray"),
         "obsState",
         ObsState.ABORTED,
         lookahead=10,
