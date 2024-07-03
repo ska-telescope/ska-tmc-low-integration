@@ -83,8 +83,8 @@ def subarray_busy_assigning(
 def mccs_subarray_in_aborted_obs_state(subarray_node_low, event_recorder):
     """MCCS Subarray in ABORTED obsState."""
     assert event_recorder.has_change_event_occurred(
-        subarray_node_low.csp_subarray_leaf_node,
-        "cspSubarrayObsState",
+        subarray_node_low.mccs_subarray_leaf_node,
+        "obsState",
         ObsState.ABORTING,
     )
     assert event_recorder.has_change_event_occurred(
