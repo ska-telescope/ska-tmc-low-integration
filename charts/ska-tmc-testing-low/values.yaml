@@ -855,7 +855,8 @@ ska-low-mccs:
           skuid_url: http://ska-ser-skuid-ska-ser-skuid-svc:9870/
           subarray_id: 1
   global:
-    minikube: false
+    cluster_domain: cluster.local
+    minikube: true
     tango_host: databaseds-tango-base:10000
   ska-low-mccs-pasd:
     configServers:
@@ -1136,7 +1137,7 @@ ska-low-mccs:
       storage:
         daq-data:
           size: 250Mi
-          storage_class: standard
+          storage_class: nfss1
 
 # SKUID
 ska-ser-skuid:
