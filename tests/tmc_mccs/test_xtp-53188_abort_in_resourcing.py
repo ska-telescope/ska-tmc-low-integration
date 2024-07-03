@@ -59,7 +59,7 @@ def subarray_busy_assigning(
     assert event_recorder.has_change_event_occurred(
         central_node_low.subarray_devices.get("mccs_subarray"),
         "obsState",
-        ObsState.RESOURCING,
+        "RESOURCING_IDLE",
     )
 
 
