@@ -1,5 +1,4 @@
 """Test TMC-MCCS Abort functionality in Configuring obstate"""
-import json
 
 import pytest
 from pytest_bdd import given, scenario, then
@@ -9,7 +8,6 @@ from tango import DevState
 from tests.resources.test_harness.helpers import (
     prepare_json_args_for_centralnode_commands,
     prepare_json_args_for_commands,
-    update_eb_pb_ids,
 )
 
 
@@ -31,10 +29,8 @@ def subarray_is_in_configuring_obsstate(
     event_recorder,
     command_input_factory,
     subarray_node_low,
-    subarray_id,
 ):
     """A method to check if telescope is in CONFIGURING obsState."""
-    central_node_low.set_subarray_id(subarray_id)
     central_node_low.move_to_on()
     event_recorder.subscribe_event(
         central_node_low.central_node, "telescopeState"
@@ -42,13 +38,11 @@ def subarray_is_in_configuring_obsstate(
     assign_input_json = prepare_json_args_for_centralnode_commands(
         "assign_resources_low", command_input_factory
     )
-    assign_str = json.loads(assign_input_json)
     assert event_recorder.has_change_event_occurred(
         central_node_low.central_node,
         "telescopeState",
         DevState.ON,
     )
-    assign_input_json = update_eb_pb_ids(json.dumps(assign_str))
     event_recorder.subscribe_event(subarray_node_low.subarray_node, "obsState")
     event_recorder.subscribe_event(
         subarray_node_low.subarray_devices.get("mccs_subarray"), "obsState"
@@ -62,12 +56,12 @@ def subarray_is_in_configuring_obsstate(
         configure_input_json=configure_input_json,
     )
     assert event_recorder.has_change_event_occurred(
-        subarray_node_low.subarray_devices["mccs_subarray"],
+        subarray_node_low.subarray_node,
         "obsState",
         ObsState.CONFIGURING,
     )
     assert event_recorder.has_change_event_occurred(
-        subarray_node_low.subarray_node,
+        subarray_node_low.subarray_devices["mccs_subarray"],
         "obsState",
         ObsState.CONFIGURING,
     )
