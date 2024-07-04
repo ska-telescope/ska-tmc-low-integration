@@ -1,6 +1,7 @@
 {
     "interface": "https://schema.skao.int/ska-low-tmc-assignresources/4.0",
     "transaction_id": "txn-....-00001",
+    "subarray_id": 1,
     "mccs": {
       "interface": "https://schema.skao.int/ska-low-mccs-controller-allocate/3.0",
       "subarray_beams": [
@@ -22,10 +23,7 @@
             {
               "station_id": 2,
               "aperture_id": "AP002.02"
-            },
-            {
-                "station_id": 3,
-                "aperture_id": "AP003.01"
+  
             }
           ],
           "number_of_channels": 8
