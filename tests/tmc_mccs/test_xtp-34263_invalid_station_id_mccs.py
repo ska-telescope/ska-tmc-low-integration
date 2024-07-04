@@ -115,7 +115,7 @@ def invoke_assignresources(
     stored_unique_id.append(unique_id[0])
 
 
-@then("the MCCS controller rejects invalid station id")
+@then("the MCCS controller should throw the error for invalid station id")
 def invalid_command_rejection(
     event_recorder, central_node_low, stored_unique_id
 ):
@@ -123,22 +123,32 @@ def invalid_command_rejection(
     Ensure that the MCCS controller throws an error for the invalid station ID
     and subscribe to the longRunningCommandResult event.
     """
+
     event_recorder.subscribe_event(
         central_node_low.mccs_master_leaf_node,
         "longRunningCommandResult",
     )
+
     assert stored_unique_id[0].endswith("AssignResources")
 
     # Capture the event data
     assertion_data = event_recorder.has_change_event_occurred(
         central_node_low.mccs_master_leaf_node,
         attribute_name="longRunningCommandResult",
-        attribute_value=Anything,
+        attribute_value=(
+            Anything,
+            '[5, "Cannot allocate resources: 15"]',
+        ),
     )
 
-    # Extract and parse the actual message
+    # Extract the actual message from the assertion data
     actual_attribute_value = assertion_data["attribute_value"]
-    result_code, message = json.loads(actual_attribute_value)
+
+    # Check if the actual attribute value is a tuple and handle it
+    if isinstance(actual_attribute_value, tuple):
+        _, (result_code, message) = actual_attribute_value
+    else:
+        result_code, message = json.loads(actual_attribute_value)
 
     # Perform assertions
     assert result_code == ResultCode.REJECTED
