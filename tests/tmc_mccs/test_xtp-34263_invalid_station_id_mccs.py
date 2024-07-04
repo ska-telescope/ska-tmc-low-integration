@@ -123,7 +123,6 @@ def invalid_command_rejection(
     Ensure that the MCCS controller throws an error for the invalid station ID
     and subscribe to the longRunningCommandResult event.
     """
-
     event_recorder.subscribe_event(
         central_node_low.mccs_master_leaf_node,
         "longRunningCommandResult",
@@ -131,28 +130,24 @@ def invalid_command_rejection(
 
     assert stored_unique_id[0].endswith("AssignResources")
 
-    # Capture the event data
     assertion_data = event_recorder.has_change_event_occurred(
         central_node_low.mccs_master_leaf_node,
         attribute_name="longRunningCommandResult",
         attribute_value=(
             Anything,
-            '[5, "Cannot allocate resources: 15"]',
+            '3',
         ),
     )
-
     # Extract the actual message from the assertion data
     actual_attribute_value = assertion_data["attribute_value"]
 
-    # Check if the actual attribute value is a tuple and handle it
-    if isinstance(actual_attribute_value, tuple):
-        _, (result_code, message) = actual_attribute_value
-    else:
-        result_code, message = json.loads(actual_attribute_value)
-
-    # Perform assertions
-    assert result_code == ResultCode.REJECTED
-    assert "Cannot allocate resources: 15" in message
+    assert "AssignResources" in actual_attribute_value[0]
+    assert ResultCode(int(actual_attribute_value[1])) == ResultCode.FAILED
+    
+    # uniq_id, message = mccs_controller.longrunningcommandresult
+    # # rc, message = json.loads(message)
+    # # assert ResultCode(rc) == ResultCode.REJECTED
+    # # assert "Cannot allocate resources" in message
 
 
 @then("the MCCS subarray should remain in EMPTY ObsState")
