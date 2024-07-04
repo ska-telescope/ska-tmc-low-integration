@@ -4,6 +4,7 @@ import json
 import pytest
 from pytest_bdd import given, parsers, scenario, then, when
 from ska_control_model import ObsState
+from ska_tango_base.commands import ResultCode
 from ska_tango_testing.mock.placeholders import Anything
 from tango import DevState
 
@@ -114,7 +115,7 @@ def invoke_assignresources(
     stored_unique_id.append(unique_id[0])
 
 
-@then("the MCCS controller should throw the error for invalid station id")
+@then("the MCCS controller rejects invalid station id")
 def invalid_command_rejection(
     event_recorder, central_node_low, stored_unique_id
 ):
@@ -126,26 +127,22 @@ def invalid_command_rejection(
         central_node_low.mccs_master_leaf_node,
         "longRunningCommandResult",
     )
-    expected_error_code = 5
-    expected_message = "Cannot allocate resources: 15"
-
     assert stored_unique_id[0].endswith("AssignResources")
 
+    # Capture the event data
     assertion_data = event_recorder.has_change_event_occurred(
         central_node_low.mccs_master_leaf_node,
         attribute_name="longRunningCommandResult",
-        attribute_value=(
-            Anything,
-            f'[{expected_error_code}, "{expected_message}"]',
-        ),
+        attribute_value=Anything,
     )
 
-    # Extract the actual message from the assertion data
+    # Extract and parse the actual message
     actual_attribute_value = assertion_data["attribute_value"]
-    actual_message = json.loads(actual_attribute_value)
+    result_code, message = json.loads(actual_attribute_value)
 
-    assert actual_message[0] == expected_error_code
-    assert actual_message[1] == expected_message
+    # Perform assertions
+    assert result_code == ResultCode.REJECTED
+    assert "Cannot allocate resources: 15" in message
 
 
 @then("the MCCS subarray should remain in EMPTY ObsState")
