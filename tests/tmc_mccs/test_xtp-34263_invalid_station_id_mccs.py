@@ -1,5 +1,5 @@
 """Test module for TMC-MCCS handle invalid json(invalid station id)"""
-import json
+# import json
 
 import pytest
 from pytest_bdd import given, parsers, scenario, then, when
@@ -135,7 +135,7 @@ def invalid_command_rejection(
         attribute_name="longRunningCommandResult",
         attribute_value=(
             Anything,
-            '3',
+            "3",
         ),
     )
     # Extract the actual message from the assertion data
@@ -143,7 +143,7 @@ def invalid_command_rejection(
 
     assert "AssignResources" in actual_attribute_value[0]
     assert ResultCode(int(actual_attribute_value[1])) == ResultCode.FAILED
-    
+
     # uniq_id, message = mccs_controller.longrunningcommandresult
     # # rc, message = json.loads(message)
     # # assert ResultCode(rc) == ResultCode.REJECTED
