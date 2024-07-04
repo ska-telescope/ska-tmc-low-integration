@@ -115,7 +115,7 @@ def invoke_assignresources(
     stored_unique_id.append(unique_id[0])
 
 
-@then("the MCCS controller should throw the error for invalid station id")
+@then("the MCCS controller rejects invalid station id")
 def invalid_command_rejection(
     event_recorder, central_node_low, stored_unique_id
 ):
