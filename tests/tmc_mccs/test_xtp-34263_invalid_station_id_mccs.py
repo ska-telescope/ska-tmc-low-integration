@@ -1,4 +1,6 @@
 """Test module for TMC-MCCS handle invalid json(invalid station id)"""
+import json
+
 import pytest
 from pytest_bdd import given, parsers, scenario, then, when
 from ska_control_model import ObsState
@@ -124,15 +126,26 @@ def invalid_command_rejection(
         central_node_low.mccs_master_leaf_node,
         "longRunningCommandResult",
     )
-    exception_message = "Cannot allocate resources: 15"
+    expected_error_code = 5
+    expected_message = "Cannot allocate resources: 15"
+
     assert stored_unique_id[0].endswith("AssignResources")
+
     assertion_data = event_recorder.has_change_event_occurred(
         central_node_low.mccs_master_leaf_node,
         attribute_name="longRunningCommandResult",
-        attribute_value=(Anything, exception_message),
+        attribute_value=(
+            Anything,
+            f'[{expected_error_code}, "{expected_message}"]',
+        ),
     )
-    assert "AssignResources" in assertion_data["attribute_value"][0]
-    assert exception_message in assertion_data["attribute_value"][1]
+
+    # Extract the actual message from the assertion data
+    actual_attribute_value = assertion_data["attribute_value"]
+    actual_message = json.loads(actual_attribute_value)
+
+    assert actual_message[0] == expected_error_code
+    assert actual_message[1] == expected_message
 
 
 @then("the MCCS subarray should remain in EMPTY ObsState")
