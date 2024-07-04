@@ -23,10 +23,6 @@
                     {
                         "station_id": 2,
                         "aperture_id": "AP002.02"
-                    },
-                    {
-                        "station_id": 3,
-                        "aperture_id": "AP003.01"
                     }
                 ],
                 "number_of_channels": 32
