@@ -124,7 +124,7 @@ def invalid_command_rejection(
         central_node_low.mccs_master_leaf_node,
         "longRunningCommandResult",
     )
-    exception_message = '[5, "Cannot allocate resources: 15"]'
+    exception_message = "Cannot allocate resources: 15"
     assert stored_unique_id[0].endswith("AssignResources")
     assertion_data = event_recorder.has_change_event_occurred(
         central_node_low.mccs_master_leaf_node,
