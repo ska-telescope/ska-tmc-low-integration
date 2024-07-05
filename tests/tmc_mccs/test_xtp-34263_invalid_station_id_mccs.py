@@ -160,7 +160,7 @@ def mccs_subarray_remains_in_empty_obsstate(event_recorder, subarray_node_low):
     )
 
 
-@then("the TMC propagate the error to the client")
+@then("the TMC propogate the error to the client")
 def central_node_receiving_error(
     event_recorder, central_node_low, stored_unique_id
 ):
