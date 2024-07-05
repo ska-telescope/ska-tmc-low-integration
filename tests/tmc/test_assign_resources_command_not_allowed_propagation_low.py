@@ -1,4 +1,6 @@
 """Test cases for AssignResources Command not allowed for LOW."""
+import json
+
 import pytest
 from ska_tango_testing.mock.placeholders import Anything
 from tango import DevState
@@ -115,15 +117,15 @@ class TestAssignCommandNotAllowedPropagation:
         )
 
         # Setting Defects on Devices
-        sdp_subarray_sim.SetDefective(COMMAND_NOT_ALLOWED_DEFECT)
+        assign_json = json.loads(assign_input_json)
+        assign_json["sdp"]["resources"]["receive_nodes"] = 0
         _, unique_id = central_node_low.perform_action(
-            "AssignResources", assign_input_json
+            "AssignResources", json.dumps(assign_json)
         )
         ERROR_MESSAGE = (
-            "Exception occurred on the following devices:"
-            + f" {low_sdp_subarray_leaf_node}:"
-            " ska_tmc_common.exceptions.CommandNotAllowed:"
-            " Command is not allowed\n\n"
+            "Exception occurred on the following devices: "
+            + f"{low_sdp_subarray_leaf_node}: "
+            + "Missing receive nodes in the AssignResources input json\n"
         )
         assertion_data = event_recorder.has_change_event_occurred(
             central_node_low.central_node,
