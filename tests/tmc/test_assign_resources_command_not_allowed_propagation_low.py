@@ -8,11 +8,11 @@ from tests.resources.test_harness.constant import (
     low_sdp_subarray_leaf_node,
     mccs_master_leaf_node,
 )
-from tests.resources.test_harness.utils.enums import SimulatorDeviceType
-from tests.resources.test_support.common_utils.result_code import ResultCode
-from tests.resources.test_support.common_utils.tmc_helpers import (
+from tests.resources.test_harness.helpers import (
     prepare_json_args_for_centralnode_commands,
 )
+from tests.resources.test_harness.utils.enums import SimulatorDeviceType
+from tests.resources.test_support.common_utils.result_code import ResultCode
 
 
 class TestAssignCommandNotAllowedPropagation:
