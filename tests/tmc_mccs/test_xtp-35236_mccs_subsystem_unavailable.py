@@ -1,4 +1,6 @@
 """Test module for TMC-MCCS ShutDown functionality"""
+import time
+
 import pytest
 from pytest_bdd import given, parsers, scenario, then, when
 from ska_control_model import ObsState
@@ -146,6 +148,7 @@ def mccs_error_reporting(event_recorder, tmc_low, stored_unique_id):
         + "The SubarrayBeam.assign_resources command has failed"
     )
     assert stored_unique_id[0].endswith("AssignResources")
+    time.sleep(30)
     assertion_data = event_recorder.has_change_event_occurred(
         tmc_low.central_node.mccs_master_leaf_node,
         attribute_name="longRunningCommandResult",
