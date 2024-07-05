@@ -12,6 +12,10 @@ from tests.resources.test_support.common_utils.tmc_helpers import (
 )
 
 
+@pytest.mark.skip(
+    reason="Issue on CSP side, will get fixed with new CSP reason"
+)
+# Issue: CSP is not using SKA Tel Model >= v1.17.0
 @pytest.mark.tmc_csp
 @scenario(
     "../features/tmc_csp/xtp-30154_abort_in_configuring.feature",

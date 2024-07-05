@@ -11,6 +11,10 @@ from tests.resources.test_harness.helpers import (
 from tests.resources.test_support.common_utils.result_code import ResultCode
 
 
+@pytest.mark.skip(
+    reason="Issue on CSP side, will get fixed with new CSP reason"
+)
+# Issue: CSP is not using SKA Tel Model >= v1.17.0
 @pytest.mark.tmc_csp
 @scenario(
     "../features/tmc_csp/xtp-29854_configure.feature",

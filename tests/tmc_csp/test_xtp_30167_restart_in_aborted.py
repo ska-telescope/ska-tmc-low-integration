@@ -6,6 +6,10 @@ from ska_control_model import ObsState
 from tango import DevState
 
 
+@pytest.mark.skip(
+    reason="Issue on CSP side, will get fixed with new CSP reason"
+)
+# Issue: CSP is not using SKA Tel Model >= v1.17.0
 @pytest.mark.tmc_csp
 @scenario(
     "../features/tmc_csp/xtp-30167_restart_in_aborted.feature",
