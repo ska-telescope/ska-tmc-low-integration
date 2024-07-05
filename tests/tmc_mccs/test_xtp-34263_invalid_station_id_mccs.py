@@ -8,10 +8,10 @@ from ska_tango_base.commands import ResultCode
 from ska_tango_testing.mock.placeholders import Anything
 from tango import DevState
 
-from tests.resources.test_harness.constant import (
-    mccs_master_leaf_node,
-    tmc_low_subarraynode1,
-)
+# from tests.resources.test_harness.constant import (
+#     mccs_master_leaf_node,
+#     tmc_low_subarraynode1,
+# )
 from tests.resources.test_harness.helpers import updated_assign_str
 from tests.resources.test_harness.utils.enums import SimulatorDeviceType
 from tests.resources.test_support.common_utils.tmc_helpers import (
@@ -160,7 +160,7 @@ def mccs_subarray_remains_in_empty_obsstate(event_recorder, subarray_node_low):
     )
 
 
-@then("the TMC propogate the error to the client")
+@then("the TMC propagate the error to the client")
 def central_node_receiving_error(
     event_recorder, central_node_low, stored_unique_id
 ):
@@ -173,9 +173,10 @@ def central_node_receiving_error(
     )
     expected_long_running_command_result = (
         stored_unique_id[0],
-        "Exception occurred on the following devices: "
-        + f"{mccs_master_leaf_node}: Timeout has occurred, command failed",
-        +f"{tmc_low_subarraynode1}: Timeout has occurred, command failed",
+        "Exception occurred on the following devices"
+        ": ska_low/tm_leaf_node/mccs_master: Timeout has occurred, "
+        "command failedska_low/tm_subarray_node/1: "
+        "Timeout has occurred, command failed",
     )
     assert event_recorder.has_change_event_occurred(
         central_node_low.central_node,
