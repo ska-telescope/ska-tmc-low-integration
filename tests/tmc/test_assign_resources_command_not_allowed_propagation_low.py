@@ -130,12 +130,12 @@ class TestAssignCommandNotAllowedPropagation:
             "longRunningCommandResult",
             (unique_id[0], Anything),
         )
-        assert ERROR_MESSAGE in assertion_data["attribute_value"][1]
         event_recorder.has_change_event_occurred(
             central_node_low.central_node,
             "longRunningCommandResult",
             (unique_id[0], str(ResultCode.FAILED.value)),
         )
+        assert ERROR_MESSAGE in assertion_data["attribute_value"][1]
 
     @pytest.mark.SKA_low
     def test_assign_command_not_allowed_propagation_mccs_ln_low(
