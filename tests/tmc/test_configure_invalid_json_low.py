@@ -148,7 +148,8 @@ def invalid_command_rejection(invalid_json):
     #     )
     elif invalid_json == "scan_duration_key_missing":
         assert (
-            "Validation 'Low TMC configure 4.0' Key 'tmc' error:\nMissing key: 'scan_duration'"
+            "Validation 'Low TMC configure 4.0' Key 'tmc' "
+            + "error:\nMissing key: 'scan_duration'"
             in pytest.command_result[1][0]
         )
     elif invalid_json == "empty_string":
