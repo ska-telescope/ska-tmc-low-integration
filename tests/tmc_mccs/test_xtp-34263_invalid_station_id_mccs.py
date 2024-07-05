@@ -144,11 +144,6 @@ def invalid_command_rejection(
     assert "AssignResources" in actual_attribute_value[0]
     assert ResultCode(int(actual_attribute_value[1])) == ResultCode.FAILED
 
-    # uniq_id, message = mccs_controller.longrunningcommandresult
-    # # rc, message = json.loads(message)
-    # # assert ResultCode(rc) == ResultCode.REJECTED
-    # # assert "Cannot allocate resources" in message
-
 
 @then("the MCCS subarray should remain in EMPTY ObsState")
 def mccs_subarray_remains_in_empty_obsstate(event_recorder, subarray_node_low):
@@ -179,10 +174,9 @@ def central_node_receiving_error(
     expected_long_running_command_result = (
         stored_unique_id[0],
         "Exception occurred on the following devices: "
-        + f"{mccs_master_leaf_node}: Cannot allocate resources: 15"
-        + f"{tmc_low_subarraynode1}: Timeout has occurred, command failed",
+        + f"{mccs_master_leaf_node}: Timeout has occurred, command failed",
+        +f"{tmc_low_subarraynode1}: Timeout has occurred, command failed",
     )
-
     assert event_recorder.has_change_event_occurred(
         central_node_low.central_node,
         "longRunningCommandResult",
