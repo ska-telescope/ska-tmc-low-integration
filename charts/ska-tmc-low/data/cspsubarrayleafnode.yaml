@@ -39,6 +39,9 @@ server:
               - name: "DelayValidityPeriod"
                 values:
                 - "{{ $DelayValidityPeriod }}"
+              - name: "CommandTimeout"
+                values:
+                - "50"
   {{- end}}
 depends_on:
   - device: sys/database/2
