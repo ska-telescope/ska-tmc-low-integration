@@ -21,6 +21,7 @@ from tests.resources.test_support.common_utils.tmc_helpers import (
 )
 
 
+@pytest.mark.aki12
 @pytest.mark.SKA_low
 @scenario(
     "../features/tmc/check_invalid_json_not_allowed.feature",
@@ -127,17 +128,17 @@ def invalid_command_rejection(invalid_json):
     # asserting validations message as per invalid json
     if invalid_json == "csp_key_missing":
         assert (
-            "Validation 'Low TMC configure 3.2' Missing key: 'csp'"
+            "Validation 'Low TMC configure 3.3' Missing key: 'csp'"
             in pytest.command_result[1][0]
         )
     elif invalid_json == "sdp_key_missing":
         assert (
-            "Validation 'Low TMC configure 3.2' Missing key: 'sdp'"
+            "Validation 'Low TMC configure 3.3' Missing key: 'sdp'"
             in pytest.command_result[1][0]
         )
     elif invalid_json == "mccs_key_missing":
         assert (
-            "Validation 'Low TMC configure 3.2' Missing key: 'mccs'"
+            "Validation 'Low TMC configure 3.3' Missing key: 'mccs'"
             in pytest.command_result[1][0]
         )
     elif invalid_json == "tmc_key_missing":
