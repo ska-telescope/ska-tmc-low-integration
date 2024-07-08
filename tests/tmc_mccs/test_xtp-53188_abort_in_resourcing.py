@@ -11,7 +11,7 @@ from tests.resources.test_support.common_utils.tmc_helpers import (
 )
 
 
-@pytest.mark.tmc_mccs1
+@pytest.mark.tmc_mccs
 @scenario(
     "../features/tmc_mccs/xtp-53188_abort_in_resourcing.feature",
     "Abort assigning using TMC",
@@ -31,7 +31,6 @@ def subarray_busy_assigning(
 ):
     """Subarray busy Assigning"""
     # Turning the devices ON
-    central_node_low.set_subarray_id(1)
     central_node_low.move_to_on()
     event_recorder.subscribe_event(
         central_node_low.central_node, "telescopeState"

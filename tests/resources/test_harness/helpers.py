@@ -647,7 +647,8 @@ def set_admin_mode_values_mccs():
             devices = []
             for device_trl in device_trls:
                 device = tango.DeviceProxy(device_trl)
-
+                # this check added to ensure MCCS devices can be
+                # set to ONLINE
                 if "daq" in device_trl or "calibrationstore" in device_trl:
                     # In these devices we can have a corba timeout due to
                     # start_communicating being a fast command and the
