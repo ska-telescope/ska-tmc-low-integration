@@ -173,7 +173,7 @@ def central_node_receiving_error(event_recorder, tmc_low):
     )
 
     expected_long_running_command_result2 = (
-        f"{tmc_low_subarraynode1}: " "Timeout has occurred, command failed",
+        f"{tmc_low_subarraynode1}: Timeout has occurred, command failed"
     )
     assertion_data = event_recorder.has_change_event_occurred(
         tmc_low.central_node.central_node,
