@@ -49,6 +49,9 @@ def given_tmc(
         central_node_low.central_node, "telescopeState"
     )
     event_tracer.subscribe_event(
+        central_node_low.central_node, "longRunningCommandResult"
+    )
+    event_tracer.subscribe_event(
         central_node_low.subarray_node, "longRunningCommandResult"
     )
     central_node_low.move_to_on()
@@ -77,12 +80,14 @@ def tmc_check_status(
         "assign_resources_low", command_input_factory
     )
     _, unique_id = central_node_low.store_resources(assign_input_json)
+    print(unique_id)
     log_events(
         {
             central_node_low.subarray_node: [
                 "obsState",
                 "longRunningCommandResult",
-            ]
+            ],
+            central_node_low.central_node: ["longRunningCommandResult"],
         }
     )
     assert_that(event_tracer).described_as(
@@ -99,12 +104,12 @@ def tmc_check_status(
     assert_that(event_tracer).described_as(
         'FAILED ASSUMPTION IN "GIVEN" STEP: '
         "'the subarray is in IDLE obsState'"
-        "Subarray Node device"
-        f"({central_node_low.subarray_node.dev_name()}) "
+        "Central Node device"
+        f"({central_node_low.central_node.dev_name()}) "
         "is expected have longRunningCommand as"
         '(unique_id,(ResultCode.OK,"Command Completed"))',
     ).within_timeout(TIMEOUT).has_change_event_occurred(
-        central_node_low.subarray_node,
+        central_node_low.central_node,
         "longRunningCommandResult",
         (unique_id[0], json.dumps((int(ResultCode.OK), "Command Completed"))),
     )

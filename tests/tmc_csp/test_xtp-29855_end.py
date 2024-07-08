@@ -1,4 +1,6 @@
 """Test module to test TMC-CSP End functionality."""
+import json
+
 import pytest
 from pytest_bdd import given, parsers, scenario, then, when
 from ska_control_model import ObsState
@@ -92,7 +94,7 @@ def move_subarray_node_to_ready_obsstate(
     event_recorder.has_change_event_occurred(
         subarray_node_real_csp_low.subarray_node,
         "longRunningCommandResult",
-        (unique_id[0], str(ResultCode.OK.value)),
+        (unique_id[0], json.dumps((int(ResultCode.OK), "Command Completed"))),
     )
 
 

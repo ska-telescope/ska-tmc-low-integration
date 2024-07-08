@@ -115,12 +115,12 @@ def subarray_in_idle_obsstate(
     assert_that(event_tracer).described_as(
         'FAILED ASSUMPTION IN "GIVEN" STEP: '
         '"subarray is in obsState IDLE"'
-        "Subarray Node device"
+        "Central Node device"
         f"({subarray_node_low.subarray_node.dev_name()}) "
         "is expected have longRunningCommand as"
         '(unique_id,(ResultCode.OK,"Command Completed"))',
     ).within_timeout(TIMEOUT).has_change_event_occurred(
-        subarray_node_low.subarray_node,
+        central_node_low.central_node,
         "longRunningCommandResult",
         (
             unique_id[0],

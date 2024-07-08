@@ -59,10 +59,10 @@ class TestLowCentralNodeOffCommand:
         )
         log_events(
             {
-                csp_master_sim: "State",
-                sdp_master_sim: "State",
-                mccs_master_sim: "State",
-                central_node_low.central_node: "telescopeState",
+                csp_master_sim: ["State"],
+                sdp_master_sim: ["State"],
+                mccs_master_sim: ["State"],
+                central_node_low.central_node: ["telescopeState"],
             }
         )
         central_node_low.move_to_on()

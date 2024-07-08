@@ -9,6 +9,7 @@ from ska_tango_testing.integration import TangoEventTracer, log_events
 from tango import DevState
 
 from tests.resources.test_harness.central_node_low import CentralNodeWrapperLow
+from tests.resources.test_harness.constant import low_sdp_subarray_leaf_node
 from tests.resources.test_harness.helpers import (
     get_device_simulators,
     prepare_json_args_for_centralnode_commands,
@@ -22,7 +23,6 @@ from tests.resources.test_harness.utils.common_utils import JsonFactory
 from tests.resources.test_harness.utils.enums import SimulatorDeviceType
 from tests.resources.test_support.constant_low import (
     FAILED_RESULT_DEFECT,
-    INTERMEDIATE_STATE_DEFECT,
     TIMEOUT,
 )
 
@@ -56,11 +56,11 @@ def test_recover_subarray_stuck_in_resourcing_low(
     )
     log_events(
         {
-            central_node_low.central_node: "longRunningCommandResult",
-            central_node_low.subarray_node: "obsState",
-            central_node_low.subarray_devices["csp_subarray"]: "obsState",
-            central_node_low.subarray_devices["sdp_subarray"]: "obsState",
-            central_node_low.subarray_devices["mccs_subarray"]: "obsState",
+            central_node_low.central_node: ["longRunningCommandResult"],
+            central_node_low.subarray_node: ["obsState"],
+            central_node_low.subarray_devices["csp_subarray"]: ["obsState"],
+            central_node_low.subarray_devices["sdp_subarray"]: ["obsState"],
+            central_node_low.subarray_devices["mccs_subarray"]: ["obsState"],
         }
     )
     central_node_low.move_to_on()
@@ -79,30 +79,30 @@ def test_recover_subarray_stuck_in_resourcing_low(
     mccs_sim = simulator_factory.get_or_create_simulator_device(
         SimulatorDeviceType.MCCS_SUBARRAY_DEVICE
     )
-    sdp_sim.SetDefective(json.dumps(INTERMEDIATE_STATE_DEFECT))
-    assert wait_and_validate_device_attribute_value(
-        sdp_sim,
-        "defective",
-        json.dumps(INTERMEDIATE_STATE_DEFECT),
-        is_json=True,
-    )
+    assign = json.loads(assign_input_json)
+    assign["sdp"]["execution_block"]["eb_id"] = "eb-xxx-218638916"
+    assign_input_json = json.dumps(assign)
     _, unique_id = central_node_low.perform_action(
         "AssignResources", assign_input_json
     )
-    exception_message = "Timeout has occurred, command failed"
+    exception_message = (
+        "Exception occurred on the following devices: "
+        f"{low_sdp_subarray_leaf_node}:"
+        " Invalid eb_id in the AssignResources input json"
+    )
     result = event_tracer.query_events(
-        lambda e: e.has_device(central_node_low.subarray_node)
+        lambda e: e.has_device(central_node_low.central_node)
         and e.has_attribute("longRunningCommandResult")
-        and e.current_value[0] == unique_id[0]
-        and json.loads(e.current_value[1])[0] == ResultCode.FAILED
-        and exception_message in json.loads(e.current_value[1])[1],
+        and e.attribute_value[0] == unique_id[0]
+        and json.loads(e.attribute_value[1])[0] == ResultCode.FAILED
+        and exception_message in json.loads(e.attribute_value[1])[1],
         timeout=TIMEOUT,
     )
 
     assert_that(result).described_as(
         "FAILED ASSUMPTION AFTER ASSIGN_RESOURCES: "
         "Central Node device"
-        f"({central_node_low.subarray_node.dev_name()}) "
+        f"({central_node_low.central_node.dev_name()}) "
         "is expected have longRunningCommandResult"
         "(ResultCode.FAILED,exception)",
     ).is_length(1)
@@ -230,9 +230,9 @@ def test_abort_with_sdp_csp_in_empty(
                 "telescopeState",
                 "longRunningCommandResult",
             ],
-            central_node_low.subarray_node: "obsState",
-            central_node_low.subarray_devices["sdp_subarray"]: "obsState",
-            central_node_low.subarray_devices["mccs_subarray"]: "obsState",
+            central_node_low.subarray_node: ["obsState"],
+            central_node_low.subarray_devices["sdp_subarray"]: ["obsState"],
+            central_node_low.subarray_devices["mccs_subarray"]: ["obsState"],
         }
     )
     central_node_low.move_to_on()
@@ -250,46 +250,52 @@ def test_abort_with_sdp_csp_in_empty(
     mccs_sim = simulator_factory.get_or_create_simulator_device(
         SimulatorDeviceType.MCCS_SUBARRAY_DEVICE
     )
-
-    # Set SDP and CSP into FAILED RESULT to change from RESOURCING to EMPTY
-    failed_result_defect = FAILED_RESULT_DEFECT
-    failed_result_defect["target_obsstates"] = [
-        ObsState.RESOURCING,
-        ObsState.EMPTY,
-    ]
     defective_device_proxy = central_node_low.subarray_devices.get(
         defective_device
     )
-    defective_device_proxy.SetDefective(json.dumps(failed_result_defect))
+    # Set SDP and CSP into FAILED RESULT to change from RESOURCING to EMPTY
+    if defective_device != "sdp_subarray":
+        failed_result_defect = FAILED_RESULT_DEFECT
+        failed_result_defect["target_obsstates"] = [
+            ObsState.RESOURCING,
+            ObsState.EMPTY,
+        ]
 
-    assert wait_and_validate_device_attribute_value(
-        defective_device_proxy,
-        "defective",
-        json.dumps(failed_result_defect),
-        is_json=True,
-    )
+        defective_device_proxy.SetDefective(json.dumps(failed_result_defect))
+
+        assert wait_and_validate_device_attribute_value(
+            defective_device_proxy,
+            "defective",
+            json.dumps(failed_result_defect),
+            is_json=True,
+        )
+    else:
+        assign = json.loads(assign_input_json)
+        assign["sdp"]["resources"]["receive_nodes"] = 0
+        assign_input_json = json.dumps(assign)
+
     _, unique_id = central_node_low.perform_action(
         "AssignResources", assign_input_json
     )
 
     exception_message = (
         "Exception occurred on the following devices: "
-        f"ska_low/tm_leaf_node/{defective_device}01"
+        f"ska_low/tm_leaf_node/{defective_device}01: "
     )
 
     result = event_tracer.query_events(
-        lambda e: e.has_device(central_node_low.subarray_node)
+        lambda e: e.has_device(central_node_low.central_node)
         and e.has_attribute("longRunningCommandResult")
-        and e.current_value[0] == unique_id[0]
-        and json.loads(e.current_value[1])[0] == ResultCode.FAILED
-        and exception_message in json.loads(e.current_value[1])[1],
+        and e.attribute_value[0] == unique_id[0]
+        and json.loads(e.attribute_value[1])[0] == ResultCode.FAILED
+        and exception_message in json.loads(e.attribute_value[1])[1],
         timeout=TIMEOUT,
     )
 
     assert_that(result).described_as(
         "FAILED ASSUMPTION AFTER ASSIGN_RESOURCES: "
         "Central Node device"
-        f"({central_node_low.subarray_node.dev_name()}) "
+        f"({central_node_low.central_node.dev_name()}) "
         "is expected have longRunningCommandResult"
         "(ResultCode.FAILED,exception)",
     ).is_length(1)
@@ -406,10 +412,10 @@ def test_abort_with_mccs_in_empty(
                 "telescopeState",
                 "longRunningCommandResult",
             ],
-            central_node_low.subarray_node: "obsState",
-            sdp_sim: "obsState",
-            mccs_sim: "obsState",
-            sdp_sim: "obsState",
+            central_node_low.subarray_node: ["obsState"],
+            csp_sim: ["obsState"],
+            mccs_sim: ["obsState"],
+            sdp_sim: ["obsState"],
         }
     )
     central_node_low.move_to_on()
@@ -444,24 +450,23 @@ def test_abort_with_mccs_in_empty(
     )
 
     exception_message = (
-        "Exception occurred on the following devices:"
-        + " ska_low/tm_subarray_node/1: "
+        " ska_low/tm_subarray_node/1: "
         + "Timeout has occurred, command failed"
     )
 
     result = event_tracer.query_events(
-        lambda e: e.has_device(central_node_low.subarray_node)
+        lambda e: e.has_device(central_node_low.central_node)
         and e.has_attribute("longRunningCommandResult")
-        and e.current_value[0] == unique_id[0]
-        and json.loads(e.current_value[1])[0] == ResultCode.FAILED
-        and exception_message in json.loads(e.current_value[1])[1],
+        and e.attribute_value[0] == unique_id[0]
+        and json.loads(e.attribute_value[1])[0] == ResultCode.FAILED
+        and exception_message in json.loads(e.attribute_value[1])[1],
         timeout=TIMEOUT,
     )
 
     assert_that(result).described_as(
         "FAILED ASSUMPTION AFTER ASSIGN_RESOURCES: "
         "Central Node device"
-        f"({central_node_low.subarray_node.dev_name()}) "
+        f"({central_node_low.central_node.dev_name()}) "
         "is expected have longRunningCommandResult"
         "(ResultCode.FAILED,exception)",
     ).is_length(1)

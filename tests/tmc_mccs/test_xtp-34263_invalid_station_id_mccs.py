@@ -1,7 +1,9 @@
 """Test module for TMC-MCCS handle invalid json(invalid station id)"""
+import json
+
 import pytest
 from pytest_bdd import given, parsers, scenario, then, when
-from ska_control_model import ObsState
+from ska_control_model import ObsState, ResultCode
 from ska_tango_testing.mock.placeholders import Anything
 from tango import DevState
 
@@ -88,11 +90,7 @@ def tmc_subarray_in_empty_obsstate(subarray_node_low, event_recorder):
     )
 )
 def invoke_assignresources(
-    station_id: int,
-    central_node_low,
-    command_input_factory,
-    subarray_id,
-    stored_unique_id,
+    station_id: int, central_node_low, command_input_factory, subarray_id
 ):
     """
     Invoke AssignResources command on TMC with invalid station_id to the MCCS
@@ -109,13 +107,11 @@ def invoke_assignresources(
     _, unique_id = central_node_low.perform_action(
         "AssignResources", assign_json_string
     )
-    stored_unique_id.append(unique_id[0])
+    pytest.unique_id = unique_id[0]
 
 
 @then("the MCCS controller should throw the error for invalid station id")
-def invalid_command_rejection(
-    event_recorder, central_node_low, stored_unique_id
-):
+def invalid_command_rejection(event_recorder, central_node_low):
     """
     Ensure that the MCCS controller throws an error for the invalid station ID
     and subscribe to the longRunningCommandResult event.
@@ -125,14 +121,17 @@ def invalid_command_rejection(
         "longRunningCommandResult",
     )
     exception_message = "Cannot allocate resources: 15"
-    assert stored_unique_id[0].endswith("AssignResources")
+    assert pytest.unique_id.endswith("AssignResources")
     assertion_data = event_recorder.has_change_event_occurred(
         central_node_low.mccs_master_leaf_node,
         attribute_name="longRunningCommandResult",
         attribute_value=(Anything, exception_message),
     )
-    assert "AssignResources" in assertion_data["attribute_value"][0]
-    assert exception_message in assertion_data["attribute_value"][1]
+
+    assert (
+        exception_message
+        in json.loads(assertion_data["attribute_value"][1])[1]
+    )
 
 
 @then("the MCCS subarray should remain in EMPTY ObsState")
@@ -151,9 +150,7 @@ def mccs_subarray_remains_in_empty_obsstate(event_recorder, subarray_node_low):
 
 
 @then("the TMC propogate the error to the client")
-def central_node_receiving_error(
-    event_recorder, central_node_low, stored_unique_id
-):
+def central_node_receiving_error(event_recorder, central_node_low):
     """
     Ensure that the TMC propagates the error to the client and subscribe to
     the longRunningCommandResult event.
@@ -162,7 +159,6 @@ def central_node_receiving_error(
         central_node_low.central_node, "longRunningCommandResult", timeout=80.0
     )
     expected_long_running_command_result = (
-        stored_unique_id[0],
         "Exception occurred on the following devices: "
         + f"{mccs_master_leaf_node}: Cannot allocate resources: 15"
         + f"{tmc_low_subarraynode1}: Timeout has occurred, command failed",
@@ -171,7 +167,12 @@ def central_node_receiving_error(
     assert event_recorder.has_change_event_occurred(
         central_node_low.central_node,
         "longRunningCommandResult",
-        expected_long_running_command_result,
+        (
+            pytest.unique_id[0],
+            json.dumps(
+                (int(ResultCode.FAILED), expected_long_running_command_result)
+            ),
+        ),
         lookahead=10,
     )
 

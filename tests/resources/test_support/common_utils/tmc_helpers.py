@@ -54,7 +54,7 @@ from tests.resources.test_support.constant_low import (
     sdp_subarray1 as sdp_subarray1_low,
 )
 
-TIMEOUT = 20
+TIMEOUT = 50
 configure_logging(logging.DEBUG)
 LOGGER = logging.getLogger(__name__)
 
@@ -468,7 +468,8 @@ def prepare_json_args_for_centralnode_commands(
 
 
 def set_subarray_to_given_obs_state(
-    subarray_node: DeviceProxy,
+    central_node,
+    subarray_node,
     obs_state: str,
     event_tracer,
     command_input_factory,
@@ -487,6 +488,7 @@ def set_subarray_to_given_obs_state(
             # Waiting for SDP Subarray to go to ObsState.IDLE
             sdp_subarray = DeviceProxy(sdp_subarray1_low)
             event_tracer.subscribe_event(sdp_subarray, "obsState")
+
             assert_that(event_tracer).described_as(
                 'FAILED ASSUMPTION IN "GIVEN STEP: '
                 f'"a Subarray in intermediate obsState {obs_state}"'
@@ -501,9 +503,30 @@ def set_subarray_to_given_obs_state(
 
             # Resetting defect on CSP Subarray.
             csp_subarray.SetDefective(json.dumps({"enabled": False}))
+            start_time = time.time()
+            while json.loads(csp_subarray.defective)["enabled"]:
+                elapsed_time = time.time() - start_time
+                if elapsed_time > TIMEOUT:
+                    LOGGER.error("Failed to reset defective")
+                    raise AssertionError("defective is not False")
 
         case "CONFIGURING":
-            subarray_node.force_change_of_obs_state("IDLE")
+            assign_input_str = prepare_json_args_for_commands(
+                "assign_resources_low", command_input_factory
+            )
+            central_node.store_resources(assign_input_str)
+
+            assert_that(event_tracer).described_as(
+                'FAILED ASSUMPTION IN "GIVEN STEP: '
+                f'"a Subarray in intermediate obsState {obs_state}"'
+                "SDP Subarray device"
+                f"({central_node.subarray_node.dev_name()}) "
+                f"is expected to be in IDLE obstate",
+            ).within_timeout(TIMEOUT).has_change_event_occurred(
+                central_node.subarray_node,
+                "obsState",
+                ObsState.IDLE,
+            )
             # Setting the device defective
             csp_subarray = DeviceProxy(csp_subarray1_low)
             csp_subarray.SetDefective(

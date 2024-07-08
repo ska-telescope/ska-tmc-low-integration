@@ -11,6 +11,7 @@ from tests.resources.test_harness.constant import (
     COMMAND_NOT_ALLOWED_DEFECT,
     TIMEOUT,
     low_sdp_subarray_leaf_node,
+    mccs_controller,
     mccs_master_leaf_node,
 )
 from tests.resources.test_harness.simulator_factory import SimulatorFactory
@@ -82,9 +83,9 @@ class TestAssignCommandNotAllowedPropagation:
         result = event_tracer.query_events(
             lambda e: e.has_device(central_node_low.central_node)
             and e.has_attribute("longRunningCommandResult")
-            and e.current_value[0] == unique_id[0]
-            and json.loads(e.current_value[1])[0] == ResultCode.FAILED
-            and exception_message in json.loads(e.current_value[1])[1],
+            and e.attribute_value[0] == unique_id[0]
+            and json.loads(e.attribute_value[1])[0] == ResultCode.FAILED
+            and exception_message in json.loads(e.attribute_value[1])[1],
             timeout=TIMEOUT,
         )
         assert_that(result).described_as(
@@ -154,9 +155,9 @@ class TestAssignCommandNotAllowedPropagation:
         result = event_tracer.query_events(
             lambda e: e.has_device(central_node_low.central_node)
             and e.has_attribute("longRunningCommandResult")
-            and e.current_value[0] == unique_id[0]
-            and json.loads(e.current_value[1])[0] == ResultCode.FAILED
-            and exception_message in json.loads(e.current_value[1])[1],
+            and e.attribute_value[0] == unique_id[0]
+            and json.loads(e.attribute_value[1])[0] == ResultCode.FAILED
+            and exception_message in json.loads(e.attribute_value[1])[1],
             timeout=TIMEOUT,
         )
         assert_that(result).described_as(
@@ -200,6 +201,14 @@ class TestAssignCommandNotAllowedPropagation:
             "assign_resources_low", command_input_factory
         )
 
+        log_events(
+            {
+                central_node_low.central_node: ["longRunningCommandResult"],
+                mccs_subarray_sim: ["obsState"],
+                central_node_low.subarray_node: ["obsState"],
+            }
+        )
+
         central_node_low.move_to_on()
         assert_that(event_tracer).described_as(
             "FAILED ASSUMPTION AFTER ON COMMAND: "
@@ -220,18 +229,18 @@ class TestAssignCommandNotAllowedPropagation:
         )
         # Constructing the error message
         exception_message = (
-            "Exception occurred on the following devices:"
-            + f"{mccs_master_leaf_node}:"
+            f"{mccs_master_leaf_node}: The invocation of the Allocate command"
+            + f" is failed on MCCS Controller device {mccs_controller}"
         )
 
         exception_message2 = "ska_tmc_common.exceptions.CommandNotAllowed"
         result = event_tracer.query_events(
             lambda e: e.has_device(central_node_low.central_node)
             and e.has_attribute("longRunningCommandResult")
-            and e.current_value[0] == unique_id[0]
-            and json.loads(e.current_value[1])[0] == ResultCode.FAILED
-            and exception_message in json.loads(e.current_value[1])[1]
-            and exception_message2 in json.loads(e.current_value[1])[1],
+            and e.attribute_value[0] == unique_id[0]
+            and json.loads(e.attribute_value[1])[0] == ResultCode.FAILED
+            and exception_message in json.loads(e.attribute_value[1])[1]
+            and exception_message2 in json.loads(e.attribute_value[1])[1],
             timeout=TIMEOUT,
         )
 

@@ -1,4 +1,6 @@
 """Test module to test TMC-MCCS End functionality."""
+import json
+
 import pytest
 from pytest_bdd import given, parsers, scenario, then, when
 from ska_control_model import ObsState
@@ -69,7 +71,7 @@ def move_subarray_node_to_ready_obsstate(
     event_recorder.has_change_event_occurred(
         central_node_low.central_node,
         "longRunningCommandResult",
-        (unique_id[0], str(ResultCode.OK.value)),
+        (unique_id[0], json.dumps((int(ResultCode.OK), "Command Completed"))),
     )
     configure_input_json = prepare_json_args_for_commands(
         "configure_low", command_input_factory
@@ -104,7 +106,7 @@ def invoke_end_command(subarray_node_low, event_recorder, subarray_id) -> None:
     event_recorder.has_change_event_occurred(
         subarray_node_low.subarray_node,
         "longRunningCommandResult",
-        (unique_id[0], str(ResultCode.OK.value)),
+        (unique_id[0], json.dumps((int(ResultCode.OK), "Command Completed"))),
     )
 
 

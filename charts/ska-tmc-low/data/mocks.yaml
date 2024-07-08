@@ -5,7 +5,6 @@ instances: ["01","02","03","04","05","06"]
 entrypoints:
   - name: "ska_tmc_common.test_helpers.helper_subarray_device.HelperSubArrayDevice"
   - name: "ska_tmc_common.test_helpers.helper_base_device.HelperBaseDevice"
-  - name: "ska_tmc_common.test_helpers.helper_csp_subarray.HelperCspSubarray"
   - name: "ska_tmc_common.test_helpers.helper_csp_master_device.HelperCspMasterDevice"
   - name: "ska_tmc_common.test_helpers.helper_sdp_subarray.HelperSdpSubarray"
   - name: "ska_tmc_common.test_helpers.helper_mccs_controller_device.HelperMCCSController"
@@ -24,7 +23,7 @@ server:
           - name: "low-csp/control/0"
     - name: "02"
       classes: 
-        - name: "HelperCspSubarray"
+        - name: "HelperSubArrayDevice"
           devices:
           - name: "low-csp/subarray/01"
           - name: "low-csp/subarray/02"
@@ -59,7 +58,7 @@ server:
 depends_on:
   - device: sys/database/2
 image:
-  registry: "{{.Values.subarraynode.image.registry}}"
-  image: "{{.Values.subarraynode.image.image}}"
-  tag: "{{.Values.subarraynode.image.tag}}"
-  pullPolicy: "{{.Values.subarraynode.image.pullPolicy}}"
+  registry: "{{.Values.mccsmasterleafnode.image.registry}}"
+  image: "{{.Values.mccsmasterleafnode.image.image}}"
+  tag: "{{.Values.mccsmasterleafnode.image.tag}}"
+  pullPolicy: "{{.Values.mccsmasterleafnode.image.pullPolicy}}"

@@ -59,7 +59,7 @@ def given_tmc(
                 "telescopeState",
                 "longRunningCommandResult",
             ],
-            central_node_low.subarray_node: "obsState",
+            central_node_low.subarray_node: ["obsState"],
         }
     )
     central_node_low.move_to_on()
@@ -114,11 +114,11 @@ def given_subarray_in_idle(
         'FAILED ASSUMPTION IN "GIVEN" STEP: '
         "'the subarray is in IDLE obsState'"
         "Subarray Node device"
-        f"({central_node_low.subarray_node.dev_name()}) "
+        f"({central_node_low.central_node.dev_name()}) "
         "is expected have longRunningCommand as"
         '(unique_id,(ResultCode.OK,"Command Completed"))',
     ).within_timeout(TIMEOUT).has_change_event_occurred(
-        central_node_low.subarray_node,
+        central_node_low.central_node,
         "longRunningCommandResult",
         (unique_id[0], json.dumps((int(ResultCode.OK), "Command Completed"))),
     )
@@ -157,10 +157,14 @@ def check_configure_completion(
     )
     log_events(
         {
-            subarray_node_low.subarray_devices.get("sdp_subarray"): "obsState",
-            subarray_node_low.subarray_devices.get("csp_subarray"): "obsState",
-            subarray_node_low.csp_subarray_leaf_node: "cspSubarrayObsState",
-            subarray_node_low.sdp_subarray_leaf_node: "sdpSubarrayObsState",
+            subarray_node_low.subarray_devices.get("sdp_subarray"): [
+                "obsState"
+            ],
+            subarray_node_low.subarray_devices.get("csp_subarray"): [
+                "obsState"
+            ],
+            subarray_node_low.csp_subarray_leaf_node: ["cspSubarrayObsState"],
+            subarray_node_low.sdp_subarray_leaf_node: ["sdpSubarrayObsState"],
         }
     )
     csp = subarray_node_low.subarray_devices.get("csp_subarray")
@@ -173,7 +177,7 @@ def check_configure_completion(
         "is expected to be in READY obstate",
     ).within_timeout(TIMEOUT).has_change_event_occurred(
         subarray_node_low.csp_subarray_leaf_node,
-        "obsState",
+        "cspSubarrayObsState",
         ObsState.READY,
     )
     assert_that(event_tracer).described_as(
@@ -184,7 +188,7 @@ def check_configure_completion(
         "is expected to be in READY obstate",
     ).within_timeout(TIMEOUT).has_change_event_occurred(
         subarray_node_low.sdp_subarray_leaf_node,
-        "obsState",
+        "sdpSubarrayObsState",
         ObsState.READY,
     )
     assert_that(event_tracer).described_as(

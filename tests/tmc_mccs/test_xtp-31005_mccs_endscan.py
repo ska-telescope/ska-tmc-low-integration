@@ -1,4 +1,6 @@
 """Test module for TMC-MCCS EndScan functionality"""
+import json
+
 import pytest
 from pytest_bdd import given, parsers, scenario, then, when
 from ska_control_model import ObsState
@@ -97,7 +99,7 @@ def subarray_in_scanning_obsstate(
     event_recorder.has_change_event_occurred(
         subarray_node_low.subarray_node,
         "longRunningCommandResult",
-        (unique_id[0], str(ResultCode.OK.value)),
+        (unique_id[0], json.dumps((int(ResultCode.OK), "Command Completed"))),
     )
 
     input_str = prepare_json_args_for_commands(

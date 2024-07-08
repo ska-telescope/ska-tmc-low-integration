@@ -12,6 +12,7 @@ from tests.resources.test_harness.central_node_low import CentralNodeWrapperLow
 from tests.resources.test_harness.constant import (
     COMMAND_FAILED_WITH_EXCEPTION_OBSSTATE_EMPTY,
     TIMEOUT,
+    low_sdp_subarray_leaf_node,
 )
 from tests.resources.test_harness.helpers import (
     get_device_simulators,
@@ -43,6 +44,12 @@ def test_assign_release_defective_csp(
         central_node_low.central_node, "longRunningCommandResult"
     )
     event_tracer.subscribe_event(central_node_low.subarray_node, "obsState")
+    log_events(
+        {
+            central_node_low.central_node: ["longRunningCommandResult"],
+            central_node_low.subarray_node: ["obsState"],
+        }
+    )
     central_node_low.move_to_on()
     assert_that(event_tracer).described_as(
         "FAILED ASSUMPTION AFTER ON COMMAND: "
@@ -76,17 +83,17 @@ def test_assign_release_defective_csp(
     assert unique_id[0].endswith("AssignResources")
     assert result[0] == ResultCode.QUEUED
     exception_message = (
-        "Exception occurred on the following devices:"
-        + " ska_low/tm_subarray_node/1:"
+        " ska_low/tm_subarray_node/1:"
         + " Exception occurred on the following devices:"
     )
     log_events({central_node_low.central_node: ["longRunningCommandResult"]})
+
     result = event_tracer.query_events(
         lambda e: e.has_device(central_node_low.central_node)
         and e.has_attribute("longRunningCommandResult")
-        and e.current_value[0] == unique_id[0]
-        and json.loads(e.current_value[1])[0] == ResultCode.FAILED
-        and exception_message in json.loads(e.current_value[1])[1],
+        and e.attribute_value[0] == unique_id[0]
+        and json.loads(e.attribute_value[1])[0] == ResultCode.FAILED
+        and exception_message in json.loads(e.attribute_value[1])[1],
         timeout=TIMEOUT,
     )
     assert_that(result).described_as(
@@ -100,11 +107,11 @@ def test_assign_release_defective_csp(
     csp_sim.SetDefective(json.dumps({"enabled": False}))
 
 
+# timeout is not possible with helper sdp
 @pytest.mark.SKA_low
-def test_assign_release_timeout_sdp(
+def test_assign_release_exception_sdp(
     central_node_low: CentralNodeWrapperLow,
     event_tracer: TangoEventTracer,
-    simulator_factory: SimulatorFactory,
     command_input_factory: JsonFactory,
 ):
     """Verify defective exception raised when csp set to defective."""
@@ -117,6 +124,14 @@ def test_assign_release_timeout_sdp(
 
     event_tracer.subscribe_event(
         central_node_low.central_node, "longRunningCommandResult"
+    )
+    log_events(
+        {
+            central_node_low.central_node: [
+                "longRunningCommandResult",
+                "telescopeState",
+            ]
+        }
     )
     event_tracer.subscribe_event(central_node_low.subarray_node, "obsState")
     central_node_low.move_to_on()
@@ -140,27 +155,26 @@ def test_assign_release_timeout_sdp(
         "obsState",
         ObsState.EMPTY,
     )
-    _, sdp_sim = get_device_simulators(simulator_factory)
-    event_tracer.subscribe_event(sdp_sim, "obsState")
-    sdp_sim.SetDefective(json.dumps(INTERMEDIATE_STATE_DEFECT))
-    assert wait_and_validate_device_attribute_value(
-        sdp_sim,
-        "defective",
-        json.dumps(INTERMEDIATE_STATE_DEFECT),
-        is_json=True,
-    )
+
+    assign = json.loads(assign_input_json)
+    assign["sdp"]["execution_block"]["eb_id"] = "eb-xxx-218638916"
+    assign_input_json = json.dumps(assign)
     result, unique_id = central_node_low.perform_action(
         "AssignResources", assign_input_json
     )
     assert unique_id[0].endswith("AssignResources")
     assert result[0] == ResultCode.QUEUED
-    exception_message = "Timeout has occurred, command failed"
+    exception_message = (
+        "Exception occurred on the following devices: "
+        f"{low_sdp_subarray_leaf_node}:"
+        " Invalid eb_id in the AssignResources input json"
+    )
     result = event_tracer.query_events(
         lambda e: e.has_device(central_node_low.central_node)
         and e.has_attribute("longRunningCommandResult")
-        and e.current_value[0] == unique_id[0]
-        and json.loads(e.current_value[1])[0] == ResultCode.FAILED
-        and exception_message in json.loads(e.current_value[1])[1],
+        and e.attribute_value[0] == unique_id[0]
+        and json.loads(e.attribute_value[1])[0] == ResultCode.FAILED
+        and exception_message in json.loads(e.attribute_value[1])[1],
         timeout=TIMEOUT,
     )
     assert_that(result).described_as(
@@ -260,10 +274,10 @@ def test_release_exception_propagation(
     result = event_tracer.query_events(
         lambda e: e.has_device(central_node_low.central_node)
         and e.has_attribute("longRunningCommandResult")
-        and e.current_value[0] == unique_id[0]
-        and json.loads(e.current_value[1])[0] == ResultCode.REJECTED
-        and "ReleaseResources is not permitted"
-        in json.loads(e.current_value[1])[1],
+        and e.attribute_value[0] == unique_id[0]
+        and json.loads(e.attribute_value[1])[0] == ResultCode.REJECTED
+        and "ReleaseResources command not permitted in observation state 1"
+        in json.loads(e.attribute_value[1])[1],
         timeout=TIMEOUT,
     )
     assert_that(result).described_as(
@@ -325,9 +339,9 @@ def test_assign_release_timeout_csp(
     result = event_tracer.query_events(
         lambda e: e.has_device(central_node_low.central_node)
         and e.has_attribute("longRunningCommandResult")
-        and e.current_value[0] == unique_id[0]
-        and json.loads(e.current_value[1])[0] == ResultCode.FAILED
-        and exception_message in json.loads(e.current_value[1])[1],
+        and e.attribute_value[0] == unique_id[0]
+        and json.loads(e.attribute_value[1])[0] == ResultCode.FAILED
+        and exception_message in json.loads(e.attribute_value[1])[1],
         timeout=TIMEOUT,
     )
     assert_that(result).described_as(

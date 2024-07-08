@@ -1,4 +1,6 @@
 """Test module for TMC-MCCS ShutDown functionality"""
+import json
+
 import pytest
 from pytest_bdd import given, parsers, scenario, then, when
 from ska_control_model import ObsState
@@ -110,9 +112,7 @@ def mccs_subarraybeam_is_unavaiable(tmc_low):
         + "TMC subarray using TMC"
     )
 )
-def invoke_assignresources(
-    tmc_low, command_input_factory, subarray_id, stored_unique_id
-):
+def invoke_assignresources(tmc_low, command_input_factory, subarray_id):
     """Invokes AssignResources command on TMC"""
     tmc_low.central_node.set_subarray_id(subarray_id)
     input_json = prepare_json_args_for_centralnode_commands(
@@ -121,11 +121,11 @@ def invoke_assignresources(
     _, unique_id = tmc_low.central_node.perform_action(
         "AssignResources", input_json
     )
-    stored_unique_id.append(unique_id[0])
+    pytest.unique_id = unique_id
 
 
 @then("MCCS controller should throw the error and report to TMC")
-def mccs_error_reporting(event_recorder, tmc_low, stored_unique_id):
+def mccs_error_reporting(event_recorder, tmc_low):
     """
     Ensure that the MCCS controller throws an
     error for the subsystem unavailable
@@ -145,29 +145,28 @@ def mccs_error_reporting(event_recorder, tmc_low, stored_unique_id):
         f"Exception occurred on device: {mccs_controller}: "
         + "The SubarrayBeam.assign_resources command has failed"
     )
-    assert stored_unique_id[0].endswith("AssignResources")
+    assert pytest.unique_id[0].endswith("AssignResources")
     assertion_data = event_recorder.has_change_event_occurred(
         tmc_low.central_node.mccs_master_leaf_node,
         attribute_name="longRunningCommandResult",
         attribute_value=(Anything, exception_message),
     )
-    assert "AssignResources" in assertion_data["attribute_value"][0]
-    assert exception_message in assertion_data["attribute_value"][1]
+    assert (
+        exception_message
+        in json.loads(assertion_data["attribute_value"][1])[1]
+    )
 
 
 @then("TMC should propogate the error to client")
-def central_node_receiving_error(event_recorder, tmc_low, stored_unique_id):
+def central_node_receiving_error(event_recorder, tmc_low):
     """
     Ensure that the TMC propagates the error to the client and subscribe to
     the longRunningCommandResult event.
     """
     event_recorder.subscribe_event(
-        tmc_low.central_node.central_node,
-        "longRunningCommandResult",
-        timeout=80.0,
+        tmc_low.central_node.central_node, "longRunningCommandResult"
     )
     expected_long_running_command_result = (
-        stored_unique_id[0],
         "Exception occurred on the following devices: "
         + f"{mccs_master_leaf_node}: Exception occurred on device: "
         + f"{mccs_controller}: The SubarrayBeam.assign_resources command "
@@ -178,7 +177,12 @@ def central_node_receiving_error(event_recorder, tmc_low, stored_unique_id):
     assert event_recorder.has_change_event_occurred(
         tmc_low.central_node.central_node,
         "longRunningCommandResult",
-        expected_long_running_command_result,
+        (
+            pytest.unique_id[0],
+            json.dumps(
+                (int(ResultCode.FAILED), expected_long_running_command_result)
+            ),
+        ),
         lookahead=10,
     )
 

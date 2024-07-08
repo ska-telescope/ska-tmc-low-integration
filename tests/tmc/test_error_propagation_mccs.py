@@ -12,7 +12,9 @@ from assertpy import assert_that
 from pytest_bdd import given, scenario, then, when
 from ska_control_model import ObsState, ResultCode
 from ska_tango_testing.integration import TangoEventTracer, log_events
+from tango import DevState
 
+from tests.resources.test_harness.central_node_low import CentralNodeWrapperLow
 from tests.resources.test_harness.constant import (
     ERROR_PROPAGATION_DEFECT,
     TIMEOUT,
@@ -44,51 +46,60 @@ def test_mccs_configure_command_error_propagation():
 
 @given("the telescope is is ON state")
 def check_telescope_is_in_on_state(
-    subarray_node_low: SubarrayNodeWrapperLow, event_tracer: TangoEventTracer
+    central_node_low: CentralNodeWrapperLow,
+    subarray_node_low: SubarrayNodeWrapperLow,
+    event_tracer: TangoEventTracer,
 ) -> None:
     """
     Ensure telescope is in ON state.
     """
     # Event Subscriptions
-    event_tracer.subscribe_event(subarray_node_low.subarray_node, "State")
+    event_tracer.subscribe_event(
+        central_node_low.central_node, "telescopeState"
+    )
     event_tracer.subscribe_event(
         subarray_node_low.subarray_node, "longRunningCommandResult"
     )
     log_events(
         {
+            central_node_low.central_node: ["telescopeState"],
             subarray_node_low.subarray_node: [
                 "obsState",
                 "longRunningCommandResult",
-            ]
+            ],
         }
     )
-    _, unique_id = subarray_node_low.move_to_on()
+    central_node_low.move_to_on()
     assert_that(event_tracer).described_as(
-        'FAILED ASSUMPTION IN "GIVEN" STEP: '
-        "'the telescope is is ON state'"
-        "Subarray Node device"
-        f"({subarray_node_low.subarray_node.dev_name()}) "
-        "is expected have longRunningCommand as"
-        '(unique_id,(ResultCode.OK,"Command Completed"))',
+        "FAILED ASSUMPTION AFTER ON COMMAND: "
+        "Central Node device"
+        f"({central_node_low.central_node.dev_name()}) "
+        "is expected to be in TelescopeState ON",
     ).within_timeout(TIMEOUT).has_change_event_occurred(
-        subarray_node_low.subarray_node,
-        "longRunningCommandResult",
-        (unique_id[0], json.dumps((int(ResultCode.OK), "Command Completed"))),
+        central_node_low.central_node,
+        "telescopeState",
+        DevState.ON,
     )
 
 
 @given("the TMC subarray is in the idle observation state")
 def check_subarray_obs_state(
-    subarray_node_low: SubarrayNodeWrapperLow, event_tracer: TangoEventTracer
+    central_node_low: CentralNodeWrapperLow,
+    subarray_node_low: SubarrayNodeWrapperLow,
+    event_tracer: TangoEventTracer,
+    command_input_factory: JsonFactory,
 ):
     """
     Method to check subarray is in IDLE observation state.
     """
     event_tracer.subscribe_event(subarray_node_low.subarray_node, "obsState")
-    subarray_node_low.force_change_of_obs_state("IDLE")
+    assign_input_str = prepare_json_args_for_commands(
+        "assign_resources_low", command_input_factory
+    )
+    central_node_low.store_resources(assign_input_str)
+
     assert_that(event_tracer).described_as(
-        'FAILED ASSUMPTION IN "GIVEN" STEP: '
-        '"the TMC subarray is in the idle observation state"'
+        "FAILED ASSUMPTION AFTER ASSIGNRESOURCES COMMAND: "
         "Subarray Node device"
         f"({subarray_node_low.subarray_node.dev_name()}) "
         "is expected to be in IDLE obstate",
@@ -168,9 +179,9 @@ def configure_command_reports_error_propagate(
     result = event_tracer.query_events(
         lambda e: e.has_device(subarray_node_low.subarray_node)
         and e.has_attribute("longRunningCommandResult")
-        and e.current_value[0] == pytest.unique_id[0]
-        and json.loads(e.current_value[1])[0] == ResultCode.FAILED
-        and exception_message in json.loads(e.current_value[1])[1],
+        and e.attribute_value[0] == pytest.unique_id[0]
+        and json.loads(e.attribute_value[1])[0] == ResultCode.FAILED
+        and exception_message in json.loads(e.attribute_value[1])[1],
         timeout=TIMEOUT,
     )
 

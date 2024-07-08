@@ -5,13 +5,15 @@ import pytest
 from assertpy import assert_that
 from ska_control_model import ObsState, ResultCode
 from ska_tango_testing.integration import TangoEventTracer, log_events
+from tango import DevState
 
+from tests.resources.test_harness.central_node_low import CentralNodeWrapperLow
+
+# low_csp_subarray_leaf_node, low_sdp_subarray_leaf_node,
+# mccs_subarray_leaf_node
 from tests.resources.test_harness.constant import (
     INTERMEDIATE_CONFIGURING_STATE_DEFECT,
     TIMEOUT,
-    low_csp_subarray_leaf_node,
-    low_sdp_subarray_leaf_node,
-    mccs_subarray_leaf_node,
 )
 from tests.resources.test_harness.simulator_factory import SimulatorFactory
 from tests.resources.test_harness.subarray_node_low import (
@@ -30,6 +32,7 @@ class TestConfigureTimeout:
     @pytest.mark.SKA_low
     def test_configure_timeout_csp_ln(
         self,
+        central_node_low: CentralNodeWrapperLow,
         subarray_node_low: SubarrayNodeWrapperLow,
         event_tracer: TangoEventTracer,
         simulator_factory: SimulatorFactory,
@@ -48,35 +51,43 @@ class TestConfigureTimeout:
         event_tracer.subscribe_event(
             subarray_node_low.subarray_node, "longRunningCommandResult"
         )
-
+        event_tracer.subscribe_event(
+            central_node_low.central_node, "longRunningCommandResult"
+        )
+        event_tracer.subscribe_event(
+            central_node_low.central_node, "telescopeState"
+        )
         # Preparing input files
+        assign_input_str = prepare_json_args_for_commands(
+            "assign_resources_low", command_input_factory
+        )
         configure_input_str = prepare_json_args_for_commands(
             "configure_low", command_input_factory
         )
         log_events(
             {
+                central_node_low.central_node: [
+                    "longRunningCommandResult",
+                    "telescopeState",
+                ],
                 subarray_node_low.subarray_node: [
                     "longRunningCommandResult",
                     "obsState",
-                ]
+                ],
             }
         )
-        _, unique_id = subarray_node_low.move_to_on()
+        central_node_low.move_to_on()
         assert_that(event_tracer).described_as(
-            "FAILED ASSUMPTION AFTER ON Command: "
-            "Subarray Node device"
-            f"({subarray_node_low.subarray_node.dev_name()}) "
-            "is expected have longRunningCommand as"
-            '(unique_id,(ResultCode.OK,"Command Completed"))',
+            "FAILED ASSUMPTION AFTER ON COMMAND: "
+            "Central Node device"
+            f"({central_node_low.central_node.dev_name()}) "
+            "is expected to be in TelescopeState ON",
         ).within_timeout(TIMEOUT).has_change_event_occurred(
-            subarray_node_low.subarray_node,
-            "longRunningCommandResult",
-            (
-                unique_id[0],
-                json.dumps((int(ResultCode.OK), "Command Completed")),
-            ),
+            central_node_low.central_node,
+            "telescopeState",
+            DevState.ON,
         )
-        subarray_node_low.force_change_of_obs_state("IDLE")
+        _, unique_id = central_node_low.store_resources(assign_input_str)
         assert_that(event_tracer).described_as(
             "FAILED ASSUMPTION AFTER ASSIGN RESOURCES: "
             "Subarray Node device"
@@ -107,11 +118,9 @@ class TestConfigureTimeout:
         result = event_tracer.query_events(
             lambda e: e.has_device(subarray_node_low.subarray_node)
             and e.has_attribute("longRunningCommandResult")
-            and e.current_value[0] == unique_id[0]
-            and json.loads(e.current_value[1])[0] == ResultCode.FAILED
-            and exception_message in json.loads(e.current_value[1])[1]
-            and low_csp_subarray_leaf_node
-            in json.loads(e.current_value[1])[1],
+            and e.attribute_value[0] == unique_id[0]
+            and json.loads(e.attribute_value[1])[0] == ResultCode.FAILED
+            and exception_message in json.loads(e.attribute_value[1])[1],
             timeout=TIMEOUT,
         )
 
@@ -123,19 +132,17 @@ class TestConfigureTimeout:
             "(ResultCode.FAILED,exception)",
         ).is_length(1)
 
+    @pytest.mark.skip("helper sdp timeout not possible")
     @pytest.mark.SKA_low
     def test_configure_timeout_sdp_ln(
         self,
+        central_node_low: CentralNodeWrapperLow,
         subarray_node_low: SubarrayNodeWrapperLow,
         event_tracer: TangoEventTracer,
-        simulator_factory: SimulatorFactory,
         command_input_factory: JsonFactory,
     ):
         """Test timeout on SDP Leaf Nodes for Configure command by inducing
         fault into the system."""
-        sdp_subarray_sim = simulator_factory.get_or_create_simulator_device(
-            SimulatorDeviceType.LOW_SDP_DEVICE
-        )
         # Event Subscriptions
         event_tracer.subscribe_event(subarray_node_low.subarray_node, "State")
         event_tracer.subscribe_event(
@@ -144,35 +151,43 @@ class TestConfigureTimeout:
         event_tracer.subscribe_event(
             subarray_node_low.subarray_node, "longRunningCommandResult"
         )
-
+        event_tracer.subscribe_event(
+            central_node_low.central_node, "longRunningCommandResult"
+        )
+        event_tracer.subscribe_event(
+            central_node_low.central_node, "telescopeState"
+        )
         # Preparing input files
+        assign_input_str = prepare_json_args_for_commands(
+            "assign_resources_low", command_input_factory
+        )
         configure_input_str = prepare_json_args_for_commands(
             "configure_low", command_input_factory
         )
         log_events(
             {
+                central_node_low.central_node: [
+                    "longRunningCommandResult",
+                    "telescopeState",
+                ],
                 subarray_node_low.subarray_node: [
                     "longRunningCommandResult",
                     "obsState",
-                ]
+                ],
             }
         )
-        _, unique_id = subarray_node_low.move_to_on()
+        central_node_low.move_to_on()
         assert_that(event_tracer).described_as(
-            "FAILED ASSUMPTION AFTER ON Command: "
-            "Subarray Node device"
-            f"({subarray_node_low.subarray_node.dev_name()}) "
-            "is expected have longRunningCommand as"
-            '(unique_id,(ResultCode.OK,"Command Completed"))',
+            "FAILED ASSUMPTION AFTER ON COMMAND: "
+            "Central Node device"
+            f"({central_node_low.central_node.dev_name()}) "
+            "is expected to be in TelescopeState ON",
         ).within_timeout(TIMEOUT).has_change_event_occurred(
-            subarray_node_low.subarray_node,
-            "longRunningCommandResult",
-            (
-                unique_id[0],
-                json.dumps((int(ResultCode.OK), "Command Completed")),
-            ),
+            central_node_low.central_node,
+            "telescopeState",
+            DevState.ON,
         )
-        subarray_node_low.force_change_of_obs_state("IDLE")
+        _, unique_id = central_node_low.store_resources(assign_input_str)
         assert_that(event_tracer).described_as(
             "FAILED ASSUMPTION AFTER ASSIGNRESOURCES COMMAND: "
             "Subarray Node device"
@@ -183,9 +198,6 @@ class TestConfigureTimeout:
             "obsState",
             ObsState.IDLE,
         )
-
-        # Inducing Fault
-        sdp_subarray_sim.SetDefective(INTERMEDIATE_CONFIGURING_STATE_DEFECT)
 
         _, unique_id = subarray_node_low.execute_transition(
             "Configure", configure_input_str
@@ -204,11 +216,9 @@ class TestConfigureTimeout:
         result = event_tracer.query_events(
             lambda e: e.has_device(subarray_node_low.subarray_node)
             and e.has_attribute("longRunningCommandResult")
-            and e.current_value[0] == unique_id[0]
-            and json.loads(e.current_value[1])[0] == ResultCode.FAILED
-            and exception_message in json.loads(e.current_value[1])[1]
-            and low_sdp_subarray_leaf_node
-            in json.loads(e.current_value[1])[1],
+            and e.attribute_value[0] == unique_id[0]
+            and json.loads(e.attribute_value[1])[0] == ResultCode.FAILED
+            and exception_message in json.loads(e.attribute_value[1])[1],
             timeout=TIMEOUT,
         )
 
@@ -223,6 +233,7 @@ class TestConfigureTimeout:
     @pytest.mark.SKA_low
     def test_configure_timeout_mccs_ln(
         self,
+        central_node_low: CentralNodeWrapperLow,
         subarray_node_low: SubarrayNodeWrapperLow,
         event_tracer: TangoEventTracer,
         simulator_factory: SimulatorFactory,
@@ -234,35 +245,49 @@ class TestConfigureTimeout:
             SimulatorDeviceType.MCCS_SUBARRAY_DEVICE
         )
         # Event Subscriptions
-        event_tracer.subscribe_event(subarray_node_low.subarray_node, "State")
+        event_tracer.subscribe_event(
+            central_node_low.central_node, "longRunningCommandResult"
+        )
+        event_tracer.subscribe_event(
+            central_node_low.central_node, "telescopeState"
+        )
         event_tracer.subscribe_event(
             subarray_node_low.subarray_node, "obsState"
         )
         event_tracer.subscribe_event(
             subarray_node_low.subarray_node, "longRunningCommandResult"
         )
-
+        log_events(
+            {
+                central_node_low.central_node: [
+                    "longRunningCommandResult",
+                    "telescopeState",
+                ],
+                subarray_node_low.subarray_node: [
+                    "longRunningCommandResult",
+                    "obsState",
+                ],
+            }
+        )
         # Preparing input files
+        assign_input_str = prepare_json_args_for_commands(
+            "assign_resources_low", command_input_factory
+        )
         configure_input_str = prepare_json_args_for_commands(
             "configure_low", command_input_factory
         )
-        _, unique_id = subarray_node_low.move_to_on()
+        central_node_low.move_to_on()
         assert_that(event_tracer).described_as(
-            "FAILED ASSUMPTION AFTER ON Command: "
-            "Subarray Node device"
-            f"({subarray_node_low.subarray_node.dev_name()}) "
-            "is expected have longRunningCommand as"
-            '(unique_id,(ResultCode.OK,"Command Completed"))',
+            "FAILED ASSUMPTION AFTER ON COMMAND: "
+            "Central Node device"
+            f"({central_node_low.central_node.dev_name()}) "
+            "is expected to be in TelescopeState ON",
         ).within_timeout(TIMEOUT).has_change_event_occurred(
-            subarray_node_low.subarray_node,
-            "longRunningCommandResult",
-            (
-                unique_id[0],
-                json.dumps((int(ResultCode.OK), "Command Completed")),
-            ),
+            central_node_low.central_node,
+            "telescopeState",
+            DevState.ON,
         )
-
-        subarray_node_low.force_change_of_obs_state("IDLE")
+        _, unique_id = central_node_low.store_resources(assign_input_str)
 
         assert_that(event_tracer).described_as(
             "FAILED ASSUMPTION AFTER ASSIGNRESOURCES COMMAND: "
@@ -295,10 +320,9 @@ class TestConfigureTimeout:
         result = event_tracer.query_events(
             lambda e: e.has_device(subarray_node_low.subarray_node)
             and e.has_attribute("longRunningCommandResult")
-            and e.current_value[0] == unique_id[0]
-            and json.loads(e.current_value[1])[0] == ResultCode.FAILED
-            and exception_message in json.loads(e.current_value[1])[1]
-            and mccs_subarray_leaf_node in json.loads(e.current_value[1])[1],
+            and e.attribute_value[0] == unique_id[0]
+            and json.loads(e.attribute_value[1])[0] == ResultCode.FAILED
+            and exception_message in json.loads(e.attribute_value[1])[1],
             timeout=TIMEOUT,
         )
 

@@ -52,7 +52,7 @@ def given_tmc(
                 "telescopeState",
                 "longRunningCommandResult",
             ],
-            central_node_low.subarray_node: "obsState",
+            central_node_low.subarray_node: ["obsState"],
         }
     )
     event_tracer.subscribe_event(central_node_low.subarray_node, "obsState")
@@ -93,7 +93,7 @@ def given_subarray_in_ready(
     event_tracer.subscribe_event(
         subarray_node_low.subarray_node, "longRunningCommandResult"
     )
-    log_events({subarray_node_low.subarray_node: "longRunningCommandResult"})
+    log_events({subarray_node_low.subarray_node: ["longRunningCommandResult"]})
     assign_input_json = prepare_json_args_for_centralnode_commands(
         "assign_resources_low", command_input_factory
     )
@@ -113,11 +113,11 @@ def given_subarray_in_ready(
         'FAILED ASSUMPTION IN "GIVEN" STEP: '
         "'a subarray in READY obsState'"
         "Subarray Node device"
-        f"({central_node_low.subarray_node.dev_name()}) "
+        f"({central_node_low.central_node.dev_name()}) "
         "is expected have longRunningCommand as"
         '(unique_id,(ResultCode.OK,"Command Completed"))',
     ).within_timeout(TIMEOUT).has_change_event_occurred(
-        central_node_low.subarray_node,
+        central_node_low.central_node,
         "longRunningCommandResult",
         (unique_id[0], json.dumps((int(ResultCode.OK), "Command Completed"))),
     )
