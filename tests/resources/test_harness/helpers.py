@@ -414,8 +414,8 @@ def wait_and_validate_device_attribute_value(
     is_json: bool = False,
     timeout: int = 300,
 ):
-    """This method wait and validate if attribute value is equal to provided
-    expected value
+    """This method waits and validates if attribute value is equal to the
+    provided expected value
     """
     count = 0
     error = ""
@@ -435,15 +435,8 @@ def wait_and_validate_device_attribute_value(
             elif attribute_value == expected_value:
                 return True
         except Exception as e:
-            # Device gets unavailable due to restart and the above command
-            # tries to access the attribute resulting into exception
-            # It keeps it printing till the attribute is accessible
-            # the exception log is suppressed by storing into variable
-            # the error is printed later into the log in case of failure
             error = e
         count += 10
-        # When device restart it will at least take 10 sec to up again
-        # so added 10 sec sleep and to avoid frequent attribute read.
         time.sleep(10)
 
     logging.exception(
@@ -614,7 +607,13 @@ def retry_communication(device_proxy: DeviceProxy, timeout: int = 30) -> None:
         while time.time() < terminate_time:
             try:
                 device_proxy.adminMode = AdminMode.ONLINE
-                break
+                if wait_and_validate_device_attribute_value(
+                    device=device_proxy,
+                    attribute_name="adminMode",
+                    expected_value=AdminMode.ONLINE,
+                    timeout=tick,
+                ):
+                    break
             except tango.DevFailed:
                 print(
                     f"{device_proxy.dev_name()} failed to communicate "
