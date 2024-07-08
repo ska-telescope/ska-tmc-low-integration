@@ -145,15 +145,15 @@ def mccs_error_reporting(event_recorder, tmc_low):
         f"Exception occurred on device: {mccs_controller}: "
         + "The SubarrayBeam.assign_resources command has failed"
     )
+
     assert pytest.unique_id[0].endswith("AssignResources")
-    assertion_data = event_recorder.has_change_event_occurred(
+    event_recorder.has_change_event_occurred(
         tmc_low.central_node.mccs_master_leaf_node,
         attribute_name="longRunningCommandResult",
-        attribute_value=(Anything, exception_message),
-    )
-    assert (
-        exception_message
-        in json.loads(assertion_data["attribute_value"][1])[1]
+        attribute_value=(
+            Anything,
+            json.dumps((int(ResultCode.FAILED), exception_message)),
+        ),
     )
 
 
