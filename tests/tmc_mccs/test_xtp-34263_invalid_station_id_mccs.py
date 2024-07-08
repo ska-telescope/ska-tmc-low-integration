@@ -166,7 +166,7 @@ def central_node_receiving_error(event_recorder, central_node_low):
         central_node_low.central_node,
         "longRunningCommandResult",
         (
-            pytest.unique_id[0],
+            pytest.unique_id,
             Anything,
         ),
         lookahead=10,
