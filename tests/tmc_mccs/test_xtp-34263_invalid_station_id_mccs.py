@@ -125,9 +125,11 @@ def invalid_command_rejection(event_recorder, central_node_low):
     assertion_data = event_recorder.has_change_event_occurred(
         central_node_low.mccs_master_leaf_node,
         attribute_name="longRunningCommandResult",
-        attribute_value=(Anything, exception_message),
+        attribute_value=(
+            Anything,
+            json.dumps((ResultCode.FAILED, exception_message)),
+        ),
     )
-
     assert (
         exception_message
         in json.loads(assertion_data["attribute_value"][1])[1]
