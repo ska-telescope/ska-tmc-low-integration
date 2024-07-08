@@ -1,5 +1,4 @@
 """Test module for TMC-MCCS ShutDown functionality"""
-import time
 
 import pytest
 from pytest_bdd import given, parsers, scenario, then, when
@@ -23,6 +22,11 @@ from tests.resources.test_support.common_utils.tmc_helpers import (
 
 
 @pytest.mark.tmc_mccs
+@pytest.mark.xfail(
+    reason="The test is marked as xfail due to dependency of testing"
+    + "with upgradation of base classes of mccsleadnodes"
+    + "it will be test with v0.4.0 release of ska-tmc-mccsleafnodes."
+)
 @scenario(
     "../features/tmc_mccs/xtp-35236_mccs_subsystem_unavailable.feature",
     "MCCS Controller report the error when one of the subarray"
@@ -148,7 +152,6 @@ def mccs_error_reporting(event_recorder, tmc_low, stored_unique_id):
         + "The SubarrayBeam.assign_resources command has failed"
     )
     assert stored_unique_id[0].endswith("AssignResources")
-    time.sleep(30)
     assertion_data = event_recorder.has_change_event_occurred(
         tmc_low.central_node.mccs_master_leaf_node,
         attribute_name="longRunningCommandResult",
