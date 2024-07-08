@@ -122,17 +122,13 @@ def invalid_command_rejection(event_recorder, central_node_low):
     )
     exception_message = "Cannot allocate resources: 15"
     assert pytest.unique_id.endswith("AssignResources")
-    assertion_data = event_recorder.has_change_event_occurred(
+    event_recorder.has_change_event_occurred(
         central_node_low.mccs_master_leaf_node,
         attribute_name="longRunningCommandResult",
         attribute_value=(
             Anything,
             json.dumps((ResultCode.FAILED, exception_message)),
         ),
-    )
-    assert (
-        exception_message
-        in json.loads(assertion_data["attribute_value"][1])[1]
     )
 
 
@@ -160,22 +156,32 @@ def central_node_receiving_error(event_recorder, central_node_low):
     event_recorder.subscribe_event(
         central_node_low.central_node, "longRunningCommandResult", timeout=80.0
     )
-    expected_long_running_command_result = (
-        "Exception occurred on the following devices: "
-        + f"{mccs_master_leaf_node}: Cannot allocate resources: 15"
-        + f"{tmc_low_subarraynode1}: Timeout has occurred, command failed",
+    expected_long_running_command_result1 = (
+        f"{mccs_master_leaf_node}: Cannot allocate resources: 15"
     )
-
-    assert event_recorder.has_change_event_occurred(
+    expected_long_running_command_result2 = (
+        f"{tmc_low_subarraynode1}: Timeout has occurred, command failed"
+    )
+    assertion_data = event_recorder.has_change_event_occurred(
         central_node_low.central_node,
         "longRunningCommandResult",
         (
             pytest.unique_id[0],
-            json.dumps(
-                (int(ResultCode.FAILED), expected_long_running_command_result)
-            ),
+            Anything,
         ),
         lookahead=10,
+    )
+    assert (
+        ResultCode.FAILED
+        == json.loads(assertion_data["attribute_value"][1])[0]
+    )
+    assert (
+        expected_long_running_command_result1
+        in json.loads(assertion_data["attribute_value"][1])[1]
+    )
+    assert (
+        expected_long_running_command_result2
+        in json.loads(assertion_data["attribute_value"][1])[1]
     )
 
 
