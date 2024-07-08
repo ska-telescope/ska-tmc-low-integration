@@ -7,7 +7,7 @@ from tango import DevState
 
 
 @pytest.mark.skip(
-    reason="Issue on CSP side, will get fixed with new CSP reason"
+    reason="Issue on CSP side, will get fixed with the new CSP chart"
 )
 # Issue: CSP is not using SKA Tel Model >= v1.17.0
 @pytest.mark.tmc_csp
