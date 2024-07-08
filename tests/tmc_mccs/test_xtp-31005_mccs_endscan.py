@@ -85,7 +85,10 @@ def subarray_in_scanning_obsstate(
     event_recorder.has_change_event_occurred(
         central_node_low.central_node,
         "longRunningCommandResult",
-        (unique_id[0], str(ResultCode.OK.value)),
+        (
+            unique_id[0],
+            json.dumps((int(ResultCode.OK), "Command Completed")),
+        ),
     )
 
     input_str = prepare_json_args_for_commands(

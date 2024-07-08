@@ -89,7 +89,10 @@ def move_subarray_node_to_ready_obsstate(
     event_recorder.has_change_event_occurred(
         subarray_node_low.subarray_node,
         "longRunningCommandResult",
-        (unique_id[0], str(ResultCode.OK.value)),
+        (
+            unique_id[0],
+            json.dumps((int(ResultCode.OK), "Command Completed")),
+        ),
     )
 
 
