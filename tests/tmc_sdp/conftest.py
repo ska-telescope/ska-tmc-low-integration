@@ -1,4 +1,5 @@
 """TMC-SDP specific conftest"""
+import json
 from ast import literal_eval
 
 from pytest_bdd import given, parsers, then, when
@@ -94,7 +95,10 @@ def assign_resources_to_subarray(
     assert event_recorder.has_change_event_occurred(
         central_node_low.central_node,
         "longRunningCommandResult",
-        (unique_id[0], str(ResultCode.OK.value)),
+        (
+            unique_id[0],
+            json.dumps((int(ResultCode.OK), "Command Completed")),
+        ),
     )
     assert event_recorder.has_change_event_occurred(
         subarray_node_low.subarray_node,
@@ -182,7 +186,10 @@ def invoke_end(
     assert event_recorder.has_change_event_occurred(
         subarray_node_low.subarray_node,
         "longRunningCommandResult",
-        (unique_id[0], str(ResultCode.OK.value)),
+        (
+            unique_id[0],
+            json.dumps((int(ResultCode.OK), "Command Completed")),
+        ),
         lookahead=10,
     )
     assert event_recorder.has_change_event_occurred(
@@ -208,7 +215,10 @@ def release_resources_to_subarray(
     assert event_recorder.has_change_event_occurred(
         central_node_low.central_node,
         "longRunningCommandResult",
-        (unique_id[0], str(ResultCode.OK.value)),
+        (
+            unique_id[0],
+            json.dumps((int(ResultCode.OK), "Command Completed")),
+        ),
         lookahead=10,
     )
 
