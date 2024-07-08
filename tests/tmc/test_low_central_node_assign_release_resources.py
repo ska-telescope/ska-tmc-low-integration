@@ -38,6 +38,7 @@ class TestLowCentralNodeAssignResources:
     simulated master devices (CSP, SDP, MCCS) and the overall
       telescope state."""
 
+    @pytest.mark.new
     @pytest.mark.SKA_low
     def test_low_centralnode_assign_resources(
         self,
@@ -215,17 +216,18 @@ class TestLowCentralNodeAssignResources:
                 json.dumps((int(ResultCode.OK), "Command Completed")),
             ),
         )
-        # update this
-        # assert_that(event_tracer).described_as(
-        #     "FAILED ASSUMPTION AFTER ASSIGN RESOURCES: "
-        #     "Subarray Node device"
-        #     f"({central_node_low.subarray_node.dev_name()}) "
-        #     "is expected to have assignedResources input json",
-        # ).within_timeout(TIMEOUT).has_change_event_occurred(
-        #     central_node_low.subarray_node,
-        #     "assignedResources",
-        #     json.dumps(assigned_resources_json,).replace("\"", "\'"),
-        # )
+
+        assert_that(event_tracer).described_as(
+            "FAILED ASSUMPTION AFTER ASSIGN RESOURCES: "
+            "Subarray Node device"
+            f"({central_node_low.subarray_node.dev_name()}) "
+            "is expected to have assignedResources input json",
+        ).within_timeout(TIMEOUT).has_change_event_occurred(
+            central_node_low.subarray_node,
+            "assignedResources",
+            (str(assigned_resources_json),),
+        )
+
         # Execute release command and verify command completed successfully
 
         _, unique_id = central_node_low.perform_action(
@@ -291,16 +293,16 @@ class TestLowCentralNodeAssignResources:
         mccs_subarray_sim.SetDirectassignedResources(
             assigned_resources_json_empty
         )
-        # assert_that(event_tracer).described_as(
-        #     "FAILED ASSUMPTION AFTER RELEASE_RESOURCES COMMAND: "
-        #     "Subarray Node device"
-        #     f"({central_node_low.subarray_node.dev_name()}) "
-        #     "is expected assignedResources to be empty",
-        # ).within_timeout(TIMEOUT).has_change_event_occurred(
-        #     central_node_low.subarray_node,
-        #     "assignedResources",
-        #     assigned_resources_json_empty,
-        # )
+        assert_that(event_tracer).described_as(
+            "FAILED ASSUMPTION AFTER RELEASE_RESOURCES COMMAND: "
+            "Subarray Node device"
+            f"({central_node_low.subarray_node.dev_name()}) "
+            "is expected assignedResources to be empty",
+        ).within_timeout(TIMEOUT).has_change_event_occurred(
+            central_node_low.subarray_node,
+            "assignedResources",
+            (str(assigned_resources_json_empty),),
+        )
 
     @pytest.mark.SKA_low
     def test_low_centralnode_assign_resources_exception_propagation(
