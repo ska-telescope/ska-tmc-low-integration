@@ -322,7 +322,7 @@ def wait_for_attribute_update(
         unique_id, result = device.read_attribute(attribute_name).value
         if expected_id in unique_id:
             LOGGER.info("The attribute value is: %s, %s", unique_id, result)
-            return result == str(expected_result.value)
+            return json.loads(result)[0] == expected_result
         time.sleep(1)
         elapsed_time = time.time() - start_time
     return False
