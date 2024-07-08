@@ -25,9 +25,7 @@ def test_abort_in_resourcing(central_node_low):
 
 @given("TMC and MCCS subarray are busy assigning resources")
 def subarray_busy_assigning(
-    central_node_low,
-    event_recorder,
-    command_input_factory,
+    central_node_low, event_recorder, command_input_factory, subarray_node_low
 ):
     """Subarray busy Assigning"""
     # Turning the devices ON
@@ -65,7 +63,7 @@ def subarray_busy_assigning(
         ObsState.RESOURCING,
     )
     assert event_recorder.has_change_event_occurred(
-        central_node_low.mccs_subarray_leaf_node,
+        subarray_node_low.mccs_subarray_leaf_node,
         "obsState",
         ObsState.RESOURCING,
     )
