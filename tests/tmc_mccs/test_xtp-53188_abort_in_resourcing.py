@@ -50,7 +50,7 @@ def subarray_busy_assigning(
         "obsState",
     )
     event_recorder.subscribe_event(
-        central_node_low.mccs_subarray_leaf_node, "obsState"
+        subarray_node_low.mccs_subarray_leaf_node, "obsState"
     )
     assert event_recorder.has_change_event_occurred(
         central_node_low.subarray_node,
