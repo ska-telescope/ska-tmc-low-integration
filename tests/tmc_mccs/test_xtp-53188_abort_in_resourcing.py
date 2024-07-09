@@ -58,7 +58,7 @@ def subarray_busy_assigning(
         ObsState.RESOURCING,
     )
     assert event_recorder.has_change_event_occurred(
-        central_node_low.subarray_devices.get("mccs_subarray"),
+        subarray_node_low.subarray_devices.get("mccs_subarray"),
         "obsState",
         ObsState.RESOURCING,
     )
@@ -79,11 +79,11 @@ def subarray_busy_assigning(
 @then("the MCCS subarray should go into an ABORTING obsstate")
 def mccs_subarray_in_aborted_obs_state(subarray_node_low, event_recorder):
     """MCCS Subarray in ABORTED obsState."""
-    # assert event_recorder.has_change_event_occurred(
-    #     subarray_node_low.mccs_subarray_leaf_node,
-    #     "obsState",
-    #     ObsState.ABORTING,
-    # )
+    assert event_recorder.has_change_event_occurred(
+        subarray_node_low.mccs_subarray_leaf_node,
+        "obsState",
+        ObsState.ABORTING,
+    )
     assert event_recorder.has_change_event_occurred(
         subarray_node_low.subarray_devices.get("mccs_subarray"),
         "obsState",
@@ -91,9 +91,15 @@ def mccs_subarray_in_aborted_obs_state(subarray_node_low, event_recorder):
         lookahead=10,
     )
     assert event_recorder.has_change_event_occurred(
+        subarray_node_low.mccs_subarray_leaf_node,
+        "obsState",
+        ObsState.ABORTED,
+        lookahead=10,
+    )
+    assert event_recorder.has_change_event_occurred(
         subarray_node_low.subarray_node,
         "obsState",
-        ObsState.ABORTING,
+        ObsState.ABORTED,
         lookahead=10,
     )
 
@@ -101,16 +107,10 @@ def mccs_subarray_in_aborted_obs_state(subarray_node_low, event_recorder):
 @then("the TMC subarray obsState is transitioned to ABORTED")
 def subarray_in_aborted_obs_state(subarray_node_low, event_recorder):
     """Subarray Node in ABORTED obsState."""
-    # assert event_recorder.has_change_event_occurred(
-    #     subarray_node_low.mccs_subarray_leaf_node,
-    #     "obsState",
-    #     ObsState.ABORTED,
-    #     lookahead=10,
-    # )
     assert event_recorder.has_change_event_occurred(
         subarray_node_low.subarray_node,
         "obsState",
-        ObsState.ABORTED,
+        ObsState.ABORTING,
         lookahead=10,
     )
     assert event_recorder.has_change_event_occurred(
