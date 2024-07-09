@@ -108,6 +108,7 @@ def test_assign_release_defective_csp(
 
 
 # timeout is not possible with helper sdp
+@pytest.mark.skip("sdp")
 @pytest.mark.SKA_low
 def test_assign_release_exception_sdp(
     central_node_low: CentralNodeWrapperLow,

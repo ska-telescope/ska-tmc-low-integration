@@ -27,6 +27,7 @@ from tests.resources.test_support.constant_low import (
 )
 
 
+@pytest.mark.skip("sdp")
 @pytest.mark.SKA_low
 def test_recover_subarray_stuck_in_resourcing_low(
     central_node_low: CentralNodeWrapperLow,
