@@ -140,6 +140,9 @@ def invalid_command_rejection(invalid_json):
             "Validation 'Low TMC configure 4.0' Missing key: 'mccs'"
             in pytest.command_result[1][0]
         )
+    # TODO: Enable this once CDM validations are accomodated
+    # Tel Model validations doesn't raise error for missing
+    # "tmc" key since its optional in schema generation
     # elif invalid_json == "tmc_key_missing":
     #     assert (
     #         "Malformed input string. Missing key: 'tmc'"
