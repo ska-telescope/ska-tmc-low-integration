@@ -2,6 +2,7 @@
 import json
 
 import pytest
+from ska_control_model import ObsState
 from ska_tango_testing.mock.placeholders import Anything
 from tango import DevState
 
@@ -83,6 +84,7 @@ class TestAssignCommandNotAllowedPropagation:
     def test_assign_command_not_allowed_propagation_sdp_ln_low(
         self,
         central_node_low,
+        subarray_node_low,
         event_recorder,
         command_input_factory,
         simulator_factory,
@@ -103,6 +105,9 @@ class TestAssignCommandNotAllowedPropagation:
         event_recorder.subscribe_event(
             central_node_low.central_node, "longRunningCommandResult"
         )
+        event_recorder.subscribe_event(
+            subarray_node_low.sdp_subarray_leaf_node, "sdpSubarrayObsState"
+        )
         event_recorder.subscribe_event(sdp_subarray_sim, "obsState")
         # Preparing input arguments
         assign_input_json = prepare_json_args_for_centralnode_commands(
@@ -121,6 +126,11 @@ class TestAssignCommandNotAllowedPropagation:
         assign_json["sdp"]["resources"]["receive_nodes"] = 0
         _, unique_id = central_node_low.perform_action(
             "AssignResources", json.dumps(assign_json)
+        )
+        assert event_recorder.has_change_event_occurred(
+            subarray_node_low.sdp_subarray_leaf_node,
+            "sdpSubarrayObsState",
+            ObsState.EMPTY,
         )
         ERROR_MESSAGE = (
             "Exception occurred on the following devices: "
