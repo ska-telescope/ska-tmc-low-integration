@@ -95,7 +95,6 @@ k8s-test:
   variables:
     KUBE_NAMESPACE: 'ci-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA'
     SERVICE_ACCOUNT: "ci-svc-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA"
-    CI_KEEP_NAMESPACE: true
   before_script:
     - make cred SERVICE_ACCOUNT=$SERVICE_ACCOUNT
     - '[ -f .make/k8s.mk ] || (echo "File k8s.mk not included in Makefile; exit 1")'
@@ -115,7 +114,6 @@ k8s-test-tmc-with-csp:
     MARK: 'tmc_csp'
     COUNT: 1
     CSP_SIMULATION_ENABLED: 'false'
-    CI_KEEP_NAMESPACE: true
   environment:
     name: test/$CI_COMMIT_REF_SLUG
     on_stop: stop-k8s-test-tmc-with-csp
@@ -136,7 +134,6 @@ k8s-test-tmc-with-sdp:
     KUBE_NAMESPACE_SDP: 'ci-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-sdp'
     SERVICE_ACCOUNT: "ci-svc-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-tmc-sdp"
     SDP_SIMULATION_ENABLED: 'false'
-    CI_KEEP_NAMESPACE: true
   script:
     - make cred SERVICE_ACCOUNT=$SERVICE_ACCOUNT
     - make cred KUBE_NAMESPACE=$KUBE_NAMESPACE_SDP
@@ -172,7 +169,6 @@ k8s-test-tmc-with-mccs:
     SERVICE_ACCOUNT: "ci-svc-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-mccs-low"
     MARK: 'tmc_mccs'
     MCCS_SIMULATION_ENABLED: 'false'
-    CI_KEEP_NAMESPACE: true
   before_script:
     - make cred SERVICE_ACCOUNT=$SERVICE_ACCOUNT
     - '[ -f .make/k8s.mk ] || (echo "File k8s.mk not included in Makefile; exit 1")'
