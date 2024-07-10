@@ -44,6 +44,12 @@ def subarray_is_in_configuring_obsstate(
     event_recorder.subscribe_event(
         subarray_node_low.subarray_devices.get("mccs_subarray"), "obsState"
     )
+    event_recorder.subscribe_event(
+        central_node_low.csp_subarray_leaf_node, "cspSubarrayObsState"
+    )
+    event_recorder.subscribe_event(
+        central_node_low.sdp_subarray_leaf_node, "sdpSubarrayObsState"
+    )
     assign_input_json = prepare_json_args_for_centralnode_commands(
         "assign_resources_low", command_input_factory
     )
@@ -56,13 +62,18 @@ def subarray_is_in_configuring_obsstate(
         configure_input_json=configure_input_json,
     )
     assert event_recorder.has_change_event_occurred(
-        subarray_node_low.mccs_subarray_leaf_node,
+        central_node_low.subarray_node,
         "obsState",
         ObsState.CONFIGURING,
     )
     assert event_recorder.has_change_event_occurred(
-        subarray_node_low.subarray_node,
-        "obsState",
+        central_node_low.csp_subarray_leaf_node,
+        "cspSubarrayObsState",
+        ObsState.CONFIGURING,
+    )
+    assert event_recorder.has_change_event_occurred(
+        central_node_low.sdp_subarray_leaf_node,
+        "sdpSubarrayObsState",
         ObsState.CONFIGURING,
     )
     assert event_recorder.has_change_event_occurred(
