@@ -49,6 +49,12 @@ def subarray_is_in_scanning_obsstate(
         "scan_low", command_input_factory
     )
     event_recorder.subscribe_event(
+        subarray_node_low.csp_subarray_leaf_node, "cspSubarrayObsState"
+    )
+    event_recorder.subscribe_event(
+        subarray_node_low.sdp_subarray_leaf_node, "sdpSubarrayObsState"
+    )
+    event_recorder.subscribe_event(
         subarray_node_low.subarray_devices.get("mccs_subarray"), "obsState"
     )
     event_recorder.subscribe_event(central_node_low.subarray_node, "obsState")
