@@ -59,17 +59,17 @@ def subarray_is_in_scanning_obsstate(
         scan_input_json=scan_json,
     )
     assert event_recorder.has_change_event_occurred(
-        central_node_low.subarray_node,
+        subarray_node_low.subarray_node,
         "obsState",
         ObsState.SCANNING,
     )
     assert event_recorder.has_change_event_occurred(
-        central_node_low.csp_subarray_leaf_node,
+        subarray_node_low.csp_subarray_leaf_node,
         "cspSubarrayObsState",
         ObsState.SCANNING,
     )
     assert event_recorder.has_change_event_occurred(
-        central_node_low.sdp_subarray_leaf_node,
+        subarray_node_low.sdp_subarray_leaf_node,
         "sdpSubarrayObsState",
         ObsState.SCANNING,
     )
