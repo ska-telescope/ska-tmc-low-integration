@@ -758,6 +758,7 @@ ska-low-mccs:
           ref_longitude: 1
           sps_station_trl: low-mccs/spsstation/ci-1
           station_calibrator_trl: low-mccs/calibrator/ci-1
+          calibration_solver_trl: low-mccs/solver/ci-1
           station_id: 1
       station-ci-2:
         low-mccs/station/ci-2:
@@ -834,6 +835,7 @@ ska-low-mccs:
           ref_longitude: 0
           sps_station_trl: low-mccs/spsstation/ci-2
           station_calibrator_trl: low-mccs/calibrator/ci-2
+          calibration_solver_trl: low-mccs/solver/ci-2
           station_id: 2
     subarraybeams:
       subarraybeam-01:
