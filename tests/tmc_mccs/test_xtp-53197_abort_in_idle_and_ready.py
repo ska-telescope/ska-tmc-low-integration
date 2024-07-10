@@ -1,14 +1,13 @@
 """Test TMC-MCCS Abort functionality in IDLE-READY obstate"""
 import pytest
 from pytest_bdd import given, parsers, scenario, then
-from ska_control_model import ObsState
+from ska_control_model import ObsState, ResultCode
 from tango import DevState
 
 from tests.resources.test_harness.helpers import (
     prepare_json_args_for_centralnode_commands,
     prepare_json_args_for_commands,
 )
-from tests.resources.test_support.common_utils.result_code import ResultCode
 
 
 @pytest.mark.tmc_mccs
@@ -132,4 +131,9 @@ def tmc_subarray_is_in_aborted_obsstate(subarray_node_low, event_recorder):
         subarray_node_low.subarray_node,
         "obsState",
         ObsState.ABORTED,
+    )
+    pytest.assertion_data = event_recorder.has_change_event_occurred(
+        subarray_node_low.subarraynode,
+        attribute_name="longRunningCommandResult",
+        attribute_value=(pytest.unique_id[0], ResultCode.OK),
     )

@@ -2,5 +2,5 @@
 Scenario: Abort assigning using TMC
     Given TMC and MCCS subarray are busy assigning resources
     When I command it to Abort
-    Then the MCCS subarray should go into an ABORTING obsstate
+    Then the MCCS subarray should go into an ABORTED obsstate
     And the TMC subarray obsState is transitioned to ABORTED

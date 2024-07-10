@@ -68,6 +68,11 @@ def subarray_is_in_scanning_obsstate(
         "obsState",
         ObsState.SCANNING,
     )
+    assert event_recorder.has_change_event_occurred(
+        subarray_node_low.mccs_subarray_leaf_node,
+        "obsState",
+        ObsState.SCANNING,
+    )
 
 
 # @when -> ../conftest.py
