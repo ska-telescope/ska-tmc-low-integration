@@ -132,7 +132,6 @@ class TestConfigureTimeout:
             "(ResultCode.FAILED,exception)",
         ).is_length(1)
 
-    @pytest.mark.skip("helper sdp timeout not possible")
     @pytest.mark.SKA_low
     def test_configure_timeout_sdp_ln(
         self,
@@ -140,6 +139,7 @@ class TestConfigureTimeout:
         subarray_node_low: SubarrayNodeWrapperLow,
         event_tracer: TangoEventTracer,
         command_input_factory: JsonFactory,
+        simulator_factory: SimulatorFactory,
     ):
         """Test timeout on SDP Leaf Nodes for Configure command by inducing
         fault into the system."""
@@ -156,6 +156,9 @@ class TestConfigureTimeout:
         )
         event_tracer.subscribe_event(
             central_node_low.central_node, "telescopeState"
+        )
+        sdp_sim = simulator_factory.get_or_create_simulator_device(
+            SimulatorDeviceType.LOW_SDP_DEVICE
         )
         # Preparing input files
         assign_input_str = prepare_json_args_for_commands(
@@ -187,18 +190,19 @@ class TestConfigureTimeout:
             "telescopeState",
             DevState.ON,
         )
+
         _, unique_id = central_node_low.store_resources(assign_input_str)
         assert_that(event_tracer).described_as(
             "FAILED ASSUMPTION AFTER ASSIGNRESOURCES COMMAND: "
             "Subarray Node device"
-            f"({subarray_node_low.subarray_node.dev_name()}) "
+            f"({central_node_low.subarray_node.dev_name()}) "
             "is expected to be in IDLE obstate",
         ).within_timeout(TIMEOUT).has_change_event_occurred(
-            subarray_node_low.subarray_node,
+            central_node_low.subarray_node,
             "obsState",
             ObsState.IDLE,
         )
-
+        sdp_sim.SetDelayInfo(json.dumps({"Configure": 50}))
         _, unique_id = subarray_node_low.execute_transition(
             "Configure", configure_input_str
         )
@@ -229,6 +233,7 @@ class TestConfigureTimeout:
             "is expected have longRunningCommandResult"
             "(ResultCode.FAILED,exception)",
         ).is_length(1)
+        sdp_sim.ResetDelayInfo()
 
     @pytest.mark.SKA_low
     def test_configure_timeout_mccs_ln(

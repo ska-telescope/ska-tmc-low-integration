@@ -12,7 +12,6 @@ from tests.resources.test_harness.central_node_low import CentralNodeWrapperLow
 from tests.resources.test_harness.constant import (
     COMMAND_FAILED_WITH_EXCEPTION_OBSSTATE_EMPTY,
     TIMEOUT,
-    low_sdp_subarray_leaf_node,
 )
 from tests.resources.test_harness.helpers import (
     get_device_simulators,
@@ -107,13 +106,12 @@ def test_assign_release_defective_csp(
     csp_sim.SetDefective(json.dumps({"enabled": False}))
 
 
-# timeout is not possible with helper sdp
-@pytest.mark.skip("sdp")
 @pytest.mark.SKA_low
-def test_assign_release_exception_sdp(
+def test_assign_release_timeout_sdp(
     central_node_low: CentralNodeWrapperLow,
     event_tracer: TangoEventTracer,
     command_input_factory: JsonFactory,
+    simulator_factory: SimulatorFactory,
 ):
     """Verify defective exception raised when csp set to defective."""
     event_tracer.subscribe_event(
@@ -122,7 +120,8 @@ def test_assign_release_exception_sdp(
     assign_input_json = prepare_json_args_for_centralnode_commands(
         "assign_resources_low", command_input_factory
     )
-
+    _, sdp_sim = get_device_simulators(simulator_factory)
+    sdp_sim.SetDelayInfo(json.dumps({"AssignResources": 50}))
     event_tracer.subscribe_event(
         central_node_low.central_node, "longRunningCommandResult"
     )
@@ -157,18 +156,14 @@ def test_assign_release_exception_sdp(
         ObsState.EMPTY,
     )
 
-    assign = json.loads(assign_input_json)
-    assign["sdp"]["execution_block"]["eb_id"] = "eb-xxx-218638916"
-    assign_input_json = json.dumps(assign)
     result, unique_id = central_node_low.perform_action(
         "AssignResources", assign_input_json
     )
     assert unique_id[0].endswith("AssignResources")
     assert result[0] == ResultCode.QUEUED
     exception_message = (
-        "Exception occurred on the following devices: "
-        f"{low_sdp_subarray_leaf_node}:"
-        " Invalid eb_id in the AssignResources input json"
+        f"{central_node_low.subarray_node.dev_name()}:"
+        " Timeout has occurred, command failed"
     )
     result = event_tracer.query_events(
         lambda e: e.has_device(central_node_low.central_node)
@@ -185,6 +180,7 @@ def test_assign_release_exception_sdp(
         "is expected have longRunningCommandResult"
         "(ResultCode.FAILED,exception)",
     ).is_length(1)
+    sdp_sim.ResetDelayInfo()
 
 
 @pytest.mark.SKA_low

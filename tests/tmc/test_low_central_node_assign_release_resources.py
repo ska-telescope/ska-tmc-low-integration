@@ -38,7 +38,6 @@ class TestLowCentralNodeAssignResources:
     simulated master devices (CSP, SDP, MCCS) and the overall
       telescope state."""
 
-    @pytest.mark.new
     @pytest.mark.SKA_low
     def test_low_centralnode_assign_resources(
         self,

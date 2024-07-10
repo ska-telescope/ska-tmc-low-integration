@@ -9,7 +9,6 @@ from ska_tango_testing.integration import TangoEventTracer, log_events
 from tango import DevState
 
 from tests.resources.test_harness.central_node_low import CentralNodeWrapperLow
-from tests.resources.test_harness.constant import low_sdp_subarray_leaf_node
 from tests.resources.test_harness.helpers import (
     get_device_simulators,
     prepare_json_args_for_centralnode_commands,
@@ -27,7 +26,7 @@ from tests.resources.test_support.constant_low import (
 )
 
 
-@pytest.mark.skip("sdp")
+@pytest.mark.skip("latest common")
 @pytest.mark.SKA_low
 def test_recover_subarray_stuck_in_resourcing_low(
     central_node_low: CentralNodeWrapperLow,
@@ -80,17 +79,11 @@ def test_recover_subarray_stuck_in_resourcing_low(
     mccs_sim = simulator_factory.get_or_create_simulator_device(
         SimulatorDeviceType.MCCS_SUBARRAY_DEVICE
     )
-    assign = json.loads(assign_input_json)
-    assign["sdp"]["execution_block"]["eb_id"] = "eb-xxx-218638916"
-    assign_input_json = json.dumps(assign)
+    sdp_sim.SetDelayInfo(json.dumps({"AssignResources": 60}))
     _, unique_id = central_node_low.perform_action(
         "AssignResources", assign_input_json
     )
-    exception_message = (
-        "Exception occurred on the following devices: "
-        f"{low_sdp_subarray_leaf_node}:"
-        " Invalid eb_id in the AssignResources input json"
-    )
+    exception_message = "Timeout has occurred, command failed"
     result = event_tracer.query_events(
         lambda e: e.has_device(central_node_low.central_node)
         and e.has_attribute("longRunningCommandResult")
