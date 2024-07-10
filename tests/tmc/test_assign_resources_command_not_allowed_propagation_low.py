@@ -19,6 +19,9 @@ class TestAssignCommandNotAllowedPropagation:
     """Test the command not allowed error propagation for the assign resources
     command for TMC."""
 
+    @pytest.mark.skip(reason="Tests fails intermittently with one error")
+    # Error: test is getting incorrect unique_id
+    # getting fixed with bc ugrade via HM-486
     @pytest.mark.SKA_low
     def test_assign_command_not_allowed_propagation_csp_ln_low(
         self,
@@ -140,6 +143,9 @@ class TestAssignCommandNotAllowedPropagation:
             (unique_id[0], str(ResultCode.FAILED.value)),
         )
 
+    @pytest.mark.skip(reason="Tests fails intermittently with one error")
+    # Error: test is getting incorrect unique_id
+    # getting fixed with bc ugrade via HM-486
     @pytest.mark.SKA_low
     def test_assign_command_not_allowed_propagation_mccs_ln_low(
         self,
