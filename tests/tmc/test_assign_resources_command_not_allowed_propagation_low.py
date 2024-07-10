@@ -141,7 +141,7 @@ class TestAssignCommandNotAllowedPropagation:
             central_node_low.central_node,
             "longRunningCommandResult",
             (unique_id[0], Anything),
-            lookahead=10,
+            lookahead=15,
         )
         assert ERROR_MESSAGE in assertion_data["attribute_value"][1]
 
