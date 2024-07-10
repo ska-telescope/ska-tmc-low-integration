@@ -12,6 +12,7 @@ from tests.resources.test_harness.constant import (
     mccs_master_leaf_node,
 )
 from tests.resources.test_harness.helpers import (
+    check_for_device_event,
     prepare_json_args_for_centralnode_commands,
 )
 from tests.resources.test_harness.utils.enums import SimulatorDeviceType
@@ -132,18 +133,19 @@ class TestAssignCommandNotAllowedPropagation:
             "sdpSubarrayObsState",
             ObsState.EMPTY,
         )
-        ERROR_MESSAGE = (
+        exception_message = (
             "Exception occurred on the following devices: "
             + f"{low_sdp_subarray_leaf_node}: "
             + "Missing receive nodes in the AssignResources input json\n"
         )
-        assertion_data = event_recorder.has_change_event_occurred(
+
+        assert check_for_device_event(
             central_node_low.central_node,
             "longRunningCommandResult",
-            (unique_id[0], Anything),
-            lookahead=15,
+            exception_message,
+            event_recorder,
+            command_name="AssignResources",
         )
-        assert ERROR_MESSAGE in assertion_data["attribute_value"][1]
 
         event_recorder.has_change_event_occurred(
             central_node_low.central_node,
