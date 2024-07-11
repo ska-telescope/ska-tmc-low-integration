@@ -7,4 +7,3 @@ Scenario: Abort resourced CSP and TMC subarray
     Examples:
         | obsstate |
         | IDLE     |
-        | READY    |

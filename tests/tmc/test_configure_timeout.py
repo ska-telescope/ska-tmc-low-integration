@@ -10,10 +10,8 @@ from tests.resources.test_harness.constant import (
     low_sdp_subarray_leaf_node,
     mccs_subarray_leaf_node,
 )
+from tests.resources.test_harness.helpers import prepare_json_args_for_commands
 from tests.resources.test_harness.utils.enums import SimulatorDeviceType
-from tests.resources.test_support.common_utils.tmc_helpers import (
-    prepare_json_args_for_commands,
-)
 
 
 class TestConfigureTimeout:

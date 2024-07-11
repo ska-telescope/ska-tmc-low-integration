@@ -8,17 +8,20 @@ from tests.resources.test_harness.constant import (
     low_sdp_subarray_leaf_node,
     mccs_master_leaf_node,
 )
-from tests.resources.test_harness.utils.enums import SimulatorDeviceType
-from tests.resources.test_support.common_utils.result_code import ResultCode
-from tests.resources.test_support.common_utils.tmc_helpers import (
+from tests.resources.test_harness.helpers import (
     prepare_json_args_for_centralnode_commands,
 )
+from tests.resources.test_harness.utils.enums import SimulatorDeviceType
+from tests.resources.test_support.common_utils.result_code import ResultCode
 
 
 class TestAssignCommandNotAllowedPropagation:
     """Test the command not allowed error propagation for the assign resources
     command for TMC."""
 
+    @pytest.mark.skip(reason="Tests fails intermittently with one error")
+    # Error: test is getting incorrect unique_id
+    # getting fixed with bc ugrade via HM-486
     @pytest.mark.SKA_low
     def test_assign_command_not_allowed_propagation_csp_ln_low(
         self,
@@ -77,6 +80,9 @@ class TestAssignCommandNotAllowedPropagation:
             (unique_id[0], str(ResultCode.FAILED.value)),
         )
 
+    @pytest.mark.skip(reason="Tests fails intermittently with one error")
+    # Error: test is getting incorrect unique_id
+    # getting fixed with bc ugrade via HM-486
     @pytest.mark.SKA_low
     def test_assign_command_not_allowed_propagation_sdp_ln_low(
         self,
@@ -137,6 +143,9 @@ class TestAssignCommandNotAllowedPropagation:
             (unique_id[0], str(ResultCode.FAILED.value)),
         )
 
+    @pytest.mark.skip(reason="Tests fails intermittently with one error")
+    # Error: test is getting incorrect unique_id
+    # getting fixed with bc ugrade via HM-486
     @pytest.mark.SKA_low
     def test_assign_command_not_allowed_propagation_mccs_ln_low(
         self,

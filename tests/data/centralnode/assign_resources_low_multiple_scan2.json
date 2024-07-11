@@ -1,5 +1,5 @@
 {
-    "interface": "https://schema.skao.int/ska-low-tmc-assignresources/3.2",
+    "interface": "https://schema.skao.int/ska-low-tmc-assignresources/4.0",
     "transaction_id": "txn-....-00001",
     "subarray_id": 1,
     "mccs": {
@@ -29,9 +29,23 @@
                 "aperture_id": "AP003.01"
             }
           ],
-          "number_of_channels": 32
+          "number_of_channels": 8
         }
       ]
+    },
+    "csp": {
+      "pss": {
+        "pss_beam_ids": [
+          1,
+          2,
+          3
+        ]
+      },
+      "pst": {
+        "pst_beam_ids": [
+          1
+        ]
+      }
     },
     "sdp": {
       "interface": "https://schema.skao.int/ska-sdp-assignres/0.4",
