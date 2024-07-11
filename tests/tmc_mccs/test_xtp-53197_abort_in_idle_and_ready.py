@@ -134,5 +134,5 @@ def tmc_subarray_is_in_aborted_obsstate(subarray_node_low, event_recorder):
         subarray_node_low.subarray_node,
         "obsState",
         ObsState.ABORTED,
-        looakead=20,
+        lookahead=20,
     )
