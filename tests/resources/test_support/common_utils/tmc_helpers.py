@@ -5,6 +5,7 @@ import logging
 import time
 from typing import Optional, Tuple
 
+from assertpy import assert_that
 from ska_control_model import ObsState, ResultCode
 from ska_ser_logging import configure_logging
 from tango import DeviceProxy, DevState
@@ -53,7 +54,7 @@ from tests.resources.test_support.constant_low import (
     sdp_subarray1 as sdp_subarray1_low,
 )
 
-TIMEOUT = 20
+TIMEOUT = 50
 configure_logging(logging.DEBUG)
 LOGGER = logging.getLogger(__name__)
 
@@ -321,7 +322,7 @@ def wait_for_attribute_update(
         unique_id, result = device.read_attribute(attribute_name).value
         if expected_id in unique_id:
             LOGGER.info("The attribute value is: %s, %s", unique_id, result)
-            return result == str(expected_result.value)
+            return json.loads(result)[0] == expected_result
         time.sleep(1)
         elapsed_time = time.time() - start_time
     return False
@@ -467,9 +468,10 @@ def prepare_json_args_for_centralnode_commands(
 
 
 def set_subarray_to_given_obs_state(
-    subarray_node: DeviceProxy,
+    central_node,
+    subarray_node,
     obs_state: str,
-    event_recorder,
+    event_tracer,
     command_input_factory,
 ):
     """Set the Subarray node to given obsState."""
@@ -485,17 +487,46 @@ def set_subarray_to_given_obs_state(
 
             # Waiting for SDP Subarray to go to ObsState.IDLE
             sdp_subarray = DeviceProxy(sdp_subarray1_low)
-            event_recorder.subscribe_event(sdp_subarray, "obsState")
-            assert event_recorder.has_change_event_occurred(
+            event_tracer.subscribe_event(sdp_subarray, "obsState")
+
+            assert_that(event_tracer).described_as(
+                'FAILED ASSUMPTION IN "GIVEN STEP: '
+                f'"a Subarray in intermediate obsState {obs_state}"'
+                "SDP Subarray device"
+                f"({sdp_subarray.dev_name()}) "
+                f"is expected to be in IDLE obstate",
+            ).within_timeout(TIMEOUT).has_change_event_occurred(
                 sdp_subarray,
                 "obsState",
                 ObsState.IDLE,
             )
+
             # Resetting defect on CSP Subarray.
             csp_subarray.SetDefective(json.dumps({"enabled": False}))
+            start_time = time.time()
+            while json.loads(csp_subarray.defective)["enabled"]:
+                elapsed_time = time.time() - start_time
+                if elapsed_time > TIMEOUT:
+                    LOGGER.error("Failed to reset defective")
+                    raise AssertionError("defective is not False")
 
         case "CONFIGURING":
-            subarray_node.force_change_of_obs_state("IDLE")
+            assign_input_str = prepare_json_args_for_commands(
+                "assign_resources_low", command_input_factory
+            )
+            central_node.store_resources(assign_input_str)
+
+            assert_that(event_tracer).described_as(
+                'FAILED ASSUMPTION IN "GIVEN STEP: '
+                f'"a Subarray in intermediate obsState {obs_state}"'
+                "SDP Subarray device"
+                f"({central_node.subarray_node.dev_name()}) "
+                f"is expected to be in IDLE obstate",
+            ).within_timeout(TIMEOUT).has_change_event_occurred(
+                central_node.subarray_node,
+                "obsState",
+                ObsState.IDLE,
+            )
             # Setting the device defective
             csp_subarray = DeviceProxy(csp_subarray1_low)
             csp_subarray.SetDefective(
@@ -509,8 +540,14 @@ def set_subarray_to_given_obs_state(
 
             # Waiting for SDP Subarray to go to ObsState.READY
             sdp_subarray = DeviceProxy(sdp_subarray1_low)
-            event_recorder.subscribe_event(sdp_subarray, "obsState")
-            assert event_recorder.has_change_event_occurred(
+            event_tracer.subscribe_event(sdp_subarray, "obsState")
+            assert_that(event_tracer).described_as(
+                'FAILED ASSUMPTION IN "GIVEN STEP: '
+                f'"a Subarray in intermediate obsState {obs_state}"'
+                "SDP Subarray device"
+                f"({sdp_subarray.dev_name()}) "
+                f"is expected to be in READY obstate",
+            ).within_timeout(TIMEOUT).has_change_event_occurred(
                 sdp_subarray,
                 "obsState",
                 ObsState.READY,

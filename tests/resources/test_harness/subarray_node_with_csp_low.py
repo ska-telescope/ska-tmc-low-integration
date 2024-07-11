@@ -43,7 +43,7 @@ class SubarrayNodeCspWrapperLow(SubarrayNodeWrapperLow):
         """Reset Simulator devices to it's original state"""
         for sim_device_fqdn in [self.sdp_subarray1]:
             device = DeviceProxy(sim_device_fqdn)
-            device.ResetDelay()
+            device.ResetDelayInfo()
             device.SetDirectHealthState(HealthState.UNKNOWN)
             device.SetDefective(json.dumps({"enabled": False}))
 

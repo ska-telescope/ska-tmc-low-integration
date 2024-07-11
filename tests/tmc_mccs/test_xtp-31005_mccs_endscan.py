@@ -1,4 +1,6 @@
 """Test module for TMC-MCCS EndScan functionality"""
+import json
+
 import pytest
 from pytest_bdd import given, parsers, scenario, then, when
 from ska_control_model import ObsState
@@ -11,6 +13,7 @@ from tests.resources.test_support.common_utils.tmc_helpers import (
 )
 
 
+@pytest.mark.skip(reason="MCCS v0.14.0 would solve the start_time key error")
 @pytest.mark.tmc_mccs
 @scenario(
     "../features/tmc_mccs/xtp-31005_endscan_mccs.feature",
@@ -83,7 +86,10 @@ def subarray_in_scanning_obsstate(
     event_recorder.has_change_event_occurred(
         central_node_low.central_node,
         "longRunningCommandResult",
-        (unique_id[0], str(ResultCode.OK.value)),
+        (
+            unique_id[0],
+            json.dumps((int(ResultCode.OK), "Command Completed")),
+        ),
     )
 
     input_str = prepare_json_args_for_commands(
@@ -97,7 +103,7 @@ def subarray_in_scanning_obsstate(
     event_recorder.has_change_event_occurred(
         subarray_node_low.subarray_node,
         "longRunningCommandResult",
-        (unique_id[0], str(ResultCode.OK.value)),
+        (unique_id[0], json.dumps((int(ResultCode.OK), "Command Completed"))),
     )
 
     input_str = prepare_json_args_for_commands(

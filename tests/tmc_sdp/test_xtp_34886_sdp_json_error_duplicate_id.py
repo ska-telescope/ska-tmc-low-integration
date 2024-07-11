@@ -1,6 +1,8 @@
 """Test module for TMC-SDP Json error propagation functionality """
 
 
+import json
+
 import pytest
 from pytest_bdd import given, parsers, scenario, then, when
 from ska_control_model import ObsState, ResultCode
@@ -143,7 +145,10 @@ def check_tmc_sdp_subarray_idle(
     assert event_recorder.has_change_event_occurred(
         central_node_low.central_node,
         "longRunningCommandResult",
-        (unique_id[0], str(ResultCode.OK.value)),
+        (
+            unique_id[0],
+            json.dumps((int(ResultCode.OK), "Command Completed")),
+        ),
     )
 
 
@@ -295,4 +300,7 @@ def check_central_node_exception_propagation(
         attribute_name="longRunningCommandResult",
         attribute_value=(pytest.unique_id[0], Anything),
     )
-    assert exception_message in assertion_data["attribute_value"][1]
+    assert (
+        exception_message
+        in json.loads(assertion_data["attribute_value"][1])[1]
+    )

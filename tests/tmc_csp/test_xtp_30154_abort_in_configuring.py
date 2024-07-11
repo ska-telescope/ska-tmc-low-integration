@@ -1,5 +1,7 @@
 """Module for TMC-CSP Abort command tests"""
 
+import json
+
 import pytest
 from pytest_bdd import given, scenario, then, when
 from ska_control_model import ObsState
@@ -65,7 +67,7 @@ def subarray_busy_configuring(
     event_recorder.has_change_event_occurred(
         central_node_low.central_node,
         "longRunningCommandResult",
-        (unique_id[0], str(ResultCode.OK.value)),
+        (unique_id[0], json.dumps((int(ResultCode.OK), "Command Completed"))),
     )
 
     configure_input_json = prepare_json_args_for_commands(

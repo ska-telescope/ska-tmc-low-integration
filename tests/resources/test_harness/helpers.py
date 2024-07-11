@@ -234,7 +234,7 @@ def get_command_call_info(device: Any, command_name: str):
 
 
 def set_subarray_to_given_obs_state(
-    subarray_node: DeviceProxy,
+    subarray_node,
     obs_state: str,
     event_recorder,
     command_input_factory,
@@ -346,7 +346,10 @@ def check_for_device_event(
                 assertion_data["attribute_value"][0] == unique_id
             )
         if is_command_event:
-            if event_data in assertion_data["attribute_value"][1]:
+            if (
+                event_data
+                in json.loads(assertion_data["attribute_value"][1])[1]
+            ):
                 event_found = True
                 return event_found
 
