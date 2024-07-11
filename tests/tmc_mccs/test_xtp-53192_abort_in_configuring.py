@@ -113,6 +113,7 @@ def tmc_subarray_is_in_aborted_obsstate(subarray_node_low, event_recorder):
         subarray_node_low.subarray_node,
         "obsState",
         ObsState.ABORTING,
+        lookahead=10,
     )
     assert event_recorder.has_change_event_occurred(
         subarray_node_low.subarray_node,

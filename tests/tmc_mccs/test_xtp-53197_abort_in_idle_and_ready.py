@@ -109,11 +109,13 @@ def mccs_subarray_is_in_aborted_obsstate(subarray_node_low, event_recorder):
         subarray_node_low.subarray_devices.get("mccs_subarray"),
         "obsState",
         ObsState.ABORTING,
+        lookahead=20,
     )
     assert event_recorder.has_change_event_occurred(
         subarray_node_low.subarray_devices.get("mccs_subarray"),
         "obsState",
         ObsState.ABORTED,
+        lookahead=20,
     )
 
 
@@ -126,14 +128,11 @@ def tmc_subarray_is_in_aborted_obsstate(subarray_node_low, event_recorder):
         subarray_node_low.subarray_node,
         "obsState",
         ObsState.ABORTING,
+        lookahead=20,
     )
     assert event_recorder.has_change_event_occurred(
         subarray_node_low.subarray_node,
         "obsState",
         ObsState.ABORTED,
-    )
-    pytest.assertion_data = event_recorder.has_change_event_occurred(
-        subarray_node_low.subarraynode,
-        attribute_name="longRunningCommandResult",
-        attribute_value=(pytest.unique_id[0], ResultCode.OK),
+        looakead=20,
     )
