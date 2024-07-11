@@ -1,4 +1,4 @@
-@XTP-28864 
+@XTP-28864
 Scenario: TMC validates Abort Command
     Given a Subarray in <obs_state> obsState
     When I Abort it
@@ -10,7 +10,7 @@ Scenario: TMC validates Abort Command
     | READY       |
     | SCANNING    |
 
-@XTP-29003 
+@XTP-29003
 Scenario: TMC validates Abort Command in intermediate obsState
     Given a Subarray in intermediate obsState <obs_state>
     When I Abort it
@@ -21,7 +21,7 @@ Scenario: TMC validates Abort Command in intermediate obsState
     | RESOURCING        |
     | CONFIGURING       |
 
-@XTP-28865 
+@XTP-28865
 Scenario: TMC executes Abort Command in EMPTY obsState.
     Given a Subarray in EMPTY obsState
     When I Abort it

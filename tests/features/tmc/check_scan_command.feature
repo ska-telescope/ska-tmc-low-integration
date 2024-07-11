@@ -1,4 +1,4 @@
-@XTP-28568 
+@XTP-28568
 Scenario: Successful Execution of Scan Command on Low Telescope Subarray in TMC
     Given a TMC
     Given a subarray in READY obsState

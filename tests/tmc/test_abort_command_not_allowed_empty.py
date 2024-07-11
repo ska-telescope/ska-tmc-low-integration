@@ -16,12 +16,7 @@ from tango import DevFailed
 from tests.resources.test_harness.subarray_node_low import (
     SubarrayNodeWrapperLow,
 )
-from tests.resources.test_support.common_utils.telescope_controls import (
-    BaseTelescopeControl,
-)
 from tests.resources.test_support.constant_low import TIMEOUT
-
-telescope_control = BaseTelescopeControl()
 
 
 @pytest.mark.SKA_low
@@ -70,9 +65,9 @@ def invalid_command_rejection():
     Verifies that the TMC rejects a command with ResultCode.REJECTED,
     and checks for a specific error message in the command result.
     """
-    assert (
-        "Abort command not permitted in observation state 0"
-        in pytest.exception
+
+    assert "Abort command not permitted in observation state EMPTY" in str(
+        pytest.exception.value
     )
 
 

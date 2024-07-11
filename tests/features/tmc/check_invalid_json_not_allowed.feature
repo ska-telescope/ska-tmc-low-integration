@@ -13,7 +13,7 @@ Feature: Commands with invalid json input
             | missing_count_key             |
             | missing_receptor_id_key       |
 
-    @XTP-41255 
+    @XTP-41255
     Scenario:   Invalid json rejected by TMC Low for Configure command
         Given the TMC is On
         And the subarray is in IDLE obsState
