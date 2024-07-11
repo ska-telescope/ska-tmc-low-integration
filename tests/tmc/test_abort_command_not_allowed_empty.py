@@ -4,12 +4,13 @@ using pytest-bdd to verify the behavior of the Telescope Monitoring and
 Control (TMC) system when the Abort command is executed in an EMPTY
 observation state.
 """
-import json
+
 
 import pytest
 from assertpy import assert_that
 from pytest_bdd import given, scenario, then, when
-from ska_control_model import ObsState, ResultCode
+from ska_control_model import ObsState
+from ska_tango_base.faults import StateModelError
 from ska_tango_testing.integration import TangoEventTracer, log_events
 
 from tests.resources.test_harness.subarray_node_low import (
@@ -18,15 +19,11 @@ from tests.resources.test_harness.subarray_node_low import (
 from tests.resources.test_support.common_utils.telescope_controls import (
     BaseTelescopeControl,
 )
-from tests.resources.test_support.constant_low import (
-    DEVICE_OBS_STATE_EMPTY_INFO,
-    TIMEOUT,
-)
+from tests.resources.test_support.constant_low import TIMEOUT
 
 telescope_control = BaseTelescopeControl()
 
 
-@pytest.mark.skip(reason="it should raise not reject")
 @pytest.mark.SKA_low
 @scenario(
     "../features/tmc/check_abort_command.feature",
@@ -47,7 +44,7 @@ def given_tmc(
         subarray_node_low.subarray_node, "longRunningCommandResult"
     )
     subarray_node_low.move_to_on()
-
+    log_events({subarray_node_low.subarray_node: "obsState"})
     assert_that(event_tracer).described_as(
         'FAILED ASSUMPTION IN "GIVEN" STEP: '
         "Subarray Node device"
@@ -63,41 +60,37 @@ def given_tmc(
 @when("I Abort it")
 def invoke_abort_command(subarray_node_low: SubarrayNodeWrapperLow):
     """Send a Abort command to the subarray."""
-    pytest.unique_id, pytest.resultcode = subarray_node_low.execute_transition(
-        "Abort"
-    )
+    with pytest.raises(StateModelError) as pytest.exception:
+        subarray_node_low.execute_transition("Abort")
 
 
-@then("TMC should reject the command with ResultCode.REJECTED")
-def invalid_command_rejection(
-    subarray_node_low: SubarrayNodeWrapperLow, event_tracer: TangoEventTracer
-):
+@then("TMC raises exception")
+def invalid_command_rejection():
     """
     Verifies that the TMC rejects a command with ResultCode.REJECTED,
     and checks for a specific error message in the command result.
     """
-    log_events({subarray_node_low.subarray_node: ["longRunningCommandResult"]})
-    result = event_tracer.query_events(
-        lambda e: e.has_device(subarray_node_low.subarray_node)
-        and e.has_attribute("longRunningCommandResult")
-        and e.attribute_value[0] == pytest.unique_id
-        and json.loads(e.attribute_value[1])[0] == ResultCode.REJECTED
-        and "Abort is not permitted" in json.loads(e.attribute_value[1])[1],
-        timeout=TIMEOUT,
+    assert (
+        "Abort command not permitted in observation state 0"
+        in pytest.exception
     )
-    assert_that(result).described_as(
-        'FAILED ASSUMPTION IN "THEN" STEP: '
-        "Subarray Node device"
-        f"({subarray_node_low.subarray_node.dev_name()}) "
-        "is expected have longRunningCommandResult ResultCode.REJECTED",
-    ).is_length(1)
 
 
 @then("the Subarray remains in obsState EMPTY")
-def tmc_status():
+def tmc_status(
+    subarray_node_low: SubarrayNodeWrapperLow, event_tracer: TangoEventTracer
+):
     """
     Verifies that the Subarray remains in the observation state EMPTY.
     """
-    assert telescope_control.is_in_valid_state(
-        DEVICE_OBS_STATE_EMPTY_INFO, "obsState"
+    assert_that(event_tracer).described_as(
+        'FAILED ASSUMPTION IN "THEN" STEP: '
+        '"the Subarray remains in obsState EMPTY"'
+        "Subarray Node device"
+        f"({subarray_node_low.subarray_node.dev_name()}) "
+        "is expected to be in EMPTY obstate",
+    ).within_timeout(TIMEOUT).has_change_event_occurred(
+        subarray_node_low.subarray_node,
+        "obsState",
+        ObsState.EMPTY,
     )

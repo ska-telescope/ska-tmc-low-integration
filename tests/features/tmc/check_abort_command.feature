@@ -25,5 +25,5 @@ Scenario: TMC validates Abort Command in intermediate obsState
 Scenario: TMC executes Abort Command in EMPTY obsState.
     Given a Subarray in EMPTY obsState
     When I Abort it
-    Then TMC should reject the command with ResultCode.REJECTED
+    Then TMC raises exception
     And the Subarray remains in obsState EMPTY

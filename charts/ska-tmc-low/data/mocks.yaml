@@ -58,7 +58,7 @@ server:
 depends_on:
   - device: sys/database/2
 image:
-  registry: "{{.Values.mccsmasterleafnode.image.registry}}"
-  image: "{{.Values.mccsmasterleafnode.image.image}}"
-  tag: "{{.Values.mccsmasterleafnode.image.tag}}"
-  pullPolicy: "{{.Values.mccsmasterleafnode.image.pullPolicy}}"
+  registry: "{{.Values.centralnode.image.registry}}"
+  image: "{{.Values.centralnode.image.image}}"
+  tag: "{{.Values.centralnode.image.tag}}"
+  pullPolicy: "{{.Values.centralnode.image.pullPolicy}}"
