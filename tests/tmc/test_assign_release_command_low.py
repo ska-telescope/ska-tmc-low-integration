@@ -151,6 +151,12 @@ def test_release_exception_propagation(
         central_node_low.central_node, "longRunningCommandResult"
     )
     event_recorder.subscribe_event(central_node_low.subarray_node, "obsState")
+    event_recorder.subscribe_event(
+        central_node_low.csp_subarray_leaf_node, "cspSubarrayObsState"
+    )
+    event_recorder.subscribe_event(
+        central_node_low.sdp_subarray_leaf_node, "sdpSubarrayObsState"
+    )
     central_node_low.move_to_on()
     assert event_recorder.has_change_event_occurred(
         central_node_low.central_node,
@@ -162,8 +168,9 @@ def test_release_exception_propagation(
         "obsState",
         ObsState.EMPTY,
     )
-    csp_sim, _ = get_device_simulators(simulator_factory)
+    csp_sim, sdp_sim = get_device_simulators(simulator_factory)
     event_recorder.subscribe_event(csp_sim, "obsState")
+    event_recorder.subscribe_event(sdp_sim, "obsState")
 
     central_node_low.perform_action("AssignResources", assign_input_json)
 
@@ -176,12 +183,22 @@ def test_release_exception_propagation(
         is_json=True,
     )
     assert event_recorder.has_change_event_occurred(
-        central_node_low.subarray_node,
+        csp_sim,
         "obsState",
         ObsState.RESOURCING,
     )
     assert event_recorder.has_change_event_occurred(
-        central_node_low.csp_subarray1,
+        central_node_low.csp_subarray_leaf_node,
+        "cspSubarrayObsState",
+        ObsState.RESOURCING,
+    )
+    assert event_recorder.has_change_event_occurred(
+        central_node_low.sdp_subarray_leaf_node,
+        "sdpSubarrayObsState",
+        ObsState.RESOURCING,
+    )
+    assert event_recorder.has_change_event_occurred(
+        central_node_low.subarray_node,
         "obsState",
         ObsState.RESOURCING,
     )
