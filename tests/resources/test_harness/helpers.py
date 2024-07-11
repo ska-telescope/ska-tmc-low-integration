@@ -438,7 +438,6 @@ def wait_and_validate_device_attribute_value(
             elif attribute_value == expected_value:
                 return True
         except Exception as e:
-            print(attribute_value, expected_value)
             # Device gets unavailable due to restart and the above command
             # tries to access the attribute resulting into exception
             # It keeps it printing till the attribute is accessible

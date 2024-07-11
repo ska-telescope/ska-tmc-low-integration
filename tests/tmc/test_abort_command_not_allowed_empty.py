@@ -10,8 +10,8 @@ import pytest
 from assertpy import assert_that
 from pytest_bdd import given, scenario, then, when
 from ska_control_model import ObsState
-from ska_tango_base.faults import StateModelError
 from ska_tango_testing.integration import TangoEventTracer, log_events
+from tango import DevFailed
 
 from tests.resources.test_harness.subarray_node_low import (
     SubarrayNodeWrapperLow,
@@ -60,7 +60,7 @@ def given_tmc(
 @when("I Abort it")
 def invoke_abort_command(subarray_node_low: SubarrayNodeWrapperLow):
     """Send a Abort command to the subarray."""
-    with pytest.raises(StateModelError) as pytest.exception:
+    with pytest.raises(DevFailed) as pytest.exception:
         subarray_node_low.execute_transition("Abort")
 
 
