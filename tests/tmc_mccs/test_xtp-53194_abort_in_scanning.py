@@ -83,6 +83,7 @@ def subarray_is_in_scanning_obsstate(
         subarray_node_low.subarray_devices["mccs_subarray"],
         "obsState",
         ObsState.SCANNING,
+        lookahead=20,
     )
 
 
