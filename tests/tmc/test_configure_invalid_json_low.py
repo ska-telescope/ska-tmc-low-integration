@@ -142,12 +142,12 @@ def send(subarray_node_low, invalid_json, command_input_factory):
         pytest.command_result = subarray_node_low.execute_transition(
             "Configure", json.dumps(invalid_configure_json)
         )
-    elif invalid_json == "tmc_key_missing":
-        invalid_configure_json = json.loads(configure_json)
-        del invalid_configure_json["tmc"]
-        pytest.command_result = subarray_node_low.execute_transition(
-            "Configure", json.dumps(invalid_configure_json)
-        )
+    # elif invalid_json == "tmc_key_missing":
+    #     invalid_configure_json = json.loads(configure_json)
+    #     del invalid_configure_json["tmc"]
+    #     pytest.command_result = subarray_node_low.execute_transition(
+    #         "Configure", json.dumps(invalid_configure_json)
+    #     )
     elif invalid_json == "scan_duration_key_missing":
         invalid_configure_json = json.loads(configure_json)
         del invalid_configure_json["tmc"]["scan_duration"]
@@ -174,28 +174,35 @@ def invalid_command_rejection(invalid_json):
     # asserting validations message as per invalid json
     if invalid_json == "csp_key_missing":
         assert (
-            "Validation 'Low TMC configure 3.2' Missing key: 'csp'"
+            "Validation 'Low TMC configure 4.0' Missing key: 'csp'"
             in pytest.command_result[1][0]
         )
     elif invalid_json == "sdp_key_missing":
         assert (
-            "Validation 'Low TMC configure 3.2' Missing key: 'sdp'"
+            "Validation 'Low TMC configure 4.0' Missing key: 'sdp'"
             in pytest.command_result[1][0]
         )
     elif invalid_json == "mccs_key_missing":
         assert (
-            "Validation 'Low TMC configure 3.2' Missing key: 'mccs'"
+            "Validation 'Low TMC configure 4.0' Missing key: 'mccs'"
             in pytest.command_result[1][0]
         )
-    elif invalid_json == "tmc_key_missing":
-        assert (
-            "Malformed input string. Missing key: 'tmc'"
-            in pytest.command_result[1][0]
-        )
+    # TODO: Enable this once CDM validations are accomodated
+    # Tel Model validations doesn't raise error for missing
+    # "tmc" key since its optional in schema generation
+    # elif invalid_json == "tmc_key_missing":
+    #     assert (
+    #         "Malformed input string. Missing key: 'tmc'"
+    #         in pytest.command_result[1][0]
+    #     )
     elif invalid_json == "scan_duration_key_missing":
-        assert "Malformed input string" in pytest.command_result[1][0]
+        assert (
+            "Validation 'Low TMC configure 4.0' Key 'tmc' "
+            + "error:\nMissing key: 'scan_duration'"
+            in pytest.command_result[1][0]
+        )
     elif invalid_json == "empty_string":
-        assert "Malformed input string" in pytest.command_result[1][0]
+        assert "Invalid 'interface' value: None" in pytest.command_result[1][0]
 
 
 @then("TMC subarray remains in IDLE obsState")

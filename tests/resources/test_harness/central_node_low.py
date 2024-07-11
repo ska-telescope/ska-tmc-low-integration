@@ -17,9 +17,11 @@ from tests.resources.test_harness.constant import (
     low_csp_master,
     low_csp_master_leaf_node,
     low_csp_subarray1,
+    low_csp_subarray_leaf_node,
     low_sdp_master,
     low_sdp_master_leaf_node,
     low_sdp_subarray1,
+    low_sdp_subarray_leaf_node,
     mccs_controller,
     mccs_master_leaf_node,
     mccs_subarray1,
@@ -60,6 +62,8 @@ class CentralNodeWrapperLow(object):
             "sdp_subarray": DeviceProxy(low_sdp_subarray1),
             "mccs_subarray": DeviceProxy(mccs_subarray1),
         }
+        self.csp_subarray_leaf_node = DeviceProxy(low_csp_subarray_leaf_node)
+        self.sdp_subarray_leaf_node = DeviceProxy(low_sdp_subarray_leaf_node)
         self.subarray_device_by_id: dict = {"1": self.subarray_devices}
         self.csp_subarray1 = DeviceProxy(low_csp_subarray1)
         self.sdp_subarray1 = DeviceProxy(low_sdp_subarray1)
