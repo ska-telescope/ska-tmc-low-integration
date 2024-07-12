@@ -117,12 +117,14 @@ k8s-test-tmc-with-csp:
   environment:
     name: test/$CI_COMMIT_REF_SLUG
     on_stop: stop-k8s-test-tmc-with-csp
+  when: manual #till chart is fixed
 
 stop-k8s-test-tmc-with-csp:
   extends:
     - stop-k8s-test
   variables:
     KUBE_NAMESPACE: 'ci-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-csp-low'
+
 
 k8s-test-tmc-with-sdp:
   tags:
