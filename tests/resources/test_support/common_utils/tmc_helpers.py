@@ -54,7 +54,7 @@ from tests.resources.test_support.constant_low import (
     sdp_subarray1 as sdp_subarray1_low,
 )
 
-TIMEOUT = 50
+TIMEOUT = 20
 configure_logging(logging.DEBUG)
 LOGGER = logging.getLogger(__name__)
 
