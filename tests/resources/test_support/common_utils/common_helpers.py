@@ -301,7 +301,7 @@ class Subscriber:
         return None
 
 
-def watch(resource, implementation="polling"):
+def watch(resource, implementation="tango_events"):
     """Returns subscriber class object
     and monitors resources"""
     return Subscriber(resource, implementation)
