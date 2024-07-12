@@ -140,10 +140,10 @@ ska-csp-lmc-low:
   deviceServers:
     cspcontroller:
       instances: ["controller"]
-      file: "data/controller_cbf_only.yaml"
+      file: "data/controller.yaml"
     cspsubarray:
       instances: ["subarray1", "subarray2", "subarray3", "subarray4"]
-      file: "data/subarray_cbf_only.yaml"
+      file: "data/subarray.yaml"
 
 ska-low-mccs:
   labels:
