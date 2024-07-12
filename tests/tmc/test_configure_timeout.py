@@ -115,22 +115,21 @@ class TestConfigureTimeout:
             ObsState.CONFIGURING,
         )
         exception_message = "Timeout has occurred, command failed"
-        result = event_tracer.query_events(
-            lambda e: e.has_device(subarray_node_low.subarray_node)
-            and e.has_attribute("longRunningCommandResult")
-            and e.attribute_value[0] == unique_id[0]
-            and json.loads(e.attribute_value[1])[0] == ResultCode.FAILED
-            and exception_message in json.loads(e.attribute_value[1])[1],
-            timeout=TIMEOUT,
-        )
 
-        assert_that(result).described_as(
+        assert_that(event_tracer).described_as(
             "FAILED ASSUMPTION AFTER CONFIGURE COMMAND: "
             "Subarray Node device"
             f"({subarray_node_low.subarray_node.dev_name()}) "
             "is expected have longRunningCommandResult"
             "(ResultCode.FAILED,exception)",
-        ).is_length(1)
+        ).within_timeout(
+            TIMEOUT
+        ).has_desired_result_code_message_in_lrcr_event(
+            subarray_node_low.subarray_node,
+            [exception_message],
+            unique_id[0],
+            ResultCode.FAILED,
+        )
 
     @pytest.mark.SKA_low
     def test_configure_timeout_sdp_ln(
@@ -217,22 +216,21 @@ class TestConfigureTimeout:
             ObsState.CONFIGURING,
         )
         exception_message = "Timeout has occurred, command failed"
-        result = event_tracer.query_events(
-            lambda e: e.has_device(subarray_node_low.subarray_node)
-            and e.has_attribute("longRunningCommandResult")
-            and e.attribute_value[0] == unique_id[0]
-            and json.loads(e.attribute_value[1])[0] == ResultCode.FAILED
-            and exception_message in json.loads(e.attribute_value[1])[1],
-            timeout=TIMEOUT,
-        )
 
-        assert_that(result).described_as(
+        assert_that(event_tracer).described_as(
             "FAILED ASSUMPTION AFTER CONFIGURE COMMAND: "
             "Subarray Node device"
             f"({subarray_node_low.subarray_node.dev_name()}) "
             "is expected have longRunningCommandResult"
             "(ResultCode.FAILED,exception)",
-        ).is_length(1)
+        ).within_timeout(
+            TIMEOUT
+        ).has_desired_result_code_message_in_lrcr_event(
+            subarray_node_low.subarray_node,
+            [exception_message],
+            unique_id[0],
+            ResultCode.FAILED,
+        )
         sdp_sim.ResetDelayInfo()
 
     @pytest.mark.SKA_low
@@ -322,19 +320,17 @@ class TestConfigureTimeout:
             ObsState.CONFIGURING,
         )
         exception_message = "Timeout has occurred, command failed"
-        result = event_tracer.query_events(
-            lambda e: e.has_device(subarray_node_low.subarray_node)
-            and e.has_attribute("longRunningCommandResult")
-            and e.attribute_value[0] == unique_id[0]
-            and json.loads(e.attribute_value[1])[0] == ResultCode.FAILED
-            and exception_message in json.loads(e.attribute_value[1])[1],
-            timeout=TIMEOUT,
-        )
-
-        assert_that(result).described_as(
+        assert_that(event_tracer).described_as(
             "FAILED ASSUMPTION AFTER CONFIGURE COMMAND: "
             "Subarray Node device"
             f"({subarray_node_low.subarray_node.dev_name()}) "
             "is expected have longRunningCommandResult"
             "(ResultCode.FAILED,exception)",
-        ).is_length(1)
+        ).within_timeout(
+            TIMEOUT
+        ).has_desired_result_code_message_in_lrcr_event(
+            subarray_node_low.subarray_node,
+            [exception_message],
+            unique_id[0],
+            ResultCode.FAILED,
+        )
