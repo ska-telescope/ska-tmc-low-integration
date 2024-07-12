@@ -32,14 +32,14 @@
   },
   "csp": {
     "pss": {
-      "pss_beam_ids": [
+      "beam_id": [
         1,
         2,
         3
       ]
     },
     "pst": {
-      "pst_beam_ids": [
+      "beam_id": [
         1
       ]
     }
