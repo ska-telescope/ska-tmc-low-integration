@@ -275,7 +275,7 @@ def test_release_exception_propagation(
         central_node_low.central_node,
         [exception_message],
         unique_id[0],
-        ResultCode.FAILED,
+        ResultCode.REJECTED,
     )
 
 
