@@ -2,6 +2,7 @@
 import json
 
 import pytest
+import tango
 from pytest_bdd import given, parsers, scenario, then, when
 from ska_control_model import ObsState
 from tango import DevState
@@ -84,6 +85,8 @@ def check_telescope_is_in_on_state(
     central_node_real_csp_low, event_recorder
 ) -> None:
     """Ensure telescope is in ON state."""
+    pst = tango.DeviceProxy("low-pst/beam/01")
+    pst.On()
     central_node_real_csp_low.move_to_on()
     event_recorder.subscribe_event(
         central_node_real_csp_low.central_node, "telescopeState"
