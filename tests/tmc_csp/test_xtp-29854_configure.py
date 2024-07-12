@@ -2,7 +2,6 @@
 import json
 
 import pytest
-import tango
 from pytest_bdd import given, parsers, scenario, then, when
 from ska_control_model import ObsState
 from tango import DevState
