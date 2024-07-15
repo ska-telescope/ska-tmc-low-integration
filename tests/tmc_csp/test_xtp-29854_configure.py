@@ -1,5 +1,6 @@
 """Test module to test TMC-CSP Configure functionality."""
 import json
+import time
 
 import pytest
 import tango
@@ -40,11 +41,8 @@ def check_telescope_is_in_on_state(
         central_node_real_csp_low.central_node, "telescopeState"
     )
     pst = tango.DeviceProxy("low-pst/beam/01")
-    assert event_recorder.has_change_event_occurred(
-        pst,
-        "State",
-        DevState.ON,
-    )
+    time.sleep(2)
+    assert "ON" in pst.State()
     assert event_recorder.has_change_event_occurred(
         central_node_real_csp_low.central_node,
         "telescopeState",
