@@ -3,7 +3,6 @@ import json
 import logging
 
 import pytest
-import tango
 from pytest_bdd import given, parsers, scenario, then, when
 from ska_control_model import ObsState
 from ska_ser_logging import configure_logging
@@ -12,6 +11,8 @@ from tango import DevState
 from tests.resources.test_harness.helpers import (
     prepare_json_args_for_centralnode_commands,
     prepare_json_args_for_commands,
+    set_receive_address,
+    wait_and_validate_device_attribute_value,
 )
 from tests.resources.test_support.common_utils.result_code import ResultCode
 
@@ -41,24 +42,15 @@ def check_telescope_is_in_on_state(
     """Ensure telescope is in ON state."""
     central_node_real_csp_low.csp_master.adminMode = 0
     central_node_real_csp_low.csp_subarray1.adminMode = 0
-    LOGGER.info(
-        "My adminmode is1 %s", central_node_real_csp_low.csp_master.adminMode
+    wait_and_validate_device_attribute_value(
+        central_node_real_csp_low.pst, "State", "DevState.ON"
     )
-    LOGGER.info(
-        "My adminmode is2  %s",
-        central_node_real_csp_low.csp_subarray1.adminMode,
-    )
-    pst = tango.DeviceProxy("low-pst/beam/01")
-    LOGGER.info("My adminmode is3  %s", pst.adminMode)
 
     central_node_real_csp_low.move_to_on()
-    LOGGER.info("My devstate is is3 %s", pst.state())
     event_recorder.subscribe_event(
         central_node_real_csp_low.central_node, "telescopeState"
     )
-    # pst = tango.DeviceProxy("low-pst/beam/01")
-    # time.sleep(2)
-    # assert "ON" in pst.State()
+
     assert event_recorder.has_change_event_occurred(
         central_node_real_csp_low.central_node,
         "telescopeState",
@@ -75,53 +67,7 @@ def move_subarray_node_to_idle_obsstate(
 ) -> None:
     """Move TMC Subarray to IDLE obsstate."""
     central_node_real_csp_low.set_subarray_id(subarray_id)
-    receive_address = json.dumps(
-        {
-            "science_A": {
-                "host": [[0, "192.168.0.1"], [2000, "192.168.0.1"]],
-                "port": [[0, 9000, 1], [2000, 9000, 1]],
-            },
-            "target:a": {
-                "vis0": {
-                    "function": "visibilities",
-                    "visibility_beam_id": 1,
-                    "host": [
-                        [0, "192.168.0.1"],
-                    ],
-                    "port": [
-                        [0, 9000, 1],
-                    ],
-                    "mac": [
-                        [0, "06-00-00-00-00-00"],
-                    ],
-                }
-            },
-            "calibration:b": {
-                "vis0": {
-                    "function": "visibilities",
-                    "host": [
-                        [0, "192.168.0.1"],
-                        [400, "192.168.0.2"],
-                        [744, "192.168.0.3"],
-                        [1144, "192.168.0.4"],
-                    ],
-                    "port": [
-                        [0, 9000, 1],
-                        [400, 9000, 1],
-                        [744, 9000, 1],
-                        [1144, 9000, 1],
-                    ],
-                    "mac": [
-                        [0, "06-00-00-00-00-00"],
-                        [744, "06-00-00-00-00-01"],
-                    ],
-                }
-            },
-        }
-    )
-    central_node_real_csp_low.subarray_devices[
-        "sdp_subarray"
-    ].SetDirectreceiveAddresses(receive_address)
+    set_receive_address(central_node_real_csp_low)
     assign_input_json = prepare_json_args_for_centralnode_commands(
         "assign_resources_low", command_input_factory
     )

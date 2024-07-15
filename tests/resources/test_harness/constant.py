@@ -136,6 +136,7 @@ processor1 = "low-cbf/processor/0.0.0"
 mccs_pasdbus_prefix = "low-mccs/pasdbus/*"
 mccs_prefix = "low-mccs/*"
 mccs_subarraybeam = "low-mccs/subarraybeam/01"
+pst = "low-pst/beam/01"
 
 device_dict_low = {
     "csp_master": low_csp_master,

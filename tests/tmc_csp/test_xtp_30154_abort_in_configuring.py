@@ -7,6 +7,10 @@ from pytest_bdd import given, scenario, then, when
 from ska_control_model import ObsState
 from tango import DevState
 
+from tests.resources.test_harness.helpers import (
+    set_receive_address,
+    wait_and_validate_device_attribute_value,
+)
 from tests.resources.test_support.common_utils.result_code import ResultCode
 from tests.resources.test_support.common_utils.tmc_helpers import (
     prepare_json_args_for_centralnode_commands,
@@ -39,6 +43,9 @@ def subarray_busy_configuring(
     event_recorder.subscribe_event(
         central_node_low.central_node, "telescopeState"
     )
+    wait_and_validate_device_attribute_value(
+        central_node_low.pst, "State", "DevState.ON"
+    )
     event_recorder.subscribe_event(
         central_node_low.central_node, "longRunningCommandResult"
     )
@@ -49,7 +56,7 @@ def subarray_busy_configuring(
         DevState.ON,
     )
     central_node_low.set_serial_number_of_cbf_processor()
-
+    set_receive_address(central_node_low)
     input_json = prepare_json_args_for_centralnode_commands(
         "assign_resources_low", command_input_factory
     )
