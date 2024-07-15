@@ -57,7 +57,6 @@ class CentralNodeWrapperLow(object):
         self.csp_master_leaf_node = DeviceProxy(low_csp_master_leaf_node)
         self.sdp_master_leaf_node = DeviceProxy(low_sdp_master_leaf_node)
         self.mccs_master_leaf_node = DeviceProxy(mccs_master_leaf_node)
-        self.pst = DeviceProxy(pst)
         self.subarray_devices = {
             "csp_subarray": DeviceProxy(low_csp_subarray1),
             "sdp_subarray": DeviceProxy(low_sdp_subarray1),
@@ -73,6 +72,8 @@ class CentralNodeWrapperLow(object):
         self.csp_master = DeviceProxy(low_csp_master)
         self.mccs_master = DeviceProxy(mccs_controller)
         self._state = DevState.OFF
+        if SIMULATED_DEVICES_DICT["sdp_and_mccs"]:
+            self.pst = DeviceProxy(pst)
         self.json_factory = JsonFactory()
         self.release_input = (
             self.json_factory.create_centralnode_configuration(
