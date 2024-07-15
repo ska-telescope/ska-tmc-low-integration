@@ -25,7 +25,6 @@ from tests.resources.test_harness.constant import (
     mccs_controller,
     mccs_master_leaf_node,
     mccs_subarray1,
-    processor1,
     tmc_low_subarraynode1,
 )
 from tests.resources.test_harness.event_recorder import EventRecorder
@@ -765,10 +764,20 @@ class CentralNodeWrapperLow(object):
     def set_serial_number_of_cbf_processor(self):
         """Sets serial number for cbf processor"""
         if SIMULATED_DEVICES_DICT["sdp_and_mccs"]:
-            self.processor1 = DeviceProxy(processor1)
-            self.processor1.serialnumber = "XFL14SLO1LIF"
-            self.processor1.subscribetoallocator("low-cbf/allocator/0")
-            self.processor1.register()
+            # self.processor1 = DeviceProxy(processor1)
+            # self.processor1.serialnumber = "XFL14SLO1LIF"
+            # self.processor1.subscribetoallocator("low-cbf/allocator/0")
+            # self.processor1.register()
+            cbf_proc1 = DeviceProxy("low-cbf/processor/0.0.0")
+            cbf_proc2 = DeviceProxy("low-cbf/processor/0.0.1")
+
+            cbf_proc1.serialnumber = "XFL14SLO1LIF"
+            cbf_proc1.subscribetoallocator("low-cbf/allocator/0")
+            cbf_proc1.register()
+
+            cbf_proc2.serialnumber = "XFL1HOOQ1Y44"
+            cbf_proc2.subscribetoallocator("low-cbf/allocator/0")
+            cbf_proc2.register()
 
     def are_sdp_components_online(self):
         start_time = time.time()

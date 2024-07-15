@@ -2,6 +2,7 @@
 import json
 
 import pytest
+import tango
 from pytest_bdd import given, parsers, scenario, then, when
 from ska_control_model import ObsState
 from tango import DevState
@@ -22,6 +23,44 @@ def test_tmc_csp_configure_functionality(central_node_low) -> None:
     """
     Test case to verify TMC-CSP Configure functionality
     """
+
+    assert central_node_low.central_node.ping() > 0
+    assert central_node_low.subarray_devices["csp_subarray"].ping() > 0
+
+
+@given("the Telescope is in ON state")
+def check_telescope_is_in_on_state(
+    central_node_real_csp_low, event_recorder
+) -> None:
+    """Ensure telescope is in ON state."""
+    central_node_real_csp_low.csp_master.adminMode = 0
+    central_node_real_csp_low.csp_subarray1.adminMode = 0
+    central_node_real_csp_low.move_to_on()
+    event_recorder.subscribe_event(
+        central_node_real_csp_low.central_node, "telescopeState"
+    )
+    pst = tango.DeviceProxy("low-pst/beam/01")
+    assert event_recorder.has_change_event_occurred(
+        pst,
+        "State",
+        DevState.ON,
+    )
+    assert event_recorder.has_change_event_occurred(
+        central_node_real_csp_low.central_node,
+        "telescopeState",
+        DevState.ON,
+    )
+
+
+@given(parsers.parse("the subarray {subarray_id} obsState is IDLE"))
+def move_subarray_node_to_idle_obsstate(
+    central_node_real_csp_low,
+    event_recorder,
+    command_input_factory,
+    subarray_id: str,
+) -> None:
+    """Move TMC Subarray to IDLE obsstate."""
+    central_node_real_csp_low.set_subarray_id(subarray_id)
     receive_address = json.dumps(
         {
             "science_A": {
@@ -31,21 +70,15 @@ def test_tmc_csp_configure_functionality(central_node_low) -> None:
             "target:a": {
                 "vis0": {
                     "function": "visibilities",
+                    "visibility_beam_id": 1,
                     "host": [
                         [0, "192.168.0.1"],
-                        [400, "192.168.0.2"],
-                        [744, "192.168.0.3"],
-                        [1144, "192.168.0.4"],
                     ],
                     "port": [
                         [0, 9000, 1],
-                        [400, 9000, 1],
-                        [744, 9000, 1],
-                        [1144, 9000, 1],
                     ],
                     "mac": [
                         [0, "06-00-00-00-00-00"],
-                        [744, "06-00-00-00-00-01"],
                     ],
                 }
             },
@@ -72,38 +105,9 @@ def test_tmc_csp_configure_functionality(central_node_low) -> None:
             },
         }
     )
-    assert central_node_low.central_node.ping() > 0
-    assert central_node_low.subarray_devices["csp_subarray"].ping() > 0
-    central_node_low.csp_master.adminMode = 0
-    central_node_low.csp_subarray1.adminMode = 0
-    central_node_low.sdp_subarray1.SetDirectreceiveAddresses(receive_address)
-
-
-@given("the Telescope is in ON state")
-def check_telescope_is_in_on_state(
-    central_node_real_csp_low, event_recorder
-) -> None:
-    """Ensure telescope is in ON state."""
-    central_node_real_csp_low.move_to_on()
-    event_recorder.subscribe_event(
-        central_node_real_csp_low.central_node, "telescopeState"
-    )
-    assert event_recorder.has_change_event_occurred(
-        central_node_real_csp_low.central_node,
-        "telescopeState",
-        DevState.ON,
-    )
-
-
-@given(parsers.parse("the subarray {subarray_id} obsState is IDLE"))
-def move_subarray_node_to_idle_obsstate(
-    central_node_real_csp_low,
-    event_recorder,
-    command_input_factory,
-    subarray_id: str,
-) -> None:
-    """Move TMC Subarray to IDLE obsstate."""
-    central_node_real_csp_low.set_subarray_id(subarray_id)
+    central_node_real_csp_low.subarray_devices[
+        "sdp_subarray"
+    ].SetDirectreceiveAddresses(receive_address)
     assign_input_json = prepare_json_args_for_centralnode_commands(
         "assign_resources_low", command_input_factory
     )
