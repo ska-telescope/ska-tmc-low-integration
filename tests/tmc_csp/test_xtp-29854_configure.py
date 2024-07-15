@@ -12,6 +12,7 @@ from tango import DevState
 from tests.resources.test_harness.helpers import (
     prepare_json_args_for_centralnode_commands,
     prepare_json_args_for_commands,
+    wait_and_validate_device_attribute_value,
 )
 from tests.resources.test_support.common_utils.result_code import ResultCode
 
@@ -48,6 +49,7 @@ def check_telescope_is_in_on_state(
         central_node_real_csp_low.csp_subarray1.adminMode,
     )
     pst = tango.DeviceProxy("low-pst/beam/01")
+    wait_and_validate_device_attribute_value(pst, "State", "DevState.ON")
     LOGGER.info("My adminmode is3  %s", pst.adminMode)
 
     central_node_real_csp_low.move_to_on()
