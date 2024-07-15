@@ -3,7 +3,6 @@ import json
 import logging
 
 import pytest
-import tango
 from pytest_bdd import given, parsers, scenario, then, when
 from ska_control_model import ObsState
 from ska_ser_logging import configure_logging
@@ -20,7 +19,7 @@ configure_logging(logging.DEBUG)
 LOGGER = logging.getLogger(__name__)
 
 
-@pytest.mark.tmc_csp1
+@pytest.mark.tmc_csp
 @scenario(
     "../features/tmc_csp/xtp-29854_configure.feature",
     "Configure CSP subarray using TMC",
@@ -41,25 +40,15 @@ def check_telescope_is_in_on_state(
     """Ensure telescope is in ON state."""
     central_node_real_csp_low.csp_master.adminMode = 0
     central_node_real_csp_low.csp_subarray1.adminMode = 0
-    LOGGER.info(
-        "My adminmode is1 %s", central_node_real_csp_low.csp_master.adminMode
+    wait_and_validate_device_attribute_value(
+        central_node_real_csp_low.pst, "State", "DevState.ON"
     )
-    LOGGER.info(
-        "My adminmode is2  %s",
-        central_node_real_csp_low.csp_subarray1.adminMode,
-    )
-    pst = tango.DeviceProxy("low-pst/beam/01")
-    wait_and_validate_device_attribute_value(pst, "State", "DevState.ON")
-    LOGGER.info("My adminmode is3  %s", pst.adminMode)
 
     central_node_real_csp_low.move_to_on()
-    LOGGER.info("My devstate is is3 %s", pst.state())
     event_recorder.subscribe_event(
         central_node_real_csp_low.central_node, "telescopeState"
     )
-    # pst = tango.DeviceProxy("low-pst/beam/01")
-    # time.sleep(2)
-    # assert "ON" in pst.State()
+
     assert event_recorder.has_change_event_occurred(
         central_node_real_csp_low.central_node,
         "telescopeState",

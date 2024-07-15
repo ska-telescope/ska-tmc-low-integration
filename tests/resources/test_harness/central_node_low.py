@@ -25,6 +25,7 @@ from tests.resources.test_harness.constant import (
     mccs_controller,
     mccs_master_leaf_node,
     mccs_subarray1,
+    pst,
     tmc_low_subarraynode1,
 )
 from tests.resources.test_harness.event_recorder import EventRecorder
@@ -56,6 +57,7 @@ class CentralNodeWrapperLow(object):
         self.csp_master_leaf_node = DeviceProxy(low_csp_master_leaf_node)
         self.sdp_master_leaf_node = DeviceProxy(low_sdp_master_leaf_node)
         self.mccs_master_leaf_node = DeviceProxy(mccs_master_leaf_node)
+        self.pst = DeviceProxy(pst)
         self.subarray_devices = {
             "csp_subarray": DeviceProxy(low_csp_subarray1),
             "sdp_subarray": DeviceProxy(low_sdp_subarray1),
