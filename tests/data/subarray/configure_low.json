@@ -98,7 +98,7 @@
         },
         "stn_beams": [
           {
-            "stn_beam_id": 1,
+            "stn_beam_id": 0,
             "integration_ms": 849
           }
         ]

@@ -23,8 +23,61 @@ def test_tmc_csp_configure_functionality(central_node_low) -> None:
     """
     Test case to verify TMC-CSP Configure functionality
     """
+    receive_address = json.dumps(
+        {
+            "science_A": {
+                "host": [[0, "192.168.0.1"], [2000, "192.168.0.1"]],
+                "port": [[0, 9000, 1], [2000, 9000, 1]],
+            },
+            "target:a": {
+                "vis0": {
+                    "function": "visibilities",
+                    "host": [
+                        [0, "192.168.0.1"],
+                        [400, "192.168.0.2"],
+                        [744, "192.168.0.3"],
+                        [1144, "192.168.0.4"],
+                    ],
+                    "port": [
+                        [0, 9000, 1],
+                        [400, 9000, 1],
+                        [744, 9000, 1],
+                        [1144, 9000, 1],
+                    ],
+                    "mac": [
+                        [0, "06-00-00-00-00-00"],
+                        [744, "06-00-00-00-00-01"],
+                    ],
+                }
+            },
+            "calibration:b": {
+                "vis0": {
+                    "function": "visibilities",
+                    "host": [
+                        [0, "192.168.0.1"],
+                        [400, "192.168.0.2"],
+                        [744, "192.168.0.3"],
+                        [1144, "192.168.0.4"],
+                    ],
+                    "port": [
+                        [0, 9000, 1],
+                        [400, 9000, 1],
+                        [744, 9000, 1],
+                        [1144, 9000, 1],
+                    ],
+                    "mac": [
+                        [0, "06-00-00-00-00-00"],
+                        [744, "06-00-00-00-00-01"],
+                    ],
+                }
+            },
+        }
+    )
     assert central_node_low.central_node.ping() > 0
     assert central_node_low.subarray_devices["csp_subarray"].ping() > 0
+    central_node_low.csp_master.adminMode = 0
+    central_node_low.csp_subarray1.adminMode = 0
+    central_node_low.sdp_subarray1.SetDirectreceiveAddresses(receive_address)
 
 
 @given("the Telescope is in ON state")
