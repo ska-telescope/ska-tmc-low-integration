@@ -79,7 +79,10 @@ def assign_resources_to_subarray(
     assert event_recorder.has_change_event_occurred(
         central_node_low.central_node,
         "longRunningCommandResult",
-        (unique_id[0], str(ResultCode.OK.value)),
+        (
+            unique_id[0],
+            json.dumps((int(ResultCode.OK), "Command Completed")),
+        ),
     )
 
 

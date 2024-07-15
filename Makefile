@@ -164,5 +164,5 @@ cred:
 	make k8s-namespace
 	make k8s-namespace-credentials
 test-requirements:
-	@poetry export --without-hashes --dev --format requirements.txt --output tests/requirements.txt
+	@poetry export --without-hashes --with dev --format requirements.txt --output tests/requirements.txt
 k8s-pre-test: test-requirements

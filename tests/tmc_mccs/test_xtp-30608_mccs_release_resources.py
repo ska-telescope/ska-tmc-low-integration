@@ -1,5 +1,7 @@
 """Test module for TMC- ReleaseResources functionality"""
 
+import json
+
 import pytest
 from pytest_bdd import given, parsers, scenario, then, when
 from ska_control_model import ObsState
@@ -92,7 +94,7 @@ def subarray_in_idle_obsstate(
     event_recorder.has_change_event_occurred(
         central_node_low.central_node,
         "longRunningCommandResult",
-        (unique_id[0], str(ResultCode.OK.value)),
+        (unique_id[0], json.dumps((int(ResultCode.OK), "Command Completed"))),
     )
 
 
@@ -108,7 +110,10 @@ def invoke_releaseresources(
     event_recorder.has_change_event_occurred(
         central_node_low.central_node,
         "longRunningCommandResult",
-        (unique_id[0], str(ResultCode.OK.value)),
+        (
+            unique_id[0],
+            json.dumps((int(ResultCode.OK), "Command Completed")),
+        ),
     )
 
 

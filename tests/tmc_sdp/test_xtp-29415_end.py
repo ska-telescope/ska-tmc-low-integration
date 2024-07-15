@@ -1,4 +1,6 @@
 """Test module for TMC-SDP End functionality"""
+import json
+
 import pytest
 from pytest_bdd import given, parsers, scenario, then, when
 from ska_tango_base.commands import ResultCode
@@ -85,7 +87,10 @@ def invoke_end(subarray_node_low, event_recorder):
     assert event_recorder.has_change_event_occurred(
         subarray_node_low.subarray_node,
         "longRunningCommandResult",
-        (unique_id[0], str(ResultCode.OK.value)),
+        (
+            unique_id[0],
+            json.dumps((int(ResultCode.OK), "Command Completed")),
+        ),
     )
 
 

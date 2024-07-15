@@ -3,16 +3,26 @@ This module defines a Pytest BDD test scenario for the successful execution of
 Scan Command of a Low Telescope Subarray in the Telescope Monitoring and
 Control (TMC) system.
 """
+import json
+
 import pytest
+from assertpy import assert_that
 from pytest_bdd import given, scenario, then, when
 from ska_control_model import ObsState
+from ska_tango_testing.integration import TangoEventTracer, log_events
 from tango import DevState
 
-from tests.resources.test_harness.helpers import (
+from tests.resources.test_harness.central_node_low import CentralNodeWrapperLow
+from tests.resources.test_harness.constant import TIMEOUT
+from tests.resources.test_harness.subarray_node_low import (
+    SubarrayNodeWrapperLow,
+)
+from tests.resources.test_harness.utils.common_utils import JsonFactory
+from tests.resources.test_support.common_utils.result_code import ResultCode
+from tests.resources.test_support.common_utils.tmc_helpers import (
     prepare_json_args_for_centralnode_commands,
     prepare_json_args_for_commands,
 )
-from tests.resources.test_support.common_utils.result_code import ResultCode
 
 
 @pytest.mark.SKA_low
@@ -20,25 +30,51 @@ from tests.resources.test_support.common_utils.result_code import ResultCode
     "../features/tmc/check_scan_command.feature",
     "Successful Execution of Scan Command on Low Telescope Subarray in TMC",
 )
-def test_tmc_mccssln_scan_command():
+def test_tmc_scan_command():
     """BDD test scenario for verifying successful execution of
     the Low Scan command in a TMC."""
 
 
 @given("a TMC")
-def given_tmc(central_node_low, event_recorder):
+def given_tmc(
+    central_node_low: CentralNodeWrapperLow, event_tracer: TangoEventTracer
+):
     """Set up a TMC and ensure it is in the ON state."""
-    event_recorder.subscribe_event(
+    event_tracer.subscribe_event(
         central_node_low.central_node, "telescopeState"
     )
-    event_recorder.subscribe_event(central_node_low.subarray_node, "obsState")
+    event_tracer.subscribe_event(
+        central_node_low.central_node, "longRunningCommandResult"
+    )
+    log_events(
+        {
+            central_node_low.central_node: [
+                "telescopeState",
+                "longRunningCommandResult",
+            ],
+            central_node_low.subarray_node: ["obsState"],
+        }
+    )
+    event_tracer.subscribe_event(central_node_low.subarray_node, "obsState")
     central_node_low.move_to_on()
-    assert event_recorder.has_change_event_occurred(
+    assert_that(event_tracer).described_as(
+        'FAILED ASSUMPTION IN "GIVEN STEP: '
+        '"a TMC'
+        "Central Node device"
+        f"({central_node_low.central_node.dev_name()}) "
+        "is expected to be in TelescopeState ON",
+    ).within_timeout(TIMEOUT).has_change_event_occurred(
         central_node_low.central_node,
         "telescopeState",
         DevState.ON,
     )
-    assert event_recorder.has_change_event_occurred(
+    assert_that(event_tracer).described_as(
+        'FAILED ASSUMPTION IN "GIVEN STEP: '
+        '"a TMC'
+        "Subarray Node device"
+        f"({central_node_low.subarray_node.dev_name()}) "
+        f"is expected to be in EMPTY obstate",
+    ).within_timeout(TIMEOUT).has_change_event_occurred(
         central_node_low.subarray_node,
         "obsState",
         ObsState.EMPTY,
@@ -47,32 +83,43 @@ def given_tmc(central_node_low, event_recorder):
 
 @given("a subarray in READY obsState")
 def given_subarray_in_ready(
-    command_input_factory,
-    central_node_low,
-    subarray_node_low,
-    event_recorder,
+    command_input_factory: JsonFactory,
+    central_node_low: CentralNodeWrapperLow,
+    event_tracer: TangoEventTracer,
+    subarray_node_low: SubarrayNodeWrapperLow,
 ):
     """Set up a subarray in the READY obsState."""
-    event_recorder.subscribe_event(central_node_low.subarray_node, "obsState")
-    event_recorder.subscribe_event(
-        central_node_low.central_node, "longRunningCommandResult"
-    )
-    event_recorder.subscribe_event(
+
+    event_tracer.subscribe_event(
         subarray_node_low.subarray_node, "longRunningCommandResult"
     )
+    log_events({subarray_node_low.subarray_node: ["longRunningCommandResult"]})
     assign_input_json = prepare_json_args_for_centralnode_commands(
         "assign_resources_low", command_input_factory
     )
     _, unique_id = central_node_low.store_resources(assign_input_json)
-    assert event_recorder.has_change_event_occurred(
+    assert_that(event_tracer).described_as(
+        'FAILED ASSUMPTION IN "GIVEN" STEP: '
+        "'a subarray in READY obsState'"
+        "Subarray Node device"
+        f"({central_node_low.subarray_node.dev_name()}) "
+        "is expected to be in IDLE obstate",
+    ).within_timeout(TIMEOUT).has_change_event_occurred(
         central_node_low.subarray_node,
         "obsState",
         ObsState.IDLE,
     )
-    event_recorder.has_change_event_occurred(
+    assert_that(event_tracer).described_as(
+        'FAILED ASSUMPTION IN "GIVEN" STEP: '
+        "'a subarray in READY obsState'"
+        "Subarray Node device"
+        f"({central_node_low.central_node.dev_name()}) "
+        "is expected have longRunningCommand as"
+        '(unique_id,(ResultCode.OK,"Command Completed"))',
+    ).within_timeout(TIMEOUT).has_change_event_occurred(
         central_node_low.central_node,
         "longRunningCommandResult",
-        (unique_id[0], str(ResultCode.OK.value)),
+        (unique_id[0], json.dumps((int(ResultCode.OK), "Command Completed"))),
     )
     configure_input_json = prepare_json_args_for_commands(
         "configure_low", command_input_factory
@@ -80,20 +127,35 @@ def given_subarray_in_ready(
     _, unique_id = subarray_node_low.store_configuration_data(
         configure_input_json
     )
-    assert event_recorder.has_change_event_occurred(
-        central_node_low.subarray_node, "obsState", ObsState.READY
+    assert_that(event_tracer).described_as(
+        'FAILED ASSUMPTION IN "GIVEN" STEP: '
+        "'a subarray in READY obsState'"
+        "Subarray Node device"
+        f"({central_node_low.subarray_node.dev_name()}) "
+        "is expected to be in READY obstate",
+    ).within_timeout(TIMEOUT).has_change_event_occurred(
+        central_node_low.subarray_node,
+        "obsState",
+        ObsState.READY,
     )
-    event_recorder.has_change_event_occurred(
-        subarray_node_low.subarray_node,
+    assert_that(event_tracer).described_as(
+        'FAILED ASSUMPTION IN "GIVEN" STEP: '
+        "'a subarray in READY obsState'"
+        "Subarray Node device"
+        f"({central_node_low.subarray_node.dev_name()}) "
+        "is expected have longRunningCommand as"
+        '(unique_id,(ResultCode.OK,"Command Completed"))',
+    ).within_timeout(TIMEOUT).has_change_event_occurred(
+        central_node_low.subarray_node,
         "longRunningCommandResult",
-        (unique_id[0], str(ResultCode.OK.value)),
+        (unique_id[0], json.dumps((int(ResultCode.OK), "Command Completed"))),
     )
 
 
 @when("I command it to scan for a given period")
 def send_scan(
-    command_input_factory,
-    subarray_node_low,
+    command_input_factory: JsonFactory,
+    subarray_node_low: SubarrayNodeWrapperLow,
 ):
     """Send a Scan command to the subarray."""
     scan_input_json = prepare_json_args_for_commands(
@@ -104,16 +166,28 @@ def send_scan(
 
 @then("the subarray must be in the SCANNING obsState until finished")
 def check_scan_completion(
-    subarray_node_low,
-    event_recorder,
+    subarray_node_low: SubarrayNodeWrapperLow,
+    event_tracer: TangoEventTracer,
 ):
     """Verify that the subarray is in the SCANNING obsState."""
-    assert event_recorder.has_change_event_occurred(
+    assert_that(event_tracer).described_as(
+        'FAILED ASSUMPTION IN "THEN" STEP: '
+        "'the subarray must be in the SCANNING obsState until finished'"
+        "Subarray Node device"
+        f"({subarray_node_low.subarray_node.dev_name()}) "
+        "is expected to be in SCANNING obstate",
+    ).within_timeout(TIMEOUT).has_change_event_occurred(
         subarray_node_low.subarray_node,
         "obsState",
         ObsState.SCANNING,
     )
-    assert event_recorder.has_change_event_occurred(
+    assert_that(event_tracer).described_as(
+        'FAILED ASSUMPTION IN "THEN" STEP: '
+        "'the subarray must be in the SCANNING obsState until finished'"
+        "Subarray Node device"
+        f"({subarray_node_low.subarray_node.dev_name()}) "
+        "is expected to be in READY obstate",
+    ).within_timeout(TIMEOUT).has_change_event_occurred(
         subarray_node_low.subarray_node,
         "obsState",
         ObsState.READY,

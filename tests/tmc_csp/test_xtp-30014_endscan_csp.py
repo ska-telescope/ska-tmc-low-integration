@@ -17,10 +17,7 @@ from tests.resources.test_harness.subarray_node_low import (
 from tests.resources.test_harness.utils.common_utils import JsonFactory
 
 
-@pytest.mark.skip(
-    reason="Issue on CSP side, will get fixed with the new CSP chart"
-)
-# Issue: CSP is not using SKA Tel Model >= v1.17.0
+@pytest.mark.skip(reason="SKB-429")
 @pytest.mark.tmc_csp
 @scenario(
     "../features/tmc_csp/xtp-30014_end_scan_csp.feature",

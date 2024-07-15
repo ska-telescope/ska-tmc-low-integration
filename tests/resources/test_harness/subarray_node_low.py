@@ -264,13 +264,9 @@ class SubarrayNodeWrapperLow:
 
     def move_to_on(self):
         # Move subarray to ON state
-        if self.state != self.ON_STATE:
-            Resource(self.tmc_subarraynode1).assert_attribute("State").equals(
-                "OFF"
-            )
-            result, message = self.subarray_node.On()
-            LOGGER.info("Invoked ON on SubarrayNode")
-            return result, message
+        result, message = self.subarray_node.On()
+        LOGGER.info("Invoked ON on SubarrayNode")
+        return result, message
 
     def move_to_off(self):
         # Move Subarray to OFF state
@@ -297,7 +293,7 @@ class SubarrayNodeWrapperLow:
             sim_device_proxy_list = []
 
         for sim_device_proxy in sim_device_proxy_list:
-            sim_device_proxy.ResetDelay()
+            sim_device_proxy.ResetDelayInfo()
             sim_device_proxy.SetDirectHealthState(HealthState.UNKNOWN)
             sim_device_proxy.SetDefective(json.dumps({"enabled": False}))
 

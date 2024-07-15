@@ -9,11 +9,19 @@ of various invalid JSON inputs.
 import json
 
 import pytest
+from assertpy import assert_that
 from pytest_bdd import given, parsers, scenario, then, when
 from ska_control_model import ObsState
+from ska_tango_testing.integration import TangoEventTracer, log_events
 from tango import DevState
 
 from tests.conftest import LOGGER
+from tests.resources.test_harness.central_node_low import CentralNodeWrapperLow
+from tests.resources.test_harness.constant import TIMEOUT
+from tests.resources.test_harness.subarray_node_low import (
+    SubarrayNodeWrapperLow,
+)
+from tests.resources.test_harness.utils.common_utils import JsonFactory
 from tests.resources.test_support.common_utils.result_code import ResultCode
 from tests.resources.test_support.common_utils.tmc_helpers import (
     prepare_json_args_for_centralnode_commands,
@@ -33,16 +41,27 @@ def test_invalid_json_in_configure_obsState():
 
 
 @given("the TMC is On")
-def given_tmc(central_node_low, event_recorder):
+def given_tmc(
+    central_node_low: CentralNodeWrapperLow, event_tracer: TangoEventTracer
+):
     """Ensure the TMC is in the 'On' state."""
-    event_recorder.subscribe_event(
+    event_tracer.subscribe_event(
         central_node_low.central_node, "telescopeState"
     )
-    event_recorder.subscribe_event(
+    event_tracer.subscribe_event(
+        central_node_low.central_node, "longRunningCommandResult"
+    )
+    event_tracer.subscribe_event(
         central_node_low.subarray_node, "longRunningCommandResult"
     )
     central_node_low.move_to_on()
-    assert event_recorder.has_change_event_occurred(
+    assert_that(event_tracer).described_as(
+        'FAILED ASSUMPTION IN "GIVEN" STEP: '
+        "'the TMC is On'"
+        "Central Node device"
+        f"({central_node_low.central_node.dev_name()}) "
+        "is expected to be in TelescopeState ON",
+    ).within_timeout(TIMEOUT).has_change_event_occurred(
         central_node_low.central_node,
         "telescopeState",
         DevState.ON,
@@ -50,21 +69,49 @@ def given_tmc(central_node_low, event_recorder):
 
 
 @given("the subarray is in IDLE obsState")
-def tmc_check_status(event_recorder, central_node_low, command_input_factory):
+def tmc_check_status(
+    central_node_low: CentralNodeWrapperLow,
+    event_tracer: TangoEventTracer,
+    command_input_factory: JsonFactory,
+):
     """Set the subarray to 'IDLE' observation state."""
-    event_recorder.subscribe_event(central_node_low.subarray_node, "obsState")
+    event_tracer.subscribe_event(central_node_low.subarray_node, "obsState")
     assign_input_json = prepare_json_args_for_centralnode_commands(
         "assign_resources_low", command_input_factory
     )
     _, unique_id = central_node_low.store_resources(assign_input_json)
-
-    assert event_recorder.has_change_event_occurred(
-        central_node_low.subarray_node, "obsState", ObsState.IDLE
+    print(unique_id)
+    log_events(
+        {
+            central_node_low.subarray_node: [
+                "obsState",
+                "longRunningCommandResult",
+            ],
+            central_node_low.central_node: ["longRunningCommandResult"],
+        }
     )
-    event_recorder.has_change_event_occurred(
+    assert_that(event_tracer).described_as(
+        'FAILED ASSUMPTION IN "GIVEN" STEP: '
+        "'the subarray is in IDLE obsState'"
+        "Subarray Node device"
+        f"({central_node_low.subarray_node.dev_name()}) "
+        "is expected to be in IDLE obstate",
+    ).within_timeout(TIMEOUT).has_change_event_occurred(
         central_node_low.subarray_node,
+        "obsState",
+        ObsState.IDLE,
+    )
+    assert_that(event_tracer).described_as(
+        'FAILED ASSUMPTION IN "GIVEN" STEP: '
+        "'the subarray is in IDLE obsState'"
+        "Central Node device"
+        f"({central_node_low.central_node.dev_name()}) "
+        "is expected have longRunningCommand as"
+        '(unique_id,(ResultCode.OK,"Command Completed"))',
+    ).within_timeout(TIMEOUT).has_change_event_occurred(
+        central_node_low.central_node,
         "longRunningCommandResult",
-        (unique_id[0], str(ResultCode.OK.value)),
+        (unique_id[0], json.dumps((int(ResultCode.OK), "Command Completed"))),
     )
 
 
@@ -159,7 +206,7 @@ def invalid_command_rejection(invalid_json):
 
 
 @then("TMC subarray remains in IDLE obsState")
-def tmc_status(subarray_node_low):
+def tmc_status(subarray_node_low: SubarrayNodeWrapperLow):
     """Ensure that the TMC subarray remains in the 'IDLE' observation state
     after rejection."""
     assert subarray_node_low.subarray_node.obsState == ObsState.IDLE
@@ -170,7 +217,9 @@ def tmc_status(subarray_node_low):
 command for the subarray with a valid json"
 )
 def tmc_accepts_next_commands(
-    subarray_node_low, command_input_factory, event_recorder
+    subarray_node_low: SubarrayNodeWrapperLow,
+    event_tracer: TangoEventTracer,
+    command_input_factory: JsonFactory,
 ):
     """Execute the Configure command with a valid JSON and verify successful
     execution."""
@@ -181,8 +230,17 @@ def tmc_accepts_next_commands(
 
     # Invoke Configure() Command on TMC
     LOGGER.info("Invoking Configure command on TMC SubarrayNode")
+
     subarray_node_low.store_configuration_data(configure_json)
-    assert event_recorder.has_change_event_occurred(
+
+    assert_that(event_tracer).described_as(
+        'FAILED ASSUMPTION IN "THEN" STEP: '
+        "'TMC successfully executes the Configure'"
+        "'command for the subarray with a valid json'"
+        "Subarray Node device"
+        f"({subarray_node_low.subarray_node.dev_name()}) "
+        "is expected to be in READY obstate",
+    ).within_timeout(TIMEOUT).has_change_event_occurred(
         subarray_node_low.subarray_node,
         "obsState",
         ObsState.READY,
