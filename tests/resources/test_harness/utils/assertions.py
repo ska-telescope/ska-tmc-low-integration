@@ -31,7 +31,7 @@ def is_attribute_value_valid(received_event: ReceivedEvent) -> bool:
         if len(received_event.attribute_value) != 2:
             return False
 
-        if len(received_event.attribute_value[1]) == 2:
+        if len(json.loads(received_event.attribute_value[1])) == 2:
             result_code, message = json.loads(
                 received_event.attribute_value[1]
             )
