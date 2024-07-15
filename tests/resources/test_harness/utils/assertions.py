@@ -1,13 +1,45 @@
 import json
+import logging
 from datetime import datetime
 from typing import Any
 
 import tango
 from ska_control_model import ResultCode
+from ska_ser_logging import configure_logging
 from ska_tango_testing.integration.assertions import (
     _get_tracer,
     _print_passed_event_args,
 )
+from ska_tango_testing.integration.event import ReceivedEvent
+
+configure_logging(logging.DEBUG)
+LOGGER = logging.getLogger(__name__)
+
+
+def is_attribute_value_valid(received_event: ReceivedEvent) -> bool:
+    """This method is utilised to validate the event data received
+    as part of long running command result attribute.
+
+    Args:
+        received_event (ReceivedEvent): long running command result
+        attribute event data
+
+    Returns:
+        bool: Returns True if the event data is valid else False
+    """
+    try:
+        if len(received_event.attribute_value) != 2:
+            return False
+
+        if len(received_event.attribute_value[1]) == 2:
+            result_code, message = json.loads(
+                received_event.attribute_value[1]
+            )
+            return all(isinstance(result_code, int), isinstance(message, str))
+        return False
+    except (AttributeError, ValueError) as exception:
+        LOGGER.error("Issue with the type of event received: %s", exception)
+        return False
 
 
 def has_desired_result_code_message_in_lrcr_event(
@@ -17,17 +49,51 @@ def has_desired_result_code_message_in_lrcr_event(
     unique_id: str,
     result_code: ResultCode,
 ):
-    """Methos
+    """Method that verifies whether LongRunningCommandResult event has
+    the desired characteristics.
+    Example:
+    In case of failures, we get following event
+    ("1234_Command_Name","[3,'Command Failed']") or
+    ("1234_Command_Name","[5,'Command Rejected']")
+
+    To assert such failure message user can use this method accordingly
+    assert_that(tracer).has_desired_result_code_message_in_lrcr_event(
+        device_name= "tango_trl",
+        exception_message=["Failed"],
+        unique_id = "1234_Command_Name",
+        result_code = ResultCode.FAILED
+    )
+    ("1234_Command_Name","[3,'Command Failed due to *** reason ,
+    please check key ABC in json']")
+    In case to check multiple data in one message user can provide multiple
+    substring that is expected in the error message event.
+    This helpful when the error message is long and user need to check only
+    main content within it.
+    assert_that(tracer).has_desired_result_code_message_in_lrcr_event(
+        device_name= "tango_trl",
+        exception_message=["Command Failed", "check key ABC", "due to ***"],
+        unique_id = "1234_Command_Name",
+        result_code = ResultCode.FAILED
+    )
 
     Args:
-        assertpy_context (Any): _description_
-        device_name (str): _description_
-        exception_messages (list[str]): _description_
-        unique_id (str): _description_
-        result_code (ResultCode): _description_
+        assertpy_context (Any): The assertpy context object
+        (It is passed automatically).
+        device_name (str | tango.DeviceName): the expected source of the LRCR
+        event, expressed as a device name or a Tango device proxy instance.
+        exception_messages (list[str]): The exception message list that
+        we expect in the LongRunningCommandResult attribute event.
+        unique_id (str): The unique id that we expect
+        in the LongRunningCommandResult attribute event.
+        result_code (ResultCode): The ResultCode ENUM that we expect
+        in the LongRunningCommandResult attribute event.
 
     Returns:
-        _type_: _description_
+        Any: the ``assertpy`` context.
+    Raises:
+    ValueError: If the TangoEventTracer instance is not found
+        (i.e., the method is called outside an assert_that(tracer) context)
+
     """
     # check assertpy_context has a tracer object
     tracer = _get_tracer(assertpy_context)
@@ -41,6 +107,7 @@ def has_desired_result_code_message_in_lrcr_event(
     result = tracer.query_events(
         lambda e: e.has_device(device_name)
         and e.has_attribute("longRunningCommandResult")
+        and is_attribute_value_valid(e)
         and e.attribute_value[0] == unique_id
         and json.loads(e.attribute_value[1])[0] == result_code
         and all(

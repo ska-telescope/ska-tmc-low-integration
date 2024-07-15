@@ -279,7 +279,6 @@ def test_release_exception_propagation(
     )
 
 
-@pytest.mark.new
 @pytest.mark.SKA_low
 def test_assign_release_timeout_csp(
     central_node_low: CentralNodeWrapperLow,
