@@ -35,7 +35,9 @@ def is_attribute_value_valid(received_event: ReceivedEvent) -> bool:
             result_code, message = json.loads(
                 received_event.attribute_value[1]
             )
-            return all(isinstance(result_code, int), isinstance(message, str))
+            return all(
+                [isinstance(result_code, int), isinstance(message, str)]
+            )
         return False
     except (AttributeError, ValueError) as exception:
         LOGGER.error("Issue with the type of event received: %s", exception)
