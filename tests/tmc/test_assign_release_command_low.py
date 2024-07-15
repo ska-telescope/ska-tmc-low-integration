@@ -61,7 +61,7 @@ def test_assign_release_defective_csp(
         DevState.ON,
     )
     assert_that(event_tracer).described_as(
-        "FAILED INITIAL ASSUMPTION: "
+        "FAILED UNEXPECTED INITIAL OBSSTATE: "
         "Subarray Node device"
         f"({central_node_low.subarray_node.dev_name()}) "
         "is expected to be in EMPTY obstate",
@@ -143,7 +143,7 @@ def test_assign_release_timeout_sdp(
         DevState.ON,
     )
     assert_that(event_tracer).described_as(
-        "FAILED INITIAL ASSUMPTION: "
+        "FAILED UNEXPECTED INITIAL OBSSTATE: "
         "Subarray Node device"
         f"({central_node_low.subarray_node.dev_name()}) "
         "is expected to be in EMPTY obstate",
@@ -215,7 +215,7 @@ def test_release_exception_propagation(
         DevState.ON,
     )
     assert_that(event_tracer).described_as(
-        "FAILED INITIAL ASSUMPTION: "
+        "FAILED UNEXPECTED INITIAL OBSSTATE: "
         "Subarray Node device"
         f"({central_node_low.subarray_node.dev_name()}) "
         "is expected to be in EMPTY obstate",
