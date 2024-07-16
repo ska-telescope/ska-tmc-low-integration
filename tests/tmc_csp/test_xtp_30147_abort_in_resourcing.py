@@ -11,7 +11,7 @@ from tests.resources.test_support.common_utils.tmc_helpers import (
 )
 
 
-@pytest.mark.tmc_csp
+@pytest.mark.tmc_csp1
 @scenario(
     "../features/tmc_csp/xtp-30147_abort_in_resourcing.feature",
     "Abort assigning using TMC",
