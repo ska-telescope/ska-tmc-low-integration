@@ -70,11 +70,6 @@ def check_telescope_is_in_on_state(
         0,
     )
     assert event_recorder.has_change_event_occurred(
-        central_node_real_csp_low.pst,
-        "State",
-        DevState.OFF,
-    )
-    assert event_recorder.has_change_event_occurred(
         central_node_real_csp_low.csp_master,
         "State",
         DevState.OFF,

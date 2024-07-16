@@ -30,6 +30,7 @@ class CentralNodeCspWrapperLow(CentralNodeWrapperLow):
         A method to invoke TelescopeOn command to
         put telescope in ON state
         """
+        self.pst.On()
         self.central_node.TelescopeOn()
         # self.csp_master.adminMode = AdminMode.ONLINE
         # self.csp_subarray1.adminMode = AdminMode.ONLINE
