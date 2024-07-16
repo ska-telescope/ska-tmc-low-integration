@@ -11,7 +11,6 @@ from tests.resources.test_support.common_utils.tmc_helpers import (
 )
 
 
-@pytest.mark.skip
 @pytest.mark.tmc_csp
 @scenario(
     "../features/tmc_csp/xtp-30147_abort_in_resourcing.feature",
