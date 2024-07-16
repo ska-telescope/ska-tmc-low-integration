@@ -21,7 +21,10 @@ from tests.resources.test_harness.helpers import (
 from tests.resources.test_harness.simulator_factory import SimulatorFactory
 from tests.resources.test_harness.utils.common_utils import JsonFactory
 from tests.resources.test_harness.utils.enums import SimulatorDeviceType
-from tests.resources.test_support.constant_low import INTERMEDIATE_STATE_DEFECT
+from tests.resources.test_support.constant_low import (
+    INTERMEDIATE_STATE_DEFECT,
+    RESET_DEFECT,
+)
 
 
 @pytest.mark.SKA_low
@@ -277,6 +280,7 @@ def test_release_exception_propagation(
         unique_id[0],
         ResultCode.REJECTED,
     )
+    csp_sim.SetDefective(json.dumps(RESET_DEFECT))
 
 
 @pytest.mark.SKA_low
@@ -339,3 +343,4 @@ def test_assign_release_timeout_csp(
         unique_id[0],
         ResultCode.FAILED,
     )
+    csp_subarray_sim.SetDefective(json.dumps(RESET_DEFECT))
