@@ -682,9 +682,14 @@ def set_receive_address(central_node):
             },
         }
     )
-    central_node.subarray_devices["sdp_subarray"].SetDirectreceiveAddresses(
-        receive_address
-    )
+    if SDP_SIMULATION_ENABLED.lower() == "false":
+        central_node.subarray_devices[
+            "sdp_subarray"
+        ].receive_addresses = receive_address
+    else:
+        central_node.subarray_devices[
+            "sdp_subarray"
+        ].SetDirectreceiveAddresses(receive_address)
 
 
 def updated_assign_str(assign_json: str, station_id: int) -> str:
