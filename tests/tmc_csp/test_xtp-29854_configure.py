@@ -19,7 +19,7 @@ configure_logging(logging.DEBUG)
 LOGGER = logging.getLogger(__name__)
 
 
-@pytest.mark.tmc_csp
+@pytest.mark.tmc_csp1
 @scenario(
     "../features/tmc_csp/xtp-29854_configure.feature",
     "Configure CSP subarray using TMC",
