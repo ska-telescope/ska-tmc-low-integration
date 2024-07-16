@@ -11,7 +11,6 @@ from tests.resources.test_support.common_utils.tmc_helpers import (
 )
 
 
-@pytest.mark.skip
 @pytest.mark.tmc_csp
 @scenario(
     "../features/tmc_csp/xtp-30147_abort_in_resourcing.feature",
@@ -86,8 +85,10 @@ def subarray_busy_assigning(
 
 
 @when("I command it to Abort")
-def abort_subarray(subarray_node_low):
+def abort_subarray(subarray_node_low, central_node_low):
     """Abort command invoked on Subarray Node"""
+    central_node_low.obsreset()
+    time.sleep(2)
     subarray_node_low.execute_transition("Abort")
 
 
