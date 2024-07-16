@@ -74,7 +74,7 @@ subarraynode:
   image:
     registry: registry.gitlab.com/ska-telescope/ska-tmc/ska-tmc-subarraynode
     image: ska-tmc-subarraynode
-    tag: 0.21.2-dev.cb30ecd96
+    tag: 0.21.2-dev.cde8e5a57
     pullPolicy: IfNotPresent
 
 sdpleafnodes:
@@ -135,6 +135,8 @@ deviceServers:
     SdpScanInterfaceURL: "https://schema.skao.int/ska-sdp-scan/0.4"
     MccsConfigureInterfaceURL: "https://schema.skao.int/ska-low-mccs-configure/1.0"
     MccsScanInterfaceURL: "https://schema.skao.int/ska-low-mccs-scan/3.0"
+    JonesURI: "tango://jones.skao.int/low/stn-beam/1"
+
 
   sdpsubarrayleafnode:
     enabled: true
