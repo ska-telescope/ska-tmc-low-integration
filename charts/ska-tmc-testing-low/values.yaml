@@ -128,11 +128,6 @@ ska-low-cbf-proc:
           memory: 300Mi  # reduced
 
 ska-csp-lmc-low:
-  lowcsplmc:
-    image:
-      registry: registry.gitlab.com/ska-telescope/ska-csp-lmc-low
-      image: ska-csp-lmc-low
-      tag: 0.16.0-dev.c8a59c2b4
   labels:
     app: ska-tmc-low-integration
   enabled: false
