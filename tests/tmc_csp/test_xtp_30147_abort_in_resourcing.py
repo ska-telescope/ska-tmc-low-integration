@@ -10,6 +10,7 @@ from tests.resources.test_support.common_utils.tmc_helpers import (
     prepare_json_args_for_centralnode_commands,
 )
 
+
 @pytest.mark.skip
 @pytest.mark.tmc_csp
 @scenario(
