@@ -41,9 +41,12 @@ def check_telescope_is_in_on_state(
     central_node_real_csp_low.csp_master.adminMode = 0
     central_node_real_csp_low.csp_subarray1.adminMode = 0
     event_recorder.subscribe_event(central_node_real_csp_low.pst, "State")
-    # wait_and_validate_device_attribute_value(
-    #     central_node_real_csp_low.pst, "State", "DevState.ON"
-    # )
+    event_recorder.subscribe_event(central_node_real_csp_low.pst, "adminMode")
+    assert event_recorder.has_change_event_occurred(
+        central_node_real_csp_low.pst,
+        "adminMode",
+        0,
+    )
     central_node_real_csp_low.move_to_on()
     assert event_recorder.has_change_event_occurred(
         central_node_real_csp_low.pst,
