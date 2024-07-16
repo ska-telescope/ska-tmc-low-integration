@@ -5,13 +5,14 @@ from pytest_bdd import given, scenario, then, when
 from ska_control_model import ObsState
 from tango import DevState
 
+from tests.resources.test_harness.helpers import set_receive_address
 from tests.resources.test_support.common_utils.tmc_helpers import (
     prepare_json_args_for_centralnode_commands,
     prepare_json_args_for_commands,
 )
 
 
-@pytest.mark.tmc_csp1
+@pytest.mark.tmc_csp
 @scenario(
     "../features/tmc_csp/xtp-30155_abort_in_scanning.feature",
     "Abort scanning CSP using TMC",
@@ -41,7 +42,7 @@ def subarray_busy_scanning(
         DevState.ON,
     )
     central_node_low.set_serial_number_of_cbf_processor()
-
+    set_receive_address(central_node_low)
     input_json = prepare_json_args_for_centralnode_commands(
         "assign_resources_low", command_input_factory
     )
