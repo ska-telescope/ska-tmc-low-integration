@@ -601,6 +601,7 @@ def get_assign_json_id(input_json: str, json_id: str = "") -> list[str]:
 
 def set_admin_mode_values_mccs():
     """Set the adminMode values of MCCS devices."""
+    max_retries: int = 3
     if MCCS_SIMULATION_ENABLED.lower() == "false":
         controller = tango.DeviceProxy(mccs_controller)
         if controller.adminMode != AdminMode.ONLINE:
@@ -618,10 +619,22 @@ def set_admin_mode_values_mccs():
                 if "daq" in device_trl or "calibrationstore" in device_trl:
                     continue
                 device = tango.DeviceProxy(device_trl)
-                if device.adminmode != AdminMode.ONLINE:
-                    device.adminmode = AdminMode.ONLINE
-                    devices.append(device)
-                    time.sleep(0.1)
+                retry: int = 0
+                while (
+                    device.adminmode != AdminMode.ONLINE
+                    and retry <= max_retries
+                ):
+                    try:
+                        device.adminmode = AdminMode.ONLINE
+                        devices.append(device)
+                        time.sleep(0.1)
+                    except tango.DevFailed as df:
+                        LOGGER.info(
+                            "Issue occurred during setting the admin mode:%s",
+                            df,
+                        )
+                        retry += 1
+                        time.sleep(0.1)
 
 
 def updated_assign_str(assign_json: str, station_id: int) -> str:
