@@ -128,6 +128,11 @@ ska-low-cbf-proc:
           memory: 300Mi  # reduced
 
 ska-csp-lmc-low:
+  lowcsplmc:
+    image:
+      registry: artefact.skao.int
+      image: ska-csp-lmc-low
+      tag: 0.16.1
   labels:
     app: ska-tmc-low-integration
   enabled: false
