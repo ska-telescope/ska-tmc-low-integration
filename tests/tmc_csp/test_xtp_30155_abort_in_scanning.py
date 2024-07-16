@@ -92,11 +92,10 @@ def subarray_busy_scanning(
 
 
 @when("I command it to Abort")
-def abort_subarray(subarray_node_low, central_node_low):
+def abort_subarray(subarray_node_low):
     """Abort command invoked on Subarray Node"""
     # central_node_low.pst.end()
     # time.sleep(2)
-    central_node_low.pst.obsreset()
     subarray_node_low.abort_subarray()
 
 
