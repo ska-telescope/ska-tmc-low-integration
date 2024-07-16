@@ -13,7 +13,6 @@ from tests.resources.test_harness.helpers import (
     check_subarray_instance,
     prepare_json_args_for_centralnode_commands,
     prepare_json_args_for_commands,
-    set_receive_address,
     update_eb_pb_ids,
     update_scan_id,
     update_scan_type,
@@ -88,7 +87,6 @@ def assign_resources_to_subarray(
         ),
         "scanID",
     )
-    set_receive_address(central_node_low)
     input_json = prepare_json_args_for_centralnode_commands(
         "assign_resources_low_multiple_scan", command_input_factory
     )

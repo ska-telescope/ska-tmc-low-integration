@@ -6,7 +6,6 @@ from ska_tango_base.control_model import ObsState
 from tests.resources.test_harness.helpers import (
     prepare_json_args_for_centralnode_commands,
     prepare_json_args_for_commands,
-    set_receive_address,
 )
 
 
@@ -41,7 +40,6 @@ def check_subarray_is_configured(
 ):
     """Method to check tmc and sdp subarray is in READY obstate"""
 
-    set_receive_address(central_node_low)
     assign_input_json = prepare_json_args_for_centralnode_commands(
         "assign_resources_low", command_input_factory
     )

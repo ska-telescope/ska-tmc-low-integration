@@ -7,7 +7,6 @@ from tango import DevState
 from tests.resources.test_harness.helpers import (
     prepare_json_args_for_centralnode_commands,
     prepare_json_args_for_commands,
-    set_receive_address,
     update_eb_pb_ids,
 )
 
@@ -50,7 +49,6 @@ def subarray_is_in_scanning_obsstate(
         "telescopeState",
         DevState.ON,
     )
-    set_receive_address(central_node_low)
     assign_input_json = prepare_json_args_for_centralnode_commands(
         "assign_resources_low", command_input_factory
     )
