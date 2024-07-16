@@ -85,10 +85,9 @@ def subarray_busy_assigning(
 
 
 @when("I command it to Abort")
-def abort_subarray(subarray_node_low, central_node_low):
+def abort_subarray(subarray_node_low):
     """Abort command invoked on Subarray Node"""
-    central_node_low.pst.obsreset()
-    time.sleep(2)
+
     subarray_node_low.execute_transition("Abort")
 
 
@@ -117,7 +116,9 @@ def csp_subarray_in_aborted_obs_state(subarray_node_low, event_recorder):
 
 
 @then("the TMC subarray node obsState transitions to ABORTED")
-def subarray_in_aborted_obs_state(subarray_node_low, event_recorder):
+def subarray_in_aborted_obs_state(
+    subarray_node_low, event_recorder, central_node_low
+):
     """Subarray Node in ABORTED obsState."""
     event_recorder.subscribe_event(
         subarray_node_low.subarray_devices.get("sdp_subarray"),
@@ -143,3 +144,4 @@ def subarray_in_aborted_obs_state(subarray_node_low, event_recorder):
         ObsState.ABORTED,
         lookahead=10,
     )
+    central_node_low.pst.obsreset()
