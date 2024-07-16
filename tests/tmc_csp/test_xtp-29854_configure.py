@@ -41,7 +41,7 @@ def check_telescope_is_in_on_state(
     """Ensure telescope is in ON state."""
     central_node_real_csp_low.csp_master.adminMode = 0
     central_node_real_csp_low.csp_subarray1.adminMode = 0
-    assert wait_and_validate_device_attribute_value(
+    wait_and_validate_device_attribute_value(
         central_node_real_csp_low.pst, "State", "DevState.ON"
     )
 

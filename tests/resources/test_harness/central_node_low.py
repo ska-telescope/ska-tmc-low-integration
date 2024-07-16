@@ -479,9 +479,6 @@ class CentralNodeWrapperLow(object):
             # Set adminMode to Online for csp_subarray
             if self.csp_subarray1.adminMode != AdminMode.ONLINE:
                 self.csp_subarray1.adminMode = AdminMode.ONLINE
-            time.sleep(2)
-            pst = DeviceProxy("low-pst/beam/01")
-            pst.On()
             time.sleep(3)
             _, unique_id = self.central_node.TelescopeOn()
             self.set_values_with_sdp_mccs_mocks(DevState.ON)
