@@ -20,7 +20,7 @@ configure_logging(logging.DEBUG)
 LOGGER = logging.getLogger(__name__)
 
 
-@pytest.mark.tmc_csp
+@pytest.mark.tmc_csp1
 @scenario(
     "../features/tmc_csp/xtp-29854_configure.feature",
     "Configure CSP subarray using TMC",
@@ -41,11 +41,11 @@ def check_telescope_is_in_on_state(
     """Ensure telescope is in ON state."""
     central_node_real_csp_low.csp_master.adminMode = 0
     central_node_real_csp_low.csp_subarray1.adminMode = 0
+
+    central_node_real_csp_low.move_to_on()
     wait_and_validate_device_attribute_value(
         central_node_real_csp_low.pst, "State", "DevState.ON"
     )
-
-    central_node_real_csp_low.move_to_on()
     event_recorder.subscribe_event(
         central_node_real_csp_low.central_node, "telescopeState"
     )

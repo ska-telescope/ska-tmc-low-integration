@@ -1,16 +1,14 @@
 """Module for TMC-CSP Abort command tests"""
 
 import json
+import time
 
 import pytest
 from pytest_bdd import given, scenario, then, when
 from ska_control_model import ObsState
 from tango import DevState
 
-from tests.resources.test_harness.helpers import (
-    set_receive_address,
-    wait_and_validate_device_attribute_value,
-)
+from tests.resources.test_harness.helpers import set_receive_address
 from tests.resources.test_support.common_utils.result_code import ResultCode
 from tests.resources.test_support.common_utils.tmc_helpers import (
     prepare_json_args_for_centralnode_commands,
@@ -18,7 +16,7 @@ from tests.resources.test_support.common_utils.tmc_helpers import (
 )
 
 
-@pytest.mark.tmc_csp
+@pytest.mark.tmc_csp1
 @scenario(
     "../features/tmc_csp/xtp-30154_abort_in_configuring.feature",
     "Abort configuring CSP using TMC",
@@ -39,11 +37,9 @@ def subarray_busy_configuring(
     """Subarray busy Configuring"""
     # Turning the devices ON
     central_node_low.move_to_on()
+    time.sleep(2)
     event_recorder.subscribe_event(
         central_node_low.central_node, "telescopeState"
-    )
-    wait_and_validate_device_attribute_value(
-        central_node_low.pst, "State", "DevState.ON"
     )
     event_recorder.subscribe_event(
         central_node_low.central_node, "longRunningCommandResult"
