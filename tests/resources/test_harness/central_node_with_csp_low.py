@@ -59,6 +59,7 @@ class CentralNodeCspWrapperLow(CentralNodeWrapperLow):
             self.invoke_release_resources(self.release_input)
         elif self.subarray_node.obsState == ObsState.RESOURCING:
             LOGGER.info("Calling Abort and Restart on SubarrayNode")
+            self.pst.obsreset()
             self.subarray_abort()
             self.subarray_restart()
         elif self.subarray_node.obsState == ObsState.ABORTED:
