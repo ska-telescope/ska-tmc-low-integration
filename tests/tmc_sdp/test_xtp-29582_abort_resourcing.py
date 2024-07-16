@@ -53,8 +53,8 @@ def telescope_is_in_resourcing_obsstate(
         SimulatorDeviceType.MCCS_SUBARRAY_DEVICE
     )
     csp_sim, _ = get_device_simulators(simulator_factory)
-    csp_sim.SetDelay(delay_command_params_str)
-    mccs_subarray_sim.SetDelay(delay_command_params_str)
+    csp_sim.SetDelayInfo(delay_command_params_str)
+    mccs_subarray_sim.SetDelayInfo(delay_command_params_str)
 
     assign_input_json = prepare_json_args_for_centralnode_commands(
         "assign_resources_low", command_input_factory
@@ -92,6 +92,8 @@ def telescope_is_in_resourcing_obsstate(
         "cspSubarrayObsState",
         ObsState.RESOURCING,
     )
+    csp_sim.ResetDelayInfo()
+    mccs_subarray_sim.ResetDelayInfo()
     # The sleep is required here because subarraynode takes
     # some time to processobsstate resourcing, resulting
     # in invocation of abort command in empty obsstate

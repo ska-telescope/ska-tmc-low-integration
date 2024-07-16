@@ -124,7 +124,7 @@ ska-low-cbf-proc:
         requests:
           memory: 100Mi
         limits:
-          xilinx.com/fpga-xilinx_u55c_gen3x16_xdma_base_3-0: 0  # no FPGA hardware
+          amd.com/xilinx_u55c_gen3x16_xdma_base_3-0: 0  # no FPGA hardware
           memory: 300Mi  # reduced
 
 ska-csp-lmc-low:

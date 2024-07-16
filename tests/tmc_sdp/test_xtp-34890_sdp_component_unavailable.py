@@ -1,4 +1,5 @@
 """Test TMC-SDP Negative Scenarios Unavailable subsystem"""
+import json
 import os
 
 import pytest
@@ -110,7 +111,10 @@ def sdp_subarray_reports_unavailability(event_recorder, central_node_low):
         attribute_value=(pytest.unique_id[0], Anything),
     )
     assert "AssignResources" in pytest.assertion_data["attribute_value"][0]
-    assert exception_message in pytest.assertion_data["attribute_value"][1]
+    assert (
+        exception_message
+        in json.loads(pytest.assertion_data["attribute_value"][1])[1]
+    )
 
 
 @then("TMC should report the error to client")
@@ -119,15 +123,17 @@ def tmc_reports_unavailability_to_client():
     Method to verify TMC subarray reports unavailability to client.
     """
     exception_message = (
-        "Exception occurred on the following devices:"
-        + " ska_low/tm_subarray_node/1: Exception occurred on the"
+        " ska_low/tm_subarray_node/1: Exception occurred on the"
         + " following devices: ska_low/tm_leaf_node/sdp_subarray01:"
         + " The processing controller, helm deployer, or both are OFFLINE:"
         + " cannot start processing blocks.\n"
     )
 
     assert "AssignResources" in pytest.assertion_data["attribute_value"][0]
-    assert exception_message in pytest.assertion_data["attribute_value"][1]
+    assert (
+        exception_message
+        in json.loads(pytest.assertion_data["attribute_value"][1])[1]
+    )
 
 
 @then(parsers.parse("the TMC SubarrayNode {subarray_id} stuck in RESOURCING"))
