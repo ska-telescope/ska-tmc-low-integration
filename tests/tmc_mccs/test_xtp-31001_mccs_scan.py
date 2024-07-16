@@ -4,6 +4,7 @@ from pytest_bdd import given, parsers, scenario, then, when
 from ska_control_model import ObsState
 from tango import DevState
 
+from tests.resources.test_harness.helpers import set_receive_address
 from tests.resources.test_support.common_utils.tmc_helpers import (
     prepare_json_args_for_centralnode_commands,
     prepare_json_args_for_commands,
@@ -65,6 +66,7 @@ def subarray_in_ready_obsstate(
     assert subarray_node_low.subarray_node.obsState == ObsState.EMPTY
 
     central_node_low.set_subarray_id(1)
+    set_receive_address(central_node_low)
     input_str = prepare_json_args_for_centralnode_commands(
         "assign_resources_low", command_input_factory
     )

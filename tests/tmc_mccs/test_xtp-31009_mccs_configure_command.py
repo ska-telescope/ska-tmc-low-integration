@@ -10,6 +10,7 @@ from tango import DevState
 from tests.resources.test_harness.helpers import (
     prepare_json_args_for_centralnode_commands,
     prepare_json_args_for_commands,
+    set_receive_address,
     update_eb_pb_ids,
 )
 from tests.resources.test_support.common_utils.result_code import ResultCode
@@ -64,6 +65,7 @@ def check_subarray_obs_state(
     event_recorder.subscribe_event(
         central_node_low.central_node, "longRunningCommandResult"
     )
+    set_receive_address(central_node_low)
     assign_input_json = prepare_json_args_for_centralnode_commands(
         "assign_resources_low", command_input_factory
     )
