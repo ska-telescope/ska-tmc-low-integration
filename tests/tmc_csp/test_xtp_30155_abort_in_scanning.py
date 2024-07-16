@@ -12,6 +12,7 @@ from tests.resources.test_support.common_utils.tmc_helpers import (
 )
 
 
+@pytest.mark.skip(reason="SKB-429")
 @pytest.mark.tmc_csp
 @scenario(
     "../features/tmc_csp/xtp-30155_abort_in_scanning.feature",

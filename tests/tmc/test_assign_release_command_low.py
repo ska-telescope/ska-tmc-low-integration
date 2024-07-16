@@ -21,7 +21,10 @@ from tests.resources.test_harness.helpers import (
 from tests.resources.test_harness.simulator_factory import SimulatorFactory
 from tests.resources.test_harness.utils.common_utils import JsonFactory
 from tests.resources.test_harness.utils.enums import SimulatorDeviceType
-from tests.resources.test_support.constant_low import INTERMEDIATE_STATE_DEFECT
+from tests.resources.test_support.constant_low import (
+    INTERMEDIATE_STATE_DEFECT,
+    RESET_DEFECT,
+)
 
 
 @pytest.mark.SKA_low
@@ -61,7 +64,7 @@ def test_assign_release_defective_csp(
         DevState.ON,
     )
     assert_that(event_tracer).described_as(
-        "FAILED INITIAL ASSUMPTION: "
+        "FAILED UNEXPECTED INITIAL OBSSTATE: "
         "Subarray Node device"
         f"({central_node_low.subarray_node.dev_name()}) "
         "is expected to be in EMPTY obstate",
@@ -87,21 +90,18 @@ def test_assign_release_defective_csp(
     )
     log_events({central_node_low.central_node: ["longRunningCommandResult"]})
 
-    result = event_tracer.query_events(
-        lambda e: e.has_device(central_node_low.central_node)
-        and e.has_attribute("longRunningCommandResult")
-        and e.attribute_value[0] == unique_id[0]
-        and json.loads(e.attribute_value[1])[0] == ResultCode.FAILED
-        and exception_message in json.loads(e.attribute_value[1])[1],
-        timeout=TIMEOUT,
-    )
-    assert_that(result).described_as(
+    assert_that(event_tracer).described_as(
         "FAILED ASSUMPTION ATER ASSIGN RESOURCES: "
         "Central Node device"
         f"({central_node_low.central_node.dev_name()}) "
         "is expected have longRunningCommandResult"
         "(ResultCode.FAILED,exception)",
-    ).is_length(1)
+    ).within_timeout(TIMEOUT).has_desired_result_code_message_in_lrcr_event(
+        central_node_low.central_node,
+        [exception_message],
+        unique_id[0],
+        ResultCode.FAILED,
+    )
 
     csp_sim.SetDefective(json.dumps({"enabled": False}))
 
@@ -146,7 +146,7 @@ def test_assign_release_timeout_sdp(
         DevState.ON,
     )
     assert_that(event_tracer).described_as(
-        "FAILED INITIAL ASSUMPTION: "
+        "FAILED UNEXPECTED INITIAL OBSSTATE: "
         "Subarray Node device"
         f"({central_node_low.subarray_node.dev_name()}) "
         "is expected to be in EMPTY obstate",
@@ -165,21 +165,19 @@ def test_assign_release_timeout_sdp(
         f"{central_node_low.subarray_node.dev_name()}:"
         " Timeout has occurred, command failed"
     )
-    result = event_tracer.query_events(
-        lambda e: e.has_device(central_node_low.central_node)
-        and e.has_attribute("longRunningCommandResult")
-        and e.attribute_value[0] == unique_id[0]
-        and json.loads(e.attribute_value[1])[0] == ResultCode.FAILED
-        and exception_message in json.loads(e.attribute_value[1])[1],
-        timeout=TIMEOUT,
-    )
-    assert_that(result).described_as(
+
+    assert_that(event_tracer).described_as(
         "FAILED ASSUMPTION AFTER ASSIGN RESOURCES: "
         "Central Node device"
         f"({central_node_low.central_node.dev_name()}) "
         "is expected have longRunningCommandResult"
         "(ResultCode.FAILED,exception)",
-    ).is_length(1)
+    ).within_timeout(TIMEOUT).has_desired_result_code_message_in_lrcr_event(
+        central_node_low.central_node,
+        [exception_message],
+        unique_id[0],
+        ResultCode.FAILED,
+    )
     sdp_sim.ResetDelayInfo()
 
 
@@ -220,7 +218,7 @@ def test_release_exception_propagation(
         DevState.ON,
     )
     assert_that(event_tracer).described_as(
-        "FAILED INITIAL ASSUMPTION: "
+        "FAILED UNEXPECTED INITIAL OBSSTATE: "
         "Subarray Node device"
         f"({central_node_low.subarray_node.dev_name()}) "
         "is expected to be in EMPTY obstate",
@@ -232,7 +230,9 @@ def test_release_exception_propagation(
     csp_sim, _ = get_device_simulators(simulator_factory)
     event_tracer.subscribe_event(csp_sim, "obsState")
 
-    central_node_low.perform_action("AssignResources", assign_input_json)
+    _, assign_unique_id = central_node_low.perform_action(
+        "AssignResources", assign_input_json
+    )
 
     csp_sim.SetDefective(json.dumps(INTERMEDIATE_STATE_DEFECT))
 
@@ -264,25 +264,39 @@ def test_release_exception_propagation(
         "obsState",
         ObsState.RESOURCING,
     )
-    result, unique_id = central_node_low.perform_action(
+    _, unique_id = central_node_low.perform_action(
         "ReleaseResources", release_input_json
     )
-    log_events({central_node_low.central_node: ["longRunningCommandResult"]})
-    result = event_tracer.query_events(
-        lambda e: e.has_device(central_node_low.central_node)
-        and e.has_attribute("longRunningCommandResult")
-        and e.attribute_value[0] == unique_id[0]
-        and json.loads(e.attribute_value[1])[0] == ResultCode.REJECTED
-        and "ReleaseResources command not permitted in observation state 1"
-        in json.loads(e.attribute_value[1])[1],
-        timeout=TIMEOUT,
+
+    exception_message = (
+        "ReleaseResources command not permitted in observation state 1"
     )
-    assert_that(result).described_as(
+    assert_that(event_tracer).described_as(
         'FAILED ASSUMPTION IN "THEN" STEP: '
         "Subarray Node device"
         f"({central_node_low.central_node.dev_name()}) "
         "is expected have longRunningCommandResult ResultCode.REJECTED",
-    ).is_length(1)
+    ).within_timeout(TIMEOUT).has_desired_result_code_message_in_lrcr_event(
+        central_node_low.central_node,
+        [exception_message],
+        unique_id[0],
+        ResultCode.REJECTED,
+    )
+    exception_message = "Timeout has occurred, command failed"
+
+    assert_that(event_tracer).described_as(
+        "FAILED ASSUMPTION ATER ASSIGN RESOURCES: "
+        "Central Node device"
+        f"({central_node_low.central_node.dev_name()}) "
+        "is expected have longRunningCommandResult"
+        "(ResultCode.FAILED,exception)",
+    ).within_timeout(TIMEOUT).has_desired_result_code_message_in_lrcr_event(
+        central_node_low.central_node,
+        [exception_message],
+        assign_unique_id[0],
+        ResultCode.FAILED,
+    )
+    csp_sim.SetDefective(json.dumps(RESET_DEFECT))
 
 
 @pytest.mark.SKA_low
@@ -333,18 +347,16 @@ def test_assign_release_timeout_csp(
     )
     exception_message = "Timeout has occurred, command failed"
     log_events({central_node_low.central_node: ["longRunningCommandResult"]})
-    result = event_tracer.query_events(
-        lambda e: e.has_device(central_node_low.central_node)
-        and e.has_attribute("longRunningCommandResult")
-        and e.attribute_value[0] == unique_id[0]
-        and json.loads(e.attribute_value[1])[0] == ResultCode.FAILED
-        and exception_message in json.loads(e.attribute_value[1])[1],
-        timeout=TIMEOUT,
-    )
-    assert_that(result).described_as(
+    assert_that(event_tracer).described_as(
         "FAILED ASSUMPTION ATER ASSIGN RESOURCES: "
         "Central Node device"
         f"({central_node_low.central_node.dev_name()}) "
         "is expected have longRunningCommandResult"
         "(ResultCode.FAILED,exception)",
-    ).is_length(1)
+    ).within_timeout(TIMEOUT).has_desired_result_code_message_in_lrcr_event(
+        central_node_low.central_node,
+        [exception_message],
+        unique_id[0],
+        ResultCode.FAILED,
+    )
+    csp_subarray_sim.SetDefective(json.dumps(RESET_DEFECT))

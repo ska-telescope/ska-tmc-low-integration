@@ -1,5 +1,5 @@
 """Test cases for AssignResources Command not allowed for LOW."""
-import json
+
 
 import pytest
 from assertpy import assert_that
@@ -80,21 +80,21 @@ class TestAssignCommandNotAllowedPropagation:
         log_events(
             {central_node_low.central_node: ["longRunningCommandResult"]}
         )
-        result = event_tracer.query_events(
-            lambda e: e.has_device(central_node_low.central_node)
-            and e.has_attribute("longRunningCommandResult")
-            and e.attribute_value[0] == unique_id[0]
-            and json.loads(e.attribute_value[1])[0] == ResultCode.FAILED
-            and exception_message in json.loads(e.attribute_value[1])[1],
-            timeout=TIMEOUT,
-        )
-        assert_that(result).described_as(
+
+        assert_that(event_tracer).described_as(
             "FAILED ASSUMPTION ATER ASSIGN RESOURCES: "
             "Central Node device"
             f"({central_node_low.central_node.dev_name()}) "
             "is expected have longRunningCommandResult"
             "(ResultCode.FAILED,exception)",
-        ).is_length(1)
+        ).within_timeout(
+            TIMEOUT
+        ).has_desired_result_code_message_in_lrcr_event(
+            central_node_low.central_node,
+            [exception_message],
+            unique_id[0],
+            ResultCode.FAILED,
+        )
 
     @pytest.mark.SKA_low
     def test_assign_command_not_allowed_propagation_sdp_ln_low(
@@ -152,21 +152,20 @@ class TestAssignCommandNotAllowedPropagation:
             " ska_tmc_common.exceptions.CommandNotAllowed:"
             " Command is not allowed\n\n"
         )
-        result = event_tracer.query_events(
-            lambda e: e.has_device(central_node_low.central_node)
-            and e.has_attribute("longRunningCommandResult")
-            and e.attribute_value[0] == unique_id[0]
-            and json.loads(e.attribute_value[1])[0] == ResultCode.FAILED
-            and exception_message in json.loads(e.attribute_value[1])[1],
-            timeout=TIMEOUT,
-        )
-        assert_that(result).described_as(
+        assert_that(event_tracer).described_as(
             "FAILED ASSUMPTION ATER ASSIGN RESOURCES: "
             "Central Node device"
             f"({central_node_low.central_node.dev_name()}) "
             "is expected have longRunningCommandResult"
             "(ResultCode.FAILED,exception)",
-        ).is_length(1)
+        ).within_timeout(
+            TIMEOUT
+        ).has_desired_result_code_message_in_lrcr_event(
+            central_node_low.central_node,
+            [exception_message],
+            unique_id[0],
+            ResultCode.FAILED,
+        )
 
     @pytest.mark.SKA_low
     def test_assign_command_not_allowed_propagation_mccs_ln_low(
@@ -234,20 +233,18 @@ class TestAssignCommandNotAllowedPropagation:
         )
 
         exception_message2 = "ska_tmc_common.exceptions.CommandNotAllowed"
-        result = event_tracer.query_events(
-            lambda e: e.has_device(central_node_low.central_node)
-            and e.has_attribute("longRunningCommandResult")
-            and e.attribute_value[0] == unique_id[0]
-            and json.loads(e.attribute_value[1])[0] == ResultCode.FAILED
-            and exception_message in json.loads(e.attribute_value[1])[1]
-            and exception_message2 in json.loads(e.attribute_value[1])[1],
-            timeout=TIMEOUT,
-        )
 
-        assert_that(result).described_as(
+        assert_that(event_tracer).described_as(
             "FAILED ASSUMPTION AFTER ASSIGN RESOURCES: "
             "Central Node device"
             f"({central_node_low.central_node.dev_name()}) "
             "is expected have longRunningCommandResult"
             "(ResultCode.FAILED,exception)",
-        ).is_length(1)
+        ).within_timeout(
+            TIMEOUT
+        ).has_desired_result_code_message_in_lrcr_event(
+            central_node_low.central_node,
+            [exception_message, exception_message2],
+            unique_id[0],
+            ResultCode.FAILED,
+        )

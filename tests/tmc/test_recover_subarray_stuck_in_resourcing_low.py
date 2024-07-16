@@ -83,22 +83,19 @@ def test_recover_subarray_stuck_in_resourcing_low(
         "AssignResources", assign_input_json
     )
     exception_message = "Timeout has occurred, command failed"
-    result = event_tracer.query_events(
-        lambda e: e.has_device(central_node_low.central_node)
-        and e.has_attribute("longRunningCommandResult")
-        and e.attribute_value[0] == unique_id[0]
-        and json.loads(e.attribute_value[1])[0] == ResultCode.FAILED
-        and exception_message in json.loads(e.attribute_value[1])[1],
-        timeout=TIMEOUT,
-    )
 
-    assert_that(result).described_as(
+    assert_that(event_tracer).described_as(
         "FAILED ASSUMPTION AFTER ASSIGN_RESOURCES: "
         "Central Node device"
         f"({central_node_low.central_node.dev_name()}) "
         "is expected have longRunningCommandResult"
         "(ResultCode.FAILED,exception)",
-    ).is_length(1)
+    ).within_timeout(TIMEOUT).has_desired_result_code_message_in_lrcr_event(
+        central_node_low.central_node,
+        [exception_message],
+        unique_id[0],
+        ResultCode.FAILED,
+    )
 
     assert_that(event_tracer).described_as(
         "FAILED ASSUMPTION AFTER ASSIGN_RESOURCES COMMAND: "
@@ -276,22 +273,18 @@ def test_abort_with_sdp_csp_in_empty(
         f"ska_low/tm_leaf_node/{defective_device}01: "
     )
 
-    result = event_tracer.query_events(
-        lambda e: e.has_device(central_node_low.central_node)
-        and e.has_attribute("longRunningCommandResult")
-        and e.attribute_value[0] == unique_id[0]
-        and json.loads(e.attribute_value[1])[0] == ResultCode.FAILED
-        and exception_message in json.loads(e.attribute_value[1])[1],
-        timeout=TIMEOUT,
-    )
-
-    assert_that(result).described_as(
+    assert_that(event_tracer).described_as(
         "FAILED ASSUMPTION AFTER ASSIGN_RESOURCES: "
         "Central Node device"
         f"({central_node_low.central_node.dev_name()}) "
         "is expected have longRunningCommandResult"
         "(ResultCode.FAILED,exception)",
-    ).is_length(1)
+    ).within_timeout(TIMEOUT).has_desired_result_code_message_in_lrcr_event(
+        central_node_low.central_node,
+        [exception_message],
+        unique_id[0],
+        ResultCode.FAILED,
+    )
     assert_that(event_tracer).described_as(
         "FAILED ASSUMPTION AFTER ASSIGN_RESOURCES COMMAND: "
         "Subarray Node device"
@@ -447,22 +440,18 @@ def test_abort_with_mccs_in_empty(
         + "Timeout has occurred, command failed"
     )
 
-    result = event_tracer.query_events(
-        lambda e: e.has_device(central_node_low.central_node)
-        and e.has_attribute("longRunningCommandResult")
-        and e.attribute_value[0] == unique_id[0]
-        and json.loads(e.attribute_value[1])[0] == ResultCode.FAILED
-        and exception_message in json.loads(e.attribute_value[1])[1],
-        timeout=TIMEOUT,
-    )
-
-    assert_that(result).described_as(
+    assert_that(event_tracer).described_as(
         "FAILED ASSUMPTION AFTER ASSIGN_RESOURCES: "
         "Central Node device"
         f"({central_node_low.central_node.dev_name()}) "
         "is expected have longRunningCommandResult"
         "(ResultCode.FAILED,exception)",
-    ).is_length(1)
+    ).within_timeout(TIMEOUT).has_desired_result_code_message_in_lrcr_event(
+        central_node_low.central_node,
+        [exception_message],
+        unique_id[0],
+        ResultCode.FAILED,
+    )
 
     assert_that(event_tracer).described_as(
         "FAILED ASSUMPTION AFTER ASSIGN_RESOURCES COMMAND: "

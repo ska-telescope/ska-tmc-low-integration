@@ -11,6 +11,24 @@ Added
 Fixed
 -----
 
+[0.17.0]
+*********
+* TMC Low release with base class version 1.0.0
+* Updated centralnode: 0.16.2
+* Updated subarraynode: 0.21.2
+* Updated cspleafnodes: 0.18.2
+* Updated sdpleafnodes: 0.16.1
+* Updated mccsleafnodes: 0.4.0 
+
+[0.16.0]
+*********
+* REL-1557 
+* Updated AssignResources and Configure schemas for verification as per SKA Tel Model v > 1.17.0
+* Verified TMC-MCCS interface with MCCS chart v0.13.0
+* Utilised OSO-TMC low AssignResources v4.0(supporting TMC-MCCS v3.0) and Configure schema v4.0 (PST observations)
+* Updated Central node version 0.15.2 with SKA Tel Model v1.17.0 to support validations for AssignResources and       ReleaseResources
+* Utilised Subarray node version 0.19.1 with SKA Tel Model v1.18.1 to support validations for AssignResources, Configure and Scan schema
+
 [master]
 *********
 * Bug SKB-296 is fixed

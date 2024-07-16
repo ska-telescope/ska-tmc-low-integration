@@ -65,7 +65,7 @@ def test_low_abort_restart_in_aborting(
         DevState.ON,
     )
     assert_that(event_tracer).described_as(
-        "FAILED INITIAL ASSUMPTION: "
+        "FAILED UNEXPECTED INITIAL OBSSTATE: "
         "Subarray Node device"
         f"({central_node_low.subarray_node.dev_name()}) "
         "is expected to be in EMPTY obstate",

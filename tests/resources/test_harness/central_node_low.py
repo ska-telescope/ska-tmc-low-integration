@@ -693,8 +693,10 @@ class CentralNodeWrapperLow(object):
             result, message = self.central_node.command_inout(
                 command_name, input_json
             )
+            LOGGER.info("unique id returned by the command call %s", message)
         else:
             result, message = self.central_node.command_inout(command_name)
+
         return result, message
 
     def set_values_with_all_mocks(self, subarray_state):
