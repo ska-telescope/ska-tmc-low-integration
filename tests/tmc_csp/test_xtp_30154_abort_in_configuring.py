@@ -16,7 +16,7 @@ from tests.resources.test_support.common_utils.tmc_helpers import (
 )
 
 
-@pytest.mark.tmc_csp1
+@pytest.mark.tmc_csp
 @scenario(
     "../features/tmc_csp/xtp-30154_abort_in_configuring.feature",
     "Abort configuring CSP using TMC",
