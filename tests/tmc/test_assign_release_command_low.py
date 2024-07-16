@@ -21,7 +21,10 @@ from tests.resources.test_harness.helpers import (
 from tests.resources.test_harness.simulator_factory import SimulatorFactory
 from tests.resources.test_harness.utils.common_utils import JsonFactory
 from tests.resources.test_harness.utils.enums import SimulatorDeviceType
-from tests.resources.test_support.constant_low import INTERMEDIATE_STATE_DEFECT
+from tests.resources.test_support.constant_low import (
+    INTERMEDIATE_STATE_DEFECT,
+    RESET_DEFECT,
+)
 
 
 @pytest.mark.SKA_low
@@ -227,7 +230,9 @@ def test_release_exception_propagation(
     csp_sim, _ = get_device_simulators(simulator_factory)
     event_tracer.subscribe_event(csp_sim, "obsState")
 
-    central_node_low.perform_action("AssignResources", assign_input_json)
+    _, assign_unique_id = central_node_low.perform_action(
+        "AssignResources", assign_input_json
+    )
 
     csp_sim.SetDefective(json.dumps(INTERMEDIATE_STATE_DEFECT))
 
@@ -262,7 +267,7 @@ def test_release_exception_propagation(
     _, unique_id = central_node_low.perform_action(
         "ReleaseResources", release_input_json
     )
-    log_events({central_node_low.central_node: ["longRunningCommandResult"]})
+
     exception_message = (
         "ReleaseResources command not permitted in observation state 1"
     )
@@ -277,6 +282,21 @@ def test_release_exception_propagation(
         unique_id[0],
         ResultCode.REJECTED,
     )
+    exception_message = "Timeout has occurred, command failed"
+
+    assert_that(event_tracer).described_as(
+        "FAILED ASSUMPTION ATER ASSIGN RESOURCES: "
+        "Central Node device"
+        f"({central_node_low.central_node.dev_name()}) "
+        "is expected have longRunningCommandResult"
+        "(ResultCode.FAILED,exception)",
+    ).within_timeout(TIMEOUT).has_desired_result_code_message_in_lrcr_event(
+        central_node_low.central_node,
+        [exception_message],
+        assign_unique_id[0],
+        ResultCode.FAILED,
+    )
+    csp_sim.SetDefective(json.dumps(RESET_DEFECT))
 
 
 @pytest.mark.SKA_low
@@ -339,3 +359,4 @@ def test_assign_release_timeout_csp(
         unique_id[0],
         ResultCode.FAILED,
     )
+    csp_subarray_sim.SetDefective(json.dumps(RESET_DEFECT))
