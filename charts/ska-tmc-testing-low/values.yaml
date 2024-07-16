@@ -130,9 +130,9 @@ ska-low-cbf-proc:
 ska-csp-lmc-low:
   lowcsplmc:
     image:
-      registry: registry.gitlab.com/ska-telescope/ska-csp-lmc-low
+      registry: artefact.skao.int
       image: ska-csp-lmc-low
-      tag: 0.16.0-dev.c8a59c2b4
+      tag: 0.16.1
   labels:
     app: ska-tmc-low-integration
   enabled: false

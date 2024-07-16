@@ -26,7 +26,7 @@ dependencies:
     repository: https://artefact.skao.int/repository/helm-internal
     condition: ska-sdp.enabled
   - name: ska-csp-lmc-low
-    version: 0.16.0
+    version: 0.16.1
     repository: https://artefact.skao.int/repository/helm-internal
     condition: ska-csp-lmc-low.enabled
   - name: ska-low-cbf
