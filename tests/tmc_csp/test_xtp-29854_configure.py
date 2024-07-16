@@ -12,7 +12,6 @@ from tests.resources.test_harness.helpers import (
     prepare_json_args_for_centralnode_commands,
     prepare_json_args_for_commands,
     set_receive_address,
-    wait_and_validate_device_attribute_value,
 )
 from tests.resources.test_support.common_utils.result_code import ResultCode
 
@@ -41,10 +40,15 @@ def check_telescope_is_in_on_state(
     """Ensure telescope is in ON state."""
     central_node_real_csp_low.csp_master.adminMode = 0
     central_node_real_csp_low.csp_subarray1.adminMode = 0
-
+    event_recorder.subscribe_event(central_node_real_csp_low.pst, "State")
+    # wait_and_validate_device_attribute_value(
+    #     central_node_real_csp_low.pst, "State", "DevState.ON"
+    # )
     central_node_real_csp_low.move_to_on()
-    wait_and_validate_device_attribute_value(
-        central_node_real_csp_low.pst, "State", "DevState.ON"
+    assert event_recorder.has_change_event_occurred(
+        central_node_real_csp_low.pst,
+        "State",
+        DevState.ON,
     )
     event_recorder.subscribe_event(
         central_node_real_csp_low.central_node, "telescopeState"
