@@ -10,6 +10,7 @@ from tests.resources.test_harness.event_recorder import EventRecorder
 from tests.resources.test_harness.helpers import (
     prepare_json_args_for_centralnode_commands,
     prepare_json_args_for_commands,
+    set_receive_address,
 )
 from tests.resources.test_support.common_utils.result_code import ResultCode
 
@@ -59,6 +60,7 @@ def move_subarray_node_to_ready_obsstate(
     event_recorder.subscribe_event(
         subarray_node_low.subarray_devices.get("mccs_subarray"), "obsState"
     )
+    set_receive_address(central_node_low)
     assign_input_json = prepare_json_args_for_centralnode_commands(
         "assign_resources_low", command_input_factory
     )
