@@ -383,6 +383,7 @@ class CentralNodeWrapperLow(object):
             )
         if SIMULATED_DEVICES_DICT["sdp_and_mccs"]:
             self.set_standby()
+            self.pst.obsreset()
         elif (
             SIMULATED_DEVICES_DICT["csp_and_mccs"]
             or SIMULATED_DEVICES_DICT["all_mocks"]

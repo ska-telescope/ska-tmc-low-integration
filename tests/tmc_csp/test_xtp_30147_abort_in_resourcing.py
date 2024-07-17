@@ -144,4 +144,3 @@ def subarray_in_aborted_obs_state(
         ObsState.ABORTED,
         lookahead=10,
     )
-    central_node_low.pst.obsreset()
