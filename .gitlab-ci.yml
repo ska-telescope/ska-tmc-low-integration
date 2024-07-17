@@ -44,7 +44,7 @@ k8s-test-tmc-with-csp:
   environment:
     name: test/$CI_COMMIT_REF_SLUG
     on_stop: stop-k8s-test-tmc-with-csp
-  when: auto
+  when: always
 
 stop-k8s-test-tmc-with-csp:
   extends:
