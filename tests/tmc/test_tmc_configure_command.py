@@ -20,6 +20,7 @@ from tango import DevState
 
 from tests.resources.test_harness.central_node_low import CentralNodeWrapperLow
 from tests.resources.test_harness.constant import TIMEOUT
+from tests.resources.test_harness.helpers import set_receive_address
 from tests.resources.test_harness.subarray_node_low import (
     SubarrayNodeWrapperLow,
 )
@@ -95,6 +96,7 @@ def given_subarray_in_idle(
 ):
     """Set up a subarray in the IDLE obsState."""
 
+    set_receive_address(central_node_low)
     assign_input_json = prepare_json_args_for_centralnode_commands(
         "assign_resources_low", command_input_factory
     )

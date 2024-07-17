@@ -15,6 +15,7 @@ from tests.resources.test_harness.constant import (
     INTERMEDIATE_CONFIGURING_STATE_DEFECT,
     TIMEOUT,
 )
+from tests.resources.test_harness.helpers import set_receive_address
 from tests.resources.test_harness.simulator_factory import SimulatorFactory
 from tests.resources.test_harness.subarray_node_low import (
     SubarrayNodeWrapperLow,
@@ -57,6 +58,7 @@ class TestConfigureTimeout:
         event_tracer.subscribe_event(
             central_node_low.central_node, "telescopeState"
         )
+        set_receive_address(central_node_low)
         # Preparing input files
         assign_input_str = prepare_json_args_for_commands(
             "assign_resources_low", command_input_factory
