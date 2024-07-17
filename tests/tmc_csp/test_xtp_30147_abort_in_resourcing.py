@@ -116,9 +116,7 @@ def csp_subarray_in_aborted_obs_state(subarray_node_low, event_recorder):
 
 
 @then("the TMC subarray node obsState transitions to ABORTED")
-def subarray_in_aborted_obs_state(
-    subarray_node_low, event_recorder, central_node_low
-):
+def subarray_in_aborted_obs_state(subarray_node_low, event_recorder):
     """Subarray Node in ABORTED obsState."""
     event_recorder.subscribe_event(
         subarray_node_low.subarray_devices.get("sdp_subarray"),
@@ -144,4 +142,3 @@ def subarray_in_aborted_obs_state(
         ObsState.ABORTED,
         lookahead=10,
     )
-    central_node_low.pst.obsreset()

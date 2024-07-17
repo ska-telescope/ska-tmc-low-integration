@@ -72,8 +72,7 @@ class CentralNodeWrapperLow(object):
         self.csp_master = DeviceProxy(low_csp_master)
         self.mccs_master = DeviceProxy(mccs_controller)
         self._state = DevState.OFF
-        if SIMULATED_DEVICES_DICT["sdp_and_mccs"]:
-            self.pst = DeviceProxy(pst)
+
         self.json_factory = JsonFactory()
         self.release_input = (
             self.json_factory.create_centralnode_configuration(
@@ -104,6 +103,8 @@ class CentralNodeWrapperLow(object):
                 self.subarray_node: ["longRunningCommandResult"],
             }
         )
+        if SIMULATED_DEVICES_DICT["sdp_and_mccs"]:
+            self.pst = DeviceProxy(pst)
 
     def set_subarray_id(self, subarray_id):
         self.subarray_node = DeviceProxy(
@@ -382,6 +383,20 @@ class CentralNodeWrapperLow(object):
                 ),
             )
         if SIMULATED_DEVICES_DICT["sdp_and_mccs"]:
+            if self.pst.obsState == ObsState.ABORTED:
+                log_events({self.pst: ["obsState"]})
+                self.event_tracer.subscribe_event(self.pst, "obsState")
+                self.pst.obsreset()
+                assert_that(self.event_tracer).described_as(
+                    "FAILED TEAR DOWN"
+                    "PST device"
+                    f"({self.pst.dev_name()}) "
+                    f"is expected to be in IDLE obstate",
+                ).within_timeout(TIMEOUT).has_change_event_occurred(
+                    self.pst,
+                    "obsState",
+                    ObsState.IDLE,
+                )
             self.set_standby()
         elif (
             SIMULATED_DEVICES_DICT["csp_and_mccs"]
