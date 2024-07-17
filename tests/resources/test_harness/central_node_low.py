@@ -365,20 +365,6 @@ class CentralNodeWrapperLow(object):
                     json.dumps((int(ResultCode.OK), "Command Completed")),
                 ),
             )
-            if SIMULATED_DEVICES_DICT["sdp_and_mccs"]:
-                log_events({self.pst: ["obsState"]})
-                self.event_tracer.subscribe_event(self.pst, "obsState")
-                self.pst.obsreset()
-                assert_that(self.event_tracer).described_as(
-                    "FAILED TEAR DOWN"
-                    "PST device"
-                    f"({self.pst.dev_name()}) "
-                    f"is expected to be in EMPTY obstate",
-                ).within_timeout(TIMEOUT).has_change_event_occurred(
-                    self.pst,
-                    "obsState",
-                    ObsState.EMPTY,
-                )
         elif self.subarray_node.obsState == ObsState.IDLE:
             LOGGER.info("Calling Release Resource on centralnode")
             _, unique_id = self.invoke_release_resources(self.release_input)
@@ -397,6 +383,20 @@ class CentralNodeWrapperLow(object):
                 ),
             )
         if SIMULATED_DEVICES_DICT["sdp_and_mccs"]:
+            if self.pst.obsState == ObsState.ABORTED:
+                log_events({self.pst: ["obsState"]})
+                self.event_tracer.subscribe_event(self.pst, "obsState")
+                self.pst.obsreset()
+                assert_that(self.event_tracer).described_as(
+                    "FAILED TEAR DOWN"
+                    "PST device"
+                    f"({self.pst.dev_name()}) "
+                    f"is expected to be in EMPTY obstate",
+                ).within_timeout(TIMEOUT).has_change_event_occurred(
+                    self.pst,
+                    "obsState",
+                    ObsState.EMPTY,
+                )
             self.set_standby()
         elif (
             SIMULATED_DEVICES_DICT["csp_and_mccs"]
