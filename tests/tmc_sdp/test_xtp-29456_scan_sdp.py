@@ -44,7 +44,7 @@ def check_subarray_is_configured(
         "assign_resources_low", command_input_factory
     )
     configure_input_json = prepare_json_args_for_commands(
-        "configure_low_sdp", command_input_factory
+        "configure_low", command_input_factory
     )
     subarray_node_low.set_subarray_id(subarray_id)
     event_recorder.subscribe_event(

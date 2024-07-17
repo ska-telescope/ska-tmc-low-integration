@@ -50,7 +50,7 @@ def check_subarray_obs_state(
         "assign_resources_low", command_input_factory
     )
     configure_input_json = prepare_json_args_for_commands(
-        "configure_low_sdp", command_input_factory
+        "configure_low", command_input_factory
     )
 
     event_recorder.subscribe_event(subarray_node_low.subarray_node, "obsState")

@@ -55,7 +55,7 @@ def subarray_is_in_scanning_obsstate(
     assign_input_json = update_eb_pb_ids(assign_input_json)
 
     configure_input_json = prepare_json_args_for_commands(
-        "configure_low_sdp", command_input_factory
+        "configure_low", command_input_factory
     )
     scan_json = prepare_json_args_for_commands(
         "scan_low", command_input_factory

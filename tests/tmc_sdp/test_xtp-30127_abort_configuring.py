@@ -74,7 +74,7 @@ def subarray_is_in_configuring_obsstate(
         subarray_node_low.csp_subarray_leaf_node, "cspSubarrayObsState"
     )
     configure_input_json = prepare_json_args_for_commands(
-        "configure_low_sdp", command_input_factory
+        "configure_low", command_input_factory
     )
     subarray_node_low.force_change_of_obs_state(
         "CONFIGURING",
