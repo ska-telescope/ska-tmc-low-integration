@@ -94,7 +94,7 @@ def invoke_configure(
         subarray_node_low.subarray_node, "longRunningCommandResult"
     )
     input_json = prepare_json_args_for_commands(
-        "configure_low", command_input_factory
+        "configure_low_sdp", command_input_factory
     )
     input_json = json.loads(input_json)
     input_json["sdp"]["scan_type"] = scan_type
