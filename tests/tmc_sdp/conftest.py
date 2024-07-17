@@ -133,7 +133,7 @@ def execute_configure_scan_sequence(
     )
     check_subarray_instance(subarray_node_low.subarray_node, subarray_id)
     configure_json = prepare_json_args_for_commands(
-        "configure_low", command_input_factory
+        "configure_low_sdp", command_input_factory
     )
 
     configure_cycle = "initial"
