@@ -391,11 +391,11 @@ class CentralNodeWrapperLow(object):
                     "FAILED TEAR DOWN"
                     "PST device"
                     f"({self.pst.dev_name()}) "
-                    f"is expected to be in EMPTY obstate",
+                    f"is expected to be in IDLE obstate",
                 ).within_timeout(TIMEOUT).has_change_event_occurred(
                     self.pst,
                     "obsState",
-                    ObsState.EMPTY,
+                    ObsState.IDLE,
                 )
             self.set_standby()
         elif (
