@@ -364,6 +364,8 @@ class CentralNodeWrapperLow(object):
                     json.dumps((int(ResultCode.OK), "Command Completed")),
                 ),
             )
+            if SIMULATED_DEVICES_DICT["sdp_and_mccs"]:
+                self.pst.obsreset()
         elif self.subarray_node.obsState == ObsState.IDLE:
             LOGGER.info("Calling Release Resource on centralnode")
             _, unique_id = self.invoke_release_resources(self.release_input)
