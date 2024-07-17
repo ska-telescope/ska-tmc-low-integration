@@ -92,7 +92,7 @@ def subarray_is_in_given_obsstate(
     if obsstate == "READY":
 
         input_json = prepare_json_args_for_commands(
-            "configure_low", command_input_factory
+            "configure_low_sdp", command_input_factory
         )
         _, unique_id = subarray_node_low.execute_transition(
             "Configure", input_json
