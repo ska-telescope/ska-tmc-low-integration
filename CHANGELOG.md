@@ -19,6 +19,8 @@ Fixed
 * Updated cspleafnodes: 0.18.2
 * Updated sdpleafnodes: 0.16.1
 * Updated mccsleafnodes: 0.4.0 
+* Update the telmodel version to 1.18.2
+* Fix bug SKB-355
 
 [0.16.0]
 *********
