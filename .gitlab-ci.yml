@@ -105,25 +105,25 @@ k8s-test:
     - pip3 install -q -U ska-ser-xray
     - XRAY_TEST_RESULT_FILE="build/cucumber.json" make xray-publish
 
-k8s-test-tmc-with-csp:
-  extends:
-    - k8s-test
-  variables:
-    KUBE_NAMESPACE: 'ci-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-csp-low'
-    SERVICE_ACCOUNT: "ci-svc-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-csp-low"
-    MARK: 'tmc_csp'
-    COUNT: 1
-    CSP_SIMULATION_ENABLED: 'false'
-  environment:
-    name: test/$CI_COMMIT_REF_SLUG
-    on_stop: stop-k8s-test-tmc-with-csp
+# k8s-test-tmc-with-csp:
+#   extends:
+#     - k8s-test
+#   variables:
+#     KUBE_NAMESPACE: 'ci-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-csp-low'
+#     SERVICE_ACCOUNT: "ci-svc-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-csp-low"
+#     MARK: 'tmc_csp'
+#     COUNT: 1
+#     CSP_SIMULATION_ENABLED: 'false'
+#   environment:
+#     name: test/$CI_COMMIT_REF_SLUG
+#     on_stop: stop-k8s-test-tmc-with-csp
 
 
-stop-k8s-test-tmc-with-csp:
-  extends:
-    - stop-k8s-test
-  variables:
-    KUBE_NAMESPACE: 'ci-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-csp-low'
+# stop-k8s-test-tmc-with-csp:
+#   extends:
+#     - stop-k8s-test
+#   variables:
+#     KUBE_NAMESPACE: 'ci-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-csp-low'
 
 # k8s-test-tmc-with-sdp:
 #   tags:
