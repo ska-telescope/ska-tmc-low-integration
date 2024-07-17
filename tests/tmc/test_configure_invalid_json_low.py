@@ -18,6 +18,7 @@ from tango import DevState
 from tests.conftest import LOGGER
 from tests.resources.test_harness.central_node_low import CentralNodeWrapperLow
 from tests.resources.test_harness.constant import TIMEOUT
+from tests.resources.test_harness.helpers import set_receive_address
 from tests.resources.test_harness.subarray_node_low import (
     SubarrayNodeWrapperLow,
 )
@@ -29,7 +30,6 @@ from tests.resources.test_support.common_utils.tmc_helpers import (
 )
 
 
-@pytest.mark.aki12
 @pytest.mark.SKA_low
 @scenario(
     "../features/tmc/check_invalid_json_not_allowed.feature",
@@ -77,6 +77,7 @@ def tmc_check_status(
 ):
     """Set the subarray to 'IDLE' observation state."""
     event_tracer.subscribe_event(central_node_low.subarray_node, "obsState")
+    set_receive_address(central_node_low)
     assign_input_json = prepare_json_args_for_centralnode_commands(
         "assign_resources_low", command_input_factory
     )

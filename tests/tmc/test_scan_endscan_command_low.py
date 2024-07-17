@@ -39,6 +39,7 @@ def test_scan_endscan_low(json_factory, command_input_factory):
     configure_json = prepare_json_args_for_commands(
         "configure_low", command_input_factory
     )
+
     scan_json = json_factory("command_scan_low")
     try:
         tmc_helper.check_devices(DEVICE_LIST_FOR_CHECK_DEVICES)
