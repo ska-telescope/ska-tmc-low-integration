@@ -105,8 +105,6 @@ class CentralNodeWrapperLow(object):
         )
         if SIMULATED_DEVICES_DICT["sdp_and_mccs"]:
             self.pst = DeviceProxy(pst)
-            log_events({self.pst: ["obsState"]})
-            self.event_tracer.subscribe_event(self.pst, "obsState")
 
     def set_subarray_id(self, subarray_id):
         self.subarray_node = DeviceProxy(
@@ -368,6 +366,8 @@ class CentralNodeWrapperLow(object):
                 ),
             )
             if SIMULATED_DEVICES_DICT["sdp_and_mccs"]:
+                log_events({self.pst: ["obsState"]})
+                self.event_tracer.subscribe_event(self.pst, "obsState")
                 self.pst.obsreset()
                 assert_that(self.event_tracer).described_as(
                     "FAILED TEAR DOWN"

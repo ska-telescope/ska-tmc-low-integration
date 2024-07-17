@@ -122,4 +122,3 @@ def subarray_in_aborted_obs_state(subarray_node_low, event_recorder):
         ObsState.ABORTED,
         lookahead=10,
     )
-    event_recorder.clear_events()
