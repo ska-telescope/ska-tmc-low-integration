@@ -32,8 +32,6 @@ class CentralNodeCspWrapperLow(CentralNodeWrapperLow):
         """
         self.pst.On()
         self.central_node.TelescopeOn()
-        # self.csp_master.adminMode = AdminMode.ONLINE
-        # self.csp_subarray1.adminMode = AdminMode.ONLINE
         device_to_on_list = [
             self.subarray_devices.get("sdp_subarray"),
             self.subarray_devices.get("mccs_subarray"),
@@ -83,9 +81,6 @@ class CentralNodeCspWrapperLow(CentralNodeWrapperLow):
 
     def set_serial_number_of_cbf_processor(self):
         """Sets serial number for cbf processor"""
-        # self.processor1.serialnumber = "XFL14SLO1LIF"
-        # self.processor1.subscribetoallocator("low-cbf/allocator/0")
-        # self.processor1.register()
         cbf_proc1 = DeviceProxy("low-cbf/processor/0.0.0")
         cbf_proc2 = DeviceProxy("low-cbf/processor/0.0.1")
 
