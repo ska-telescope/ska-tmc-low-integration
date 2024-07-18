@@ -87,6 +87,7 @@ def subarray_busy_assigning(
 @when("I command it to Abort")
 def abort_subarray(subarray_node_low):
     """Abort command invoked on Subarray Node"""
+
     subarray_node_low.execute_transition("Abort")
 
 

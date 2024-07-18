@@ -25,6 +25,7 @@ from tests.resources.test_harness.constant import (
 from tests.resources.test_harness.helpers import (
     prepare_json_args_for_centralnode_commands,
     prepare_json_args_for_commands,
+    set_receive_address,
     wait_and_validate_device_attribute_value,
 )
 from tests.resources.test_harness.subarray_node_low import (
@@ -97,6 +98,7 @@ def subarray_in_idle_obsstate(
             ]
         }
     )
+    set_receive_address(central_node_low)
     assign_input_json = prepare_json_args_for_centralnode_commands(
         "assign_resources_low", command_input_factory
     )

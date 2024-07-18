@@ -7,6 +7,7 @@ from pytest_bdd import given, scenario, then, when
 from ska_control_model import ObsState
 from tango import DevState
 
+from tests.resources.test_harness.helpers import set_receive_address
 from tests.resources.test_support.common_utils.result_code import ResultCode
 from tests.resources.test_support.common_utils.tmc_helpers import (
     prepare_json_args_for_centralnode_commands,
@@ -14,7 +15,6 @@ from tests.resources.test_support.common_utils.tmc_helpers import (
 )
 
 
-@pytest.mark.skip(reason="SKB-429")
 @pytest.mark.tmc_csp
 @scenario(
     "../features/tmc_csp/xtp-30154_abort_in_configuring.feature",
@@ -49,7 +49,7 @@ def subarray_busy_configuring(
         DevState.ON,
     )
     central_node_low.set_serial_number_of_cbf_processor()
-
+    set_receive_address(central_node_low)
     input_json = prepare_json_args_for_centralnode_commands(
         "assign_resources_low", command_input_factory
     )
@@ -92,6 +92,7 @@ def subarray_busy_configuring(
 @when("I command it to Abort")
 def abort_subarray(subarray_node_low):
     """Abort command invoked on Subarray Node"""
+
     subarray_node_low.abort_subarray()
 
 
@@ -119,4 +120,3 @@ def subarray_in_aborted_obs_state(subarray_node_low, event_recorder):
         ObsState.ABORTED,
         lookahead=10,
     )
-    event_recorder.clear_events()

@@ -25,7 +25,7 @@ from tests.resources.test_harness.constant import (
     mccs_controller,
     mccs_master_leaf_node,
     mccs_subarray1,
-    processor1,
+    pst,
     tmc_low_subarraynode1,
 )
 from tests.resources.test_harness.event_recorder import EventRecorder
@@ -72,6 +72,7 @@ class CentralNodeWrapperLow(object):
         self.csp_master = DeviceProxy(low_csp_master)
         self.mccs_master = DeviceProxy(mccs_controller)
         self._state = DevState.OFF
+
         self.json_factory = JsonFactory()
         self.release_input = (
             self.json_factory.create_centralnode_configuration(
@@ -102,6 +103,8 @@ class CentralNodeWrapperLow(object):
                 self.subarray_node: ["longRunningCommandResult"],
             }
         )
+        if SIMULATED_DEVICES_DICT["sdp_and_mccs"]:
+            self.pst = DeviceProxy(pst)
 
     def set_subarray_id(self, subarray_id):
         self.subarray_node = DeviceProxy(
@@ -380,6 +383,20 @@ class CentralNodeWrapperLow(object):
                 ),
             )
         if SIMULATED_DEVICES_DICT["sdp_and_mccs"]:
+            if self.pst.obsState == ObsState.ABORTED:
+                log_events({self.pst: ["obsState"]})
+                self.event_tracer.subscribe_event(self.pst, "obsState")
+                self.pst.obsreset()
+                assert_that(self.event_tracer).described_as(
+                    "FAILED TEAR DOWN"
+                    "PST device"
+                    f"({self.pst.dev_name()}) "
+                    f"is expected to be in IDLE obstate",
+                ).within_timeout(TIMEOUT).has_change_event_occurred(
+                    self.pst,
+                    "obsState",
+                    ObsState.IDLE,
+                )
             self.set_standby()
         elif (
             SIMULATED_DEVICES_DICT["csp_and_mccs"]
@@ -477,6 +494,7 @@ class CentralNodeWrapperLow(object):
             # Set adminMode to Online for csp_subarray
             if self.csp_subarray1.adminMode != AdminMode.ONLINE:
                 self.csp_subarray1.adminMode = AdminMode.ONLINE
+            time.sleep(3)
             _, unique_id = self.central_node.TelescopeOn()
             self.set_values_with_sdp_mccs_mocks(DevState.ON)
             assert_that(self.event_tracer).described_as(
@@ -763,10 +781,16 @@ class CentralNodeWrapperLow(object):
     def set_serial_number_of_cbf_processor(self):
         """Sets serial number for cbf processor"""
         if SIMULATED_DEVICES_DICT["sdp_and_mccs"]:
-            self.processor1 = DeviceProxy(processor1)
-            self.processor1.serialnumber = "XFL14SLO1LIF"
-            self.processor1.subscribetoallocator("low-cbf/allocator/0")
-            self.processor1.register()
+            cbf_proc1 = DeviceProxy("low-cbf/processor/0.0.0")
+            cbf_proc2 = DeviceProxy("low-cbf/processor/0.0.1")
+
+            cbf_proc1.serialnumber = "XFL14SLO1LIF"
+            cbf_proc1.subscribetoallocator("low-cbf/allocator/0")
+            cbf_proc1.register()
+
+            cbf_proc2.serialnumber = "XFL1HOOQ1Y44"
+            cbf_proc2.subscribetoallocator("low-cbf/allocator/0")
+            cbf_proc2.register()
 
     def are_sdp_components_online(self):
         start_time = time.time()

@@ -130,15 +130,37 @@ ska-low-cbf-proc:
 ska-csp-lmc-low:
   labels:
     app: ska-tmc-low-integration
-  legacy_compatibility: true
   enabled: false
   deviceServers:
     cspcontroller:
       instances: ["controller"]
-      file: "data/controller_cbf_only.yaml"
+      file: "data/controller.yaml"
     cspsubarray:
       instances: ["subarray1", "subarray2", "subarray3", "subarray4"]
-      file: "data/subarray_cbf_only.yaml"
+      file: "data/subarray.yaml"
+
+ska-pst:
+  labels:
+    app: ska-tmc-low-integration
+  enabled: false
+  ska-pst-core:
+    enabled: false
+    serviceAccount:
+      create: false
+    send:
+      enabled: true
+      dpdApiIntegration: true
+  ska-pst-jupyterlab:
+    enabled: false
+  ska-pst-lmc:
+    enabled: true
+    beam:
+      simulationMode: 1
+      scanOutputDirPattern: /tmp/<eb_id>/<subsystem_id>/<scan_id>
+    affinity:
+      podAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution: []
+  volume: null
 
 ska-low-mccs:
   labels:

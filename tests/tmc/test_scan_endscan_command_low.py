@@ -10,6 +10,7 @@ from tests.resources.test_support.common_utils.telescope_controls import (
 )
 from tests.resources.test_support.common_utils.tmc_helpers import (
     TmcHelper,
+    prepare_json_args_for_commands,
     tear_down,
 )
 from tests.resources.test_support.constant_low import (
@@ -31,11 +32,14 @@ telescope_control = BaseTelescopeControl()
 
 @pytest.mark.skip(reason="Unskip after repository setup")
 @pytest.mark.SKA_low
-def test_scan_endscan_low(json_factory):
+def test_scan_endscan_low(json_factory, command_input_factory):
     """Scan and EndScan is executed."""
     assign_json = json_factory("command_assign_resource_low")
     release_json = json_factory("command_release_resource_low")
-    configure_json = json_factory("command_Configure_low")
+    configure_json = prepare_json_args_for_commands(
+        "configure_low", command_input_factory
+    )
+
     scan_json = json_factory("command_scan_low")
     try:
         tmc_helper.check_devices(DEVICE_LIST_FOR_CHECK_DEVICES)

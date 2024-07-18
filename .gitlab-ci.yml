@@ -125,7 +125,6 @@ stop-k8s-test-tmc-with-csp:
   variables:
     KUBE_NAMESPACE: 'ci-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-csp-low'
 
-
 k8s-test-tmc-with-sdp:
   tags:
     - ska-k8s

@@ -15,6 +15,7 @@ from tests.resources.test_harness.constant import (
     INTERMEDIATE_CONFIGURING_STATE_DEFECT,
     TIMEOUT,
 )
+from tests.resources.test_harness.helpers import set_receive_address
 from tests.resources.test_harness.simulator_factory import SimulatorFactory
 from tests.resources.test_harness.subarray_node_low import (
     SubarrayNodeWrapperLow,
@@ -87,6 +88,7 @@ class TestConfigureTimeout:
             "telescopeState",
             DevState.ON,
         )
+        set_receive_address(central_node_low)
         _, unique_id = central_node_low.store_resources(assign_input_str)
         assert_that(event_tracer).described_as(
             "FAILED ASSUMPTION AFTER ASSIGN RESOURCES: "
