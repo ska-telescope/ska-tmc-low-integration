@@ -781,10 +781,6 @@ class CentralNodeWrapperLow(object):
     def set_serial_number_of_cbf_processor(self):
         """Sets serial number for cbf processor"""
         if SIMULATED_DEVICES_DICT["sdp_and_mccs"]:
-            # self.processor1 = DeviceProxy(processor1)
-            # self.processor1.serialnumber = "XFL14SLO1LIF"
-            # self.processor1.subscribetoallocator("low-cbf/allocator/0")
-            # self.processor1.register()
             cbf_proc1 = DeviceProxy("low-cbf/processor/0.0.0")
             cbf_proc2 = DeviceProxy("low-cbf/processor/0.0.1")
 
