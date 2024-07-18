@@ -994,3 +994,34 @@ ska-ser-skuid:
     use_pv: false
     config:
       generator_id: mvp01
+
+# CSP subsystems (CBF, PST)
+# simulators
+ska-csp-simulators:
+  simul:
+    image:
+      registry: registry.gitlab.com/ska-telescope/ska-csp-simulators
+      tag: 0.5.0-dev.cb13ee62b
+  deviceServers:
+    enabled: false
+    servers:
+      midcbfctrl:
+        enabled: false
+      midcbfsubarray:
+        enabled: false
+      midpssctrl:
+        enabled: false
+      midpsssubarray:
+        enabled: false
+      midpstbeam:
+        enabled: false
+      lowcbfctrl:
+        enabled: true
+      lowcbfsubarray:
+        enabled: true
+      lowpssctrl:
+        enabled: true
+      lowpsssubarray:
+        enabled: true
+      lowpstbeam:
+        enabled: true        

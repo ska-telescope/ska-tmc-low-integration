@@ -1,0 +1,36 @@
+tmc-low:
+  deviceServers:
+    mocks:
+      is_simulated:
+        csp: false
+ska-csp-lmc-low:
+  enabled: true
+  deviceServers:
+      cspcontroller:
+        instances: [ "controller" ]
+        file: "data/controller_sim_aa05.yaml"
+      cspsubarray:
+        instances: [ "subarray1", "subarray2", "subarray3", "subarray4"]
+        file: "data/subarray_sim_aa05.yaml"
+ska-low-cbf:
+  enabled: false
+  ska-low-cbf-proc:
+    enabled: false
+ska-pst:
+  enabled: false
+
+ska-csp-simulators:
+  deviceServers:
+    enabled: true
+    servers:
+      lowcbfctrl:
+        enabled: true
+      lowcbfsubarray:
+        enabled: true
+      lowpssctrl:
+        enabled: false
+      lowpsssubarray:
+        enabled: false
+      lowpstbeam:
+        enabled: true
+

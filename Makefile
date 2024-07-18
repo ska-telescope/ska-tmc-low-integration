@@ -9,6 +9,7 @@ TELESCOPE ?= SKA-low
 KUBE_NAMESPACE ?= ska-tmc-low-integration
 KUBE_NAMESPACE_SDP ?= ska-tmc-integration-sdp
 CSP_SIMULATION_ENABLED ?= true
+CBF_PST_SIMULATION_ENABLED ?= false
 SDP_SIMULATION_ENABLED ?= true
 MCCS_SIMULATION_ENABLED ?= true
 SDP_PROCCONTROL_REPLICAS ?= 1
@@ -85,6 +86,10 @@ ifeq ($(CSP_SIMULATION_ENABLED),false)
 CUSTOM_VALUES =	-f charts/ska-tmc-testing-low/tmc_csp_values.yaml
 endif
 
+ifeq ($(CBF_PST_SIMULATION_ENABLED),true)
+CUSTOM_VALUES =	-f charts/ska-tmc-testing-low/tmc_csp_with_simulators.yaml
+endif
+
 ifeq ($(MCCS_SIMULATION_ENABLED),false)
 CUSTOM_VALUES =	-f charts/ska-tmc-testing-low/tmc_mccs_values.yaml
 endif
@@ -115,6 +120,7 @@ PYTHON_VARS_BEFORE_PYTEST ?= PYTHONPATH=.:./src \
 							 KUBE_NAMESPACE=$(KUBE_NAMESPACE) \
 							 KUBE_NAMESPACE_SDP=$(KUBE_NAMESPACE_SDP) \
 							 CSP_SIMULATION_ENABLED=$(CSP_SIMULATION_ENABLED) \
+							 CBF_PST_SIMULATION_ENABLED=$(CBF_PST_SIMULATION_ENABLED) \
 							 SDP_SIMULATION_ENABLED=$(SDP_SIMULATION_ENABLED) \
 							 MCCS_SIMULATION_ENABLED=$(MCCS_SIMULATION_ENABLED) \
 
