@@ -121,7 +121,7 @@ def sync_abort(device_dict, timeout=1000):
     return decorator_sync_abort
 
 
-def sync_restart(device_dict, timeout=1000):
+def sync_restart(device_dict, timeout=300):
     # define as a decorator
     def decorator_sync_restart(func):
         @functools.wraps(func)
