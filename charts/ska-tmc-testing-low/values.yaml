@@ -998,10 +998,6 @@ ska-ser-skuid:
 # CSP subsystems (CBF, PST)
 # simulators
 ska-csp-simulators:
-  simul:
-    image:
-      registry: registry.gitlab.com/ska-telescope/ska-csp-simulators
-      tag: 0.5.0-dev.cb13ee62b
   deviceServers:
     enabled: false
     servers:

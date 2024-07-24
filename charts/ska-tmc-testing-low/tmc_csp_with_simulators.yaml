@@ -33,4 +33,6 @@ ska-csp-simulators:
         enabled: false
       lowpstbeam:
         enabled: true
+        instances: ["beam1"]
+        file: "data/beginner/lowpstbeam-aa05.yaml"
 
