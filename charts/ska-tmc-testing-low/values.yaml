@@ -167,153 +167,230 @@ ska-low-mccs:
     app: ska-tmc-low-integration
   legacy_compatibility: true
   enabled: false
+  daqDataRepository: daq-data
   deviceServers:
     antennas:
       antennas-ci-1:
-        low-mccs/antenna/ci-1-100:
-          antenna_id: 100
-          field_station_trl: low-mccs/fieldstation/ci-1
-          logging_level_default: 5
-          tile_trl: low-mccs/tile/ci-1-10
-          tile_x_channel: 31
-          tile_y_channel: 30
-        low-mccs/antenna/ci-1-113:
-          antenna_id: 113
-          field_station_trl: low-mccs/fieldstation/ci-1
-          logging_level_default: 5
-          tile_trl: low-mccs/tile/ci-1-10
-          tile_x_channel: 31
-          tile_y_channel: 30
-        low-mccs/antenna/ci-1-121:
-          antenna_id: 121
-          field_station_trl: low-mccs/fieldstation/ci-1
-          logging_level_default: 5
-          tile_trl: low-mccs/tile/ci-1-10
-          tile_x_channel: 31
-          tile_y_channel: 30
-        low-mccs/antenna/ci-1-134:
-          antenna_id: 134
-          field_station_trl: low-mccs/fieldstation/ci-1
-          logging_level_default: 5
-          tile_trl: low-mccs/tile/ci-1-10
-          tile_x_channel: 31
-          tile_y_channel: 30
-        low-mccs/antenna/ci-1-155:
-          antenna_id: 155
-          field_station_trl: low-mccs/fieldstation/ci-1
-          logging_level_default: 5
-          tile_trl: low-mccs/tile/ci-1-10
-          tile_x_channel: 31
-          tile_y_channel: 30
-        low-mccs/antenna/ci-1-168:
-          antenna_id: 168
-          field_station_trl: low-mccs/fieldstation/ci-1
-          logging_level_default: 5
-          tile_trl: low-mccs/tile/ci-1-10
-          tile_x_channel: 31
-          tile_y_channel: 30
-        low-mccs/antenna/ci-1-189:
-          antenna_id: 189
-          field_station_trl: low-mccs/fieldstation/ci-1
-          logging_level_default: 5
-          tile_trl: low-mccs/tile/ci-1-10
-          tile_x_channel: 31
-          tile_y_channel: 30
-        low-mccs/antenna/ci-1-202:
-          antenna_id: 202
-          field_station_trl: low-mccs/fieldstation/ci-1
-          logging_level_default: 5
-          tile_trl: low-mccs/tile/ci-1-10
-          tile_x_channel: 31
-          tile_y_channel: 30
-        low-mccs/antenna/ci-1-223:
-          antenna_id: 223
-          field_station_trl: low-mccs/fieldstation/ci-1
-          logging_level_default: 5
-          tile_trl: low-mccs/tile/ci-1-10
-          tile_x_channel: 31
-          tile_y_channel: 30
-        low-mccs/antenna/ci-1-244:
+        low-mccs/antenna/ci-1-sb01-01:
           antenna_id: 244
           field_station_trl: low-mccs/fieldstation/ci-1
           logging_level_default: 5
-          tile_trl: low-mccs/tile/ci-1-10
+          tile_trl: low-mccs/tile/ci-1-tpm01
           tile_x_channel: 31
           tile_y_channel: 30
+          x_displacement: -5.422
+          y_displacement: 17.79
+          z_displacement: 0.008
+        low-mccs/antenna/ci-1-sb01-02:
+          antenna_id: 189
+          field_station_trl: low-mccs/fieldstation/ci-1
+          logging_level_default: 5
+          tile_trl: low-mccs/tile/ci-1-tpm01
+          tile_x_channel: 31
+          tile_y_channel: 30
+          x_displacement: -3.975
+          y_displacement: 15.948
+          z_displacement: 0.016
+        low-mccs/antenna/ci-1-sb01-03:
+          antenna_id: 155
+          field_station_trl: low-mccs/fieldstation/ci-1
+          logging_level_default: 5
+          tile_trl: low-mccs/tile/ci-1-tpm01
+          tile_x_channel: 31
+          tile_y_channel: 30
+          x_displacement: -4.752
+          y_displacement: 14.09
+          z_displacement: 0.004
+        low-mccs/antenna/ci-1-sb01-04:
+          antenna_id: 121
+          field_station_trl: low-mccs/fieldstation/ci-1
+          logging_level_default: 5
+          tile_trl: low-mccs/tile/ci-1-tpm01
+          tile_x_channel: 31
+          tile_y_channel: 30
+          x_displacement: -5.231
+          y_displacement: 12.066
+          z_displacement: 0.018
+        low-mccs/antenna/ci-1-sb01-05:
+          antenna_id: 1
+          field_station_trl: low-mccs/fieldstation/ci-1
+          logging_level_default: 5
+          tile_trl: low-mccs/tile/ci-1-tpm01
+          tile_x_channel: 31
+          tile_y_channel: 30
+          x_displacement: -3.25
+          y_displacement: 11.478
+          z_displacement: 0.023
+        low-mccs/antenna/ci-1-sb01-06:
+          antenna_id: 134
+          field_station_trl: low-mccs/fieldstation/ci-1
+          logging_level_default: 5
+          tile_trl: low-mccs/tile/ci-1-tpm01
+          tile_x_channel: 31
+          tile_y_channel: 30
+          x_displacement: -2.658
+          y_displacement: 13.574
+          z_displacement: 0.028
+        low-mccs/antenna/ci-1-sb01-07:
+          antenna_id: 2
+          field_station_trl: low-mccs/fieldstation/ci-1
+          logging_level_default: 5
+          tile_trl: low-mccs/tile/ci-1-tpm01
+          tile_x_channel: 31
+          tile_y_channel: 30
+          x_displacement: -0.746
+          y_displacement: 12.648
+          z_displacement: 0.019
+        low-mccs/antenna/ci-1-sb01-08:
+          antenna_id: 168
+          field_station_trl: low-mccs/fieldstation/ci-1
+          logging_level_default: 5
+          tile_trl: low-mccs/tile/ci-1-tpm01
+          tile_x_channel: 31
+          tile_y_channel: 30
+          x_displacement: -1.715
+          y_displacement: 15.36
+          z_displacement: 0.019
+        low-mccs/antenna/ci-1-sb01-09:
+          antenna_id: 202
+          field_station_trl: low-mccs/fieldstation/ci-1
+          logging_level_default: 5
+          tile_trl: low-mccs/tile/ci-1-tpm01
+          tile_x_channel: 31
+          tile_y_channel: 30
+          x_displacement: -0.511
+          y_displacement: 16.966
+          z_displacement: 0.037
+        low-mccs/antenna/ci-1-sb01-10:
+          antenna_id: 223
+          field_station_trl: low-mccs/fieldstation/ci-1
+          logging_level_default: 5
+          tile_trl: low-mccs/tile/ci-1-tpm01
+          tile_x_channel: 31
+          tile_y_channel: 30
+          x_displacement: -2.864
+          y_displacement: 17.596
+          z_displacement: 0.011
       antennas-ci-2:
-        low-mccs/antenna/ci-2-100:
-          antenna_id: 100
-          field_station_trl: low-mccs/fieldstation/ci-2
-          logging_level_default: 5
-          tile_trl: low-mccs/tile/ci-2-10
-          tile_x_channel: 31
-          tile_y_channel: 30
-        low-mccs/antenna/ci-2-113:
-          antenna_id: 113
-          field_station_trl: low-mccs/fieldstation/ci-2
-          logging_level_default: 5
-          tile_trl: low-mccs/tile/ci-2-10
-          tile_x_channel: 31
-          tile_y_channel: 30
-        low-mccs/antenna/ci-2-121:
-          antenna_id: 121
-          field_station_trl: low-mccs/fieldstation/ci-2
-          logging_level_default: 5
-          tile_trl: low-mccs/tile/ci-2-10
-          tile_x_channel: 31
-          tile_y_channel: 30
-        low-mccs/antenna/ci-2-134:
-          antenna_id: 134
-          field_station_trl: low-mccs/fieldstation/ci-2
-          logging_level_default: 5
-          tile_trl: low-mccs/tile/ci-2-10
-          tile_x_channel: 31
-          tile_y_channel: 30
-        low-mccs/antenna/ci-2-155:
-          antenna_id: 155
-          field_station_trl: low-mccs/fieldstation/ci-2
-          logging_level_default: 5
-          tile_trl: low-mccs/tile/ci-2-10
-          tile_x_channel: 31
-          tile_y_channel: 30
-        low-mccs/antenna/ci-2-168:
-          antenna_id: 168
-          field_station_trl: low-mccs/fieldstation/ci-2
-          logging_level_default: 5
-          tile_trl: low-mccs/tile/ci-2-10
-          tile_x_channel: 31
-          tile_y_channel: 30
-        low-mccs/antenna/ci-2-189:
-          antenna_id: 189
-          field_station_trl: low-mccs/fieldstation/ci-2
-          logging_level_default: 5
-          tile_trl: low-mccs/tile/ci-2-10
-          tile_x_channel: 31
-          tile_y_channel: 30
-        low-mccs/antenna/ci-2-202:
-          antenna_id: 202
-          field_station_trl: low-mccs/fieldstation/ci-2
-          logging_level_default: 5
-          tile_trl: low-mccs/tile/ci-2-10
-          tile_x_channel: 31
-          tile_y_channel: 30
-        low-mccs/antenna/ci-2-223:
-          antenna_id: 223
-          field_station_trl: low-mccs/fieldstation/ci-2
-          logging_level_default: 5
-          tile_trl: low-mccs/tile/ci-2-10
-          tile_x_channel: 31
-          tile_y_channel: 30
-        low-mccs/antenna/ci-2-244:
+        low-mccs/antenna/ci-2-sb01-01:
           antenna_id: 244
           field_station_trl: low-mccs/fieldstation/ci-2
           logging_level_default: 5
-          tile_trl: low-mccs/tile/ci-2-10
+          tile_trl: low-mccs/tile/ci-2-tpm01
           tile_x_channel: 31
           tile_y_channel: 30
+          x_displacement: -5.422
+          y_displacement: 17.79
+          z_displacement: 0.008
+        low-mccs/antenna/ci-2-sb01-02:
+          antenna_id: 189
+          field_station_trl: low-mccs/fieldstation/ci-2
+          logging_level_default: 5
+          tile_trl: low-mccs/tile/ci-2-tpm01
+          tile_x_channel: 31
+          tile_y_channel: 30
+          x_displacement: -3.975
+          y_displacement: 15.948
+          z_displacement: 0.016
+        low-mccs/antenna/ci-2-sb01-03:
+          antenna_id: 155
+          field_station_trl: low-mccs/fieldstation/ci-2
+          logging_level_default: 5
+          tile_trl: low-mccs/tile/ci-2-tpm01
+          tile_x_channel: 31
+          tile_y_channel: 30
+          x_displacement: -4.752
+          y_displacement: 14.09
+          z_displacement: 0.004
+        low-mccs/antenna/ci-2-sb01-04:
+          antenna_id: 121
+          field_station_trl: low-mccs/fieldstation/ci-2
+          logging_level_default: 5
+          tile_trl: low-mccs/tile/ci-2-tpm01
+          tile_x_channel: 31
+          tile_y_channel: 30
+          x_displacement: -5.231
+          y_displacement: 12.066
+          z_displacement: 0.018
+        low-mccs/antenna/ci-2-sb01-05:
+          antenna_id: 1
+          field_station_trl: low-mccs/fieldstation/ci-2
+          logging_level_default: 5
+          tile_trl: low-mccs/tile/ci-2-tpm01
+          tile_x_channel: 31
+          tile_y_channel: 30
+          x_displacement: -3.25
+          y_displacement: 11.478
+          z_displacement: 0.023
+        low-mccs/antenna/ci-2-sb01-06:
+          antenna_id: 134
+          field_station_trl: low-mccs/fieldstation/ci-2
+          logging_level_default: 5
+          tile_trl: low-mccs/tile/ci-2-tpm01
+          tile_x_channel: 31
+          tile_y_channel: 30
+          x_displacement: -2.658
+          y_displacement: 13.574
+          z_displacement: 0.028
+        low-mccs/antenna/ci-2-sb01-07:
+          antenna_id: 2
+          field_station_trl: low-mccs/fieldstation/ci-2
+          logging_level_default: 5
+          tile_trl: low-mccs/tile/ci-2-tpm01
+          tile_x_channel: 31
+          tile_y_channel: 30
+          x_displacement: -0.746
+          y_displacement: 12.648
+          z_displacement: 0.019
+        low-mccs/antenna/ci-2-sb01-08:
+          antenna_id: 168
+          field_station_trl: low-mccs/fieldstation/ci-2
+          logging_level_default: 5
+          tile_trl: low-mccs/tile/ci-2-tpm01
+          tile_x_channel: 31
+          tile_y_channel: 30
+          x_displacement: -1.715
+          y_displacement: 15.36
+          z_displacement: 0.019
+        low-mccs/antenna/ci-2-sb01-09:
+          antenna_id: 202
+          field_station_trl: low-mccs/fieldstation/ci-2
+          logging_level_default: 5
+          tile_trl: low-mccs/tile/ci-2-tpm01
+          tile_x_channel: 31
+          tile_y_channel: 30
+          x_displacement: -0.511
+          y_displacement: 16.966
+          z_displacement: 0.037
+        low-mccs/antenna/ci-2-sb01-10:
+          antenna_id: 223
+          field_station_trl: low-mccs/fieldstation/ci-2
+          logging_level_default: 5
+          tile_trl: low-mccs/tile/ci-2-tpm01
+          tile_x_channel: 31
+          tile_y_channel: 30
+          x_displacement: -2.864
+          y_displacement: 17.596
+          z_displacement: 0.011
+    cabinetbanks:
+      cabinetbank-cb-1:
+        low-mccs/cabinetbank/cb-1-01:
+          cabinetbank_id: 1
+          stations:
+          - low-mccs/station/ci-1
+          - low-mccs/station/ci-2
+    calibrationstores:
+      ci-1:
+        low-mccs/calibrationstore/ci-1:
+          logging_level_default: 5
+      ci-2:
+        low-mccs/calibrationstore/ci-2:
+          logging_level_default: 5
     controllers:
       controller:
         low-mccs/control/control:
+          cabinetbanks:
+          - low-mccs/cabinetbank/cb-1-01
           stationbeams:
           - low-mccs/beam/ci-1-01
           - low-mccs/beam/ci-1-02
@@ -616,40 +693,167 @@ ska-low-mccs:
           beam_id: 95
         low-mccs/beam/ci-2-48:
           beam_id: 96
+    stationcalibrators:
+      ci-1:
+        low-mccs/stationcalibrator/ci-1:
+          calibration_store_trl: low-mccs/calibrationstore/ci-1
+          logging_level_default: 5
+          station_trl: low-mccs/station/ci-1
+      ci-2:
+        low-mccs/stationcalibrator/ci-2:
+          calibration_store_trl: low-mccs/calibrationstore/ci-2
+          logging_level_default: 5
+          station_trl: low-mccs/station/ci-2
     stations:
       station-ci-1:
         low-mccs/station/ci-1:
+          antenna_ids:
+          - 244
+          - 189
+          - 155
+          - 121
+          - 1
+          - 134
+          - 2
+          - 168
+          - 202
+          - 223
+          antenna_tpm_ids:
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
           antenna_trls:
-          - low-mccs/antenna/ci-1-100
-          - low-mccs/antenna/ci-1-113
-          - low-mccs/antenna/ci-1-121
-          - low-mccs/antenna/ci-1-134
-          - low-mccs/antenna/ci-1-155
-          - low-mccs/antenna/ci-1-168
-          - low-mccs/antenna/ci-1-189
-          - low-mccs/antenna/ci-1-202
-          - low-mccs/antenna/ci-1-223
-          - low-mccs/antenna/ci-1-244
+          - low-mccs/antenna/ci-1-sb01-01
+          - low-mccs/antenna/ci-1-sb01-02
+          - low-mccs/antenna/ci-1-sb01-03
+          - low-mccs/antenna/ci-1-sb01-04
+          - low-mccs/antenna/ci-1-sb01-05
+          - low-mccs/antenna/ci-1-sb01-06
+          - low-mccs/antenna/ci-1-sb01-07
+          - low-mccs/antenna/ci-1-sb01-08
+          - low-mccs/antenna/ci-1-sb01-09
+          - low-mccs/antenna/ci-1-sb01-10
+          antenna_xs:
+          - -5.422
+          - -3.975
+          - -4.752
+          - -5.231
+          - -3.25
+          - -2.658
+          - -0.746
+          - -1.715
+          - -0.511
+          - -2.864
+          antenna_ys:
+          - 17.79
+          - 15.948
+          - 14.09
+          - 12.066
+          - 11.478
+          - 13.574
+          - 12.648
+          - 15.36
+          - 16.966
+          - 17.596
+          antenna_zs:
+          - 0.008
+          - 0.016
+          - 0.004
+          - 0.018
+          - 0.023
+          - 0.028
+          - 0.019
+          - 0.019
+          - 0.037
+          - 0.011
           field_station_trl: low-mccs/fieldstation/ci-1
           logging_level_default: 5
+          ref_height: 1
+          ref_latitude: -1
+          ref_longitude: 1
           sps_station_trl: low-mccs/spsstation/ci-1
           station_calibrator_trl: low-mccs/calibrator/ci-1
           station_id: 1
       station-ci-2:
         low-mccs/station/ci-2:
+          antenna_ids:
+          - 244
+          - 189
+          - 155
+          - 121
+          - 1
+          - 134
+          - 2
+          - 168
+          - 202
+          - 223
+          antenna_tpm_ids:
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
+          - 0
           antenna_trls:
-          - low-mccs/antenna/ci-2-100
-          - low-mccs/antenna/ci-2-113
-          - low-mccs/antenna/ci-2-121
-          - low-mccs/antenna/ci-2-134
-          - low-mccs/antenna/ci-2-155
-          - low-mccs/antenna/ci-2-168
-          - low-mccs/antenna/ci-2-189
-          - low-mccs/antenna/ci-2-202
-          - low-mccs/antenna/ci-2-223
-          - low-mccs/antenna/ci-2-244
+          - low-mccs/antenna/ci-2-sb01-01
+          - low-mccs/antenna/ci-2-sb01-02
+          - low-mccs/antenna/ci-2-sb01-03
+          - low-mccs/antenna/ci-2-sb01-04
+          - low-mccs/antenna/ci-2-sb01-05
+          - low-mccs/antenna/ci-2-sb01-06
+          - low-mccs/antenna/ci-2-sb01-07
+          - low-mccs/antenna/ci-2-sb01-08
+          - low-mccs/antenna/ci-2-sb01-09
+          - low-mccs/antenna/ci-2-sb01-10
+          antenna_xs:
+          - -5.422
+          - -3.975
+          - -4.752
+          - -5.231
+          - -3.25
+          - -2.658
+          - -0.746
+          - -1.715
+          - -0.511
+          - -2.864
+          antenna_ys:
+          - 17.79
+          - 15.948
+          - 14.09
+          - 12.066
+          - 11.478
+          - 13.574
+          - 12.648
+          - 15.36
+          - 16.966
+          - 17.596
+          antenna_zs:
+          - 0.008
+          - 0.016
+          - 0.004
+          - 0.018
+          - 0.023
+          - 0.028
+          - 0.019
+          - 0.019
+          - 0.037
+          - 0.011
           field_station_trl: low-mccs/fieldstation/ci-2
           logging_level_default: 5
+          ref_height: 0
+          ref_latitude: 0
+          ref_longitude: 0
           sps_station_trl: low-mccs/spsstation/ci-2
           station_calibrator_trl: low-mccs/calibrator/ci-2
           station_id: 2
@@ -672,28 +876,33 @@ ska-low-mccs:
           logging_level_default: 5
           skuid_url: http://ska-ser-skuid-ska-ser-skuid-svc:9870/
           subarray_id: 1
-
+  global:
+    cluster_domain: cluster.local
+    minikube: true
+    tango_host: databaseds-tango-base:10000
   ska-low-mccs-pasd:
-    labels:
-      app: ska-tmc-low-integration
+    configServers:
+      array:
+        host: pasd-configuration-service
+        port: 8081
     deviceServers:
       fieldstations:
         ci-1:
           low-mccs/fieldstation/ci-1:
-            configuration_host: pasd-configuration-service-ci-1
-            configuration_port: 50034
+            configuration_host: pasd-configuration-service
+            configuration_port: 8081
             fndh_name: low-mccs/fndh/ci-1
             logging_level_default: 5
             smartbox_names:
-            - low-mccs/smartbox/ci-1-01
+            - low-mccs/smartbox/ci-1-sb01
         ci-2:
           low-mccs/fieldstation/ci-2:
-            configuration_host: pasd-configuration-service-ci-2
-            configuration_port: 50034
+            configuration_host: pasd-configuration-service
+            configuration_port: 8081
             fndh_name: low-mccs/fndh/ci-2
             logging_level_default: 5
             smartbox_names:
-            - low-mccs/smartbox/ci-2-01
+            - low-mccs/smartbox/ci-2-sb01
       fndhs:
         ci-1:
           low-mccs/fndh/ci-1:
@@ -723,16 +932,16 @@ ska-low-mccs:
             simulation_config: 1
             timeout: 10
       smartboxes:
-        ci-1-01:
-          low-mccs/smartbox/ci-1-01:
+        ci-1-sb01:
+          low-mccs/smartbox/ci-1-sb01:
             field_station_name: low-mccs/fieldstation/ci-1
             fndh_name: low-mccs/fndh/ci-1
             fndh_port: 1
             logging_level_default: 5
             pasdbus_name: low-mccs/pasdbus/ci-1
             smartbox_number: 1
-        ci-2-01:
-          low-mccs/smartbox/ci-2-01:
+        ci-2-sb01:
+          low-mccs/smartbox/ci-2-sb01:
             field_station_name: low-mccs/fieldstation/ci-2
             fndh_name: low-mccs/fndh/ci-2
             fndh_port: 1
@@ -743,11 +952,11 @@ ska-low-mccs:
       pasdconfiguration:
         ci-1:
           antennas:
-            "100":
+            "1":
               masked: false
               smartbox: "1"
               smartbox_port: 5
-            "113":
+            "2":
               masked: false
               smartbox: "1"
               smartbox_port: 7
@@ -783,19 +992,17 @@ ska-low-mccs:
               masked: false
               smartbox: "1"
               smartbox_port: 1
-          configuration_host: pasd-configuration-server-ci-1
-          configuration_port: 50034
           pasd:
             smartboxes:
               "1":
                 fndh_port: 1
         ci-2:
           antennas:
-            "100":
+            "1":
               masked: false
               smartbox: "1"
               smartbox_port: 5
-            "113":
+            "2":
               masked: false
               smartbox: "1"
               smartbox_port: 7
@@ -831,8 +1038,6 @@ ska-low-mccs:
               masked: false
               smartbox: "1"
               smartbox_port: 1
-          configuration_host: pasd-configuration-server-ci-2
-          configuration_port: 50034
           pasd:
             smartboxes:
               "1":
@@ -840,26 +1045,13 @@ ska-low-mccs:
     simulators:
       pasdbuses:
         ci-1:
-          configuration_host: pasd-configuration-service-ci-1
-          configuration_port: 50034
           host: pasd-simulator-ci-1
           port: 9502
         ci-2:
-          configuration_host: pasd-configuration-service-ci-2
-          configuration_port: 50034
           host: pasd-simulator-ci-2
           port: 9502
   ska-low-mccs-spshw:
-    labels:
-      app: ska-tmc-low-integration
     deviceServers:
-      calibrationstores:
-        ci-1:
-          low-mccs/calibrationstore/ci-1:
-            logging_level_default: 5
-        ci-2:
-          low-mccs/calibrationstore/ci-2:
-            logging_level_default: 5
       daqs:
         ci-1:
           low-mccs/daqreceiver/ci-1:
@@ -885,87 +1077,74 @@ ska-low-mccs:
         ci-1:
           low-mccs/spsstation/ci-1:
             antenna_config_uri: []
-            cabinet_network_address: 0.0.0.0
             daq_trl: low-mccs/daqreceiver/ci-1
             logging_level_default: 5
+            sdn_first_interface: 10.0.0.128/16
             station_id: 1
             subracks:
-            - ci-1-1
+            - low-mccs/subrack/ci-1-sr1
             tpms:
-            - ci-1-10
+            - low-mccs/tile/ci-1-tpm01
         ci-2:
           low-mccs/spsstation/ci-2:
             antenna_config_uri: []
-            cabinet_network_address: 0.0.0.0
             daq_trl: low-mccs/daqreceiver/ci-2
             logging_level_default: 5
+            sdn_first_interface: 10.0.0.192/16
             station_id: 2
             subracks:
-            - ci-2-1
+            - low-mccs/subrack/ci-2-sr1
             tpms:
-            - ci-2-10
-      stationcalibrators:
-        ci-1:
-          low-mccs/stationcalibrator/ci-1:
-            calibration_store_trl: low-mccs/calibrationstore/ci-1
-            field_station_trl: low-mccs/fieldstation/ci-1
-            logging_level_default: 5
-        ci-2:
-          low-mccs/stationcalibrator/ci-2:
-            calibration_store_trl: low-mccs/calibrationstore/ci-2
-            field_station_trl: low-mccs/fieldstation/ci-2
-            logging_level_default: 5
+            - low-mccs/tile/ci-2-tpm01
       subracks:
-        ci-1-1:
-          low-mccs/subrack/ci-1-1:
+        ci-1-sr1:
+          low-mccs/subrack/ci-1-sr1:
             logging_level_default: 5
-            srmb_host: subrack-simulator-ci-1-1
+            srmb_host: subrack-simulator-ci-1-sr1
             srmb_port: 8081
-        ci-2-1:
-          low-mccs/subrack/ci-2-1:
+        ci-2-sr1:
+          low-mccs/subrack/ci-2-sr1:
             logging_level_default: 5
-            srmb_host: subrack-simulator-ci-2-1
+            srmb_host: subrack-simulator-ci-2-sr1
             srmb_port: 8081
       tpms:
-        ci-1-10:
-          low-mccs/tile/ci-1-10:
+        ci-1-tpm01:
+          low-mccs/tile/ci-1-tpm01:
             host: 10.0.10.201
             logging_level_default: 5
             port: 10000
             simulation_config: 1
             station_id: 1
-            subrack: ci-1-1
+            subrack: ci-1-sr1
             subrack_slot: 1
             test_config: 1
             tile_id: 0
             version: tpm_v1_6
-        ci-2-10:
-          low-mccs/tile/ci-2-10:
+        ci-2-tpm01:
+          low-mccs/tile/ci-2-tpm01:
             host: 10.0.10.201
             logging_level_default: 5
             port: 10000
             simulation_config: 1
             station_id: 2
-            subrack: ci-2-1
+            subrack: ci-2-sr1
             subrack_slot: 1
             test_config: 1
             tile_id: 0
             version: tpm_v1_6
     simulators:
       subracks:
-        ci-1-1:
-          srmb_host: subrack-simulator-ci-1-1
+        ci-1-sr1:
+          srmb_host: subrack-simulator-ci-1-sr1
           srmb_port: 8081
-        ci-2-1:
-          srmb_host: subrack-simulator-ci-2-1
+        ci-2-sr1:
+          srmb_host: subrack-simulator-ci-2-sr1
           srmb_port: 8081
     ska-low-mccs-daq:
       receivers:
         ci-1:
           affinity: null
           gpu_limit: null
-          host: daq-receiver-ci-1
-          id: 1
           node_selector: null
           runtime_class: null
           storage: daq-data
@@ -973,8 +1152,6 @@ ska-low-mccs:
         ci-2:
           affinity: null
           gpu_limit: null
-          host: daq-receiver-ci-2
-          id: 2
           node_selector: null
           runtime_class: null
           storage: daq-data
@@ -982,8 +1159,7 @@ ska-low-mccs:
       storage:
         daq-data:
           size: 250Mi
-          storage_class: standard
-
+          storage_class: nfss1
 
 # SKUID
 ska-ser-skuid:

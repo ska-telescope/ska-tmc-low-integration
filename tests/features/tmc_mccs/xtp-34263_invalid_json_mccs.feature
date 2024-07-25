@@ -6,7 +6,7 @@ Scenario: The TMC Low Subarray reports the exception triggered by the MCCS contr
       And the TMC subarray is in EMPTY obsState
       When I assign resources with invalid <station_id> to the MCCS subarray using TMC with <subarray_id>
       Then the MCCS controller should throw the error for invalid station id
-      And the MCCS subarray should remain in EMPTY ObsState
+      Then the MCCS controller rejects invalid station id
       And the TMC propogate the error to the client
       And the TMC SubarrayNode remains in RESOURCING obsState
       Examples:
