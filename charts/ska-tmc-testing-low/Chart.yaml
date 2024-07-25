@@ -42,7 +42,7 @@ dependencies:
     repository:  https://artefact.skao.int/repository/helm-internal
     condition: ska-pst.enabled
   - name: ska-low-mccs
-    version: 0.13.0
+    version: 0.14.0
     repository: https://artefact.skao.int/repository/helm-internal
     condition: ska-low-mccs.enabled
   - name: ska-ser-skuid
