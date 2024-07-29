@@ -91,7 +91,7 @@ def central_node_assign_resources(
     central_node_low: CentralNodeWrapperLow, command_input_factory: JsonFactory
 ):
     """
-    This method central node is busy assigning resources
+    This method invokes AssignResources command on central node.
 
     Args:
         central_node (CentralNodeWrapperLow): Object of Central node wrapper
@@ -116,8 +116,8 @@ def subarray_node_obs_state_resourcing(
     simulator_factory: SimulatorFactory,
 ):
     """
-    This method central node is busy assigning resources
-
+    This method checks the subarray node observation state RESOURCING after
+    AssignResources is invoked on central node.
     Args:
         central_node (CentralNodeWrapperLow): Object of Central node wrapper
         event_tracer(TangoEventTracer): Object of TangoEventTracer used for
