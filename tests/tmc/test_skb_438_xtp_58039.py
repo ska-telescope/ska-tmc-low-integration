@@ -5,6 +5,8 @@ Control (TMC) system to verify the SKB-438.
 """
 
 
+import json
+
 import pytest
 from assertpy import assert_that
 from pytest_bdd import given, scenario, then, when
@@ -131,6 +133,7 @@ def subarray_node_obs_state_resourcing(
     )
     event_tracer.subscribe_event(csp_sim, "obsState")
     event_tracer.subscribe_event(sdp_sim, "obsState")
+    csp_sim.setDelayInfo(json.dumps({"AssignResources": 50}))
     log_events({csp_sim: ["obsState"], sdp_sim: ["obsState"]})
     assert_that(event_tracer).described_as(
         "FAILED UNEXPECTED OBSSTATE: "
@@ -162,6 +165,7 @@ def subarray_node_obs_state_resourcing(
         "obsState",
         ObsState.RESOURCING,
     )
+    csp_sim.RestDelayInfo()
 
 
 @when("I invoke abort on subarray node")
