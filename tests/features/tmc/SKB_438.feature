@@ -3,5 +3,5 @@ Scenario: Verify SKB-438
     Given a TMC
     And central node is busy assigning resources
     And subarray node is in observation state RESOURCING
-    When I invoke abort on subarray nod
+    When I invoke abort on subarray node
     Then central node receives long running command result for assign resources with message `Command has been aborted`
