@@ -176,7 +176,7 @@ def subarray_node_invoke_abort(central_node_low: CentralNodeWrapperLow):
 
 @then(
     'central node receives long running command result for assign resources \
-    with message "Command has been aborted"'
+        with message "Command has been aborted"'
 )
 def check_central_node_lrcr(
     central_node_low: CentralNodeWrapperLow, event_tracer: TangoEventTracer
