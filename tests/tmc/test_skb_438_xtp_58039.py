@@ -165,7 +165,7 @@ def subarray_node_obs_state_resourcing(
         "obsState",
         ObsState.RESOURCING,
     )
-    csp_sim.RestDelayInfo()
+    csp_sim.ResetDelayInfo()
 
 
 @when("I invoke abort on subarray node")
