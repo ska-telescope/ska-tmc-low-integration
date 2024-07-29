@@ -1159,7 +1159,7 @@ ska-low-mccs:
       storage:
         daq-data:
           size: 250Mi
-          storage_class: standard
+          storage_class: nfss1
 
 # SKUID
 ska-ser-skuid:
