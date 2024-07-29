@@ -14,7 +14,9 @@ from ska_tango_testing.integration import TangoEventTracer, log_events
 from tango import DevState
 
 from tests.resources.test_harness.central_node_low import CentralNodeWrapperLow
+from tests.resources.test_harness.simulator_factory import SimulatorFactory
 from tests.resources.test_harness.utils.common_utils import JsonFactory
+from tests.resources.test_harness.utils.enums import SimulatorDeviceType
 from tests.resources.test_support.common_utils.tmc_helpers import (
     prepare_json_args_for_centralnode_commands,
 )
@@ -107,7 +109,9 @@ def central_node_assign_resources(
 
 @given("subarray node is in observation state RESOURCING")
 def subarray_node_obs_state_resourcing(
-    central_node_low: CentralNodeWrapperLow, event_tracer: TangoEventTracer
+    central_node_low: CentralNodeWrapperLow,
+    event_tracer: TangoEventTracer,
+    simulator_factory: SimulatorFactory,
 ):
     """
     This method central node is busy assigning resources
@@ -118,6 +122,16 @@ def subarray_node_obs_state_resourcing(
         managing the device events
         command_input_factory (JsonFactory): Object of json factory
     """
+
+    sdp_sim = simulator_factory.get_or_create_simulator_device(
+        SimulatorDeviceType.LOW_SDP_DEVICE
+    )
+    csp_sim = simulator_factory.get_or_create_simulator_device(
+        SimulatorDeviceType.LOW_CSP_DEVICE
+    )
+    event_tracer.subscribe_event(csp_sim, "obsState")
+    event_tracer.subscribe_event(sdp_sim, "obsState")
+    log_events({csp_sim: ["obsState"], sdp_sim: ["obsState"]})
     assert_that(event_tracer).described_as(
         "FAILED UNEXPECTED OBSSTATE: "
         "Subarray Node device"
@@ -125,6 +139,26 @@ def subarray_node_obs_state_resourcing(
         "is expected to be in RESOURCING obstate",
     ).within_timeout(TIMEOUT).has_change_event_occurred(
         central_node_low.subarray_node,
+        "obsState",
+        ObsState.RESOURCING,
+    )
+    assert_that(event_tracer).described_as(
+        "FAILED UNEXPECTED OBSSTATE: "
+        "SDP subarray device"
+        f"({central_node_low.subarray_node.dev_name()}) "
+        "is expected to be in RESOURCING obstate",
+    ).within_timeout(TIMEOUT).has_change_event_occurred(
+        sdp_sim,
+        "obsState",
+        ObsState.RESOURCING,
+    )
+    assert_that(event_tracer).described_as(
+        "FAILED UNEXPECTED OBSSTATE: "
+        "CSP subarray device"
+        f"({central_node_low.subarray_node.dev_name()}) "
+        "is expected to be in RESOURCING obstate",
+    ).within_timeout(TIMEOUT).has_change_event_occurred(
+        csp_sim,
         "obsState",
         ObsState.RESOURCING,
     )
@@ -141,7 +175,7 @@ def subarray_node_invoke_abort(central_node_low: CentralNodeWrapperLow):
 
 
 @then(
-    "central node receives long running command result  for assign resources"
+    "central node receives long running command result for assign resources"
     'with message "Command has been aborted"'
 )
 def check_central_node_lrcr(
