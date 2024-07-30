@@ -180,7 +180,8 @@ def subarray_node_invoke_abort(subarray_node_low: SubarrayNodeWrapperLow):
 
 
 @then(
-    "central node receives longrunningcommandresult with message `Command has been aborted`"
+    "central node receives longrunningcommandresult with message"
+    + "`Command has been aborted`"
 )
 def check_central_node_lrcr(
     central_node_low: CentralNodeWrapperLow, event_tracer: TangoEventTracer
