@@ -1,11 +1,6 @@
-release=0.17.0
-tag=0.17.0
+release=0.17.1
+tag=0.17.1
 tag_description=
 **Charts:**
-**1. ska-tmc-low-integration 0.17.0**
-        * TMC Low release with base class version 1.0.0
-        * Updated centralnode: 0.16.2
-        * Updated subarraynode: 0.21.2
-        * Updated cspleafnodes: 0.18.2
-        * Updated sdpleafnodes: 0.16.1
-        * Updated mccsleafnodes: 0.4.0 
+**1. ska-tmc-low-integration 0.17.1**
+        * Central Node v0.16.3 and Subarray Node v0.21.4 related to SKB-438
