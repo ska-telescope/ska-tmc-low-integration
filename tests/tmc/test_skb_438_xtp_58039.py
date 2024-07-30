@@ -180,7 +180,7 @@ def subarray_node_invoke_abort(subarray_node_low: SubarrayNodeWrapperLow):
 
 
 @then(
-    "central node receives longrunningcommandresult with message"
+    "central node receives longrunningcommandresult with message "
     + "`Command has been aborted`"
 )
 def check_central_node_lrcr(
