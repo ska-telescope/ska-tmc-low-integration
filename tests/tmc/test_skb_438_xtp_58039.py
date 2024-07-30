@@ -17,6 +17,9 @@ from tango import DevState
 
 from tests.resources.test_harness.central_node_low import CentralNodeWrapperLow
 from tests.resources.test_harness.simulator_factory import SimulatorFactory
+from tests.resources.test_harness.subarray_node_low import (
+    SubarrayNodeWrapperLow,
+)
 from tests.resources.test_harness.utils.common_utils import JsonFactory
 from tests.resources.test_harness.utils.enums import SimulatorDeviceType
 from tests.resources.test_support.common_utils.tmc_helpers import (
@@ -95,8 +98,6 @@ def central_node_assign_resources(
 
     Args:
         central_node (CentralNodeWrapperLow): Object of Central node wrapper
-        event_tracer(TangoEventTracer): Object of TangoEventTracer used for
-        managing the device events
         command_input_factory (JsonFactory): Object of json factory
     """
     assign_input_json = prepare_json_args_for_centralnode_commands(
@@ -169,13 +170,13 @@ def subarray_node_obs_state_resourcing(
 
 
 @when("I invoke abort on subarray node")
-def subarray_node_invoke_abort(central_node_low: CentralNodeWrapperLow):
+def subarray_node_invoke_abort(subarray_node_low: SubarrayNodeWrapperLow):
     """This method invokes abort on subarray node
 
     Args:
         central_node (CentralNodeWrapperLow): Object of Central node wrapper
     """
-    central_node_low.subarray_abort()
+    subarray_node_low.abort_subarray()
 
 
 @then(

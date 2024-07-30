@@ -4,4 +4,4 @@ Scenario: Verify SKB-438
     And central node is busy assigning resources
     And subarray node is in observation state RESOURCING
     When I invoke abort on subarray node
-    Then central node receives long running command result for assign resources with message `Command has been aborted`
+    Then central node receives longrunningcommandresult with message `Command has been aborted`

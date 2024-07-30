@@ -10,6 +10,9 @@ Added
 
 Fixed
 -----
+[0.17.1]
+*********
+* Central Node v0.16.3 and Subarray Node v0.21.4 related to SKB-438
 
 [0.17.0]
 *********
