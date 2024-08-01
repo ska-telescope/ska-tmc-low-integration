@@ -203,7 +203,7 @@ class TestConfigureTimeout:
             "obsState",
             ObsState.IDLE,
         )
-        sdp_sim.SetDelayInfo(json.dumps({"Configure": 50}))
+        sdp_sim.SetDelayInfo(json.dumps({"Configure": 55}))
         _, unique_id = subarray_node_low.execute_transition(
             "Configure", configure_input_str
         )
@@ -218,18 +218,19 @@ class TestConfigureTimeout:
             ObsState.CONFIGURING,
         )
         exception_message = "Timeout has occurred, command failed"
-
+        sdp_ln_timeout_exception = (
+            "Exception occurred on the following "
+            f"devices: {subarray_node_low.sdp_subarray_leaf_node.dev_name()}"
+        )
         assert_that(event_tracer).described_as(
             "FAILED ASSUMPTION AFTER CONFIGURE COMMAND: "
             "Subarray Node device"
             f"({subarray_node_low.subarray_node.dev_name()}) "
             "is expected have longRunningCommandResult"
             "(ResultCode.FAILED,exception)",
-        ).within_timeout(
-            TIMEOUT
-        ).has_desired_result_code_message_in_lrcr_event(
+        ).within_timeout(52).has_desired_result_code_message_in_lrcr_event(
             subarray_node_low.subarray_node,
-            [exception_message],
+            [exception_message, sdp_ln_timeout_exception],
             unique_id[0],
             ResultCode.FAILED,
         )
