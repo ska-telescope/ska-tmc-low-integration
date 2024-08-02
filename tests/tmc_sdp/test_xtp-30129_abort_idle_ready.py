@@ -90,7 +90,6 @@ def subarray_is_in_given_obsstate(
     )
 
     if obsstate == "READY":
-
         input_json = prepare_json_args_for_commands(
             "configure_low", command_input_factory
         )

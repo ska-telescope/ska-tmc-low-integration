@@ -504,14 +504,15 @@ class TestLowCentralNodeAssignResources:
         time.sleep(1)
 
         # Setting device to defective
-        sdp_subarray_sim.SetDelayInfo(json.dumps({"ReleaseAllResources": 100}))
+        sdp_subarray_sim.SetDelayInfo(json.dumps({"ReleaseAllResources": 55}))
 
         _, unique_id = central_node_low.perform_action(
             "ReleaseResources", release_resource_json
         )
 
         exception_message = (
-            f"{tmc_low_subarraynode1}:" " Timeout has occurred, command failed"
+            f"{central_node_low.sdp_subarray_leaf_node.dev_name()}:"
+            " Timeout has occurred, command failed"
         )
 
         assert_that(event_tracer).described_as(
