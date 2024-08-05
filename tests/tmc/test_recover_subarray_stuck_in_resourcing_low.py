@@ -366,7 +366,6 @@ def test_abort_with_sdp_csp_in_empty(
 
 
 @pytest.mark.SKA_low
-@pytest.mark.test
 def test_abort_with_mccs_in_empty(
     subarray_node_low: SubarrayNodeWrapperLow,
     central_node_low: CentralNodeWrapperLow,
