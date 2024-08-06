@@ -774,9 +774,15 @@ class CentralNodeWrapperLow(object):
     def reset_defects_for_devices(self):
         """Resets the defects for given devices."""
         if SIMULATED_DEVICES_DICT["all_mocks"]:
-            self.csp_subarray1.SetDefective(RESET_DEFECT)
-            self.sdp_subarray1.SetDefective(RESET_DEFECT)
-            self.mccs_master.SetDefective(RESET_DEFECT)
+            for mock_device in [
+                self.csp_subarray1,
+                self.sdp_subarray1,
+                self.mccs_master,
+                self.mccs_subarray1,
+            ]:
+                mock_device.SetDefective(RESET_DEFECT)
+                if mock_device != self.mccs_master:
+                    mock_device.ResetDelayInfo()
 
     def set_serial_number_of_cbf_processor(self):
         """Sets serial number for cbf processor"""

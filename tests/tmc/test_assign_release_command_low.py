@@ -121,7 +121,7 @@ def test_assign_release_timeout_sdp(
         "assign_resources_low", command_input_factory
     )
     _, sdp_sim = get_device_simulators(simulator_factory)
-    sdp_sim.SetDelayInfo(json.dumps({"AssignResources": 50}))
+    sdp_sim.SetDelayInfo(json.dumps({"AssignResources": 52}))
     event_tracer.subscribe_event(
         central_node_low.central_node, "longRunningCommandResult"
     )
@@ -162,7 +162,7 @@ def test_assign_release_timeout_sdp(
     assert unique_id[0].endswith("AssignResources")
     assert result[0] == ResultCode.QUEUED
     exception_message = (
-        f"{central_node_low.subarray_node.dev_name()}:"
+        f"{central_node_low.sdp_subarray_leaf_node.dev_name()}:"
         " Timeout has occurred, command failed"
     )
 

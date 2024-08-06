@@ -204,7 +204,13 @@ def invalid_command_rejection(invalid_json):
             in pytest.command_result[1][0]
         )
     elif invalid_json == "empty_string":
-        assert "Invalid 'interface' value: None" in pytest.command_result[1][0]
+        # TODO: Enable this once CDM available with latest telmodel
+        # assert "Invalid 'interface' value: None"
+        # in pytest.command_result[1][0]
+        assert (
+            "Low TMC configure 4.0' Missing keys: 'csp', 'interface', "
+            "'mccs', 'sdp" in pytest.command_result[1][0]
+        )
 
 
 @then("TMC subarray remains in IDLE obsState")

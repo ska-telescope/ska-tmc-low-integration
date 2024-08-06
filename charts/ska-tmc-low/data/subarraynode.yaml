@@ -57,7 +57,7 @@ server:
               - "5"
           - name: "CommandTimeout"
             values:
-              - "40"
+              - "70"
           - name: "CspAssignResourcesInterfaceURL"
             values:
               - "{{ $csp_assign_interface }}"
