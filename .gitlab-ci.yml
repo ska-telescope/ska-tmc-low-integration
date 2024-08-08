@@ -169,7 +169,7 @@ k8s-test-tmc-csp-sdp:
     COUNT: 1
   script:
     - make cred SERVICE_ACCOUNT=$SERVICE_ACCOUNT
-    - make cred KUBE_NAMESPACE=$KUBE_NAMESPACE_SDP_CSP
+    - make cred KUBE_NAMESPACE=$KUBE_NAMESPACE
     - '[ -f .make/k8s.mk ] || (echo "File k8s.mk not included in Makefile; exit 1")'
     - 'make help | grep k8s-test'
     - make k8s-install-chart
