@@ -154,7 +154,41 @@ k8s-test-tmc-with-sdp:
   environment:
     name: test/$CI_COMMIT_REF_SLUG
     on_stop: stop-k8s-test-tmc-with-sdp
-    
+  
+k8s-test-tmc-csp-sdp:
+  tags:
+    - ska-k8s
+  variables:
+    TELESCOPE: 'SKA-low'
+    PORT: "10000"
+    KUBE_NAMESPACE: 'ci-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-tmc-sdp-csp'
+    KUBE_NAMESPACE_SDP_CSP: 'ci-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-sdp-csp'
+    SERVICE_ACCOUNT: "ci-svc-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-tmc-sdp-csp"
+    SDP_SIMULATION_ENABLED: 'false'
+    CSP_SIMULATION_ENABLED: 'false'
+  script:
+    - make cred SERVICE_ACCOUNT=$SERVICE_ACCOUNT
+    - make cred KUBE_NAMESPACE=$KUBE_NAMESPACE_SDP_CSP
+    - '[ -f .make/k8s.mk ] || (echo "File k8s.mk not included in Makefile; exit 1")'
+    - 'make help | grep k8s-test'
+    - make k8s-install-chart
+    - make k8s-wait
+    - make k8s-wait KUBE_APP="ska-sdp"
+  after_script:
+    - pip3 install -q -U ska-ser-xray
+    - XRAY_TEST_RESULT_FILE="build/cucumber.json" make xray-publish
+  environment:
+    name: test/$CI_COMMIT_REF_SLUG
+    on_stop: stop-k8s-test-tmc-with-sdp-csp
+
+stop-k8s-test-tmc-with-sdp-csp:
+  extends:
+    - stop-k8s-test
+  variables:
+    KUBE_NAMESPACE: 'ci-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-tmc-sdp-csp'
+    SDP_SIMULATION_ENABLED: 'false'
+    CSP_SIMULATION_ENABLED: 'false'
+
 stop-k8s-test-tmc-with-sdp:
   extends:
     - stop-k8s-test
