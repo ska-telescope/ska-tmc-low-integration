@@ -156,8 +156,8 @@ k8s-test-tmc-with-sdp:
     on_stop: stop-k8s-test-tmc-with-sdp
   
 k8s-test-tmc-csp-sdp:
-  tags:
-    - ska-k8s
+  extends:
+    - k8s-test
   variables:
     TELESCOPE: 'SKA-low'
     PORT: "10000"
