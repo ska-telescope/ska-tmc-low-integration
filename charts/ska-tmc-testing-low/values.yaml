@@ -60,7 +60,6 @@ ska-tango-base:
 tmc-low:
   labels:
     app: ska-tmc-low-integration
-  subarray_count: 1
   enabled: true
   deviceServers:
     mocks:
@@ -75,7 +74,7 @@ ska-sdp:
   enabled: false
   lmc:
     prefix: low
-    nsubarray: 1
+    nsubarray: 4
   console:
     enabled: true
   data-pvc:
