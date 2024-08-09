@@ -1,7 +1,7 @@
 name: "cspsubarrayleafnode-test"
 function: telescope-monitoring
 domain: general-monitoring
-instances: ["01"]
+instances: ["01","02","03","04"]
 entrypoints:
   - name: "ska_tmc_cspsubarrayleafnode.csp_subarray_leaf_node_low.CspSubarrayLeafNodeLow"
 {{- $DelayModelTimeInAdvance := .Values.deviceServers.cspsubarrayleafnode.DelayModelTimeInAdvance }}

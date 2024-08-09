@@ -1,7 +1,7 @@
 name: "subarraynode-test"
 function: telescope-monitoring
 domain: subarray
-instances: ["01"]
+instances: ["01","02","03","04"]
 entrypoints:
   - name: "ska_tmc_subarraynode.subarray_node_low.SubarrayNodeLow"
 {{- $csp_assign_interface := .Values.deviceServers.subarraynode.CspAssignResourcesInterfaceURL }}

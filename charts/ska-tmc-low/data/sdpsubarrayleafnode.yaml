@@ -1,7 +1,7 @@
 name: "sdpsubarrayleafnode-test"
 function: telescope-monitoring
 domain: general-monitoring
-instances: ["01"]
+instances: ["01","02","03","04"]
 entrypoints:
   - name: "ska_tmc_sdpsubarrayleafnode.sdp_subarray_leaf_node.SdpSubarrayLeafNode"
 server:
