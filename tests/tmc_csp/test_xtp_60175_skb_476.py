@@ -146,7 +146,7 @@ def check_configure_json_and_invoke_command(
     configure_input_json = prepare_json_args_for_commands(
         "configure_low_without_timing_beams", command_input_factory
     )
-    assert key not in json.load(configure_input_json)["csp"]["lowcbf"].keys()
+    assert key not in json.loads(configure_input_json)["csp"]["lowcbf"].keys()
     subarray_node_low.store_configuration_data(configure_input_json)
 
 
