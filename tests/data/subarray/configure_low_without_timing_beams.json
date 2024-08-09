@@ -49,8 +49,8 @@
   "csp": {
     "interface": "https://schema.skao.int/ska-low-csp-configure/3.2",
     "common": {
-      "config_id": "sbi-mvp01-20200325-00001-science_A",
-      "eb_id": "eb-test-20220916-00000"
+      "config_id": "sbi-mvp01-20200325-00002-science_A",
+      "eb_id": "eb-test-20220917-00000"
     },
     "lowcbf": {
       "stations": {
