@@ -1,4 +1,4 @@
-@XTP-60175 @XTP-29682
+@XTP-60175 @XTP-29682 @tmc_csp
 Scenario: verify SKB-476
     Given the Telescope is in ON state
     And subarray node is in observation state IDLE
