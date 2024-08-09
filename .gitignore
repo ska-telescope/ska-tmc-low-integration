@@ -281,7 +281,7 @@ charts/ska-tmc-testing-low/charts/
 code-coverage
 pytest-logs.txt
 kubeconfig
-KUBECONFIG
+KUBECONFIG*
 
 # Ignore legacy dependency and release systems
 setup.py
