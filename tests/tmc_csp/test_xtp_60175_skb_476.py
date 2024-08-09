@@ -15,9 +15,11 @@ from ska_tango_base.commands import ResultCode
 from ska_tango_testing.integration import TangoEventTracer, log_events
 from tango import DevState
 
-from tests.resources.test_harness.central_node_low import CentralNodeWrapperLow
-from tests.resources.test_harness.subarray_node_low import (
-    SubarrayNodeWrapperLow,
+from tests.resources.test_harness.central_node_with_csp_low import (
+    CentralNodeCspWrapperLow,
+)
+from tests.resources.test_harness.subarray_node_with_csp_low import (
+    SubarrayNodeCspWrapperLow,
 )
 from tests.resources.test_harness.utils.common_utils import JsonFactory
 from tests.resources.test_support.common_utils.tmc_helpers import (
@@ -37,7 +39,8 @@ def test_verify_skb_476():
 
 @given("the Telescope is in ON state")
 def given_a_tmc(
-    central_node_low: CentralNodeWrapperLow, event_tracer: TangoEventTracer
+    central_node_real_csp_low: CentralNodeCspWrapperLow,
+    event_tracer: TangoEventTracer,
 ):
     """
     This method invokes On command from central node and verifies
@@ -47,49 +50,118 @@ def given_a_tmc(
         event_tracer(TangoEventTracer): object of TangoEventTracer used for
         managing the device events
     """
+    central_node_real_csp_low.csp_master.adminMode = 0
+    central_node_real_csp_low.csp_subarray1.adminMode = 0
+    event_tracer.subscribe_event(central_node_real_csp_low.pst, "State")
+
+    event_tracer.subscribe_event(central_node_real_csp_low.pst, "adminMode")
     event_tracer.subscribe_event(
-        central_node_low.central_node, "telescopeState"
+        central_node_real_csp_low.csp_master, "adminMode"
     )
     event_tracer.subscribe_event(
-        central_node_low.central_node, "longRunningCommandResult"
+        central_node_real_csp_low.csp_subarray1, "adminMode"
     )
-    event_tracer.subscribe_event(central_node_low.subarray_node, "obsState")
+    assert_that(event_tracer).described_as(
+        "FAILED UNEXPECTED ADMIN MODE: "
+        "CSP Master device"
+        f"({central_node_real_csp_low.csp_master.dev_name()}) "
+        "is expected to be in Admin Mode ONLINE",
+    ).within_timeout(TIMEOUT).has_change_event_occurred(
+        central_node_real_csp_low.csp_master,
+        "adminMode",
+        0,
+    )
+
+    assert_that(event_tracer).described_as(
+        "FAILED UNEXPECTED ADMIN MODE: "
+        "CSP Master device"
+        f"({central_node_real_csp_low.csp_master.dev_name()}) "
+        "is expected to be in Admin Mode ONLINE",
+    ).within_timeout(TIMEOUT).has_change_event_occurred(
+        central_node_real_csp_low.csp_master,
+        "adminMode",
+        0,
+    )
+
+    assert_that(event_tracer).described_as(
+        "FAILED UNEXPECTED ADMIN MODE: "
+        "CSP Subarray device"
+        f"({central_node_real_csp_low.csp_subarray1.dev_name()}) "
+        "is expected to be in Admin Mode ONLINE",
+    ).within_timeout(TIMEOUT).has_change_event_occurred(
+        central_node_real_csp_low.csp_subarray1,
+        "adminMode",
+        0,
+    )
+
+    assert_that(event_tracer).described_as(
+        "FAILED UNEXPECTED ADMIN MODE: "
+        "PST device"
+        f"({central_node_real_csp_low.pst.dev_name()}) "
+        "is expected to be in Admin Mode ONLINE",
+    ).within_timeout(TIMEOUT).has_change_event_occurred(
+        central_node_real_csp_low.pst,
+        "adminMode",
+        0,
+    )
+
+    event_tracer.subscribe_event(
+        central_node_real_csp_low.central_node, "telescopeState"
+    )
+    event_tracer.subscribe_event(
+        central_node_real_csp_low.central_node, "longRunningCommandResult"
+    )
+    event_tracer.subscribe_event(
+        central_node_real_csp_low.subarray_node, "obsState"
+    )
     log_events(
         {
-            central_node_low.central_node: [
+            central_node_real_csp_low.central_node: [
                 "telescopeState",
                 "longRunningCommandResult",
             ],
-            central_node_low.subarray_node: ["obsState"],
+            central_node_real_csp_low.subarray_node: ["obsState"],
         }
     )
-    central_node_low.move_to_on()
+    central_node_real_csp_low.move_to_on()
     assert_that(event_tracer).described_as(
         'FAILED ASSUMPTION IN "GIVEN" STEP: '
         "'the telescope is is ON state'"
         "Central Node device"
-        f"({central_node_low.central_node.dev_name()}) "
+        f"({central_node_real_csp_low.central_node.dev_name()}) "
         "is expected to be in TelescopeState ON",
     ).within_timeout(TIMEOUT).has_change_event_occurred(
-        central_node_low.central_node,
+        central_node_real_csp_low.central_node,
         "telescopeState",
         DevState.ON,
     )
     assert_that(event_tracer).described_as(
         "FAILED UNEXPECTED INITIAL OBSSTATE: "
         "Subarray Node device"
-        f"({central_node_low.subarray_node.dev_name()}) "
+        f"({central_node_real_csp_low.subarray_node.dev_name()}) "
         "is expected to be in EMPTY obstate",
     ).within_timeout(TIMEOUT).has_change_event_occurred(
-        central_node_low.subarray_node,
+        central_node_real_csp_low.subarray_node,
         "obsState",
         ObsState.EMPTY,
+    )
+
+    assert_that(event_tracer).described_as(
+        'FAILED ASSUMPTION IN "GIVEN" STEP: '
+        "'the telescope is is ON state'"
+        "PST device"
+        f"({central_node_real_csp_low.pst.dev_name()}) "
+        "is expected to be in State ON",
+    ).within_timeout(TIMEOUT).has_change_event_occurred(
+        central_node_real_csp_low.pst,
+        "State",
+        DevState.ON,
     )
 
 
 @given("subarray node is in observation state IDLE")
 def central_node_assign_resources(
-    central_node_low: CentralNodeWrapperLow,
+    central_node_real_csp_low: CentralNodeCspWrapperLow,
     command_input_factory: JsonFactory,
     event_tracer: TangoEventTracer,
 ):
@@ -102,10 +174,11 @@ def central_node_assign_resources(
         event_tracer(TangoEventTracer): object of TangoEventTracer used for
         managing the device events
     """
+    central_node_real_csp_low.set_serial_number_of_cbf_processor()
     assign_input_json = prepare_json_args_for_centralnode_commands(
         "assign_resources_low", command_input_factory
     )
-    result, pytest.unique_id = central_node_low.perform_action(
+    result, pytest.unique_id = central_node_real_csp_low.perform_action(
         "AssignResources", assign_input_json
     )
     assert pytest.unique_id[0].endswith("AssignResources")
@@ -114,10 +187,10 @@ def central_node_assign_resources(
     assert_that(event_tracer).described_as(
         "FAILED UNEXPECTED OBSSTATE: "
         "Subarray Node device"
-        f"({central_node_low.subarray_node.dev_name()}) "
+        f"({central_node_real_csp_low.subarray_node.dev_name()}) "
         "is expected to be in IDLE obstate",
     ).within_timeout(TIMEOUT).has_change_event_occurred(
-        central_node_low.subarray_node,
+        central_node_real_csp_low.subarray_node,
         "obsState",
         ObsState.IDLE,
     )
@@ -130,7 +203,7 @@ def central_node_assign_resources(
 )
 def check_configure_json_and_invoke_command(
     command_input_factory: JsonFactory,
-    subarray_node_low: SubarrayNodeWrapperLow,
+    subarray_node_real_csp_low: SubarrayNodeCspWrapperLow,
     key: str,
 ):
     """Method to verify the input json and invocation of conigure command
@@ -146,12 +219,13 @@ def check_configure_json_and_invoke_command(
         "configure_low_without_timing_beams", command_input_factory
     )
     assert key not in json.loads(configure_input_json)["csp"]["lowcbf"].keys()
-    subarray_node_low.store_configuration_data(configure_input_json)
+    subarray_node_real_csp_low.store_configuration_data(configure_input_json)
 
 
 @then("subarray node transitions to observation state READY")
 def check_csp_obs_state_ready(
-    event_tracer: TangoEventTracer, subarray_node_low: SubarrayNodeWrapperLow
+    event_tracer: TangoEventTracer,
+    subarray_node_real_csp_low: SubarrayNodeCspWrapperLow,
 ):
     """Method to check observation state of subarray node
     after configure command.
@@ -162,19 +236,21 @@ def check_csp_obs_state_ready(
         subarray_node_low (SubarrayNodeWrapperLow): Object of subarray
         node wrapper
     """
-    event_tracer.subscribe_event(subarray_node_low.csp_subarray1, "obsState")
+    event_tracer.subscribe_event(
+        subarray_node_real_csp_low.csp_subarray1, "obsState"
+    )
     log_events(
         {
-            subarray_node_low.csp_subarray1: ["obsState"],
+            subarray_node_real_csp_low.csp_subarray1: ["obsState"],
         }
     )
     assert_that(event_tracer).described_as(
         "FAILED UNEXPECTED OBSSTATE: "
         "CSP Subarray Node device"
-        f"({subarray_node_low.csp_subarray1.dev_name()}) "
+        f"({subarray_node_real_csp_low.csp_subarray1.dev_name()}) "
         "is expected to be in READY obstate",
     ).within_timeout(TIMEOUT).has_change_event_occurred(
-        subarray_node_low.csp_subarray1,
+        subarray_node_real_csp_low.csp_subarray1,
         "obsState",
         ObsState.READY,
     )
@@ -182,7 +258,8 @@ def check_csp_obs_state_ready(
 
 @then("subarray node transitions to observation state READY")
 def check_obs_state_ready(
-    event_tracer: TangoEventTracer, subarray_node_low: SubarrayNodeWrapperLow
+    event_tracer: TangoEventTracer,
+    subarray_node_real_csp_low: SubarrayNodeCspWrapperLow,
 ):
     """Method to check observation state of subarray node
     after configure command.
@@ -196,10 +273,10 @@ def check_obs_state_ready(
     assert_that(event_tracer).described_as(
         "FAILED UNEXPECTED OBSSTATE: "
         "Subarray Node device"
-        f"({subarray_node_low.subarray_node.dev_name()}) "
+        f"({subarray_node_real_csp_low.subarray_node.dev_name()}) "
         "is expected to be in READY obstate",
     ).within_timeout(TIMEOUT).has_change_event_occurred(
-        subarray_node_low.subarray_node,
+        subarray_node_real_csp_low.subarray_node,
         "obsState",
         ObsState.READY,
     )
