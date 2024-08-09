@@ -60,6 +60,7 @@ ska-tango-base:
 tmc-low:
   labels:
     app: ska-tmc-low-integration
+  subarray_count: 1
   enabled: true
   deviceServers:
     mocks:
