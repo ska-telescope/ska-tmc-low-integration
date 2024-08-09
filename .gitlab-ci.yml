@@ -166,7 +166,7 @@ k8s-test-tmc-csp-sdp:
     SDP_SIMULATION_ENABLED: 'false'
     CSP_SIMULATION_ENABLED: 'false'
     MCCS_SIMULATION_ENABLED: 'false'
-    SUBARRAY_COUNT: 5
+    SUBARRAY_COUNT: 4
   script:
     - make cred SERVICE_ACCOUNT=$SERVICE_ACCOUNT
     - make cred KUBE_NAMESPACE=$KUBE_NAMESPACE

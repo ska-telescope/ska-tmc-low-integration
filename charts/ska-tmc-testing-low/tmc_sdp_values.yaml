@@ -5,5 +5,6 @@ tmc-low:
         sdp: false
 ska-sdp:
   enabled: true
+  nsubarray: 4
   lmc:
     loadBalancer: true
