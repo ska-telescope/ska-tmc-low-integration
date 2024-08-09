@@ -37,6 +37,11 @@ ska-taranta:
     nginx: true
     hostname: k8s.stfc.skao.int
   tangogql:
+    ska-tango-base:
+      enabled: false
+
+    ska-tango-examples:
+      enabled: false
     replicas: 1
     resources:
       requests:
