@@ -188,6 +188,8 @@ stop-k8s-test-tmc-with-sdp-csp:
     KUBE_NAMESPACE: 'ci-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-tmc-sdp-csp'
     SDP_SIMULATION_ENABLED: 'false'
     CSP_SIMULATION_ENABLED: 'false'
+    MCCS_SIMULATION_ENABLED: 'false'
+
 
 stop-k8s-test-tmc-with-sdp:
   extends:

@@ -1,5 +1,8 @@
 # Project makefile for a ska-tmc-low-integration project. You should normally only need to modify
 # CAR_OCI_REGISTRY_USER and PROJECT below.
+CUSTOM_VALUES1 ?=
+CUSTOM_VALUES2 ?=
+CUSTOM_VALUES3 ?=
 ALARM_HANDLER_FQDN= "alarm/handler/01"
 CAR_OCI_REGISTRY_HOST:=artefact.skao.int
 PROJECT = ska-tmc-low-integration
@@ -82,15 +85,15 @@ endif
 PYTHON_VARS_AFTER_PYTEST ?= -m '$(MARK)' $(ADD_ARGS) $(FILE) -x --count=$(COUNT)
 
 ifeq ($(CSP_SIMULATION_ENABLED),false)
-CUSTOM_VALUES =	-f charts/ska-tmc-testing-low/tmc_csp_values.yaml
+CUSTOM_VALUES1 =	-f charts/ska-tmc-testing-low/tmc_csp_values.yaml
 endif
 
 ifeq ($(MCCS_SIMULATION_ENABLED),false)
-CUSTOM_VALUES =	-f charts/ska-tmc-testing-low/tmc_mccs_values.yaml
+CUSTOM_VALUES2 =	-f charts/ska-tmc-testing-low/tmc_mccs_values.yaml
 endif
 
 ifeq ($(SDP_SIMULATION_ENABLED),false)
-CUSTOM_VALUES =	-f charts/ska-tmc-testing-low/tmc_sdp_values.yaml \
+CUSTOM_VALUES3 =	-f charts/ska-tmc-testing-low/tmc_sdp_values.yaml \
 	--set global.sdp_master=$(SDP_MASTER)\
 	--set global.sdp_subarray_prefix=$(SDP_SUBARRAY_PREFIX)\
 	--set ska-sdp.proccontrol.replicas=$(SDP_PROCCONTROL_REPLICAS)\
@@ -107,7 +110,9 @@ K8S_CHART_PARAMS = --set global.minikube=$(MINIKUBE) \
 	--set global.operator=true \
 	--set ska-taranta.enabled=$(TARANTA_ENABLED)\
 	--set tmc-low.subarray_count=$(SUBARRAY_COUNT)\
-	$(CUSTOM_VALUES)
+	$(CUSTOM_VALUES1)\
+	$(CUSTOM_VALUES2)\
+	$(CUSTOM_VALUES3)
 
 PYTHON_VARS_BEFORE_PYTEST ?= PYTHONPATH=.:./src \
 							 TANGO_HOST=$(TANGO_HOST) \
