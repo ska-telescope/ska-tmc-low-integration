@@ -52,8 +52,8 @@ dependencies:
   - name: ska-tango-taranta
     version: 2.10.2
     repository: https://artefact.skao.int/repository/helm-internal
-    condition: ska-taranta.enabled
+    condition: ska-tango-taranta.enabled
   - name: ska-tango-tangogql
     version: 1.4.3
     repository: https://artefact.skao.int/repository/helm-internal
-    condition: ska-taranta.enabled
+    condition: ska-tango-taranta.enabled
