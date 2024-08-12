@@ -46,7 +46,7 @@ def given_a_tmc(
     This method invokes On command from central node and verifies
     the state of telescope after the invocation.
     Args:
-        central_node_real_csp_low (CentralNodeCspWrapperLow): Object of 
+        central_node_real_csp_low (CentralNodeCspWrapperLow): Object of
         Central node wrapper
         event_tracer(TangoEventTracer): object of TangoEventTracer used for
         managing the device events
