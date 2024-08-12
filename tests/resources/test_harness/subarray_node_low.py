@@ -433,13 +433,13 @@ class SubarrayNodeWrapperLow:
         if SIMULATED_DEVICES_DICT["sdp_and_mccs"]:
             if self.pst.obsState == ObsState.ABORTED:
                 self.event_recorder.subscribe_event(self.pst, "obsState")
+                self.pst.obsreset()
                 assert self.event_recorder.has_change_event_occurred(
                     self.pst,
                     "obsState",
                     ObsState.IDLE,
                     lookahead=2,
                 )
-                self.pst.obsreset()
 
         # Move Subarray to OFF state
         self.move_to_off()
