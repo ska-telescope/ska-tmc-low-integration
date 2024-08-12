@@ -438,7 +438,7 @@ class SubarrayNodeWrapperLow:
                     self.pst,
                     "obsState",
                     ObsState.IDLE,
-                    lookahead=2,
+                    lookahead=4,
                 )
 
         # Move Subarray to OFF state
