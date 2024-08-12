@@ -223,7 +223,7 @@ def check_configure_json_and_invoke_command(
     subarray_node_real_csp_low.store_configuration_data(configure_input_json)
 
 
-@then("subarray node transitions to observation state READY")
+@then("csp subbaray node transitions to observation state READY")
 def check_csp_obs_state_ready(
     event_tracer: TangoEventTracer,
     subarray_node_real_csp_low: SubarrayNodeCspWrapperLow,
