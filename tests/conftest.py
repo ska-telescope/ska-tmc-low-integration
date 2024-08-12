@@ -219,7 +219,7 @@ def event_recorder() -> Generator[EventRecorder, None, None]:
 def event_tracer():
     """Returns a TangoEventTracer instance."""
     tracer = TangoEventTracer()
-    yield
+    yield tracer
     tracer.clear_events()
 
 
