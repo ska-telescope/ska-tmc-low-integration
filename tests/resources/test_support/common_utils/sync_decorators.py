@@ -136,7 +136,7 @@ def sync_abort(timeout: int = 500):
     return decorator_sync_abort
 
 
-def sync_restart(timeout: int = 300):
+def sync_restart(timeout: int = 500):
     """Sync method for Restart Command
     define as a Decorator"""
 
