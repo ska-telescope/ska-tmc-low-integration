@@ -405,6 +405,7 @@ class CentralNodeWrapperLow(object):
             self.move_to_off()
         self._clear_command_call_and_transition_data(clear_transition=True)
         self.event_recorder.clear_events()
+        self.event_tracer.clear_events()
         # Adding a small sleep to allow the systems to clean up processes
         sleep(0.15)
 

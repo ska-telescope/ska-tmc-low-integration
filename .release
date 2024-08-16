@@ -1,6 +1,6 @@
-release=0.17.1
-tag=0.17.1
+release=0.17.3
+tag=0.17.3
 tag_description=
 **Charts:**
-**1. ska-tmc-low-integration 0.17.1**
-        * Central Node v0.16.3 and Subarray Node v0.21.4 related to SKB-438
+**1. ska-tmc-low-integration 0.17.3**
+        * Updated Subarray Node v0.22.3 to resolve SKB-477.

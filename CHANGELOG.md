@@ -10,9 +10,17 @@ Added
 
 Fixed
 -----
+[0.17.3]
+********
+* Updated Subarray Node v0.22.3 to resolve SKB-477.
+
+[0.17.2]
+********
+* Updated Subarray Node v0.22.2 to resolve SKB-476.
+
 [0.17.1]
 *********
-* Central Node v0.16.3 and Subarray Node v0.21.4 related to SKB-438
+* Updated Central Node v0.16.3 and Subarray Node v0.21.4 related to SKB-438
 
 [0.17.0]
 *********
