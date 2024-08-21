@@ -7,6 +7,10 @@ This project adheres to `Semantic Versioning <http://semver.org/>`_.
 
 Added
 -----
+[0.18.0]
+********
+* Obs State aggregation in subarray node is improved
+* Subarray node use rule-engine rules to aggregate obs state.
 
 Fixed
 -----
