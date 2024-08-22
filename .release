@@ -1,6 +1,6 @@
-release=0.17.4
-tag=0.17.4
+release=0.18.0
+tag=0.18.0
 tag_description=
 **Charts:**
-**1. ska-tmc-low-integration 0.17.4**
-        * Updated Subarray Node v0.23.0 to support PSS and PST as optional keys
+**1. ska-tmc-low-integration 0.18.0**
+        * Updated Subarray Node v0.23.1 to support PSS and PST as optional keys
