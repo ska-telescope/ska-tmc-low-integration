@@ -8,7 +8,7 @@ This project adheres to `Semantic Versioning <http://semver.org/>`_.
 Added
 -----
 [0.17.4]
-* Integrate TMC SubarrayNode v0.23.0 to support PSS and PST as optional keys
+* Integrate TMC SubarrayNode v0.23.0 to support PSS and PST as optional keys under TMC-CSP schema
     * To mitigate the dependency for PST observation to be based on having pst and pss  keys (mandatory)under CSP section,
     * As per the SKA Tel model pss and pst are not the mandatory fields, considering every observation would not be around PST.
     But the way TMC was supporting the PST observation, was considering these keys as mandatory.
