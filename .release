@@ -1,6 +1,6 @@
-release=0.17.3
-tag=0.17.3
+release=0.17.4
+tag=0.17.4
 tag_description=
 **Charts:**
-**1. ska-tmc-low-integration 0.17.3**
-        * Updated Subarray Node v0.22.3 to resolve SKB-477.
+**1. ska-tmc-low-integration 0.17.4**
+        * Updated Subarray Node v0.23.0 to support PSS and PST as optional keys

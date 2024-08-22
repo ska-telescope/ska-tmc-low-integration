@@ -70,6 +70,7 @@ centralnode:
     tag: 0.16.3
     pullPolicy: IfNotPresent
 
+# the SA image referred from gitlab, due to STS-1076
 subarraynode:
   image:
     registry: registry.gitlab.com/ska-telescope/ska-tmc/ska-tmc-subarraynode
