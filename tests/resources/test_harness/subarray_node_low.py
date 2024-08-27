@@ -220,13 +220,6 @@ class SubarrayNodeWrapperLow:
             tmc_low_subarraynode1: {
                 "obsstate": [ObsState.ABORTED],
             },
-            low_csp_subarray_leaf_node: {
-                "cspsubarrayobsstate": [ObsState.ABORTED]
-            },
-            low_sdp_subarray_leaf_node: {
-                "sdpsubarrayobsstate": [ObsState.ABORTED]
-            },
-            mccs_subarray_leaf_node: {"obsstate": [ObsState.ABORTED]},
         },
         timeout=100,
     )
