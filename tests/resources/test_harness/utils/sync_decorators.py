@@ -111,6 +111,10 @@ class AttributeEventWatcher:
             self.__watcher_id,
             device_states.to_string(index=False, justify="left"),
         )
+        LOGGER.info(
+            "Missed events are: %s",
+            self.__attributes_to_watch,
+        )
 
     def event_callback(self, event_data: tango.EventData) -> None:
         """A simple event callback method to check if the event has been
@@ -122,7 +126,7 @@ class AttributeEventWatcher:
 
         :returns: None
         """
-        attribute_name = event_data.attr_value.name
+        attribute_name = event_data.attr_value.name.lower()
         attribute_value = event_data.attr_value.value
         device_name = event_data.device.dev_name()
         reception_time: datetime = event_data.attr_value.time.todatetime()
@@ -258,7 +262,7 @@ def wait_for_command_completion(
                 result_code,
                 unique_id,
             )
-            watcher.set_watcher_id(unique_id)
+            watcher.set_watcher_id(unique_id[0])
             watcher.watch()
             return result_code, unique_id
 
