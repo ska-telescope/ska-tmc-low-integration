@@ -40,13 +40,8 @@ from tests.resources.test_harness.utils.obs_state_resetter_low import (
     ObsStateResetterFactory,
 )
 from tests.resources.test_harness.utils.sync_decorators import (
-    sync_abort,
-    sync_assign_resources,
-    sync_configure,
-    sync_end,
-    sync_endscan,
     sync_release_resources,
-    sync_restart,
+    wait_for_command_completion,
 )
 from tests.resources.test_support.common_utils.common_helpers import Resource
 
@@ -172,7 +167,23 @@ class SubarrayNodeWrapperLow:
         """
         self._obs_state = value
 
-    @sync_configure(device_dict=device_dict_low)
+    @wait_for_command_completion(
+        {
+            tmc_low_subarraynode1: {
+                "obsstate": [ObsState.CONFIGURING, ObsState.READY],
+            },
+            low_csp_subarray_leaf_node: {
+                "cspsubarrayobsstate": [ObsState.CONFIGURING, ObsState.READY]
+            },
+            low_sdp_subarray_leaf_node: {
+                "sdpsubarrayobsstate": [ObsState.CONFIGURING, ObsState.READY]
+            },
+            mccs_subarray_leaf_node: {
+                "obsstate": [ObsState.CONFIGURING, ObsState.READY]
+            },
+        },
+        timeout=100,
+    )
     def store_configuration_data(self, input_json: str):
         """Invoke configure command on subarray Node
         Args:
@@ -184,25 +195,83 @@ class SubarrayNodeWrapperLow:
         LOGGER.info("Invoked Configure on SubarrayNode")
         return result, message
 
-    @sync_end(device_dict=device_dict_low)
+    @wait_for_command_completion(
+        {
+            tmc_low_subarraynode1: {
+                "obsstate": [ObsState.IDLE],
+            },
+            low_csp_subarray_leaf_node: {
+                "cspsubarrayobsstate": [ObsState.IDLE]
+            },
+            low_sdp_subarray_leaf_node: {
+                "sdpsubarrayobsstate": [ObsState.IDLE]
+            },
+            mccs_subarray_leaf_node: {"obsstate": [ObsState.IDLE]},
+        },
+        timeout=100,
+    )
     def end_observation(self):
         result, message = self.subarray_node.End()
         LOGGER.info("Invoked End on SubarrayNode")
         return result, message
 
-    @sync_abort(device_dict=device_dict_low)
+    @wait_for_command_completion(
+        {
+            tmc_low_subarraynode1: {
+                "obsstate": [ObsState.ABORTED],
+            },
+            low_csp_subarray_leaf_node: {
+                "cspsubarrayobsstate": [ObsState.ABORTED]
+            },
+            low_sdp_subarray_leaf_node: {
+                "sdpsubarrayobsstate": [ObsState.ABORTED]
+            },
+            mccs_subarray_leaf_node: {"obsstate": [ObsState.ABORTED]},
+        },
+        timeout=100,
+    )
     def abort_subarray(self):
         result, message = self.subarray_node.Abort()
         LOGGER.info("Invoked Abort on SubarrayNode")
         return result, message
 
-    @sync_restart(device_dict=device_dict_low)
+    @wait_for_command_completion(
+        {
+            tmc_low_subarraynode1: {
+                "obsstate": [ObsState.EMPTY],
+            },
+            low_csp_subarray_leaf_node: {
+                "cspsubarrayobsstate": [ObsState.EMPTY]
+            },
+            low_sdp_subarray_leaf_node: {
+                "sdpsubarrayobsstate": [ObsState.EMPTY]
+            },
+            mccs_subarray_leaf_node: {"obsstate": [ObsState.EMPTY]},
+        },
+        timeout=100,
+    )
     def restart_subarray(self):
         result, message = self.subarray_node.Restart()
         LOGGER.info("Invoked Restart on SubarrayNode")
         return result, message
 
-    @sync_assign_resources(device_dict=device_dict_low)
+    @wait_for_command_completion(
+        {
+            tmc_low_subarraynode1: {
+                "obsstate": [ObsState.RESOURCING, ObsState.IDLE],
+            },
+            low_csp_subarray_leaf_node: {
+                "cspsubarrayobsstate": [ObsState.RESOURCING, ObsState.IDLE]
+            },
+            low_sdp_subarray_leaf_node: {
+                "sdpsubarrayobsstate": [ObsState.RESOURCING, ObsState.IDLE]
+            },
+            mccs_subarray_leaf_node: {
+                "obsstate": [ObsState.RESOURCING, ObsState.IDLE]
+            },
+        },
+        timeout=100,
+    )
     def store_resources(self, assign_json: str):
         """Invoke Assign Resource command on subarray Node
         Args:
@@ -212,7 +281,21 @@ class SubarrayNodeWrapperLow:
         LOGGER.info("Invoked AssignResources on CentralNode")
         return result, message
 
-    @sync_release_resources(device_dict=device_dict_low)
+    @wait_for_command_completion(
+        {
+            tmc_low_subarraynode1: {
+                "obsstate": [ObsState.EMPTY],
+            },
+            low_csp_subarray_leaf_node: {
+                "cspsubarrayobsstate": [ObsState.EMPTY]
+            },
+            low_sdp_subarray_leaf_node: {
+                "sdpsubarrayobsstate": [ObsState.EMPTY]
+            },
+            mccs_subarray_leaf_node: {"obsstate": [ObsState.EMPTY]},
+        },
+        timeout=100,
+    )
     def release_resources_subarray(self):
         result, message = self.subarray_node.ReleaseAllResources()
         LOGGER.info("Invoked Release Resource on SubarrayNode")
@@ -227,7 +310,21 @@ class SubarrayNodeWrapperLow:
         result, message = self.central_node.ReleaseResources(input_string)
         return result, message
 
-    @sync_endscan(device_dict=device_dict_low)
+    @wait_for_command_completion(
+        {
+            tmc_low_subarraynode1: {
+                "obsstate": [ObsState.READY],
+            },
+            low_csp_subarray_leaf_node: {
+                "cspsubarrayobsstate": [ObsState.READY]
+            },
+            low_sdp_subarray_leaf_node: {
+                "sdpsubarrayobsstate": [ObsState.READY]
+            },
+            mccs_subarray_leaf_node: {"obsstate": [ObsState.READY]},
+        },
+        timeout=100,
+    )
     def remove_scan_data(self):
         result, message = self.subarray_node.EndScan()
         LOGGER.info("Invoked EndScan on SubarrayNode")

@@ -25,6 +25,7 @@ from tests.resources.test_harness.constant import (
     mccs_controller,
     mccs_master_leaf_node,
     mccs_subarray1,
+    mccs_subarray_leaf_node,
     pst,
     tmc_low_subarraynode1,
 )
@@ -33,11 +34,10 @@ from tests.resources.test_harness.helpers import SIMULATED_DEVICES_DICT
 from tests.resources.test_harness.utils.common_utils import JsonFactory
 from tests.resources.test_harness.utils.sync_decorators import (
     sync_abort,
-    sync_assign_resources,
-    sync_release_resources,
     sync_restart,
     sync_set_to_off,
     sync_set_to_on,
+    wait_for_command_completion,
 )
 from tests.resources.test_support.common_utils.common_helpers import Resource
 
@@ -639,7 +639,23 @@ class CentralNodeWrapperLow(object):
             )
         sleep(0.15)
 
-    @sync_assign_resources(device_dict=device_dict_low)
+    @wait_for_command_completion(
+        {
+            tmc_low_subarraynode1: {
+                "obsstate": [ObsState.RESOURCING, ObsState.IDLE],
+            },
+            low_csp_subarray_leaf_node: {
+                "cspsubarrayobsstate": [ObsState.RESOURCING, ObsState.IDLE]
+            },
+            low_sdp_subarray_leaf_node: {
+                "sdpsubarrayobsstate": [ObsState.RESOURCING, ObsState.IDLE]
+            },
+            mccs_subarray_leaf_node: {
+                "obsstate": [ObsState.RESOURCING, ObsState.IDLE]
+            },
+        },
+        timeout=100,
+    )
     def store_resources(self, assign_json: str):
         """Invoke Assign Resource command on subarray Node
         Args:
@@ -651,7 +667,21 @@ class CentralNodeWrapperLow(object):
         LOGGER.info("Invoked AssignResources on CentralNode")
         return result, message
 
-    @sync_release_resources(device_dict=device_dict_low)
+    @wait_for_command_completion(
+        {
+            tmc_low_subarraynode1: {
+                "obsstate": [ObsState.EMPTY],
+            },
+            low_csp_subarray_leaf_node: {
+                "cspsubarrayobsstate": [ObsState.EMPTY]
+            },
+            low_sdp_subarray_leaf_node: {
+                "sdpsubarrayobsstate": [ObsState.EMPTY]
+            },
+            mccs_subarray_leaf_node: {"obsstate": [ObsState.EMPTY]},
+        },
+        timeout=100,
+    )
     def invoke_release_resources(self, input_string):
         """Invoke Release Resource command on central Node
         Args:

@@ -26,6 +26,7 @@ from tests.resources.test_support.common_utils.tmc_helpers import (
 
 
 @pytest.mark.SKA_low
+@pytest.mark.improved_decorator
 @scenario(
     "../features/tmc/check_scan_command.feature",
     "Successful Execution of Scan Command on Low Telescope Subarray in TMC",
@@ -79,6 +80,7 @@ def given_tmc(
         "obsState",
         ObsState.EMPTY,
     )
+    event_tracer.clear_events()
 
 
 @given("a subarray in READY obsState")
@@ -150,6 +152,7 @@ def given_subarray_in_ready(
         "longRunningCommandResult",
         (unique_id[0], json.dumps((int(ResultCode.OK), "Command Completed"))),
     )
+    event_tracer.clear_events()
 
 
 @when("I command it to scan for a given period")

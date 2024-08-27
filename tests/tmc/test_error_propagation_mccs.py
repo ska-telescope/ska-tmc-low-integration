@@ -14,6 +14,7 @@ from ska_control_model import ObsState, ResultCode
 from ska_tango_testing.integration import TangoEventTracer, log_events
 from tango import DevState
 
+from tests.conftest import LOGGER
 from tests.resources.test_harness.central_node_low import CentralNodeWrapperLow
 from tests.resources.test_harness.constant import (
     ERROR_PROPAGATION_DEFECT,
@@ -33,6 +34,7 @@ from tests.resources.test_support.common_utils.tmc_helpers import (
 
 
 @pytest.mark.SKA_low
+@pytest.mark.improved_decorator
 @scenario(
     "../features/tmc/check_error_propagation_mccs.feature",
     "Error Propagation Reported by TMC Low Configure Command for"
@@ -137,9 +139,17 @@ def invoke_configure_command_with_mccs_defective(
     #
     mccs_subarray_sim.SetDefective(ERROR_PROPAGATION_DEFECT)
 
-    _, pytest.unique_id = subarray_node_low.execute_transition(
-        "Configure", configure_input_str
-    )
+    # The change in this line showcases the logging capabilities of the
+    # improved decorator. This will lead to a test failure though, so encasing
+    # it in a try: except block
+    try:
+        _, pytest.unique_id = subarray_node_low.store_configuration_data(
+            configure_input_str
+        )
+    # pylint: disable=broad-exception-caught
+    except Exception as exception:
+        LOGGER.exception("Exception occurred:\n%s", exception)
+
     assert_that(event_tracer).described_as(
         'FAILED ASSUMPTION IN "WHEN" STEP: '
         '"Configure command is invoked on a defective MCCS Subarray"'

@@ -155,52 +155,10 @@ class TestLowCentralNodeAssignResources:
         )
 
         # Execute Assign command and check command completed successfully
-        _, unique_id = central_node_low.perform_action(
-            "AssignResources", assign_input_json
-        )
+        _, unique_id = central_node_low.store_resources(assign_input_json)
 
         mccs_subarray_sim.SetDirectassignedResources(assigned_resources_json)
 
-        assert_that(event_tracer).described_as(
-            "FAILED ASSUMPTION AFTER ASSIGNRESOURCES COMMAND: "
-            "SDP Subarray device"
-            f"({sdp_subarray_sim.dev_name()}) "
-            "is expected to be in IDLE obstate",
-        ).within_timeout(TIMEOUT).has_change_event_occurred(
-            sdp_subarray_sim,
-            "obsState",
-            ObsState.IDLE,
-        )
-        assert_that(event_tracer).described_as(
-            "FAILED ASSUMPTION AFTER ASSIGNRESOURCES COMMAND: "
-            "CSP Subarray device"
-            f"({csp_subarray_sim.dev_name()}) "
-            "is expected to be in IDLE obstate",
-        ).within_timeout(TIMEOUT).has_change_event_occurred(
-            csp_subarray_sim,
-            "obsState",
-            ObsState.IDLE,
-        )
-        assert_that(event_tracer).described_as(
-            "FAILED ASSUMPTION AFTER ASSIGNRESOURCES COMMAND: "
-            "MCCS Subarray device"
-            f"({mccs_subarray_sim.dev_name()}) "
-            "is expected to be in IDLE obstate",
-        ).within_timeout(TIMEOUT).has_change_event_occurred(
-            mccs_subarray_sim,
-            "obsState",
-            ObsState.IDLE,
-        )
-        assert_that(event_tracer).described_as(
-            "FAILED ASSUMPTION AFTER ASSIGN RESOURCES: "
-            "Subarray Node device"
-            f"({central_node_low.subarray_node.dev_name()}) "
-            "is expected to be in IDLE obstate",
-        ).within_timeout(TIMEOUT).has_change_event_occurred(
-            central_node_low.subarray_node,
-            "obsState",
-            ObsState.IDLE,
-        )
         assert_that(event_tracer).described_as(
             "FAILED ASSUMPTION AFTER ASSIGNRESOURCES COMMAND: "
             "Central Node device"
