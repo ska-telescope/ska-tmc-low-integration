@@ -1,3 +1,4 @@
+import copy
 import functools
 import os
 import time
@@ -25,18 +26,16 @@ class AttributeEventWatcher:
     """A class for watching attribute changes through events."""
 
     def __init__(
-        self, attributes_list: Dict[str, Dict[str, List]], timeout: int = 100
+        self,
+        attributes_dictionary: Dict[str, Dict[str, List]],
+        timeout: int = 100,
     ) -> None:
-        self.__attributes_to_watch: Dict[
-            str, Dict[str, List]
-        ] = attributes_list
+        """Initialization method for the AttributeEventWatcher class."""
+        self.__attributes_to_watch: Dict[str, Dict[str, List]] = copy.deepcopy(
+            attributes_dictionary
+        )
         self.__expected_correct_events_count: int = 0
         self.__received_correct_events_count: int = 0
-        for attribute_events in self.__attributes_to_watch.values():
-            self.__expected_correct_events_count += sum(
-                len(expected_values)
-                for expected_values in attribute_events.values()
-            )
         self.__stop: bool = False
         self.__init_time: datetime = datetime.utcnow()
         self.__events_count_lock: RLock = RLock()
@@ -45,6 +44,13 @@ class AttributeEventWatcher:
         self.__timeout_thread: Timer = Timer(timeout, self.set_timeout_event)
         self.__watcher_id: str = ""
         self.subscription_proxies_and_ids: Dict[tango.DeviceProxy, List] = {}
+
+        for attribute_events in self.__attributes_to_watch.values():
+            self.__expected_correct_events_count += sum(
+                len(expected_values)
+                for expected_values in attribute_events.values()
+            )
+
         LOGGER.debug(
             "Initialization of AttributeEventWatcher class completed with the"
             + " following details: \nAttribute dictionary: %s\nExpected "
@@ -58,8 +64,10 @@ class AttributeEventWatcher:
         all event subscriptions"""
         LOGGER.debug("Stopping the watch loop and unsubscribing to events.")
         self.__stop = True
+
         with self.__events_count_lock:
             self.__received_correct_events_count = 0
+
         for (
             proxy,
             subscribtion_ids,
@@ -135,6 +143,7 @@ class AttributeEventWatcher:
         attribute_value = event_data.attr_value.value
         device_name = event_data.device.dev_name()
         reception_time: datetime = event_data.attr_value.time.todatetime()
+
         if not self.is_event_recent(reception_time):
             LOGGER.debug(
                 "Received an older event while waiting for command completion."
@@ -167,9 +176,11 @@ class AttributeEventWatcher:
                 key_error,
             )
             return None
+
         if expected_value_list == []:
             # This means all the necessary events were read
             return None
+
         LOGGER.debug(
             "Expected value list for the attribute: %s is %s",
             attribute_name,
@@ -181,6 +192,7 @@ class AttributeEventWatcher:
             self.__attributes_to_watch[device_name][
                 attribute_name
             ] = expected_value_list[1:]
+
             # Updating the received events count
             with self.__events_count_lock:
                 self.__received_correct_events_count += 1
@@ -188,13 +200,16 @@ class AttributeEventWatcher:
                     "Updated the received events count to: %s",
                     self.__received_correct_events_count,
                 )
+
                 if (
                     self.__expected_correct_events_count
                     == self.__received_correct_events_count
                 ):
                     LOGGER.debug("All events received!")
                     self.__received_all_events.set()
+
             return None
+
         return None
 
     def is_event_recent(self, reception_time: datetime) -> bool:
@@ -213,6 +228,7 @@ class AttributeEventWatcher:
         watch and verifies them reaching the expected values."""
         # Starting the timeout thread
         self.__timeout_thread.start()
+
         # Subscribing to all events
         for device, attribute_dictionary in self.__attributes_to_watch.items():
             device_proxy = tango.DeviceProxy(device)
@@ -238,30 +254,37 @@ class AttributeEventWatcher:
                     + f"Expected {self.__expected_correct_events_count} events"
                     + f", received only {self.__received_correct_events_count}"
                 )
+
             if self.__received_all_events.is_set():
                 self.stop_watching()
+
             time.sleep(1)
 
 
 def wait_for_command_completion(
-    attributes_list: Dict[str, Dict[str, List]], timeout: int = 100
+    attributes_dictionary: Dict[str, Dict[str, List]], timeout: int = 100
 ) -> Callable[[Callable], Callable]:
     """Wait on attribute events for command completion based on the mapping
     of device names and expected attribute values.
 
-    :param attribute_list: A list of all attributes to monitor with device
-        FQDNs, attribute name and expected value/values
+    :param attributes_dictionary: A list of all attributes to monitor with
+        device FQDNs, attribute name and expected value/values
         Example: {
             "ska_low/tm_subarray_node/1": {
                 "obsState": [ObsState.RESOURCING, ObsState.IDLE]
             }
         }
-    :type attribute_list: Dict[str, Dict[str, List]]
+    :type attributes_dictionary: Dict[str, Dict[str, List]]
     :param timeout: Timeout for attribute watcher
     :type timeout: int, default=100
 
     :returns: `Callable[Callable, Callable]`
     """
+    LOGGER.debug(
+        "Decorator called with values- \nAttributes to watch: %s\nTimeout: %s",
+        attributes_dictionary,
+        timeout,
+    )
 
     def decorator_wait_for_command_completion(func: Callable) -> Callable:
         """Decorator method for the above function"""
@@ -269,8 +292,13 @@ def wait_for_command_completion(
         @functools.wraps(func)
         def wrapper(*args, **kwargs) -> Tuple:
             """Wrapper method for the wait function"""
-            watcher = AttributeEventWatcher(attributes_list, timeout)
-            result_code, unique_id = func(*args, **kwargs)
+            watcher = AttributeEventWatcher(attributes_dictionary, timeout)
+
+            if args or kwargs:
+                result_code, unique_id = func(*args, **kwargs)
+            else:
+                result_code, unique_id = func()
+
             LOGGER.info(
                 "Command invoked with Result: %s and id: %s",
                 result_code,
@@ -278,6 +306,7 @@ def wait_for_command_completion(
             )
             watcher.set_watcher_id(unique_id[0])
             watcher.watch()
+
             return result_code, unique_id
 
         return wrapper
