@@ -64,6 +64,7 @@ class AttributeEventWatcher:
         all event subscriptions"""
         LOGGER.debug("Stopping the watch loop and unsubscribing to events.")
         self.__stop = True
+        self.__timeout_thread.cancel()
 
         with self.__events_count_lock:
             self.__received_correct_events_count = 0
@@ -253,6 +254,8 @@ class AttributeEventWatcher:
                     "Timeout occurred while waiting for attribute events. "
                     + f"Expected {self.__expected_correct_events_count} events"
                     + f", received only {self.__received_correct_events_count}"
+                    + "\nMissed events are the part of following dictionary:"
+                    + f" {self.__attributes_to_watch}"
                 )
 
             if self.__received_all_events.is_set():
@@ -293,7 +296,7 @@ def wait_for_command_completion(
         def wrapper(*args, **kwargs) -> Tuple:
             """Wrapper method for the wait function"""
             watcher = AttributeEventWatcher(attributes_dictionary, timeout)
-
+            watcher.watch()
             result_code, unique_id = func(*args, **kwargs)
 
             LOGGER.info(
@@ -302,7 +305,6 @@ def wait_for_command_completion(
                 unique_id,
             )
             watcher.set_watcher_id(unique_id[0])
-            watcher.watch()
 
             return result_code, unique_id
 
