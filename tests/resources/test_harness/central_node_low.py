@@ -185,7 +185,7 @@ class CentralNodeWrapperLow(object):
         self._telescope_state = value
 
     @wait_for_command_completion(
-        {low_centralnode: {"telescopestate": [DevState.OFF]}}
+        {low_centralnode: {"telescopestate": [DevState.OFF]}}, timeout=200
     )
     def move_to_off(self):
         """
@@ -409,7 +409,7 @@ class CentralNodeWrapperLow(object):
         sleep(0.15)
 
     @wait_for_command_completion(
-        {low_centralnode: {"telescopestate": [DevState.ON]}}
+        {low_centralnode: {"telescopestate": [DevState.ON]}}, timeout=200
     )
     def move_to_on(self):
         """
