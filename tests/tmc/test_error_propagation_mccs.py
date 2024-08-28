@@ -33,7 +33,6 @@ from tests.resources.test_support.common_utils.tmc_helpers import (
 
 
 @pytest.mark.SKA_low
-@pytest.mark.improved_decorator
 @scenario(
     "../features/tmc/check_error_propagation_mccs.feature",
     "Error Propagation Reported by TMC Low Configure Command for"
@@ -138,10 +137,8 @@ def invoke_configure_command_with_mccs_defective(
     #
     mccs_subarray_sim.SetDefective(ERROR_PROPAGATION_DEFECT)
 
-    # The change in this line showcases the logging capabilities of the
-    # improved decorator. This will lead to a test failure.
-    _, pytest.unique_id = subarray_node_low.store_configuration_data(
-        configure_input_str
+    _, pytest.unique_id = subarray_node_low.execute_transition(
+        "Configure", configure_input_str
     )
 
     assert_that(event_tracer).described_as(

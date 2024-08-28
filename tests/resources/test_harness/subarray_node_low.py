@@ -9,7 +9,6 @@ from ska_tango_base.control_model import HealthState
 from tango import DeviceProxy, DevState
 
 from tests.resources.test_harness.constant import (
-    device_dict_low,
     low_centralnode,
     low_csp_master,
     low_csp_subarray1,
@@ -40,7 +39,6 @@ from tests.resources.test_harness.utils.obs_state_resetter_low import (
     ObsStateResetterFactory,
 )
 from tests.resources.test_harness.utils.sync_decorators import (
-    sync_release_resources,
     wait_for_command_completion,
 )
 from tests.resources.test_support.common_utils.common_helpers import Resource
@@ -294,7 +292,21 @@ class SubarrayNodeWrapperLow:
         LOGGER.info("Invoked Release Resource on SubarrayNode")
         return result, message
 
-    @sync_release_resources(device_dict=device_dict_low)
+    @wait_for_command_completion(
+        {
+            tmc_low_subarraynode1: {
+                "obsstate": [ObsState.EMPTY],
+            },
+            low_csp_subarray_leaf_node: {
+                "cspsubarrayobsstate": [ObsState.EMPTY]
+            },
+            low_sdp_subarray_leaf_node: {
+                "sdpsubarrayobsstate": [ObsState.EMPTY]
+            },
+            mccs_subarray_leaf_node: {"obsstate": [ObsState.EMPTY]},
+        },
+        timeout=100,
+    )
     def release_resources(self, input_string):
         """Invoke Release Resource command on central Node
         Args:

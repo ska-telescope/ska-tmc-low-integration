@@ -12,7 +12,6 @@ from tango import DeviceProxy, DevState
 
 from tests.resources.test_harness.constant import (
     RESET_DEFECT,
-    device_dict_low,
     low_centralnode,
     low_csp_master,
     low_csp_master_leaf_node,
@@ -33,10 +32,6 @@ from tests.resources.test_harness.event_recorder import EventRecorder
 from tests.resources.test_harness.helpers import SIMULATED_DEVICES_DICT
 from tests.resources.test_harness.utils.common_utils import JsonFactory
 from tests.resources.test_harness.utils.sync_decorators import (
-    sync_abort,
-    sync_restart,
-    sync_set_to_off,
-    sync_set_to_on,
     wait_for_command_completion,
 )
 from tests.resources.test_support.common_utils.common_helpers import Resource
@@ -189,7 +184,9 @@ class CentralNodeWrapperLow(object):
         """
         self._telescope_state = value
 
-    @sync_set_to_off(device_dict=device_dict_low)
+    @wait_for_command_completion(
+        {low_centralnode: {"telescopestate": [DevState.OFF]}}
+    )
     def move_to_off(self):
         """
         A method to invoke TelescopeOff command to
@@ -409,7 +406,9 @@ class CentralNodeWrapperLow(object):
         # Adding a small sleep to allow the systems to clean up processes
         sleep(0.15)
 
-    @sync_set_to_on(device_dict=device_dict_low)
+    @wait_for_command_completion(
+        {low_centralnode: {"telescopestate": [DevState.ON]}}
+    )
     def move_to_on(self):
         """
         A method to invoke TelescopeOn command to
@@ -690,13 +689,34 @@ class CentralNodeWrapperLow(object):
         result, message = self.central_node.ReleaseResources(input_string)
         return result, message
 
-    @sync_abort(device_dict=device_dict_low)
+    @wait_for_command_completion(
+        {
+            tmc_low_subarraynode1: {
+                "obsstate": [ObsState.ABORTED],
+            }
+        },
+        timeout=100,
+    )
     def subarray_abort(self):
         """Invoke Abort command on subarray Node"""
         result, message = self.subarray_node.Abort()
         return result, message
 
-    @sync_restart(device_dict=device_dict_low)
+    @wait_for_command_completion(
+        {
+            tmc_low_subarraynode1: {
+                "obsstate": [ObsState.EMPTY],
+            },
+            low_csp_subarray_leaf_node: {
+                "cspsubarrayobsstate": [ObsState.EMPTY]
+            },
+            low_sdp_subarray_leaf_node: {
+                "sdpsubarrayobsstate": [ObsState.EMPTY]
+            },
+            mccs_subarray_leaf_node: {"obsstate": [ObsState.EMPTY]},
+        },
+        timeout=100,
+    )
     def subarray_restart(self):
         """Invoke Restart command on subarray Node"""
         result, message = self.subarray_node.Restart()
