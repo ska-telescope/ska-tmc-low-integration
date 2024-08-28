@@ -9,7 +9,6 @@ from typing import Callable, Dict, List, Tuple
 
 import pandas as pd
 import tango
-from ska_control_model import ObsState
 from ska_ser_logging.configuration import configure_logging
 
 MCCS_SIMULATION_ENABLED = os.getenv("MCCS_SIMULATION_ENABLED")
@@ -103,9 +102,7 @@ class AttributeEventWatcher:
                 devices.append(device_fqdn)
                 attributes.append(attribute_name)
                 states.append(
-                    ObsState(
-                        device_proxy.read_attribute(attribute_name).value
-                    ).name
+                    device_proxy.read_attribute(attribute_name).value
                 )
 
         # Creating and setting up a DataFrame
@@ -151,7 +148,7 @@ class AttributeEventWatcher:
                 + " %s/%s: %s",
                 device_name,
                 attribute_name,
-                ObsState(attribute_value).name,
+                attribute_value,
             )
             return None
 
@@ -160,7 +157,7 @@ class AttributeEventWatcher:
             + " %s/%s: %s",
             device_name,
             attribute_name,
-            ObsState(attribute_value).name,
+            attribute_value,
         )
         try:
             expected_value_list = self.__attributes_to_watch[device_name][
