@@ -50,10 +50,18 @@ class AttributeEventWatcher:
         self.__timeout_thread: Timer = Timer(timeout, self.set_timeout_event)
         self.__watcher_id: str = ""
         self.subscription_proxies_and_ids: Dict[tango.DeviceProxy, List] = {}
+        LOGGER.debug(
+            "Initialization of AttributeEventWatcher class completed with the"
+            + " following details: \nAttribute dictionary: %s\nExpected "
+            + "Events count: %s",
+            self.__attributes_to_watch,
+            self.__expected_correct_events_count,
+        )
 
     def stop_watching(self) -> None:
         """A method to stop watching the attribute changes and unsubscribing
         all event subscriptions"""
+        LOGGER.debug("Stopping the watch loop and unsubscribing to events.")
         self.__stop = True
         with self.__events_count_lock:
             self.__received_correct_events_count = 0
@@ -66,10 +74,12 @@ class AttributeEventWatcher:
 
     def set_timeout_event(self) -> None:
         """Set the timeout event once called."""
+        LOGGER.debug("Timeout occurred, setting the timeout event")
         self.__timeout_event.set()
 
     def set_watcher_id(self, watcher_id: str) -> None:
         """Set the Watcher ID to improve logging."""
+        LOGGER.debug("Setting the watcher id to: %s", watcher_id)
         self.__watcher_id = watcher_id
 
     def log_states(self) -> None:
@@ -112,7 +122,7 @@ class AttributeEventWatcher:
             device_states.to_string(index=False, justify="left"),
         )
         LOGGER.info(
-            "Missed events are: %s",
+            "Missed events are the values of values in the dictionary: %s",
             self.__attributes_to_watch,
         )
 
@@ -165,6 +175,11 @@ class AttributeEventWatcher:
         if expected_value_list == []:
             # This means all the necessary events were read
             return None
+        LOGGER.debug(
+            "Expected value list for the attribute: %s is %s",
+            attribute_name,
+            expected_value_list,
+        )
         if attribute_value == expected_value_list[0]:
             # One of the expected events have been seen, removing it from
             # expectations
@@ -174,10 +189,15 @@ class AttributeEventWatcher:
             # Updating the received events count
             with self.__events_count_lock:
                 self.__received_correct_events_count += 1
+                LOGGER.debug(
+                    "Updated the received events count to: %s",
+                    self.__received_correct_events_count,
+                )
                 if (
                     self.__expected_correct_events_count
                     == self.__received_correct_events_count
                 ):
+                    LOGGER.debug("All events received!")
                     self.__received_all_events.set()
             return None
         return None
@@ -219,7 +239,9 @@ class AttributeEventWatcher:
                     "Timeout occurred while waiting for attribute events."
                 )
                 raise TimeoutError(
-                    "Timeout occurred while waiting for attribute events."
+                    "Timeout occurred while waiting for attribute events. "
+                    + f"Expected {self.__expected_correct_events_count} events"
+                    + f", received only {self.__received_correct_events_count}"
                 )
             if self.__received_all_events.is_set():
                 self.stop_watching()
@@ -229,11 +251,8 @@ class AttributeEventWatcher:
 def wait_for_command_completion(
     attributes_list: Dict[str, Dict[str, List]], timeout: int = 100
 ) -> Callable[[Callable], Callable]:
-    """Wait on attribute events for command completion based on the command
-    name.
-
-    This function refers to a mapping of commands with the related attributes
-    to monitor.
+    """Wait on attribute events for command completion based on the mapping
+    of device names and expected attribute values.
 
     :param attribute_list: A list of all attributes to monitor with device
         FQDNs, attribute name and expected value/values
