@@ -294,10 +294,7 @@ def wait_for_command_completion(
             """Wrapper method for the wait function"""
             watcher = AttributeEventWatcher(attributes_dictionary, timeout)
 
-            if args or kwargs:
-                result_code, unique_id = func(*args, **kwargs)
-            else:
-                result_code, unique_id = func()
+            result_code, unique_id = func(*args, **kwargs)
 
             LOGGER.info(
                 "Command invoked with Result: %s and id: %s",

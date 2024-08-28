@@ -195,7 +195,7 @@ class CentralNodeWrapperLow(object):
         """
         if SIMULATED_DEVICES_DICT["all_mocks"]:
             LOGGER.info("Invoking TelescopeOff command with all Mocks")
-            _, unique_id = self.central_node.TelescopeOff()
+            result_code, unique_id = self.central_node.TelescopeOff()
             self.set_values_with_all_mocks(DevState.OFF)
             assert_that(self.event_tracer).described_as(
                 "FAILED ASSUMPTION AFTER OFF COMMAND: "
@@ -216,7 +216,7 @@ class CentralNodeWrapperLow(object):
             LOGGER.info(
                 "Invoking TelescopeOff command with csp and sdp simulated"
             )
-            _, unique_id = self.central_node.TelescopeOff()
+            result_code, unique_id = self.central_node.TelescopeOff()
             self.set_value_with_csp_sdp_mocks(DevState.OFF)
             assert_that(self.event_tracer).described_as(
                 "FAILED ASSUMPTION AFTER OFF COMMAND: "
@@ -236,7 +236,7 @@ class CentralNodeWrapperLow(object):
             LOGGER.info(
                 "Invoking TelescopeOff command with csp and mccs simulated"
             )
-            _, unique_id = self.central_node.TelescopeOff()
+            result_code, unique_id = self.central_node.TelescopeOff()
             self.set_values_with_csp_mccs_mocks(DevState.OFF)
             assert_that(self.event_tracer).described_as(
                 "FAILED ASSUMPTION AFTER OFF COMMAND: "
@@ -256,7 +256,7 @@ class CentralNodeWrapperLow(object):
             LOGGER.info(
                 "Invoking TelescopeOff command with sdp and mccs simulated"
             )
-            _, unique_id = self.central_node.TelescopeOff()
+            result_code, unique_id = self.central_node.TelescopeOff()
             self.set_values_with_sdp_mccs_mocks(DevState.OFF)
             assert_that(self.event_tracer).described_as(
                 "FAILED ASSUMPTION AFTER OFF COMMAND: "
@@ -276,7 +276,7 @@ class CentralNodeWrapperLow(object):
             LOGGER.info(
                 "Invoke TelescopeOff command with all real sub-systems"
             )
-            _, unique_id = self.central_node.TelescopeOff()
+            result_code, unique_id = self.central_node.TelescopeOff()
             assert_that(self.event_tracer).described_as(
                 "FAILED ASSUMPTION AFTER OFF COMMAND: "
                 "Central Node device"
@@ -291,6 +291,8 @@ class CentralNodeWrapperLow(object):
                     json.dumps((int(ResultCode.OK), "Command Completed")),
                 ),
             )
+
+        return result_code, unique_id
 
     def _clear_command_call_and_transition_data(self, clear_transition=False):
         """Clears the command call data"""
@@ -420,7 +422,7 @@ class CentralNodeWrapperLow(object):
         LOGGER.info(f"Received simulated devices: {SIMULATED_DEVICES_DICT}")
         if SIMULATED_DEVICES_DICT["all_mocks"]:
             LOGGER.info("Invoking TelescopeOn command with all Mocks")
-            _, unique_id = self.central_node.TelescopeOn()
+            result_code, unique_id = self.central_node.TelescopeOn()
             self.set_values_with_all_mocks(DevState.ON)
             assert_that(self.event_tracer).described_as(
                 "FAILED ASSUMPTION AFTER ON COMMAND: "
@@ -447,7 +449,7 @@ class CentralNodeWrapperLow(object):
             # Set adminMode to Online for mccs_subarray
             if self.mccs_subarray1.adminMode != AdminMode.ONLINE:
                 self.mccs_subarray1.adminMode = AdminMode.ONLINE
-            _, unique_id = self.central_node.TelescopeOn()
+            result_code, unique_id = self.central_node.TelescopeOn()
             self.set_value_with_csp_sdp_mocks(DevState.ON)
             assert_that(self.event_tracer).described_as(
                 "FAILED ASSUMPTION AFTER ON COMMAND: "
@@ -467,7 +469,7 @@ class CentralNodeWrapperLow(object):
             LOGGER.info(
                 "Invoking TelescopeOn command with csp and MCCS simulated"
             )
-            _, unique_id = self.central_node.TelescopeOn()
+            result_code, unique_id = self.central_node.TelescopeOn()
 
             self.set_values_with_csp_mccs_mocks(DevState.ON)
             assert_that(self.event_tracer).described_as(
@@ -495,7 +497,7 @@ class CentralNodeWrapperLow(object):
             if self.csp_subarray1.adminMode != AdminMode.ONLINE:
                 self.csp_subarray1.adminMode = AdminMode.ONLINE
             time.sleep(3)
-            _, unique_id = self.central_node.TelescopeOn()
+            result_code, unique_id = self.central_node.TelescopeOn()
             self.set_values_with_sdp_mccs_mocks(DevState.ON)
             assert_that(self.event_tracer).described_as(
                 "FAILED ASSUMPTION AFTER ON COMMAND: "
@@ -513,7 +515,7 @@ class CentralNodeWrapperLow(object):
             )
         else:
             LOGGER.info("Invoke TelescopeOn command with all real sub-systems")
-            _, unique_id = self.central_node.TelescopeOn()
+            result_code, unique_id = self.central_node.TelescopeOn()
             assert_that(self.event_tracer).described_as(
                 "FAILED ASSUMPTION AFTER ON COMMAND: "
                 "Central Node device"
@@ -528,6 +530,8 @@ class CentralNodeWrapperLow(object):
                     json.dumps((int(ResultCode.OK), "Command Completed")),
                 ),
             )
+
+        return result_code, unique_id
 
     def set_standby(self):
         """
