@@ -127,6 +127,37 @@ class AttributeEventWatcher:
             self.__attributes_to_watch,
         )
 
+    def read_attribute_values_to_ensure_completion(self) -> bool:
+        """After the timeout has occurred, read the attribute values to check
+        if the necessary states were reached and it was a case of missing event
+        or if it actually failed.
+
+        :returns: bool
+            True if event missing
+            False if failure
+        """
+        # Read all remaining attribute values to check if they are correct
+        for (
+            device_name,
+            attributes_dictionary,
+        ) in self.__attributes_to_watch.items():
+            for (
+                attribute_name,
+                expected_values,
+            ) in attributes_dictionary.items():
+                if expected_values:
+                    device_proxy = tango.DeviceProxy(device_name)
+                    attribute_value = device_proxy.read_attribute(
+                        attribute_name
+                    ).value
+
+                    # If any value is incorrect return False
+                    if attribute_value != expected_values[-1]:
+                        return False
+
+        # All correct, return True
+        return True
+
     def event_callback(self, event_data: tango.EventData) -> None:
         """A simple event callback method to check if the event has been
         received after starting the watcher and if the value is the expected
@@ -243,17 +274,27 @@ class AttributeEventWatcher:
 
         while not self.__stop:
             if self.__timeout_event.is_set():
-                self.log_states()
-                LOGGER.error(
-                    "Timeout occurred while waiting for attribute events."
-                )
-                raise TimeoutError(
-                    "Timeout occurred while waiting for attribute events. "
-                    + f"Expected {self.__expected_correct_events_count} events"
-                    + f", received only {self.__received_correct_events_count}"
-                    + "\nMissed events are the part of following dictionary:"
-                    + f" {self.__attributes_to_watch}"
-                )
+                if self.read_attribute_values_to_ensure_completion():
+                    LOGGER.exception(
+                        "Timeout occurred while waiting for attribute events, "
+                        + "but the device states are as expected. Events "
+                        + "were missed from the following dictionary: %s",
+                        self.__attributes_to_watch,
+                    )
+                    self.stop_watching()
+                else:
+                    self.log_states()
+                    LOGGER.error(
+                        "Timeout occurred while waiting for attribute events."
+                    )
+                    raise TimeoutError(
+                        "Timeout occurred while waiting for attribute events. "
+                        + f"Expected: {self.__expected_correct_events_count}"
+                        + " events, received only:"
+                        + f" {self.__received_correct_events_count}"
+                        + "\nMissed events are the part of following "
+                        + f"dictionary: {self.__attributes_to_watch}"
+                    )
 
             if self.__received_all_events.is_set():
                 self.stop_watching()
