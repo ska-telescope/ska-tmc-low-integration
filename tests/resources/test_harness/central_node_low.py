@@ -645,17 +645,15 @@ class CentralNodeWrapperLow(object):
     @wait_for_command_completion(
         {
             tmc_low_subarraynode1: {
-                "obsstate": [ObsState.RESOURCING, ObsState.IDLE],
+                "obsstate": [ObsState.IDLE],
             },
             low_csp_subarray_leaf_node: {
-                "cspsubarrayobsstate": [ObsState.RESOURCING, ObsState.IDLE]
+                "cspsubarrayobsstate": [ObsState.IDLE]
             },
             low_sdp_subarray_leaf_node: {
-                "sdpsubarrayobsstate": [ObsState.RESOURCING, ObsState.IDLE]
+                "sdpsubarrayobsstate": [ObsState.IDLE]
             },
-            mccs_subarray_leaf_node: {
-                "obsstate": [ObsState.RESOURCING, ObsState.IDLE]
-            },
+            mccs_subarray_leaf_node: {"obsstate": [ObsState.IDLE]},
         },
         timeout=100,
     )

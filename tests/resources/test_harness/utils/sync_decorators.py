@@ -293,7 +293,6 @@ def wait_for_command_completion(
         def wrapper(*args, **kwargs) -> Tuple:
             """Wrapper method for the wait function"""
             watcher = AttributeEventWatcher(attributes_dictionary, timeout)
-            watcher.watch()
             result_code, unique_id = func(*args, **kwargs)
 
             LOGGER.info(
@@ -302,6 +301,7 @@ def wait_for_command_completion(
                 unique_id,
             )
             watcher.set_watcher_id(unique_id[0])
+            watcher.watch()
 
             return result_code, unique_id
 
