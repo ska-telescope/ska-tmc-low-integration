@@ -20,7 +20,7 @@ server:
   {{ $sdp_sa_fqdn_prefix:= .Values.global.sdp_subarray_prefix}}
   {{ $mccs_sa_ln_fqdn_prefix:= .Values.global.mccs_subarray_ln_prefix}}
   {{ $mccs_sa_fqdn_prefix:= .Values.global.mccs_subarray_prefix}}
-
+  {{ $CommandTimeOut := .Values.deviceServes.mccssubarrayleafnode.CommandTimeOut}}
   {{- range  ( regexSplit " " ((.Values.subarray_count | int) | seq ) -1 ) }}
     - name: "{{ printf "%02s" . }}"
       classes:
@@ -57,7 +57,7 @@ server:
               - "5"
           - name: "CommandTimeout"
             values:
-              - "70"
+              - "{{ $CommandTimeOut }}"
           - name: "CspAssignResourcesInterfaceURL"
             values:
               - "{{ $csp_assign_interface }}"

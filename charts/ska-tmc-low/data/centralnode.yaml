@@ -10,6 +10,7 @@ server:
   {{ $tmc_sa_fqdn_prefix:= .Values.global.tmc_subarray_prefix}}
   {{ $csp_sa_ln_fqdn_prefix:= .Values.global.csp_subarray_ln_prefix}}
   {{ $sdp_sa_ln_fqdn_prefix:= .Values.global.sdp_subarray_ln_prefix}}
+  {{ $CommandTimeout := .values.deviceServers.centralnode.CommandTimeout}}
   - name: "01"
     classes:
     - name: "CentralNodeLow"
@@ -60,7 +61,7 @@ server:
             - "5"
         - name: "CommandTimeout"
           values:
-            - "80"
+            - "{{ $CommandTimeOut}}"
 
 depends_on:
   - device: sys/database/2

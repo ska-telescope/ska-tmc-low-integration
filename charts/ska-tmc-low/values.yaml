@@ -126,6 +126,7 @@ deviceServers:
     enabled: true
     instances: ["01"]
     file: "data/centralnode.yaml"
+    CommandTimeOut: 80
 
   subarraynode:
     enabled: true
@@ -136,10 +137,12 @@ deviceServers:
     MccsConfigureInterfaceURL: "https://schema.skao.int/ska-low-mccs-configure/1.0"
     MccsScanInterfaceURL: "https://schema.skao.int/ska-low-mccs-scan/3.0"
     JonesURI: "tango://jones.skao.int/low/stn-beam/1"
+    CommandTimeOut: 70
 
   sdpsubarrayleafnode:
     enabled: true
     file: "data/sdpsubarrayleafnode.yaml"
+    CommandTimeOut: 50
 
   sdpmasterleafnode:
     enabled: true
@@ -157,6 +160,7 @@ deviceServers:
     DelayCadence: 300.0
     DelayValidityPeriod: 600.0
     DelayModelTimeInAdvance: 600
+    CommandTimeOut: 50
 
   mccsmasterleafnode:
     enabled: true

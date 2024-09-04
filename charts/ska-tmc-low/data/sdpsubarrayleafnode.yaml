@@ -8,6 +8,7 @@ server:
   name: "sdp_subarray_leaf_node"
   instances:
   {{ $sdp_sa_fqdn_prefix:= .Values.global.sdp_subarray_prefix}}
+  {{ $CommandTimeOut := .Values.deviceServers.sdpsubarrayleafnode.CommandTimeOut }}
   {{- range  ( regexSplit " " ((.Values.subarray_count | int) | seq ) -1 ) }}
     - name: "{{ printf "%02s" . }}"
       classes:
@@ -27,6 +28,9 @@ server:
               - name: "LoggingLevelDefault"
                 values:
                 - "5"
+              - name: "CommandTimeOut"
+                values:
+                - "{{ $CommandTimeOut }}"
   {{- end}}
 depends_on:
   - device: sys/database/2
