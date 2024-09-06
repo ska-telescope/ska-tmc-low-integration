@@ -38,8 +38,8 @@ dependencies:
     repository:  https://artefact.skao.int/repository/helm-internal
     condition: ska-low-cbf.enabled
   - name: ska-low-mccs
-    version: 0.14.0-dev.c944eedb3
-    repository: https://gitlab.com/api/v4/projects/15564271/packages/helm/dev
+    version: 0.15.0
+    repository: https://artefact.skao.int/repository/helm-internal
     condition: ska-low-mccs.enabled
   - name: ska-ser-skuid
     version: 3.3.3
