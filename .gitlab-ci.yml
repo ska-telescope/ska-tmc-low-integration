@@ -3,6 +3,7 @@ image: $SKA_K8S_TOOLS_DOCKER_BUILDER_IMAGE
 variables:
   GIT_SUBMODULE_STRATEGY: recursive
   DOCKER_DRIVER: overlay2
+  DOCS_RTD_PROJECT_SLUG: ska-telescope-ska-tmc-integration
 
 cache:
   paths:
