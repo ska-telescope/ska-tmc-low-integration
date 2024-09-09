@@ -5,7 +5,10 @@ tmc-low:
         csp: false
 ska-csp-lmc-low:
   enabled: true
+
 ska-low-cbf:
   enabled: true
   ska-low-cbf-proc:
     enabled: true
+ska-pst:
+  enabled: true

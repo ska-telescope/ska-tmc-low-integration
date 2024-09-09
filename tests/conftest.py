@@ -11,6 +11,7 @@ import tango
 from pytest_bdd import given, parsers, then, when
 from ska_control_model import HealthState
 from ska_ser_logging import configure_logging
+from ska_tango_testing.integration import TangoEventTracer
 from ska_tango_testing.mock.tango.event_callback import (
     MockTangoEventCallbackGroup,
 )
@@ -212,6 +213,14 @@ def event_recorder() -> Generator[EventRecorder, None, None]:
     event_rec = EventRecorder()
     yield event_rec
     event_rec.clear_events()
+
+
+@pytest.fixture
+def event_tracer():
+    """Returns a TangoEventTracer instance."""
+    tracer = TangoEventTracer()
+    yield tracer
+    tracer.clear_events()
 
 
 @pytest.fixture(scope="session", autouse=True)

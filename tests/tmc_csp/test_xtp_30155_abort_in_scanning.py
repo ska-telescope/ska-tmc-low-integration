@@ -1,20 +1,16 @@
 """Module for TMC-CSP Abort command tests"""
-
 import pytest
 from pytest_bdd import given, scenario, then
 from ska_control_model import ObsState
 from tango import DevState
 
+from tests.resources.test_harness.helpers import set_receive_address
 from tests.resources.test_support.common_utils.tmc_helpers import (
     prepare_json_args_for_centralnode_commands,
     prepare_json_args_for_commands,
 )
 
 
-@pytest.mark.skip(
-    reason="Issue on CSP side, will get fixed with the new CSP chart"
-)
-# Issue: CSP is not using SKA Tel Model >= v1.17.0
 @pytest.mark.tmc_csp
 @scenario(
     "../features/tmc_csp/xtp-30155_abort_in_scanning.feature",
@@ -45,7 +41,7 @@ def subarray_busy_scanning(
         DevState.ON,
     )
     central_node_low.set_serial_number_of_cbf_processor()
-
+    set_receive_address(central_node_low)
     input_json = prepare_json_args_for_centralnode_commands(
         "assign_resources_low", command_input_factory
     )

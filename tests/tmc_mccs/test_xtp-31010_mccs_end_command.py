@@ -1,4 +1,6 @@
 """Test module to test TMC-MCCS End functionality."""
+import json
+
 import pytest
 from pytest_bdd import given, parsers, scenario, then, when
 from ska_control_model import ObsState
@@ -8,6 +10,7 @@ from tests.resources.test_harness.event_recorder import EventRecorder
 from tests.resources.test_harness.helpers import (
     prepare_json_args_for_centralnode_commands,
     prepare_json_args_for_commands,
+    set_receive_address,
 )
 from tests.resources.test_support.common_utils.result_code import ResultCode
 
@@ -57,6 +60,7 @@ def move_subarray_node_to_ready_obsstate(
     event_recorder.subscribe_event(
         subarray_node_low.subarray_devices.get("mccs_subarray"), "obsState"
     )
+    set_receive_address(central_node_low)
     assign_input_json = prepare_json_args_for_centralnode_commands(
         "assign_resources_low", command_input_factory
     )
@@ -69,7 +73,7 @@ def move_subarray_node_to_ready_obsstate(
     event_recorder.has_change_event_occurred(
         central_node_low.central_node,
         "longRunningCommandResult",
-        (unique_id[0], str(ResultCode.OK.value)),
+        (unique_id[0], json.dumps((int(ResultCode.OK), "Command Completed"))),
     )
     configure_input_json = prepare_json_args_for_commands(
         "configure_low", command_input_factory
@@ -87,7 +91,10 @@ def move_subarray_node_to_ready_obsstate(
     event_recorder.has_change_event_occurred(
         subarray_node_low.subarray_node,
         "longRunningCommandResult",
-        (unique_id[0], str(ResultCode.OK.value)),
+        (
+            unique_id[0],
+            json.dumps((int(ResultCode.OK), "Command Completed")),
+        ),
     )
 
 
@@ -104,7 +111,7 @@ def invoke_end_command(subarray_node_low, event_recorder, subarray_id) -> None:
     event_recorder.has_change_event_occurred(
         subarray_node_low.subarray_node,
         "longRunningCommandResult",
-        (unique_id[0], str(ResultCode.OK.value)),
+        (unique_id[0], json.dumps((int(ResultCode.OK), "Command Completed"))),
     )
 
 

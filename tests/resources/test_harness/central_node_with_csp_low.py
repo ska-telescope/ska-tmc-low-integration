@@ -1,6 +1,6 @@
 import logging
 
-from ska_control_model import AdminMode, ObsState
+from ska_control_model import ObsState
 from ska_ser_logging import configure_logging
 from ska_tango_base.control_model import HealthState
 from tango import DeviceProxy, DevState
@@ -30,9 +30,8 @@ class CentralNodeCspWrapperLow(CentralNodeWrapperLow):
         A method to invoke TelescopeOn command to
         put telescope in ON state
         """
+        self.pst.On()
         self.central_node.TelescopeOn()
-        self.csp_master.adminMode = AdminMode.ONLINE
-        self.csp_subarray1.adminMode = AdminMode.ONLINE
         device_to_on_list = [
             self.subarray_devices.get("sdp_subarray"),
             self.subarray_devices.get("mccs_subarray"),
@@ -58,6 +57,7 @@ class CentralNodeCspWrapperLow(CentralNodeWrapperLow):
             self.invoke_release_resources(self.release_input)
         elif self.subarray_node.obsState == ObsState.RESOURCING:
             LOGGER.info("Calling Abort and Restart on SubarrayNode")
+            self.pst.obsreset()
             self.subarray_abort()
             self.subarray_restart()
         elif self.subarray_node.obsState == ObsState.ABORTED:
@@ -81,6 +81,13 @@ class CentralNodeCspWrapperLow(CentralNodeWrapperLow):
 
     def set_serial_number_of_cbf_processor(self):
         """Sets serial number for cbf processor"""
-        self.processor1.serialnumber = "XFL14SLO1LIF"
-        self.processor1.subscribetoallocator("low-cbf/allocator/0")
-        self.processor1.register()
+        cbf_proc1 = DeviceProxy("low-cbf/processor/0.0.0")
+        cbf_proc2 = DeviceProxy("low-cbf/processor/0.0.1")
+
+        cbf_proc1.serialnumber = "XFL14SLO1LIF"
+        cbf_proc1.subscribetoallocator("low-cbf/allocator/0")
+        cbf_proc1.register()
+
+        cbf_proc2.serialnumber = "XFL1HOOQ1Y44"
+        cbf_proc2.subscribetoallocator("low-cbf/allocator/0")
+        cbf_proc2.register()

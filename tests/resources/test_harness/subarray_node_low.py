@@ -18,8 +18,10 @@ from tests.resources.test_harness.constant import (
     low_sdp_subarray_leaf_node,
     mccs_subarray1,
     mccs_subarray_leaf_node,
+    pst,
     tmc_low_subarraynode1,
 )
+from tests.resources.test_harness.event_recorder import EventRecorder
 from tests.resources.test_harness.helpers import (
     SIMULATED_DEVICES_DICT,
     check_subarray_obs_state,
@@ -102,6 +104,10 @@ class SubarrayNodeWrapperLow:
         self.IDLE_OBS_STATE = IDLE
         self.READY_OBS_STATE = READY
         self.ABORTED_OBS_STATE = ABORTED
+        if SIMULATED_DEVICES_DICT["sdp_and_mccs"]:
+            self.pst = DeviceProxy(pst)
+
+        self.event_recorder = EventRecorder()
 
     @property
     def state(self) -> DevState:
@@ -263,13 +269,9 @@ class SubarrayNodeWrapperLow:
 
     def move_to_on(self):
         # Move subarray to ON state
-        if self.state != self.ON_STATE:
-            Resource(self.tmc_subarraynode1).assert_attribute("State").equals(
-                "OFF"
-            )
-            result, message = self.subarray_node.On()
-            LOGGER.info("Invoked ON on SubarrayNode")
-            return result, message
+        result, message = self.subarray_node.On()
+        LOGGER.info("Invoked ON on SubarrayNode")
+        return result, message
 
     def move_to_off(self):
         # Move Subarray to OFF state
@@ -296,7 +298,7 @@ class SubarrayNodeWrapperLow:
             sim_device_proxy_list = []
 
         for sim_device_proxy in sim_device_proxy_list:
-            sim_device_proxy.ResetDelay()
+            sim_device_proxy.ResetDelayInfo()
             sim_device_proxy.SetDirectHealthState(HealthState.UNKNOWN)
             sim_device_proxy.SetDefective(json.dumps({"enabled": False}))
 
@@ -427,6 +429,16 @@ class SubarrayNodeWrapperLow:
             self.release_resources(self.release_input)
         else:
             self.force_change_of_obs_state("EMPTY")
+        if SIMULATED_DEVICES_DICT["sdp_and_mccs"]:
+            if self.pst.obsState == ObsState.ABORTED:
+                self.event_recorder.subscribe_event(self.pst, "obsState")
+                self.pst.obsreset()
+                assert self.event_recorder.has_change_event_occurred(
+                    self.pst,
+                    "obsState",
+                    ObsState.IDLE,
+                    lookahead=4,
+                )
 
         # Move Subarray to OFF state
         self.move_to_off()

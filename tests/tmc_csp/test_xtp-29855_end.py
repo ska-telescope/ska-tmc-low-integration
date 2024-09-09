@@ -1,4 +1,6 @@
 """Test module to test TMC-CSP End functionality."""
+import json
+
 import pytest
 from pytest_bdd import given, parsers, scenario, then, when
 from ska_control_model import ObsState
@@ -12,10 +14,6 @@ from tests.resources.test_harness.helpers import (
 from tests.resources.test_support.common_utils.result_code import ResultCode
 
 
-@pytest.mark.skip(
-    reason="Issue on CSP side, will get fixed with the new CSP chart"
-)
-# Issue: CSP is not using SKA Tel Model >= v1.17.0
 @pytest.mark.tmc_csp
 @scenario(
     "../features/tmc_csp/xtp-29855_end.feature",
@@ -80,7 +78,10 @@ def move_subarray_node_to_ready_obsstate(
     event_recorder.has_change_event_occurred(
         central_node_real_csp_low.central_node,
         "longRunningCommandResult",
-        (unique_id[0], str(ResultCode.OK.value)),
+        (
+            unique_id[0],
+            json.dumps((int(ResultCode.OK), "Command Completed")),
+        ),
     )
     configure_input_json = prepare_json_args_for_commands(
         "configure_low", command_input_factory
@@ -96,7 +97,7 @@ def move_subarray_node_to_ready_obsstate(
     event_recorder.has_change_event_occurred(
         subarray_node_real_csp_low.subarray_node,
         "longRunningCommandResult",
-        (unique_id[0], str(ResultCode.OK.value)),
+        (unique_id[0], json.dumps((int(ResultCode.OK), "Command Completed"))),
     )
 
 

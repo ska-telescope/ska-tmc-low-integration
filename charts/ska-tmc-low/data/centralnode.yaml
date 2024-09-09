@@ -60,7 +60,7 @@ server:
             - "5"
         - name: "CommandTimeout"
           values:
-            - "50"
+            - "80"
 
 depends_on:
   - device: sys/database/2

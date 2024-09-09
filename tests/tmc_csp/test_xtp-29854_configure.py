@@ -1,20 +1,24 @@
 """Test module to test TMC-CSP Configure functionality."""
+import json
+import logging
+
 import pytest
 from pytest_bdd import given, parsers, scenario, then, when
 from ska_control_model import ObsState
+from ska_ser_logging import configure_logging
 from tango import DevState
 
 from tests.resources.test_harness.helpers import (
     prepare_json_args_for_centralnode_commands,
     prepare_json_args_for_commands,
+    set_receive_address,
 )
 from tests.resources.test_support.common_utils.result_code import ResultCode
 
+configure_logging(logging.DEBUG)
+LOGGER = logging.getLogger(__name__)
 
-@pytest.mark.skip(
-    reason="Issue on CSP side, will get fixed with the new CSP chart"
-)
-# Issue: CSP is not using SKA Tel Model >= v1.17.0
+
 @pytest.mark.tmc_csp
 @scenario(
     "../features/tmc_csp/xtp-29854_configure.feature",
@@ -24,6 +28,7 @@ def test_tmc_csp_configure_functionality(central_node_low) -> None:
     """
     Test case to verify TMC-CSP Configure functionality
     """
+
     assert central_node_low.central_node.ping() > 0
     assert central_node_low.subarray_devices["csp_subarray"].ping() > 0
 
@@ -33,13 +38,45 @@ def check_telescope_is_in_on_state(
     central_node_real_csp_low, event_recorder
 ) -> None:
     """Ensure telescope is in ON state."""
+    central_node_real_csp_low.csp_master.adminMode = 0
+    central_node_real_csp_low.csp_subarray1.adminMode = 0
+    event_recorder.subscribe_event(central_node_real_csp_low.pst, "State")
+
+    event_recorder.subscribe_event(central_node_real_csp_low.pst, "adminMode")
+    event_recorder.subscribe_event(
+        central_node_real_csp_low.csp_master, "adminMode"
+    )
+    event_recorder.subscribe_event(
+        central_node_real_csp_low.csp_subarray1, "adminMode"
+    )
+    assert event_recorder.has_change_event_occurred(
+        central_node_real_csp_low.csp_master,
+        "adminMode",
+        0,
+    )
+    assert event_recorder.has_change_event_occurred(
+        central_node_real_csp_low.csp_subarray1,
+        "adminMode",
+        0,
+    )
+    assert event_recorder.has_change_event_occurred(
+        central_node_real_csp_low.pst,
+        "adminMode",
+        0,
+    )
     central_node_real_csp_low.move_to_on()
     event_recorder.subscribe_event(
         central_node_real_csp_low.central_node, "telescopeState"
     )
+
     assert event_recorder.has_change_event_occurred(
         central_node_real_csp_low.central_node,
         "telescopeState",
+        DevState.ON,
+    )
+    assert event_recorder.has_change_event_occurred(
+        central_node_real_csp_low.pst,
+        "State",
         DevState.ON,
     )
 
@@ -53,6 +90,7 @@ def move_subarray_node_to_idle_obsstate(
 ) -> None:
     """Move TMC Subarray to IDLE obsstate."""
     central_node_real_csp_low.set_subarray_id(subarray_id)
+    set_receive_address(central_node_real_csp_low)
     assign_input_json = prepare_json_args_for_centralnode_commands(
         "assign_resources_low", command_input_factory
     )
@@ -72,7 +110,7 @@ def move_subarray_node_to_idle_obsstate(
     event_recorder.has_change_event_occurred(
         central_node_real_csp_low.central_node,
         "longRunningCommandResult",
-        (unique_id[0], str(ResultCode.OK.value)),
+        (unique_id[0], json.dumps((int(ResultCode.OK), "Command Completed"))),
     )
 
 
@@ -93,7 +131,7 @@ def invoke_configure_command(
     event_recorder.has_change_event_occurred(
         subarray_node_real_csp_low.subarray_node,
         "longRunningCommandResult",
-        (unique_id[0], str(ResultCode.OK.value)),
+        (unique_id[0], json.dumps((int(ResultCode.OK), "Command Completed"))),
     )
 
 

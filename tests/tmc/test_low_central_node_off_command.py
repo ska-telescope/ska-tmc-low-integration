@@ -8,8 +8,13 @@ validating the completion transitions assuming that external subsystems work
 fine.
 """
 import pytest
+from assertpy import assert_that
+from ska_tango_testing.integration import TangoEventTracer, log_events
 from tango import DevState
 
+from tests.resources.test_harness.central_node_low import CentralNodeWrapperLow
+from tests.resources.test_harness.constant import TIMEOUT
+from tests.resources.test_harness.simulator_factory import SimulatorFactory
 from tests.resources.test_harness.utils.enums import SimulatorDeviceType
 
 
@@ -21,9 +26,9 @@ class TestLowCentralNodeOffCommand:
     @pytest.mark.SKA_low
     def test_low_central_node_off_command(
         self,
-        central_node_low,
-        event_recorder,
-        simulator_factory,
+        central_node_low: CentralNodeWrapperLow,
+        event_tracer: TangoEventTracer,
+        simulator_factory: SimulatorFactory,
     ):
         """
         Test to verify transitions that are triggered by Off
@@ -46,35 +51,70 @@ class TestLowCentralNodeOffCommand:
         mccs_master_sim = simulator_factory.get_or_create_simulator_device(
             SimulatorDeviceType.MCCS_MASTER_DEVICE
         )
-        event_recorder.subscribe_event(csp_master_sim, "State")
-        event_recorder.subscribe_event(sdp_master_sim, "State")
-        event_recorder.subscribe_event(mccs_master_sim, "State")
-        event_recorder.subscribe_event(
+        event_tracer.subscribe_event(csp_master_sim, "State")
+        event_tracer.subscribe_event(sdp_master_sim, "State")
+        event_tracer.subscribe_event(mccs_master_sim, "State")
+        event_tracer.subscribe_event(
             central_node_low.central_node, "telescopeState"
         )
+        log_events(
+            {
+                csp_master_sim: ["State"],
+                sdp_master_sim: ["State"],
+                mccs_master_sim: ["State"],
+                central_node_low.central_node: ["telescopeState"],
+            }
+        )
         central_node_low.move_to_on()
-        assert event_recorder.has_change_event_occurred(
+
+        assert_that(event_tracer).described_as(
+            "FAILED ASSUMPTION AFTER ON COMMAND: "
+            "Central Node device"
+            f"({central_node_low.central_node.dev_name()}) "
+            "is expected to be in TelescopeState ON",
+        ).within_timeout(TIMEOUT).has_change_event_occurred(
             central_node_low.central_node,
             "telescopeState",
             DevState.ON,
         )
+
         central_node_low.move_to_off()
-        assert event_recorder.has_change_event_occurred(
+        assert_that(event_tracer).described_as(
+            "FAILED ASSUMPTION AFTER OFF COMMAND: "
+            "SDP Controller device"
+            f"({sdp_master_sim.dev_name()}) "
+            "is expected to be in State OFF",
+        ).within_timeout(TIMEOUT).has_change_event_occurred(
             sdp_master_sim,
             "State",
             DevState.OFF,
         )
-        assert event_recorder.has_change_event_occurred(
+        assert_that(event_tracer).described_as(
+            "FAILED ASSUMPTION AFTER OFF COMMAND: "
+            "CSP Controller device"
+            f"({csp_master_sim.dev_name()}) "
+            "is expected to be in State OFF",
+        ).within_timeout(TIMEOUT).has_change_event_occurred(
             csp_master_sim,
             "State",
             DevState.OFF,
         )
-        assert event_recorder.has_change_event_occurred(
+        assert_that(event_tracer).described_as(
+            "FAILED ASSUMPTION AFTER OFF COMMAND: "
+            "MCCS Controller device"
+            f"({mccs_master_sim.dev_name()}) "
+            "is expected to be in State OFF",
+        ).within_timeout(TIMEOUT).has_change_event_occurred(
             mccs_master_sim,
             "State",
             DevState.OFF,
         )
-        assert event_recorder.has_change_event_occurred(
+        assert_that(event_tracer).described_as(
+            "FAILED ASSUMPTION AFTER OFF COMMAND: "
+            "Central Node device"
+            f"({central_node_low.central_node.dev_name()}) "
+            "is expected to be in TelescopeState OFF",
+        ).within_timeout(TIMEOUT).has_change_event_occurred(
             central_node_low.central_node,
             "telescopeState",
             DevState.OFF,

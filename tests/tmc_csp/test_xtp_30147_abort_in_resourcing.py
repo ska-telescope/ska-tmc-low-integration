@@ -11,12 +11,6 @@ from tests.resources.test_support.common_utils.tmc_helpers import (
 )
 
 
-@pytest.mark.skip(reason="Random failure")
-# Random failure, SubarrayNode timed out, CORBA command timeout while
-# invoking Abort command
-# SubarrayNode receives obsstate IDLE event before Abort is successful on
-# CspSuabrrayLeafNode and the tracker thread misbehaves, leading SA
-# stuck in ABORTING
 @pytest.mark.tmc_csp
 @scenario(
     "../features/tmc_csp/xtp-30147_abort_in_resourcing.feature",

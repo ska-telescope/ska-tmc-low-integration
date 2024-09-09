@@ -9,6 +9,7 @@ from tests.resources.test_harness.utils.enums import (
     SimulatorDeviceType,
 )
 
+TIMEOUT = 80
 COMMAND_FAILED_WITH_EXCEPTION_OBSSTATE_IDLE = {
     "enabled": True,
     "fault_type": FaultType.FAILED_RESULT,
@@ -135,6 +136,7 @@ processor1 = "low-cbf/processor/0.0.0"
 mccs_pasdbus_prefix = "low-mccs/pasdbus/*"
 mccs_prefix = "low-mccs/*"
 mccs_subarraybeam = "low-mccs/subarraybeam/01"
+pst = "low-pst/beam/01"
 
 device_dict_low = {
     "csp_master": low_csp_master,
@@ -163,7 +165,7 @@ SIMULATOR_DEVICE_FQDN_DICT = {
 LOW_DELAYMODEL_VERSION = "https://schema.skao.int/ska-low-csp-delaymodel/1.0"
 
 INITIAL_LOW_DELAY_JSON = {
-    "interface": "",
+    "interface": "https://schema.skao.int/ska-low-csp-delaymodel/1.0",
     "start_validity_sec": 0.1,
     "cadence_sec": 0.1,
     "validity_period_sec": 0.1,

@@ -91,11 +91,7 @@ def tmc_subarray_in_empty_obsstate(subarray_node_low, event_recorder):
     )
 )
 def invoke_assignresources(
-    station_id: int,
-    central_node_low,
-    command_input_factory,
-    subarray_id,
-    stored_unique_id,
+    station_id: int, central_node_low, command_input_factory, subarray_id
 ):
     """
     Invoke AssignResources command on TMC with invalid station_id to the MCCS
@@ -112,7 +108,7 @@ def invoke_assignresources(
     _, unique_id = central_node_low.perform_action(
         "AssignResources", assign_json_string
     )
-    stored_unique_id.append(unique_id[0])
+    pytest.unique_id = unique_id[0]
 
 
 @then("the MCCS controller rejects invalid station id")
@@ -161,9 +157,7 @@ def mccs_subarray_remains_in_empty_obsstate(event_recorder, subarray_node_low):
 
 
 @then("the TMC propogate the error to the client")
-def central_node_receiving_error(
-    event_recorder, central_node_low, stored_unique_id
-):
+def central_node_receiving_error(event_recorder, central_node_low):
     """
     Ensure that the TMC propagates the error to the client and subscribe to
     the longRunningCommandResult event.
@@ -181,8 +175,23 @@ def central_node_receiving_error(
     assert event_recorder.has_change_event_occurred(
         central_node_low.central_node,
         "longRunningCommandResult",
-        expected_long_running_command_result,
+        (
+            pytest.unique_id,
+            Anything,
+        ),
         lookahead=10,
+    )
+    assert (
+        ResultCode.FAILED
+        == json.loads(assertion_data["attribute_value"][1])[0]
+    )
+    assert (
+        expected_long_running_command_result1
+        in json.loads(assertion_data["attribute_value"][1])[1]
+    )
+    assert (
+        expected_long_running_command_result2
+        in json.loads(assertion_data["attribute_value"][1])[1]
     )
 
 

@@ -19,7 +19,7 @@ csp_subarray2 = "low-csp/subarray/02"
 csp_subarray3 = "low-csp/subarray/03"
 sdp_master = "low-sdp/control/0"
 csp_master = "low-csp/control/0"
-
+TIMEOUT = 80
 DEVICE_STATE_STANDBY_INFO = {
     sdp_subarray1: ["DISABLE", "OFF"],
     sdp_master: ["DISABLE", "STANDBY", "OFF"],

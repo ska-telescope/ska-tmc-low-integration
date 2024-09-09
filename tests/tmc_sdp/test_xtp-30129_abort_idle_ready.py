@@ -1,4 +1,6 @@
 """Test TMC-SDP Abort functionality in IDLE obstate"""
+import json
+
 import pytest
 from pytest_bdd import given, parsers, scenario, then
 from ska_control_model import ObsState
@@ -81,11 +83,13 @@ def subarray_is_in_given_obsstate(
     event_recorder.has_change_event_occurred(
         central_node_low.central_node,
         "longRunningCommandResult",
-        (unique_id[0], str(ResultCode.OK.value)),
+        (
+            unique_id[0],
+            json.dumps((int(ResultCode.OK), "Command Completed")),
+        ),
     )
 
     if obsstate == "READY":
-
         input_json = prepare_json_args_for_commands(
             "configure_low", command_input_factory
         )
@@ -105,7 +109,10 @@ def subarray_is_in_given_obsstate(
         event_recorder.has_change_event_occurred(
             subarray_node_low.subarray_node,
             "longRunningCommandResult",
-            (unique_id[0], str(ResultCode.OK.value)),
+            (
+                unique_id[0],
+                json.dumps((int(ResultCode.OK), "Command Completed")),
+            ),
         )
 
 
