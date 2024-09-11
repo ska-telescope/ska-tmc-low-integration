@@ -36,20 +36,14 @@ ska-taranta:
     enabled: true
     nginx: true
     hostname: k8s.stfc.skao.int
-    
-ska-tango-tangogql:
-  ska-tango-base:
-    enabled: false
-
-  ska-tango-examples:
-    enabled: false
-  replicas: 1
-  resources:
-    requests:
-      cpu: 200m # 200m = 0.2 CPU
-      memory: 200Mi # 200Mi = 0.2 GB mem
-    limits:
-      memory: 1024Mi # 1024Mi = 1 GB mem
+  tangogql:
+    replicas: 1
+    resources:
+      requests:
+        cpu: 200m # 200m = 0.2 CPU
+        memory: 200Mi # 200Mi = 0.2 GB mem
+      limits:
+        memory: 1024Mi # 1024Mi = 1 GB mem
 
 ska-tango-base:
   enabled: true
@@ -130,43 +124,21 @@ ska-low-cbf-proc:
         requests:
           memory: 100Mi
         limits:
-          amd.com/xilinx_u55c_gen3x16_xdma_base_3-0: 0  # no FPGA hardware
+          xilinx.com/fpga-xilinx_u55c_gen3x16_xdma_base_3-0: 0  # no FPGA hardware
           memory: 300Mi  # reduced
 
 ska-csp-lmc-low:
   labels:
     app: ska-tmc-low-integration
+  legacy_compatibility: true
   enabled: false
   deviceServers:
     cspcontroller:
       instances: ["controller"]
-      file: "data/controller.yaml"
+      file: "data/controller_cbf_only.yaml"
     cspsubarray:
       instances: ["subarray1", "subarray2", "subarray3", "subarray4"]
-      file: "data/subarray.yaml"
-
-ska-pst:
-  labels:
-    app: ska-tmc-low-integration
-  enabled: false
-  ska-pst-core:
-    enabled: false
-    serviceAccount:
-      create: false
-    send:
-      enabled: true
-      dpdApiIntegration: true
-  ska-pst-jupyterlab:
-    enabled: false
-  ska-pst-lmc:
-    enabled: true
-    beam:
-      simulationMode: 1
-      scanOutputDirPattern: /tmp/<eb_id>/<subsystem_id>/<scan_id>
-    affinity:
-      podAffinity:
-        requiredDuringSchedulingIgnoredDuringExecution: []
-  volume: null
+      file: "data/subarray_cbf_only.yaml"
 
 ska-low-mccs:
   labels:
@@ -703,13 +675,11 @@ ska-low-mccs:
       ci-1:
         low-mccs/stationcalibrator/ci-1:
           calibration_store_trl: low-mccs/calibrationstore/ci-1
-          calibration_solver_trl: low-mccs/solver/ci-1
           logging_level_default: 5
           station_trl: low-mccs/station/ci-1
       ci-2:
         low-mccs/stationcalibrator/ci-2:
           calibration_store_trl: low-mccs/calibrationstore/ci-2
-          calibration_solver_trl: low-mccs/solver/ci-2
           logging_level_default: 5
           station_trl: low-mccs/station/ci-2
     stations:
