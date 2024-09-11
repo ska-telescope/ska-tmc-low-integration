@@ -3,6 +3,7 @@ image: $SKA_K8S_TOOLS_DOCKER_BUILDER_IMAGE
 variables:
   GIT_SUBMODULE_STRATEGY: recursive
   DOCKER_DRIVER: overlay2
+  DOCS_RTD_PROJECT_SLUG: ska-telescope-ska-tmc-low-integration
 
 cache:
   paths:
@@ -29,9 +30,6 @@ include:
 
   - project: 'ska-telescope/templates-repository'
     file: 'gitlab-ci/includes/helm-chart.gitlab-ci.yml'
-
-  - project: 'ska-telescope/templates-repository'
-    file: 'gitlab-ci/includes/docs-pages.gitlab-ci.yml'
 
   - project: 'ska-telescope/templates-repository'
     file: 'gitlab-ci/includes/docs.gitlab-ci.yml'
@@ -95,12 +93,6 @@ k8s-test:
   variables:
     KUBE_NAMESPACE: 'ci-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA'
     SERVICE_ACCOUNT: "ci-svc-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA"
-  before_script:
-    - make cred SERVICE_ACCOUNT=$SERVICE_ACCOUNT
-    - '[ -f .make/k8s.mk ] || (echo "File k8s.mk not included in Makefile; exit 1")'
-    - 'make help | grep k8s-test'
-    - make k8s-install-chart
-    - make k8s-wait
   after_script:
     - pip3 install -q -U ska-ser-xray
     - XRAY_TEST_RESULT_FILE="build/cucumber.json" make xray-publish
@@ -170,12 +162,6 @@ k8s-test-tmc-with-mccs:
     SERVICE_ACCOUNT: "ci-svc-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-mccs-low"
     MARK: 'tmc_mccs'
     MCCS_SIMULATION_ENABLED: 'false'
-  before_script:
-    - make cred SERVICE_ACCOUNT=$SERVICE_ACCOUNT
-    - '[ -f .make/k8s.mk ] || (echo "File k8s.mk not included in Makefile; exit 1")'
-    - 'make help | grep k8s-test'
-    - make k8s-install-chart
-    - make k8s-wait
   environment:
     name: test/$CI_COMMIT_REF_SLUG
     on_stop: stop-k8s-test-tmc-with-mccs
