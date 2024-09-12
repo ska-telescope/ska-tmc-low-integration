@@ -30,12 +30,29 @@ global:
       pullPolicy: IfNotPresent
   cluster_domain: cluster.local
 
-ska-taranta:
-  enabled: false
-  ingress:
-    enabled: true
-    nginx: true
-    hostname: k8s.stfc.skao.int
+ska-tango-tangogql:
+  ska-tango-base:
+    enabled: false
+
+  ska-tango-examples:
+    enabled: false
+  replicas: 1
+  resources:
+    requests:
+      cpu: 200m # 200m = 0.2 CPU
+      memory: 200Mi # 200Mi = 0.2 GB mem
+    limits:
+      memory: 1024Mi # 1024Mi = 1 GB mem
+
+  ska-tango-examples:
+    enabled: false
+  replicas: 1
+  resources:
+    requests:
+      cpu: 200m # 200m = 0.2 CPU
+      memory: 200Mi # 200Mi = 0.2 GB mem
+    limits:
+      memory: 1024Mi # 1024Mi = 1 GB mem
   tangogql:
     replicas: 1
     resources:
@@ -124,7 +141,7 @@ ska-low-cbf-proc:
         requests:
           memory: 100Mi
         limits:
-          xilinx.com/fpga-xilinx_u55c_gen3x16_xdma_base_3-0: 0  # no FPGA hardware
+          amd.com/xilinx_u55c_gen3x16_xdma_base_3-0: 0  # no FPGA hardware
           memory: 300Mi  # reduced
 
 ska-csp-lmc-low:
