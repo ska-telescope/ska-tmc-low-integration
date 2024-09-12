@@ -30,10 +30,20 @@ global:
       pullPolicy: IfNotPresent
   cluster_domain: cluster.local
 
-  
+
 ska-tango-tangogql:
   ska-tango-base:
     enabled: false
+
+  ska-tango-examples:
+    enabled: false
+  replicas: 1
+  resources:
+    requests:
+      cpu: 200m # 200m = 0.2 CPU
+      memory: 200Mi # 200Mi = 0.2 GB mem
+    limits:
+      memory: 1024Mi # 1024Mi = 1 GB mem
 
   ska-tango-examples:
     enabled: false
