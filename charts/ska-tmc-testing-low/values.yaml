@@ -30,6 +30,13 @@ global:
       pullPolicy: IfNotPresent
   cluster_domain: cluster.local
 
+ska-taranta:
+  enabled: false
+  ingress:
+    enabled: true
+    nginx: true
+    hostname: k8s.stfc.skao.int
+    
 ska-tango-tangogql:
   ska-tango-base:
     enabled: false
@@ -44,24 +51,6 @@ ska-tango-tangogql:
     limits:
       memory: 1024Mi # 1024Mi = 1 GB mem
 
-  ska-tango-examples:
-    enabled: false
-  replicas: 1
-  resources:
-    requests:
-      cpu: 200m # 200m = 0.2 CPU
-      memory: 200Mi # 200Mi = 0.2 GB mem
-    limits:
-      memory: 1024Mi # 1024Mi = 1 GB mem
-  tangogql:
-    replicas: 1
-    resources:
-      requests:
-        cpu: 200m # 200m = 0.2 CPU
-        memory: 200Mi # 200Mi = 0.2 GB mem
-      limits:
-        memory: 1024Mi # 1024Mi = 1 GB mem
-
 ska-tango-base:
   enabled: true
   vnc:
@@ -72,7 +61,6 @@ ska-tango-base:
     replicas: 1
   tangodb:
     use_pv: false
-
 
 # TMC-low
 tmc-low:
@@ -179,7 +167,6 @@ ska-pst:
       podAffinity:
         requiredDuringSchedulingIgnoredDuringExecution: []
   volume: null
-
 
 ska-low-mccs:
   labels:
@@ -1179,6 +1166,8 @@ ska-low-mccs:
         daq-data:
           size: 250Mi
           storage_class: nfss1
+
+
 
 # SKUID
 ska-ser-skuid:
