@@ -30,13 +30,7 @@ global:
       pullPolicy: IfNotPresent
   cluster_domain: cluster.local
 
-ska-taranta:
-  enabled: false
-  ingress:
-    enabled: true
-    nginx: true
-    hostname: k8s.stfc.skao.int
-    
+  
 ska-tango-tangogql:
   ska-tango-base:
     enabled: false
