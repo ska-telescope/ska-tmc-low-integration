@@ -14,6 +14,7 @@ MCCS_SIMULATION_ENABLED ?= true
 SDP_PROCCONTROL_REPLICAS ?= 1
 K8S_TIMEOUT ?= 600s
 PYTHON_LINT_TARGET ?= tests/
+K8S_SKIP_NAMESPACE ?= true
 
 DEPLOYMENT_TYPE = $(shell echo $(TELESCOPE) | cut -d '-' -f2)
 MARK ?= $(shell echo $(TELESCOPE) | sed "s/-/_/g") ## What -m opt to pass to pytest
