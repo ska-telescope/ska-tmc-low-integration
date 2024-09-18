@@ -433,6 +433,27 @@ ska-low-mccs:
             logging_level_default: 5
             port: 50051
             skuid_url: http://ska-ser-skuid-ska-ser-skuid-svc:9870/
+        bandpass-daq-ci-2:
+          low-mccs/bandpass-daq/ci-2:
+            host: daqrx-ci-2-bandpass
+            id: 2
+            logging_level_default: 5
+            port: 50051
+            skuid_url: http://ska-ser-skuid-ska-ser-skuid-svc:9870/
+        calibration-daq-ci-1:
+          low-mccs/calibration-daq/ci-1:
+            host: daqrx-ci-1-calibration
+            id: 1
+            logging_level_default: 5
+            port: 50051
+            skuid_url: http://ska-ser-skuid-ska-ser-skuid-svc:9870/
+        calibration-daq-ci-2:
+          low-mccs/calibration-daq/ci-2:
+            host: daqrx-ci-2-calibration
+            id: 2
+            logging_level_default: 5
+            port: 50051
+            skuid_url: http://ska-ser-skuid-ska-ser-skuid-svc:9870/
       spsstations:
         ci-1:
           low-mccs/spsstation/ci-1:
@@ -500,6 +521,33 @@ ska-low-mccs:
     ska-low-mccs-daq:
       receivers:
         ci-1-bandpass:
+          affinity: null
+          expose_data_service: true
+          grpc_port: 50051
+          node_selector: null
+          nvidia_gpu: false
+          receiver_interface: eth0
+          receiver_port: 4660
+          tolerations: null
+        ci-2-bandpass:
+          affinity: null
+          expose_data_service: true
+          grpc_port: 50051
+          node_selector: null
+          nvidia_gpu: false
+          receiver_interface: eth0
+          receiver_port: 4660
+          tolerations: null
+        ci-1-calibration:
+          affinity: null
+          expose_data_service: true
+          grpc_port: 50051
+          node_selector: null
+          nvidia_gpu: false
+          receiver_interface: eth0
+          receiver_port: 4660
+          tolerations: null
+        ci-2-calibration:
           affinity: null
           expose_data_service: true
           grpc_port: 50051
