@@ -221,7 +221,6 @@ ska-low-mccs:
           - low-mccs/station/ci-2
           subarraybeams:
           - low-mccs/subarraybeam/01
-          - low-mccs/subarraybeam/02
           subarrays:
           - low-mccs/subarray/01
     solvers:
@@ -260,19 +259,14 @@ ska-low-mccs:
         low-mccs/station/ci-1:
           antenna_ids:
           - 244
-          - 189
           antenna_trls:
           - low-mccs/antenna/ci-1-sb01-01
-          - low-mccs/antenna/ci-1-sb01-02
           antenna_xs:
           - -5.422
-          - -3.975
           antenna_ys:
           - 17.79
-          - 15.948
           antenna_zs:
           - 0.008
-          - 0.016
           field_station_trl: low-mccs/fieldstation/ci-1
           logging_level_default: 5
           ref_height: 1
@@ -285,19 +279,14 @@ ska-low-mccs:
         low-mccs/station/ci-2:
           antenna_ids:
           - 244
-          - 189
           antenna_trls:
           - low-mccs/antenna/ci-2-sb01-01
-          - low-mccs/antenna/ci-2-sb01-02
           antenna_xs:
           - -5.422
-          - -3.975
           antenna_ys:
           - 17.79
-          - 15.948
           antenna_zs:
           - 0.008
-          - 0.016
           field_station_trl: low-mccs/fieldstation/ci-2
           logging_level_default: 5
           ref_height: 0
@@ -309,15 +298,6 @@ ska-low-mccs:
     subarraybeams:
       subarraybeam-01:
         low-mccs/subarraybeam/01:
-          logging_level_default: 5
-      subarraybeam-02:
-        low-mccs/subarraybeam/02:
-          logging_level_default: 5
-      subarraybeam-03:
-        low-mccs/subarraybeam/03:
-          logging_level_default: 5
-      subarraybeam-04:
-        low-mccs/subarraybeam/04:
           logging_level_default: 5
     subarrays:
       subarray-01:
@@ -405,6 +385,42 @@ ska-low-mccs:
               masked: false
               smartbox: sb01
               smartbox_port: 1
+            sb01-02:
+              masked: false
+              smartbox: sb01
+              smartbox_port: 2
+            sb01-03:
+              masked: false
+              smartbox: sb01
+              smartbox_port: 3
+            sb01-04:
+              masked: false
+              smartbox: sb01
+              smartbox_port: 4
+            sb01-05:
+              masked: false
+              smartbox: sb01
+              smartbox_port: 5
+            sb01-06:
+              masked: false
+              smartbox: sb01
+              smartbox_port: 6
+            sb01-07:
+              masked: false
+              smartbox: sb01
+              smartbox_port: 7
+            sb01-08:
+              masked: false
+              smartbox: sb01
+              smartbox_port: 8
+            sb01-09:
+              masked: false
+              smartbox: sb01
+              smartbox_port: 9
+            sb01-10:
+              masked: false
+              smartbox: sb01
+              smartbox_port: 10
           pasd:
             smartboxes:
               sb01:
@@ -415,6 +431,42 @@ ska-low-mccs:
               masked: false
               smartbox: sb01
               smartbox_port: 1
+            sb01-02:
+              masked: false
+              smartbox: sb01
+              smartbox_port: 2
+            sb01-03:
+              masked: false
+              smartbox: sb01
+              smartbox_port: 3
+            sb01-04:
+              masked: false
+              smartbox: sb01
+              smartbox_port: 4
+            sb01-05:
+              masked: false
+              smartbox: sb01
+              smartbox_port: 5
+            sb01-06:
+              masked: false
+              smartbox: sb01
+              smartbox_port: 6
+            sb01-07:
+              masked: false
+              smartbox: sb01
+              smartbox_port: 7
+            sb01-08:
+              masked: false
+              smartbox: sb01
+              smartbox_port: 8
+            sb01-09:
+              masked: false
+              smartbox: sb01
+              smartbox_port: 9
+            sb01-10:
+              masked: false
+              smartbox: sb01
+              smartbox_port: 10
           pasd:
             smartboxes:
               sb01:
@@ -423,6 +475,9 @@ ska-low-mccs:
       pasdbuses:
         ci-1:
           host: pasd-simulator-ci-1
+          port: 9502
+        ci-2:
+          host: pasd-simulator-ci-2
           port: 9502
   ska-low-mccs-spshw:
     deviceServers:
@@ -519,6 +574,9 @@ ska-low-mccs:
         ci-1-sr1:
           srmb_host: subrack-simulator-ci-1-sr1
           srmb_port: 8081
+        ci-2-sr1:
+          srmb_host: subrack-simulator-ci-2-sr1
+          srmb_port: 8081
     ska-low-mccs-daq:
       receivers:
         ci-1-bandpass:
@@ -530,16 +588,16 @@ ska-low-mccs:
           receiver_interface: eth0
           receiver_port: 4660
           tolerations: null
-        ci-2-bandpass:
+        ci-1-calibration:
           affinity: null
-          expose_data_service: true
           grpc_port: 50051
           node_selector: null
           nvidia_gpu: false
           receiver_interface: eth0
           receiver_port: 4660
+          storage: daq-data
           tolerations: null
-        ci-1-calibration:
+        ci-2-bandpass:
           affinity: null
           expose_data_service: true
           grpc_port: 50051
@@ -550,18 +608,18 @@ ska-low-mccs:
           tolerations: null
         ci-2-calibration:
           affinity: null
-          expose_data_service: true
           grpc_port: 50051
           node_selector: null
           nvidia_gpu: false
           receiver_interface: eth0
           receiver_port: 4660
+          storage: daq-data
           tolerations: null
       storage:
         daq-data:
           size: 250Mi
-          storage_class: standard
-      
+          storage_class: nfss1
+  
 # SKUID
 ska-ser-skuid:
   labels:
