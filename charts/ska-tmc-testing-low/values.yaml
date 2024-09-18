@@ -33,6 +33,7 @@ global:
 ska-tango-tangogql:
   ska-tango-base:
     enabled: false
+    storage_class: standard
 
   ska-tango-examples:
     enabled: false
@@ -214,7 +215,7 @@ ska-low-mccs:
           - low-mccs/cabinetbank/cb-1
           stationbeams:
           - low-mccs/beam/ci-1-01
-          - low-mccs/beam/ci-1-02
+          - low-mccs/beam/ci-2-01
           stations:
           - low-mccs/station/ci-1
           - low-mccs/station/ci-2
@@ -559,7 +560,7 @@ ska-low-mccs:
       storage:
         daq-data:
           size: 250Mi
-          storage_class: nfss1
+          storage_class: standard
       
 # SKUID
 ska-ser-skuid:
