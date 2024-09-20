@@ -14,22 +14,7 @@ from tests.resources.test_harness.helpers import (
 )
 from tests.resources.test_harness.simulator_factory import SimulatorFactory
 
-
-# Adjust the health thresholds on the controller to force it into DEGRADED
-# state
-def adjust_controller_to_degraded_state(controller):
-    """
-    Adjusts the health thresholds on the controller to
-      force it into DEGRADED state.
-
-    Args:
-        controller: The controller instance to adjust.
-
-    Returns:
-        None
-    """
-    health_params = {"stations_degraded_threshold": 0}
-    controller.healthModelParams = json.dumps(health_params)
+    
 
 
 @pytest.mark.tmc_mccs1
@@ -105,7 +90,7 @@ def set_simulator_devices_health_states(
           class.
         controller: The controller instance to adjust.
     """
-    adjust_controller_to_degraded_state(controller)
+    healthModelParams = json.dumps({"stations_degraded_threshold": 0})  
     # Split the devices string into individual devices
     devices_list = devices.split(",")
     health_state_list = health_state.split(",")
