@@ -117,8 +117,22 @@ def tmc_subarray_idle(subarray_node_low, event_recorder):
 )
 def mccs_subarray_assignedresources(central_node_low, station_ids):
     """Method to check whether resources are assigned"""
-    station_id = json.loads(
+    # Parse the assigned resources from MCCS subarray
+    assigned_resources = json.loads(
         central_node_low.subarray_devices["mccs_subarray"].assignedResources
-    )["station_ids"]
+    )
+
+    # Extract station_ids from assigned resources
+    actual_station_ids = [
+        f"ci-{aperture['station_id']}"
+        for beam in assigned_resources["subarray_beams"]
+        for aperture in beam["apertures"]
+    ]
+
+    # Compare with the expected station IDs
     expected_station_ids = station_ids.replace('"', "").split(", ")
-    assert station_id == expected_station_ids
+
+    # Check if both lists are the same
+    assert sorted(actual_station_ids) == sorted(
+        expected_station_ids
+    ), f"Expected: {expected_station_ids}, but got: {actual_station_ids}"
