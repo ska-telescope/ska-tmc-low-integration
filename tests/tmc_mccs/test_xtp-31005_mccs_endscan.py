@@ -13,8 +13,7 @@ from tests.resources.test_support.common_utils.tmc_helpers import (
 )
 
 
-@pytest.mark.skip(reason="MCCS v0.14.0 would solve the start_time key error")
-@pytest.mark.tmc_mccs
+@pytest.mark.tmc_mccs1
 @scenario(
     "../features/tmc_mccs/xtp-31005_endscan_mccs.feature",
     "TMC executes a EndScan command on MCCS subarray",

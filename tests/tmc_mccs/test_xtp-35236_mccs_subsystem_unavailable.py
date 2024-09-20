@@ -22,12 +22,7 @@ from tests.resources.test_support.common_utils.tmc_helpers import (
 )
 
 
-@pytest.mark.tmc_mccs
-@pytest.mark.skip(
-    reason="The test is marked as skip due to dependency of testing"
-    + "with upgradation of base classes of mccsleadnodes"
-    + "it will be test with v0.4.0 release of ska-tmc-mccsleafnodes."
-)
+@pytest.mark.tmc_mccs1
 @scenario(
     "../features/tmc_mccs/xtp-35236_mccs_subsystem_unavailable.feature",
     "MCCS Controller report the error when one of the subarray"
