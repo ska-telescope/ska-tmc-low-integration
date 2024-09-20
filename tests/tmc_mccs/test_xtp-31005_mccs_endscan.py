@@ -13,7 +13,7 @@ from tests.resources.test_support.common_utils.tmc_helpers import (
 )
 
 
-@pytest.mark.tmc_mccs1
+@pytest.mark.tmc_mccs
 @scenario(
     "../features/tmc_mccs/xtp-31005_endscan_mccs.feature",
     "TMC executes a EndScan command on MCCS subarray",

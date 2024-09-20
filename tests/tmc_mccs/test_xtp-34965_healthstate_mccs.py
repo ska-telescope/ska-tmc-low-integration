@@ -32,7 +32,7 @@ def adjust_controller_to_degraded_state(controller):
     controller.healthModelParams = json.dumps(health_params)
 
 
-@pytest.mark.tmc_mccs
+@pytest.mark.tmc_mccs1
 @scenario(
     "../features/tmc_mccs/xtp-34965_healthstate_mccs.feature",
     "Verify CentralNode TelescopeHealthState",
