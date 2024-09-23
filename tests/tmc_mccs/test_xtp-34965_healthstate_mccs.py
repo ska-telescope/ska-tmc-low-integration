@@ -15,7 +15,7 @@ from tests.resources.test_harness.helpers import (
 from tests.resources.test_harness.simulator_factory import SimulatorFactory
 
 
-@pytest.mark.tmc_mccs1
+@pytest.mark.tmc_mccs
 @scenario(
     "../features/tmc_mccs/xtp-34965_healthstate_mccs.feature",
     "Verify CentralNode TelescopeHealthState",

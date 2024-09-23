@@ -22,7 +22,7 @@ from tests.resources.test_support.common_utils.tmc_helpers import (
 )
 
 
-@pytest.mark.tmc_mccs
+@pytest.mark.tmc_mccs1
 @scenario(
     "../features/tmc_mccs/xtp-35236_mccs_subsystem_unavailable.feature",
     "MCCS Controller report the error when one of the subarray"
