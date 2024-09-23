@@ -154,7 +154,7 @@ def central_node_receiving_error(event_recorder, central_node_low):
         central_node_low.central_node, "longRunningCommandResult", timeout=80.0
     )
 
-    expected_error_mccs = "Cannot allocate resources"
+    expected_error_mccs = "Cannot allocate resources: 15"
     expected_error_timeout = "Timeout has occurred, command failed"
 
     assertion_data = event_recorder.has_change_event_occurred(
