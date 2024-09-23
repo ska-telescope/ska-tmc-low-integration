@@ -296,3 +296,20 @@ def invoke_abort(subarray_node_low):
     This method invokes abort command on tmc subarray
     """
     subarray_node_low.abort_subarray()
+
+
+# Adjust the health thresholds on the controller to force it into DEGRADED
+# state
+def adjust_controller_to_degraded_state(controller):
+    """
+    Adjusts the health thresholds on the controller to
+      force it into DEGRADED state.
+
+    Args:
+        controller: The controller instance to adjust.
+
+    Returns:
+        None
+    """
+    health_params = {"stations_degraded_threshold": 0}
+    controller.healthModelParams = json.dumps(health_params)

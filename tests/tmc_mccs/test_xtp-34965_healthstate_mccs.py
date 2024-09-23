@@ -1,35 +1,18 @@
 """Test case for verifying TMC TelescopeHealthState transition based on MCCS
  Controller HealthState."""
-import json
 
 import pytest
 from pytest_bdd import given, parsers, scenario, when
 from ska_tango_base.control_model import HealthState
 from tango import DevState
 
+from tests.conftest import adjust_controller_to_degraded_state
 from tests.resources.test_harness.central_node_low import CentralNodeWrapperLow
 from tests.resources.test_harness.constant import mccs_controller
 from tests.resources.test_harness.helpers import (
     get_device_simulator_with_given_name,
 )
 from tests.resources.test_harness.simulator_factory import SimulatorFactory
-
-
-# Adjust the health thresholds on the controller to force it into DEGRADED
-# state
-def adjust_controller_to_degraded_state(controller):
-    """
-    Adjusts the health thresholds on the controller to
-      force it into DEGRADED state.
-
-    Args:
-        controller: The controller instance to adjust.
-
-    Returns:
-        None
-    """
-    health_params = {"stations_degraded_threshold": 0}
-    controller.healthModelParams = json.dumps(health_params)
 
 
 @pytest.mark.tmc_mccs1
