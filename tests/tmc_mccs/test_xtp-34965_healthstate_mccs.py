@@ -77,7 +77,6 @@ def set_simulator_devices_health_states(
     devices: str,
     health_state: str,
     simulator_factory: SimulatorFactory,
-    controller,
 ):
     """Method to set the health state of specified simulator devices.
 
@@ -88,6 +87,11 @@ def set_simulator_devices_health_states(
           class.
         controller: The controller instance to adjust.
     """
+     # Fetch the controller from the simulator factory or define it
+    controller = get_device_simulator_with_given_name(
+        simulator_factory, ["mccs master"]
+    )[0]
+    
     adjust_controller_to_degraded_state(controller)
     # Split the devices string into individual devices
     devices_list = devices.split(",")
