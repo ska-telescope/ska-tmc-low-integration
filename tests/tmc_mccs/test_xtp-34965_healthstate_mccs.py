@@ -1,6 +1,6 @@
 """Test case for verifying TMC TelescopeHealthState transition based on MCCS
  Controller HealthState."""
-import json
+# import json
 
 import pytest
 from pytest_bdd import given, parsers, scenario, when
@@ -13,8 +13,6 @@ from tests.resources.test_harness.helpers import (
     get_device_simulator_with_given_name,
 )
 from tests.resources.test_harness.simulator_factory import SimulatorFactory
-
-    
 
 
 @pytest.mark.tmc_mccs1
@@ -79,7 +77,7 @@ def set_simulator_devices_health_states(
     devices: str,
     health_state: str,
     simulator_factory: SimulatorFactory,
-    controller,
+    # healthModelParams,
 ):
     """Method to set the health state of specified simulator devices.
 
@@ -90,7 +88,7 @@ def set_simulator_devices_health_states(
           class.
         controller: The controller instance to adjust.
     """
-    healthModelParams = json.dumps({"stations_degraded_threshold": 0})  
+    # healthModelParams = json.dumps({"stations_degraded_threshold": 0})
     # Split the devices string into individual devices
     devices_list = devices.split(",")
     health_state_list = health_state.split(",")

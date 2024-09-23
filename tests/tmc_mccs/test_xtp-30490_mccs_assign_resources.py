@@ -12,7 +12,7 @@ from tests.resources.test_support.common_utils.tmc_helpers import (
 )
 
 
-@pytest.mark.tmc_mccs
+@pytest.mark.tmc_mccs2
 @scenario(
     "../features/tmc_mccs/xtp-30490_assign_resources_mccs.feature",
     "Assigning Resources to MCCS Subarray",
@@ -117,22 +117,8 @@ def tmc_subarray_idle(subarray_node_low, event_recorder):
 )
 def mccs_subarray_assignedresources(central_node_low, station_ids):
     """Method to check whether resources are assigned"""
-    # Parse the assigned resources JSON
-    assigned_resources = json.loads(
+    station_id = json.loads(
         central_node_low.subarray_devices["mccs_subarray"].assignedResources
-    )
-
-    # Extract station_id from the nested JSON structure
-    station_id_list = [
-        f"ci-{aperture['station_id']}"
-        for beam in assigned_resources["mccs"]["subarray_beams"]
-        for aperture in beam["apertures"]
-    ]
-
-    # Clean the expected station_ids from the test scenario
+    )["station_ids"]
     expected_station_ids = station_ids.replace('"', "").split(", ")
-
-    # Compare actual and expected resources
-    assert (
-        station_id_list == expected_station_ids
-    ), f"Expected {expected_station_ids} but got {station_id_list}"
+    assert station_id == expected_station_ids
