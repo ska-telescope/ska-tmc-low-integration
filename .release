@@ -1,6 +1,19 @@
-release=0.18.0
-tag=0.18.0
+release=0.19.0
+tag=0.19.0
 tag_description=
 **Charts:**
-**1. ska-tmc-low-integration 0.18.0**
-        * Updated Subarray Node v0.23.1 to support PSS and PST as optional keys
+**1. ska-tmc-low-integration 0.18.0 - 0.19.0**
+
+    **1.1 ska-tmc-low - 0.18.0 - 0.19.0:
+       a. Utilised MCCS v0.16.2 and tested the Abort-Restart functionality.
+       b. Resolved: SKB-319, SKB-424, and SKB-375.
+       c. Utilised CentralNode v0.19.4, SDPLN v0.16.5, CSPLN v0.19.4, MCCSLN v0.4.2 as part of SKB-434.
+
+release_notes=
+**Charts:**
+**1. ska-tmc-low-integration 0.18.0 - 0.19.0**
+
+ **1.1 ska-tmc-low - 0.18.0 - 0.19.0:
+        a. Utilised MCCS v0.16.2 and tested the Abort-Restart functionality.
+       b. Resolved: SKB-319, SKB-424, and SKB-375.
+       c. Utilised CentralNode v0.19.4, SDPLN v0.16.5, CSPLN v0.19.4, MCCSLN v0.4.2 as part of SKB-434.

@@ -7,6 +7,22 @@ This project adheres to `Semantic Versioning <http://semver.org/>`_.
 
 Added
 -----
+[0.19.0]
+* MCCS Chart Update: Utilized the latest MCCS chart v0.16.2 for enhanced functionality and stability.
+* TMC-MCCS Pairwise Testing: Added test cases for Abort-Restart commands as part of TMC-MCCS  pairwise integration testing.
+* TMC-MCCS Scheme Update: Updated the TMC-MCCS scheme to include station-specific IDs, along with per-aperture handling.
+* Dependency Updates:
+  * CentralNode: v0.19.4
+  * SDPLN: v0.16.5
+  * CSPLN: v0.19.4
+  * MCCSLN: v0.4.2
+  These updates are part of SKB-434.
+* Validation:
+This release validates the following tickets:
+* SKB-319
+* SKB-424
+* SKB-375
+
 [0.18.0]
 * Integrate TMC SubarrayNode v0.23.1
     * Obs State aggregation in subarray node is improved
