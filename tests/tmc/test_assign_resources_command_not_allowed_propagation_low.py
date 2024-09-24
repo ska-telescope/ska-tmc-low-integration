@@ -74,7 +74,7 @@ class TestAssignCommandNotAllowedPropagation:
         )
 
         exception_message = (
-            "The invocation of the AssignResources command is "
+            "The invocation of the AssignResources command "
             + "failed on Csp Subarray Device low-csp/subarray/01"
         )
         log_events(
