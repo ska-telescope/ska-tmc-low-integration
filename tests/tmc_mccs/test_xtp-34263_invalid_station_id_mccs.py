@@ -1,6 +1,5 @@
 """Test module for TMC-MCCS handle invalid json(invalid station id)"""
 import json
-import re
 
 import pytest
 from pytest_bdd import given, parsers, scenario, then, when
@@ -8,6 +7,10 @@ from ska_control_model import ObsState, ResultCode
 from ska_tango_testing.mock.placeholders import Anything
 from tango import DevState
 
+from tests.resources.test_harness.constant import (
+    mccs_controller,
+    tmc_low_subarraynode1,
+)
 from tests.resources.test_harness.helpers import updated_assign_str
 from tests.resources.test_harness.utils.enums import SimulatorDeviceType
 from tests.resources.test_support.common_utils.tmc_helpers import (
@@ -153,10 +156,12 @@ def central_node_receiving_error(event_recorder, central_node_low):
     event_recorder.subscribe_event(
         central_node_low.central_node, "longRunningCommandResult", timeout=80.0
     )
-
-    expected_error_mccs = "Cannot allocate resources: 15"
-    expected_error_timeout = "Timeout has occurred, command failed"
-
+    expected_long_running_command_result1 = (
+        f"{mccs_controller}: Cannot allocate resources: 15"
+    )
+    expected_long_running_command_result2 = (
+        f"{tmc_low_subarraynode1}: Timeout has occurred, command failed"
+    )
     assertion_data = event_recorder.has_change_event_occurred(
         central_node_low.central_node,
         "longRunningCommandResult",
@@ -166,27 +171,17 @@ def central_node_receiving_error(event_recorder, central_node_low):
         ),
         lookahead=10,
     )
-
-    # Assert that the command result has failed
     assert (
         ResultCode.FAILED
         == json.loads(assertion_data["attribute_value"][1])[0]
     )
-
-    # Extract the actual message
-    actual_message = json.loads(assertion_data["attribute_value"][1])[1]
-
-    # Ensure these variables are defined and used correctly in the test
-    actual_message = "The actual error message returned by the system"
-
-    # Use the corrected assertions
-    assert re.search(expected_error_mccs, actual_message), (
-        f"Expected 'Cannot allocate resources' in the message, but got "
-        f"{actual_message}"
+    assert (
+        expected_long_running_command_result1
+        in json.loads(assertion_data["attribute_value"][1])[1]
     )
-    assert re.search(expected_error_timeout, actual_message), (
-        "Expected 'Timeout has occurred, command failed' in the message, "
-        f"but got {actual_message}"
+    assert (
+        expected_long_running_command_result2
+        in json.loads(assertion_data["attribute_value"][1])[1]
     )
 
 
