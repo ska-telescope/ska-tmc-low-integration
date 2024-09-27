@@ -103,14 +103,14 @@ mccsmasterleafnode:
   image:
     registry: artefact.skao.int
     image: ska-tmc-mccsleafnodes
-    tag: 0.4.0
+    tag: 0.4.2
     pullPolicy: IfNotPresent
 
 mccssubarrayleafnode:
   image:
     registry: artefact.skao.int
     image: ska-tmc-mccsleafnodes
-    tag: 0.4.0
+    tag: 0.4.2
     pullPolicy: IfNotPresent
 
 resources:
