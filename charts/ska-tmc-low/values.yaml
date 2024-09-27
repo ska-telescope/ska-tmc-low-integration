@@ -72,9 +72,9 @@ centralnode:
 
 subarraynode:
   image:
-    registry: artefact.skao.int
+    registry: registry.gitlab.com/ska-telescope/ska-tmc/ska-tmc-subarraynode/
     image: ska-tmc-subarraynode
-    tag: 0.23.1
+    tag: 0.23.3-dev.c03744606
     pullPolicy: IfNotPresent
 
 sdpleafnodes:
@@ -86,16 +86,16 @@ sdpleafnodes:
 
 cspmasterleafnode:
   image:
-    registry: artefact.skao.int
+    registry: registry.gitlab.com/ska-telescope/ska-tmc/ska-tmc-cspleafnodes/
     image: ska-tmc-cspleafnodes
-    tag: 0.18.2
+    tag: 0.19.3-dev.c3a550348
     pullPolicy: IfNotPresent
 
 cspsubarrayleafnode:
   image:
-    registry: artefact.skao.int
+    registry: registry.gitlab.com/ska-telescope/ska-tmc/ska-tmc-cspleafnodes/
     image: ska-tmc-cspleafnodes
-    tag: 0.18.2
+    tag: 0.19.3-dev.c3a550348
     pullPolicy: IfNotPresent
 
 
@@ -157,6 +157,9 @@ deviceServers:
     DelayCadence: 300.0
     DelayValidityPeriod: 600.0
     DelayModelTimeInAdvance: 600
+    PSTDelayCadence: 300.0
+    PSTDelayValidityPeriod: 600.0
+    PSTDelayModelTimeInAdvance: 600
 
   mccsmasterleafnode:
     enabled: true

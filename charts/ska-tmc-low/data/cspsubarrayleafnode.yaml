@@ -7,6 +7,9 @@ entrypoints:
 {{- $DelayModelTimeInAdvance := .Values.deviceServers.cspsubarrayleafnode.DelayModelTimeInAdvance }}
 {{- $DelayCadence := .Values.deviceServers.cspsubarrayleafnode.DelayCadence }}
 {{- $DelayValidityPeriod := .Values.deviceServers.cspsubarrayleafnode.DelayValidityPeriod }}
+{{- $PSTDelayModelTimeInAdvance := .Values.deviceServers.cspsubarrayleafnode.PSTDelayModelTimeInAdvance }}
+{{- $PSTDelayCadence := .Values.deviceServers.cspsubarrayleafnode.PSTDelayCadence }}
+{{- $PSTDelayValidityPeriod := .Values.deviceServers.cspsubarrayleafnode.PSTDelayValidityPeriod }}
 server:
   name: "csp_subarray_leaf_node_low"
   instances:
@@ -39,6 +42,15 @@ server:
               - name: "DelayValidityPeriod"
                 values:
                 - "{{ $DelayValidityPeriod }}"
+              - name: "PSTDelayModelTimeInAdvance"
+                values:
+                - "{{ $PSTDelayModelTimeInAdvance }}"
+              - name: "PSTDelayCadence"
+                values:
+                - "{{ $PSTDelayCadence }}"
+              - name: "PSTDelayValidityPeriod"
+                values:
+                - "{{ $PSTDelayValidityPeriod }}"
               - name: "CommandTimeout"
                 values:
                 - "50"
