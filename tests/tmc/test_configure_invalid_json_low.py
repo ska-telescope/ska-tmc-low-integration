@@ -176,17 +176,17 @@ def invalid_command_rejection(invalid_json):
     # asserting validations message as per invalid json
     if invalid_json == "csp_key_missing":
         assert (
-            "Validation 'Low TMC configure 4.0' Missing key: 'csp'"
+            "Validation 'Low TMC configure 4.1' Missing key: 'csp'"
             in pytest.command_result[1][0]
         )
     elif invalid_json == "sdp_key_missing":
         assert (
-            "Validation 'Low TMC configure 4.0' Missing key: 'sdp'"
+            "Validation 'Low TMC configure 4.1' Missing key: 'sdp'"
             in pytest.command_result[1][0]
         )
     elif invalid_json == "mccs_key_missing":
         assert (
-            "Validation 'Low TMC configure 4.0' Missing key: 'mccs'"
+            "Validation 'Low TMC configure 4.1' Missing key: 'mccs'"
             in pytest.command_result[1][0]
         )
     # TODO: Enable this once CDM validations are accomodated
@@ -199,7 +199,7 @@ def invalid_command_rejection(invalid_json):
     #     )
     elif invalid_json == "scan_duration_key_missing":
         assert (
-            "Validation 'Low TMC configure 4.0' Key 'tmc' "
+            "Validation 'Low TMC configure 4.1' Key 'tmc' "
             + "error:\nMissing key: 'scan_duration'"
             in pytest.command_result[1][0]
         )
@@ -208,7 +208,7 @@ def invalid_command_rejection(invalid_json):
         # assert "Invalid 'interface' value: None"
         # in pytest.command_result[1][0]
         assert (
-            "Low TMC configure 4.0' Missing keys: 'csp', 'interface', "
+            "Low TMC configure 4.1' Missing keys: 'csp', 'interface', "
             "'mccs', 'sdp" in pytest.command_result[1][0]
         )
 
