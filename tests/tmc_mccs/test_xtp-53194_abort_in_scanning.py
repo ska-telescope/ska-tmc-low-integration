@@ -21,6 +21,7 @@ def test_tmc_mccs_abort_in_scanning(central_node_low):
     """
     assert central_node_low.subarray_devices["mccs_subarray"].ping() > 0
 
+
 @given("TMC and MCCS subarray are busy scanning")
 def subarray_is_in_scanning_obsstate(
     central_node_low,
