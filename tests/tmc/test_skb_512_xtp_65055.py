@@ -34,6 +34,7 @@ from tests.resources.test_support.constant_low import (
 
 
 @pytest.mark.SKA_low
+@pytest.mark.temp
 @scenario(
     "../features/tmc/SKB_512.feature",
     "TMC executes EndScan on other sub-systems even if one sub-system goes "
@@ -201,9 +202,14 @@ def invoke_endscan_with_a_device_going_to_fault(
         subarray_node_low (SubarrayNodeWrapperLow): Object of subarray
         node wrapper
     """
+    # Event Subscription
+    event_tracer.subscribe_event(
+        subarray_node_low.csp_subarray_leaf_node, "cspSubarrayObsState"
+    )
+
     csp_sim, _ = get_device_simulators(simulator_factory)
-    event_tracer.subscribe_event(csp_sim, "obsState")
     csp_sim.SetDefective(json.dumps(INTERMEDIATE_FAULT_OBS_STATE_DEFECT))
+
     subarray_node_low.execute_transition("EndScan")
     assert_that(event_tracer).described_as(
         'FAILED ASSUMPTION IN "WHEN" STEP: '
@@ -213,7 +219,7 @@ def invoke_endscan_with_a_device_going_to_fault(
         "is expected to be in FAULT obstate",
     ).within_timeout(TIMEOUT).has_change_event_occurred(
         subarray_node_low.csp_subarray_leaf_node,
-        "obsState",
+        "cspSubarrayObsState",
         ObsState.FAULT,
     )
 
@@ -239,7 +245,7 @@ def check_obs_state_ready_for_leaf_nodes(
     """
     # Subscribing to events
     event_tracer.subscribe_event(
-        subarray_node_low.sdp_subarray_leaf_node, "obsState"
+        subarray_node_low.sdp_subarray_leaf_node, "sdpSubarrayObsState"
     )
     event_tracer.subscribe_event(
         subarray_node_low.mccs_subarray_leaf_node, "obsState"
@@ -253,7 +259,7 @@ def check_obs_state_ready_for_leaf_nodes(
         "is expected to be in READY obstate",
     ).within_timeout(TIMEOUT).has_change_event_occurred(
         subarray_node_low.sdp_subarray_leaf_node,
-        "obsState",
+        "sdpSubarrayObsState",
         ObsState.READY,
     )
     assert_that(event_tracer).described_as(
