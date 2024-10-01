@@ -12,6 +12,7 @@ from tests.resources.test_support.common_utils.tmc_helpers import (
 
 
 @pytest.mark.tmc_mccs
+@pytest.mark.skip(reason="This test case is skip due to SKB-589")
 @scenario(
     "../features/tmc_mccs/xtp-53188_abort_in_resourcing.feature",
     "Abort assigning using TMC",

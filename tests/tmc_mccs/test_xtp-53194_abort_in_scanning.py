@@ -11,6 +11,7 @@ from tests.resources.test_harness.helpers import (
 
 
 @pytest.mark.tmc_mccs
+@pytest.mark.skip(reason="This test case is skip due to SKB-589")
 @scenario(
     "../features/tmc_mccs/xtp-53194_abort_in_scanning.feature",
     "Abort scanning MCCS using TMC",

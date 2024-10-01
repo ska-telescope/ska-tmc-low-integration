@@ -11,6 +11,7 @@ from tests.resources.test_harness.helpers import (
 
 
 @pytest.mark.tmc_mccs
+@pytest.mark.skip(reason="This test case is skip due to SKB-589")
 @scenario(
     "../features/tmc_mccs/xtp-53197_abort_idle_ready.feature",
     "Abort resourced MCCS and TMC subarray",
