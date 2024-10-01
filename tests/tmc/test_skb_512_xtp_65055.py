@@ -204,7 +204,7 @@ def invoke_endscan_with_a_device_going_to_fault(
     csp_sim, _ = get_device_simulators(simulator_factory)
     event_tracer.subscribe_event(csp_sim, "obsState")
     csp_sim.SetDefective(json.dumps(INTERMEDIATE_FAULT_OBS_STATE_DEFECT))
-    subarray_node_low.remove_scan_data()
+    subarray_node_low.execute_transition("EndScan")
     assert_that(event_tracer).described_as(
         'FAILED ASSUMPTION IN "WHEN" STEP: '
         "'I invoke EndScan command and a sub-system goes to FAULT'"
