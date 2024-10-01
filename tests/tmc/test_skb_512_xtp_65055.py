@@ -204,27 +204,27 @@ def invoke_endscan_with_a_device_going_to_fault(
     """
     # Event Subscription
     event_tracer.subscribe_event(
-        subarray_node_low.sdp_subarray_leaf_node, "sdpSubarrayObsState"
+        subarray_node_low.csp_subarray_leaf_node, "cspSubarrayObsState"
     )
 
-    _, sdp_sim = get_device_simulators(simulator_factory)
-    sdp_sim.SetDefective(json.dumps(INTERMEDIATE_FAULT_OBS_STATE_DEFECT))
+    csp_sim, _ = get_device_simulators(simulator_factory)
+    csp_sim.SetDefective(json.dumps(INTERMEDIATE_FAULT_OBS_STATE_DEFECT))
 
     subarray_node_low.execute_transition("EndScan")
     assert_that(event_tracer).described_as(
         'FAILED ASSUMPTION IN "WHEN" STEP: '
         "'I invoke EndScan command and a sub-system goes to FAULT'"
-        "SDP Subarray Leaf Node device"
-        f"({subarray_node_low.sdp_subarray_leaf_node.dev_name()}) "
+        "CSP Subarray Leaf Node device"
+        f"({subarray_node_low.csp_subarray_leaf_node.dev_name()}) "
         "is expected to be in FAULT obstate",
     ).within_timeout(TIMEOUT).has_change_event_occurred(
-        subarray_node_low.sdp_subarray_leaf_node,
-        "sdpSubarrayObsState",
+        subarray_node_low.csp_subarray_leaf_node,
+        "cspSubarrayObsState",
         ObsState.FAULT,
     )
 
     # Resetting defect for teardown.
-    sdp_sim.SetDefective(json.dumps(RESET_DEFECT))
+    csp_sim.SetDefective(json.dumps(RESET_DEFECT))
     event_tracer.clear_events()
 
 
@@ -245,7 +245,7 @@ def check_obs_state_ready_for_leaf_nodes(
     """
     # Subscribing to events
     event_tracer.subscribe_event(
-        subarray_node_low.csp_subarray_leaf_node, "cspSubarrayObsState"
+        subarray_node_low.sdp_subarray_leaf_node, "sdpSubarrayObsState"
     )
     event_tracer.subscribe_event(
         subarray_node_low.mccs_subarray_leaf_node, "obsState"
@@ -254,12 +254,12 @@ def check_obs_state_ready_for_leaf_nodes(
     assert_that(event_tracer).described_as(
         'FAILED ASSUMPTION IN "THEN" STEP: '
         "'the command is executed successfully on other sub-systems'"
-        "CSP Subarray Leaf Node device"
-        f"({subarray_node_low.csp_subarray_leaf_node.dev_name()}) "
+        "SDP Subarray Leaf Node device"
+        f"({subarray_node_low.sdp_subarray_leaf_node.dev_name()}) "
         "is expected to be in READY obstate",
     ).within_timeout(TIMEOUT).has_change_event_occurred(
-        subarray_node_low.csp_subarray_leaf_node,
-        "cspSubarrayObsState",
+        subarray_node_low.sdp_subarray_leaf_node,
+        "sdpSubarrayObsState",
         ObsState.READY,
     )
     assert_that(event_tracer).described_as(
@@ -276,5 +276,5 @@ def check_obs_state_ready_for_leaf_nodes(
     event_tracer.clear_events()
 
     # Assisting teardown
-    _, sdp_sim = get_device_simulators(simulator_factory)
-    sdp_sim.SetDirectObsState(ObsState.READY)
+    csp_sim, _ = get_device_simulators(simulator_factory)
+    csp_sim.SetDirectObsState(ObsState.READY)
