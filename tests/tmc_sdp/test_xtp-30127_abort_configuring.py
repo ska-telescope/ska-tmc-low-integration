@@ -2,7 +2,7 @@
 import json
 
 import pytest
-from pytest_bdd import given, parsers, scenario, then, when
+from pytest_bdd import given, parsers, scenario, then
 from ska_control_model import ObsState
 from tango import DevState
 
@@ -108,12 +108,7 @@ def subarray_is_in_configuring_obsstate(
     )
 
 
-@when("I command it to Abort")
-def invoke_abort(subarray_node_low):
-    """
-    This method invokes abort command on tmc subarray
-    """
-    subarray_node_low.abort_subarray()
+# @when -> ../conftest.py
 
 
 @then("the SDP subarray transitions to ObsState ABORTED")

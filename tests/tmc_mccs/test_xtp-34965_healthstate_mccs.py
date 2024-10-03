@@ -1,12 +1,12 @@
 """Test case for verifying TMC TelescopeHealthState transition based on MCCS
  Controller HealthState."""
-import json
 
 import pytest
 from pytest_bdd import given, parsers, scenario, when
 from ska_tango_base.control_model import HealthState
 from tango import DevState
 
+from tests.conftest import adjust_controller_to_degraded_state
 from tests.resources.test_harness.central_node_low import CentralNodeWrapperLow
 from tests.resources.test_harness.constant import mccs_controller
 from tests.resources.test_harness.helpers import (
@@ -15,28 +15,6 @@ from tests.resources.test_harness.helpers import (
 from tests.resources.test_harness.simulator_factory import SimulatorFactory
 
 
-# Adjust the health thresholds on the controller to force it into DEGRADED
-# state
-def adjust_controller_to_degraded_state(controller):
-    """
-    Adjusts the health thresholds on the controller to
-      force it into DEGRADED state.
-
-    Args:
-        controller: The controller instance to adjust.
-
-    Returns:
-        None
-    """
-    health_params = {"stations_degraded_threshold": 0}
-    controller.healthModelParams = json.dumps(health_params)
-
-
-@pytest.mark.xfail(
-    reason="The test is marked as xfail due to existing issues"
-    + "with healthstate in MCCS, which prevent the controller from entering a"
-    + "DEGRADED state. This will be fix as part of skb-319."
-)
 @pytest.mark.tmc_mccs
 @scenario(
     "../features/tmc_mccs/xtp-34965_healthstate_mccs.feature",
@@ -99,7 +77,6 @@ def set_simulator_devices_health_states(
     devices: str,
     health_state: str,
     simulator_factory: SimulatorFactory,
-    controller,
 ):
     """Method to set the health state of specified simulator devices.
 
@@ -110,6 +87,11 @@ def set_simulator_devices_health_states(
           class.
         controller: The controller instance to adjust.
     """
+    # Fetch the controller from the simulator factory or define it
+    controller = get_device_simulator_with_given_name(
+        simulator_factory, ["mccs master"]
+    )[0]
+
     adjust_controller_to_degraded_state(controller)
     # Split the devices string into individual devices
     devices_list = devices.split(",")

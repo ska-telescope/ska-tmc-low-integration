@@ -10,7 +10,6 @@ from tests.resources.test_support.common_utils.tmc_helpers import (
 )
 
 
-@pytest.mark.skip(reason="MCCS v0.14.0 would solve the start_time key error")
 @pytest.mark.tmc_mccs
 @scenario(
     "../features/tmc_mccs/xtp-31001_scan_mccs.feature",
@@ -99,9 +98,7 @@ def invoke_scan(
     input_str = prepare_json_args_for_commands(
         "scan_low", command_input_factory
     )
-    input_str = subarray_node_low.set_scan_id_and_start_time(
-        int(scan_id), input_str
-    )
+    input_str = subarray_node_low.set_scan_id(int(scan_id), input_str)
     subarray_node_low.store_scan_data(input_str)
 
 

@@ -8,7 +8,7 @@ from ska_tango_testing.mock.placeholders import Anything
 from tango import DevState
 
 from tests.resources.test_harness.constant import (
-    mccs_master_leaf_node,
+    mccs_controller,
     tmc_low_subarraynode1,
 )
 from tests.resources.test_harness.helpers import updated_assign_str
@@ -157,7 +157,7 @@ def central_node_receiving_error(event_recorder, central_node_low):
         central_node_low.central_node, "longRunningCommandResult", timeout=80.0
     )
     expected_long_running_command_result1 = (
-        f"{mccs_master_leaf_node}: Cannot allocate resources: 15"
+        f"{mccs_controller}: Cannot allocate resources: 15"
     )
     expected_long_running_command_result2 = (
         f"{tmc_low_subarraynode1}: Timeout has occurred, command failed"

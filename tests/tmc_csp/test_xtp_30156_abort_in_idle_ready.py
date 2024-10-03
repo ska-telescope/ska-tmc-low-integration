@@ -1,7 +1,7 @@
 """Module for TMC-CSP Abort command tests"""
 
 import pytest
-from pytest_bdd import given, parsers, scenario, then, when
+from pytest_bdd import given, parsers, scenario, then
 from ska_control_model import ObsState
 from tango import DevState
 
@@ -47,10 +47,7 @@ def subarray_in_given_obs_state(
     )
 
 
-@when("I command it to Abort")
-def abort_subarray(subarray_node_low):
-    """Abort command invoked on Subarray Node"""
-    subarray_node_low.abort_subarray()
+# @when -> ../conftest.py
 
 
 @then("the CSP subarray should go into an aborted obsState")
