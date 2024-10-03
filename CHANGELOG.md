@@ -38,6 +38,10 @@ Added
 
 Fixed
 -----
+[0.18.1]
+********
+* Updated Subarray Node v0.23.3 to fix SKB-512
+
 [0.17.3]
 * Updated Subarray Node v0.22.3 to resolve SKB-477.
 

@@ -243,11 +243,22 @@ class SubarrayNodeWrapperLow:
             command_name (str): Name of command to execute
         """
         if command_name is not None:
-            result, message = self.subarray_node.command_inout(
-                command_name, argin
-            )
-            LOGGER.info(f"Invoked {command_name} on SubarrayNode")
-            return result, message
+            if argin:
+                result, message = self.subarray_node.command_inout(
+                    command_name, argin
+                )
+                LOGGER.info(
+                    "Invoked %s on SubarrayNode with argin: %s",
+                    command_name,
+                    argin,
+                )
+                return result, message
+            else:
+                result, message = self.subarray_node.command_inout(
+                    command_name
+                )
+                LOGGER.info("Invoked %s on SubarrayNode.", command_name)
+                return result, message
 
     def set_subarray_id(self, requested_subarray_id: str) -> None:
         """This method creates subarray devices for the requested subarray
