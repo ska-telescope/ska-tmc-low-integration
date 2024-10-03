@@ -74,8 +74,8 @@ class TestAssignCommandNotAllowedPropagation:
         )
 
         exception_message = (
-            "The invocation of the AssignResources command is "
-            + "failed on Csp Subarray Device low-csp/subarray/01"
+            "The invocation of the AssignResources command failed on Csp "
+            + "Subarray Device low-csp/subarray/01"
         )
         log_events(
             {central_node_low.central_node: ["longRunningCommandResult"]}
@@ -147,10 +147,9 @@ class TestAssignCommandNotAllowedPropagation:
             {central_node_low.central_node: ["longRunningCommandResult"]}
         )
         exception_message = (
-            "Exception occurred on the following devices:"
-            + f" {low_sdp_subarray_leaf_node}:"
-            " ska_tmc_common.exceptions.CommandNotAllowed:"
-            " Command is not allowed\n\n"
+            "Exception occurred on the following devices: "
+            + f"{low_sdp_subarray_leaf_node}: ska_tmc_common.exceptions"
+            + ".CommandNotAllowed: Command is not allowed"
         )
         assert_that(event_tracer).described_as(
             "FAILED ASSUMPTION ATER ASSIGN RESOURCES: "
