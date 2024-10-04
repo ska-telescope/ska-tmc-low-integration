@@ -154,6 +154,8 @@ deviceServers:
   cspsubarrayleafnode:
     enabled: true
     file: "data/cspsubarrayleafnode.yaml"
+    TelmodelSource: gitlab://gitlab.com/ska-telescope/ska-telmodel-data?main#tmdata
+    TelmodelPath: instrument/ska1_low/layout/low-layout.json
     DelayCadence: 300.0
     DelayValidityPeriod: 600.0
     DelayModelTimeInAdvance: 600

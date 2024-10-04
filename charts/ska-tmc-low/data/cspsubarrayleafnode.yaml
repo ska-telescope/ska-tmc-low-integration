@@ -4,6 +4,8 @@ domain: general-monitoring
 instances: ["01"]
 entrypoints:
   - name: "ska_tmc_cspsubarrayleafnode.csp_subarray_leaf_node_low.CspSubarrayLeafNodeLow"
+{{- $TelmodelSource := .Values.deviceServers.cspsubarrayleafnode.TelmodelSource }}
+{{- $TelmodelPath := .Values.deviceServers.cspsubarrayleafnode.TelmodelPath }}
 {{- $DelayModelTimeInAdvance := .Values.deviceServers.cspsubarrayleafnode.DelayModelTimeInAdvance }}
 {{- $DelayCadence := .Values.deviceServers.cspsubarrayleafnode.DelayCadence }}
 {{- $DelayValidityPeriod := .Values.deviceServers.cspsubarrayleafnode.DelayValidityPeriod }}
@@ -21,6 +23,12 @@ server:
         devices:
           - name: "ska_low/tm_leaf_node/csp_subarray{{ printf "%02s" . }}"
             properties:
+              - name: "TelmodelSource"
+                values:
+                - "{{ $TelmodelSource }}"
+              - name: "TelmodelPath"
+                values:
+                - "{{ $TelmodelPath }}"
               - name: "CspSubarrayFQDN"
                 values:
                 - "{{ $csp_sa_fqdn_prefix }}/{{ printf "%02s" . }}"
