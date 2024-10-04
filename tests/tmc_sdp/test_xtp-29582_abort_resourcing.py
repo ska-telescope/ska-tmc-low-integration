@@ -2,7 +2,7 @@
 import time
 
 import pytest
-from pytest_bdd import given, scenario, then, when
+from pytest_bdd import given, scenario, then
 from ska_control_model import ObsState
 from tango import DevState
 
@@ -95,17 +95,12 @@ def telescope_is_in_resourcing_obsstate(
     csp_sim.ResetDelayInfo()
     mccs_subarray_sim.ResetDelayInfo()
     # The sleep is required here because subarraynode takes
-    # some time to processobsstate resourcing, resulting
+    # some time to process obsstate resourcing, resulting
     # in invocation of abort command in empty obsstate
     time.sleep(1.8)
 
 
-@when("I command it to Abort")
-def abort_is_invoked(subarray_node_low):
-    """
-    This method invokes abort command on tmc subarray
-    """
-    subarray_node_low.execute_transition("Abort")
+# @when -> ../conftest.py
 
 
 @then("the SDP subarray should go into an aborted obsstate")

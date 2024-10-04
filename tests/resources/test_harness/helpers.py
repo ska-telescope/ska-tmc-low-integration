@@ -599,6 +599,45 @@ def get_assign_json_id(input_json: str, json_id: str = "") -> list[str]:
         return [pb["pb_id"] for pb in input_json["sdp"]["processing_blocks"]]
 
 
+def retry_communication(device_proxy: DeviceProxy, timeout: int = 30) -> None:
+    """
+    Retry communication with the backend.
+
+    NOTE: This is to be used for devices that do not know if the backend is
+    available at the time of the call. For example, the daq_handler backend
+    gRPC server may not be ready when we try to start communicating.
+    In this case, we will retry connection.
+
+    :param device_proxy: A 'tango.DeviceProxy' to the backend device.
+    :param timeout: A max time in seconds before we give up trying
+    """
+    tick = 2
+    if device_proxy.adminMode != AdminMode.ONLINE:
+        terminate_time = time.time() + timeout
+        while time.time() < terminate_time:
+            try:
+                device_proxy.adminMode = AdminMode.ONLINE
+                if wait_and_validate_device_attribute_value(
+                    device=device_proxy,
+                    attribute_name="adminMode",
+                    expected_value=AdminMode.ONLINE,
+                    timeout=tick,
+                ):
+                    break
+            except tango.DevFailed:
+                print(
+                    f"{device_proxy.dev_name()} failed to communicate "
+                    "with backend."
+                )
+                time.sleep(tick)
+        assert device_proxy.adminMode == AdminMode.ONLINE
+    else:
+        print(
+            f"Device {device_proxy.dev_name()} is already ONLINE, "
+            "nothing to do."
+        )
+
+
 def set_admin_mode_values_mccs():
     """Set the adminMode values of MCCS devices."""
     max_retries: int = 3
@@ -609,32 +648,33 @@ def set_admin_mode_values_mccs():
             pasd_bus_trls = db.get_device_exported(mccs_pasdbus_prefix)
             for pasd_bus_trl in pasd_bus_trls:
                 pasdbus = tango.DeviceProxy(pasd_bus_trl)
-                if pasdbus.adminmode != AdminMode.ONLINE:
-                    pasdbus.adminmode = AdminMode.ONLINE
-                    time.sleep(0.1)
+                retry_communication(pasdbus, 30)
 
             device_trls = db.get_device_exported(mccs_prefix)
             devices = []
             for device_trl in device_trls:
                 if "daq" in device_trl or "calibrationstore" in device_trl:
-                    continue
-                device = tango.DeviceProxy(device_trl)
-                retry: int = 0
-                while (
-                    device.adminmode != AdminMode.ONLINE
-                    and retry <= max_retries
-                ):
-                    try:
-                        device.adminmode = AdminMode.ONLINE
-                        devices.append(device)
-                        time.sleep(0.1)
-                    except tango.DevFailed as df:
-                        LOGGER.info(
-                            "Issue occurred during setting the admin mode:%s",
-                            df,
-                        )
-                        retry += 1
-                        time.sleep(0.1)
+                    device = tango.DeviceProxy(device_trl)
+                    retry_communication(device, 30)
+                else:
+                    device = tango.DeviceProxy(device_trl)
+                    retry: int = 0
+                    while (
+                        device.adminMode != AdminMode.ONLINE
+                        and retry <= max_retries
+                    ):
+                        try:
+                            device.adminMode = AdminMode.ONLINE
+                            devices.append(device)
+                            time.sleep(0.1)
+                        except tango.DevFailed as df:
+                            LOGGER.info(
+                                "Issue occurred during setting the admin "
+                                "mode: %s",
+                                df,
+                            )
+                            retry += 1
+                            time.sleep(0.1)
 
 
 def set_receive_address(central_node):

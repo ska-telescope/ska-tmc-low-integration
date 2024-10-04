@@ -8,7 +8,7 @@ from typing import Generator
 
 import pytest
 import tango
-from pytest_bdd import given, parsers, then
+from pytest_bdd import given, parsers, then, when
 from ska_control_model import HealthState
 from ska_ser_logging import configure_logging
 from ska_tango_testing.integration import TangoEventTracer
@@ -288,3 +288,28 @@ def check_telescope_health_state(
         HealthState[telescope_health_state],
     ), f"Expected telescopeHealthState to be \
         {HealthState[telescope_health_state]}"
+
+
+@when("I command it to Abort")
+def invoke_abort(subarray_node_low):
+    """
+    This method invokes abort command on tmc subarray
+    """
+    subarray_node_low.abort_subarray()
+
+
+# Adjust the health thresholds on the controller to force it into DEGRADED
+# state
+def adjust_controller_to_degraded_state(controller):
+    """
+    Adjusts the health thresholds on the controller to
+      force it into DEGRADED state.
+
+    Args:
+        controller: The controller instance to adjust.
+
+    Returns:
+        None
+    """
+    health_params = {"stations_degraded_threshold": 0}
+    controller.healthModelParams = json.dumps(health_params)

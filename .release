@@ -1,6 +1,19 @@
-release=0.18.1
-tag=0.18.1
+release=0.19.0
+tag=0.19.0
 tag_description=
 **Charts:**
-**1. ska-tmc-low-integration 0.18.1**
-        * Updated Subarray Node v0.23.3 to fix SKB-512
+**1. ska-tmc-low-integration 0.18.1 - 0.19.0**
+
+    **1.1 ska-tmc-low - 0.18.0 - 0.19.0:
+       a. Utilised MCCS v0.16.2 and Resolved: SKB-319 and SKB-375.
+       b. Verification of SKB-424 is blocked due to SKB-589.
+       c. Utilised CSPLN v0.19.4, MCCSLN v0.4.3
+
+release_notes=
+**Charts:**
+**1. ska-tmc-low-integration 0.18.1 - 0.19.0**
+
+ **1.1 ska-tmc-low - 0.18.1 - 0.19.0:
+       a. Utilised MCCS v0.16.2 and Resolved: SKB-319 and SKB-375.
+       b. Verification of SKB-424 is blocked due to SKB-589.
+       c. Utilised CSPLN v0.19.4, MCCSLN v0.4.3
