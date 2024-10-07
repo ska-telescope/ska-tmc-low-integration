@@ -226,7 +226,7 @@ def invoke_end_command(
 
 @then("CSP Subarray Leaf Node stops generating delay values for PST Beams")
 def check_if_delay_values_are_not_generating(subarray_node_low) -> None:
-    """Check if delay values are stopped generating."""
+    """Check if PST Beam delay values are stopped generating."""
     assert wait_and_validate_device_attribute_value(
         subarray_node_low.csp_subarray_leaf_node,
         "delayModelPSTBeam1",
