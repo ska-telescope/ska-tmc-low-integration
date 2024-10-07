@@ -1,7 +1,4 @@
 """
-This module defines a Pytest BDD test scenario for checking the
-delay value generation during the Configure command execution on a
-Telescope Monitoring and Control (TMC) system.
 The scenario includes steps to set up the TMC, configure the subarray,
 and checks whether CspSubarrayLeafNode starts generating delay value for
 PST Beams.
