@@ -36,8 +36,8 @@
         ],
         "sky_coordinates": {
           "reference_frame": "ICRS",
-          "c1": 180,
-          "c2": 45
+          "c1": 180.0,
+          "c2": 45.0
         }
       }
     ]
@@ -126,11 +126,11 @@
             "stn_beam_id": 1,
             "stn_weights": [
               0.9,
-              1,
-              1,
-              1,
+              1.0,
+              1.0,
+              1.0,
               0.9,
-              1
+              1.0
             ]
           }
         ]
@@ -148,8 +148,8 @@
             "wt_nsamp": 32,
             "udp_nchan": 24,
             "num_frequency_channels": 432,
-            "centre_frequency": 200000000,
-            "total_bandwidth": 1562500,
+            "centre_frequency": 200000000.0,
+            "total_bandwidth": 1562500.0,
             "observation_mode": "VOLTAGE_RECORDER",
             "observer_id": "jdoe",
             "project_id": "project1",
@@ -165,18 +165,18 @@
             "feed_handedness": 1,
             "feed_angle": 1.234,
             "feed_tracking_mode": "FA",
-            "feed_position_angle": 10,
+            "feed_position_angle": 10.0,
             "oversampling_ratio": [
               8,
               7
             ],
             "coordinates": {
-              "equinox": 2000,
+              "equinox": 2000.0,
               "ra": "19:21:44.815",
               "dec": "21:53:02.400"
             },
-            "max_scan_length": 20000,
-            "subint_duration": 30,
+            "max_scan_length": 20000.0,
+            "subint_duration": 30.0,
             "receptors": [
               "receptor1",
               "receptor2"
@@ -190,7 +190,7 @@
               {
                 "num_filter_taps": 1,
                 "filter_coefficients": [
-                  1
+                  1.0
                 ],
                 "num_frequency_channels": 1024,
                 "oversampling_ratio": [
@@ -201,7 +201,7 @@
               {
                 "num_filter_taps": 1,
                 "filter_coefficients": [
-                  1
+                  1.0
                 ],
                 "num_frequency_channels": 256,
                 "oversampling_ratio": [
@@ -216,6 +216,6 @@
     }
   },
   "tmc": {
-    "scan_duration": 10
+    "scan_duration": 10.0
   }
 }
