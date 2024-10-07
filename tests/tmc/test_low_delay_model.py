@@ -181,11 +181,23 @@ def check_if_delay_values_are_generating(subarray_node_low) -> None:
             "delayModel"
         ).value
     )
+    generated_pst_delay_model = (
+        subarray_node_low.csp_subarray_leaf_node.read_attribute(
+            "delayModelPSTBeam1"
+        ).value
+    )
     generated_delay_model_json = json.loads(generated_delay_model)
     assert generated_delay_model_json != json.dumps(INITIAL_LOW_DELAY_JSON)
+    generated_pst_delay_model_json = json.loads(generated_pst_delay_model)
+    assert generated_pst_delay_model_json != json.dumps(INITIAL_LOW_DELAY_JSON)
     telmodel_validate(
         version=LOW_DELAYMODEL_VERSION,
         config=generated_delay_model_json,
+        strictness=2,
+    )
+    telmodel_validate(
+        version=LOW_DELAYMODEL_VERSION,
+        config=generated_pst_delay_model_json,
         strictness=2,
     )
 
