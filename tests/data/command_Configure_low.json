@@ -5,7 +5,7 @@
     "subarray_beams": [
       {
         "subarray_beam_id": 1,
-        "update_rate": 0,
+        "update_rate": 0.0,
         "logical_bands": [
           {
             "start_channel": 80,
