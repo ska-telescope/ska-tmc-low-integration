@@ -88,14 +88,14 @@ cspmasterleafnode:
   image:
     registry: artefact.skao.int
     image: ska-tmc-cspleafnodes
-    tag: 0.19.4
+    tag: 0.21.1
     pullPolicy: IfNotPresent
 
 cspsubarrayleafnode:
   image:
     registry: artefact.skao.int
     image: ska-tmc-cspleafnodes
-    tag: 0.19.4
+    tag: 0.21.1
     pullPolicy: IfNotPresent
 
 
@@ -154,9 +154,14 @@ deviceServers:
   cspsubarrayleafnode:
     enabled: true
     file: "data/cspsubarrayleafnode.yaml"
+    TelmodelSource: gitlab://gitlab.com/ska-telescope/ska-telmodel-data?main#tmdata
+    TelmodelPath: instrument/ska1_low/layout/low-layout.json
     DelayCadence: 300.0
     DelayValidityPeriod: 600.0
     DelayModelTimeInAdvance: 600
+    PSTDelayCadence: 300.0
+    PSTDelayValidityPeriod: 600.0
+    PSTDelayModelTimeInAdvance: 600
 
   mccsmasterleafnode:
     enabled: true

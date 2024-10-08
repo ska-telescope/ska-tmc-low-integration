@@ -7,6 +7,12 @@ This project adheres to `Semantic Versioning <http://semver.org/>`_.
 
 Added
 -----
+[0.20.0-rc]
+* Integrate TMC CSPLeafNodes version 0.21.1 to support PST Beam Delay Calculation
+* Update TMC Configure JSON to support Delay Calculation for PST Beams
+* Dependency Update:
+* CSPLN: v0.21.1
+
 [0.19.0]
 * MCCS Chart Update: Utilized the latest MCCS chart v0.16.2 for enhanced functionality and stability.
 * TMC-MCCS Pairwise Testing: Added test cases for Abort-Restart commands as part of TMC-MCCS pairwise integration testing but due to SKB-589 it is skipped.

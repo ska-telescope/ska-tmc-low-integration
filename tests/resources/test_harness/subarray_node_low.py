@@ -26,6 +26,7 @@ from tests.resources.test_harness.helpers import (
     SIMULATED_DEVICES_DICT,
     check_subarray_obs_state,
     update_eb_pb_ids,
+    wait_for_partial_or_complete_abort,
 )
 from tests.resources.test_harness.utils.common_utils import JsonFactory
 from tests.resources.test_harness.utils.constant import (
@@ -421,20 +422,21 @@ class SubarrayNodeWrapperLow:
             ObsState.CONFIGURING,
             ObsState.RESOURCING,
         ]:
-            """Invoke Abort and Restart"""
+            # Invoke Abort and Restart
             LOGGER.info("Invoking Abort on Subarray")
-            self.abort_subarray()
+            self.execute_transition("Abort")
+            wait_for_partial_or_complete_abort()
             self.restart_subarray()
-        elif self.subarray_node.obsState == ObsState.ABORTED:
-            """Invoke Restart"""
+        elif self.subarray_node.obsState in [ObsState.ABORTED, ObsState.FAULT]:
+            # Invoke Restart
             LOGGER.info("Invoking Restart on Subarray")
             self.restart_subarray()
         elif self.subarray_node.obsState == ObsState.IDLE:
-            """Invoke Release"""
+            # Invoke Release
             LOGGER.info("Invoking Release Resources on Subarray")
             self.release_resources(self.release_input)
         elif self.subarray_node.obsState == ObsState.READY:
-            """Invoke End"""
+            # Invoke End
             LOGGER.info("Invoking End command on Subarray")
             self.end_observation()
             self.release_resources(self.release_input)

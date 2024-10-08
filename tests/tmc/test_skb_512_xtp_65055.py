@@ -34,7 +34,6 @@ from tests.resources.test_support.constant_low import (
 
 
 @pytest.mark.SKA_low
-@pytest.mark.temp
 @scenario(
     "../features/tmc/SKB_512.feature",
     "TMC executes EndScan on other sub-systems even if one sub-system goes "
@@ -232,7 +231,6 @@ def invoke_endscan_with_a_device_going_to_fault(
 def check_obs_state_ready_for_leaf_nodes(
     event_tracer: TangoEventTracer,
     subarray_node_low: SubarrayNodeWrapperLow,
-    simulator_factory: SimulatorFactory,
 ):
     """Method to check observation state of subarray leaf nodes
     after EndScan command.
@@ -274,7 +272,3 @@ def check_obs_state_ready_for_leaf_nodes(
         ObsState.READY,
     )
     event_tracer.clear_events()
-
-    # Assisting teardown
-    csp_sim, _ = get_device_simulators(simulator_factory)
-    csp_sim.SetDirectObsState(ObsState.READY)
