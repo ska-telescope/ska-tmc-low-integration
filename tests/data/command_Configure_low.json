@@ -22,16 +22,8 @@
             "weighting_key_ref": "aperture2"
           },
           {
-            "aperture_id": "AP001.02",
-            "weighting_key_ref": "aperture3"
-          },
-          {
             "aperture_id": "AP002.01",
             "weighting_key_ref": "aperture2"
-          },
-          {
-            "aperture_id": "AP002.02",
-            "weighting_key_ref": "aperture3"
           }
         ],
         "sky_coordinates": {
