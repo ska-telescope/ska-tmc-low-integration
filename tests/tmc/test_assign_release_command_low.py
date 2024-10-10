@@ -27,7 +27,7 @@ from tests.resources.test_support.constant_low import (
 )
 
 
-@pytest.mark.SKA_low
+@pytest.mark.skb_528
 def test_assign_release_defective_csp(
     central_node_low: CentralNodeWrapperLow,
     event_tracer: TangoEventTracer,
