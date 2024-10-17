@@ -776,9 +776,7 @@ def remove_timing_beams(configure_json: str) -> str:
     """
     config_dict = json.loads(configure_json)
     if "csp" in config_dict and "lowcbf" in config_dict["csp"]:
-        config_dict["csp"]["lowcbf"].pop(
-            "timing_beams", None
-        )  # Remove timing_beams if it exists
+        config_dict["csp"]["lowcbf"].pop("timing_beams", None)
     return json.dumps(config_dict)
 
 
