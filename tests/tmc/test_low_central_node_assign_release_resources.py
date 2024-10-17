@@ -30,6 +30,16 @@ from tests.resources.test_support.constant_low import (
     RESET_DEFECT,
     TIMEOUT,
 )
+from tests.tmc.conftest import (
+    create_simulators,
+    prepare_command_json,
+    prepare_resource_json,
+    subscribe_to_events,
+    verify_assigned_resources,
+    verify_empty_assigned_resources,
+    verify_initial_state,
+    verify_release_resources,
+)
 
 
 class TestLowCentralNodeAssignResources:
@@ -59,27 +69,17 @@ class TestLowCentralNodeAssignResources:
         - "command_input_factory": fixture for JsonFactory class,
         which provides json files for CentralNode
         """
-        assign_input_json = prepare_json_args_for_centralnode_commands(
+        assign_input_json = prepare_command_json(
             "assign_resources_low", command_input_factory
         )
-
-        release_resource_json = prepare_json_args_for_centralnode_commands(
+        release_resource_json = prepare_command_json(
             "release_resources_low", command_input_factory
         )
 
-        assigned_resources_json = {
-            "subarray_beam_ids": ["some_id"],
-            "station_ids": ["station1", "station2"],
-            "apertures": ["AP001.01", "AP001.02"],
-            "channels": [32],
-        }
-
-        assigned_resources_json_empty = {
-            "subarray_beam_ids": [],
-            "station_ids": [],
-            "apertures": [],
-            "channels": [0],
-        }
+        (
+            assigned_resources_json,
+            assigned_resources_json_empty,
+        ) = prepare_resource_json()
 
         # Update transaction and subarray ID
         assign_input_json["transaction_id"] = "txn-....-00002"
@@ -92,147 +92,51 @@ class TestLowCentralNodeAssignResources:
         )
 
         # Create simulator devices
-        csp_subarray_sim = simulator_factory.get_or_create_simulator_device(
-            SimulatorDeviceType.LOW_CSP_DEVICE
-        )
-        sdp_subarray_sim = simulator_factory.get_or_create_simulator_device(
-            SimulatorDeviceType.LOW_SDP_DEVICE
-        )
-        mccs_controller_sim = simulator_factory.get_or_create_simulator_device(
-            SimulatorDeviceType.MCCS_MASTER_DEVICE
-        )
-        mccs_subarray_sim = simulator_factory.get_or_create_simulator_device(
-            SimulatorDeviceType.MCCS_SUBARRAY_DEVICE
-        )
+        simulators = create_simulators(simulator_factory)
 
         # Subscribe to events
-        for sim in [
-            csp_subarray_sim,
-            sdp_subarray_sim,
-            mccs_controller_sim,
-            mccs_subarray_sim,
-        ]:
-            event_tracer.subscribe_event(sim, "State")
-            event_tracer.subscribe_event(sim, "obsState")
-        event_tracer.subscribe_event(
-            central_node_low.central_node, "telescopeState"
-        )
-        event_tracer.subscribe_event(
-            central_node_low.subarray_node, "obsState"
-        )
-        event_tracer.subscribe_event(
-            central_node_low.subarray_node, "assignedResources"
-        )
-        event_tracer.subscribe_event(
-            central_node_low.central_node, "longRunningCommandResult"
-        )
+        subscribe_to_events(event_tracer, simulators, central_node_low)
 
         # Execute ON Command
         central_node_low.move_to_on()
-
-        assert_that(event_tracer).within_timeout(
-            TIMEOUT
-        ).has_change_event_occurred(csp_subarray_sim, "State", DevState.ON)
-        assert_that(event_tracer).within_timeout(
-            TIMEOUT
-        ).has_change_event_occurred(mccs_controller_sim, "State", DevState.ON)
-        assert_that(event_tracer).within_timeout(
-            TIMEOUT
-        ).has_change_event_occurred(
-            central_node_low.central_node, "telescopeState", DevState.ON
+        verify_initial_state(
+            event_tracer, simulators, central_node_low, TIMEOUT
         )
 
         # Execute Assign command
         _, unique_id = central_node_low.perform_action(
             "AssignResources", assign_input_json
         )
-        mccs_subarray_sim.SetDirectassignedResources(
+        simulators["mccs_subarray_sim"].SetDirectassignedResources(
             assigned_resources_json_str
         )
 
-        assert_that(event_tracer).within_timeout(
-            TIMEOUT
-        ).has_change_event_occurred(
-            sdp_subarray_sim, "obsState", ObsState.IDLE
-        )
-        assert_that(event_tracer).within_timeout(
-            TIMEOUT
-        ).has_change_event_occurred(
-            csp_subarray_sim, "obsState", ObsState.IDLE
-        )
-        assert_that(event_tracer).within_timeout(
-            TIMEOUT
-        ).has_change_event_occurred(
-            mccs_subarray_sim, "obsState", ObsState.IDLE
-        )
-        assert_that(event_tracer).within_timeout(
-            TIMEOUT
-        ).has_change_event_occurred(
-            central_node_low.subarray_node, "obsState", ObsState.IDLE
-        )
-        assert_that(event_tracer).within_timeout(
-            TIMEOUT
-        ).has_change_event_occurred(
-            central_node_low.central_node,
-            "longRunningCommandResult",
-            (
-                unique_id[0],
-                json.dumps((int(ResultCode.OK), "Command Completed")),
-            ),
-        )
-        assert_that(event_tracer).within_timeout(
-            TIMEOUT
-        ).has_change_event_occurred(
-            central_node_low.subarray_node,
-            "assignedResources",
-            (assigned_resources_json_str,),
+        verify_assigned_resources(
+            event_tracer,
+            simulators,
+            central_node_low,
+            unique_id,
+            assigned_resources_json_str,
+            TIMEOUT,
         )
 
         # Execute release command
         _, unique_id = central_node_low.perform_action(
             "ReleaseResources", release_resource_json
         )
-        assert_that(event_tracer).within_timeout(
-            TIMEOUT
-        ).has_change_event_occurred(
-            sdp_subarray_sim, "obsState", ObsState.EMPTY
-        )
-        assert_that(event_tracer).within_timeout(
-            TIMEOUT
-        ).has_change_event_occurred(
-            csp_subarray_sim, "obsState", ObsState.EMPTY
-        )
-        assert_that(event_tracer).within_timeout(
-            TIMEOUT
-        ).has_change_event_occurred(
-            mccs_subarray_sim, "obsState", ObsState.EMPTY
-        )
-        assert_that(event_tracer).within_timeout(
-            TIMEOUT
-        ).has_change_event_occurred(
-            central_node_low.subarray_node, "obsState", ObsState.EMPTY
-        )
-        assert_that(event_tracer).within_timeout(
-            TIMEOUT
-        ).has_change_event_occurred(
-            central_node_low.central_node,
-            "longRunningCommandResult",
-            (
-                unique_id[0],
-                json.dumps((int(ResultCode.OK), "Command Completed")),
-            ),
+        verify_release_resources(
+            event_tracer, simulators, central_node_low, unique_id, TIMEOUT
         )
 
         # Setting Assigned Resources empty
-        mccs_subarray_sim.SetDirectassignedResources(
+        simulators["mccs_subarray_sim"].SetDirectassignedResources(
             assigned_resources_json_empty_str
         )
-        assert_that(event_tracer).within_timeout(
-            TIMEOUT
-        ).has_change_event_occurred(
-            central_node_low.subarray_node,
-            "assignedResources",
-            (assigned_resources_json_empty_str,),
+        verify_empty_assigned_resources(
+            event_tracer,
+            central_node_low,
+            assigned_resources_json_empty_str,
+            TIMEOUT,
         )
 
     @pytest.mark.SKA_low
