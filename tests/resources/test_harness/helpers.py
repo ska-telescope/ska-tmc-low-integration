@@ -742,6 +742,41 @@ def updated_assign_str(assign_json: str, station_id: int) -> str:
     return updated_assign_str
 
 
+def get_subarray_id(scan_json: str, subarray_id: int) -> dict:
+    """
+    Adds subarray_id to the scan JSON if provided.
+
+    Args:
+        scan_json (str): The original scan JSON as a string.
+        subarray_id (int): The subarray ID to add to the JSON.
+
+    Returns:
+        dict: The modified JSON with subarray_id added.
+    """
+    scan_json = json.loads(scan_json)
+    if subarray_id is not None:
+        scan_json["subarray_id"] = subarray_id  # Add the subarray_id
+    return scan_json
+
+
+def remove_timing_beams(configure_json: str) -> str:
+    """
+    Removes the 'timing_beams' key from the configure JSON.
+
+    Args:
+        configure_json (str): Original JSON string.
+
+    Returns:
+        str: Modified JSON string without 'timing_beams'.
+    """
+    config_dict = json.loads(configure_json)
+    if "csp" in config_dict and "lowcbf" in config_dict["csp"]:
+        config_dict["csp"]["lowcbf"].pop(
+            "timing_beams", None
+        )  # Remove timing_beams if it exists
+    return json.dumps(config_dict)
+
+
 def wait_for_partial_or_complete_abort(timeout: int = 110) -> None:
     """Wait for completion of Partial/Full abort on SubarrayNode by waiting for
     one of 3 states on all the devices - ABORTED, EMPTY or FAULT until

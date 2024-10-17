@@ -16,6 +16,7 @@ from ska_tango_testing.integration import TangoEventTracer, log_events
 from tango import DevState
 
 from tests.resources.test_harness.central_node_low import CentralNodeWrapperLow
+from tests.resources.test_harness.helpers import get_subarray_id
 from tests.resources.test_harness.subarray_node_low import (
     SubarrayNodeWrapperLow,
 )
@@ -27,7 +28,7 @@ from tests.resources.test_support.common_utils.tmc_helpers import (
 from tests.resources.test_support.constant_low import TIMEOUT
 
 
-@pytest.mark.SKA_low
+@pytest.mark.SKA_low1
 @scenario(
     "../features/tmc/SKB_477.feature",
     "Verify SKB-477 - with TMC entrypoint",
@@ -188,8 +189,9 @@ def invoke_scan_with_subarray_id(
         node wrapper
     """
     scan_input_json = prepare_json_args_for_commands(
-        "Scan_low_with_subarray_id_key", command_input_factory
+        "scan_low", command_input_factory
     )
+    scan_input_json = get_subarray_id(scan_input_json, subarray_id=1)
     pytest.result, _ = subarray_node_low.subarray_node.Scan(scan_input_json)
 
 
