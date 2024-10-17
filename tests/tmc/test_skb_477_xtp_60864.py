@@ -191,8 +191,16 @@ def invoke_scan_with_subarray_id(
     scan_input_json = prepare_json_args_for_commands(
         "scan_low", command_input_factory
     )
+    # Add subarray_id and convert back to string
     scan_input_json = get_subarray_id(scan_input_json, subarray_id=1)
-    pytest.result, _ = subarray_node_low.subarray_node.Scan(scan_input_json)
+
+    # Convert the modified dict back to JSON string
+    scan_input_json_str = json.dumps(scan_input_json)
+
+    # Invoke the Scan command with the correct input format (string)
+    pytest.result, _ = subarray_node_low.subarray_node.Scan(
+        scan_input_json_str
+    )
 
 
 @then("TMC SubarrayNode raises exception with ResultCode.REJECTED")

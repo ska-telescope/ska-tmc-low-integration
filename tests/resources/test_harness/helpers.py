@@ -753,10 +753,15 @@ def get_subarray_id(scan_json: str, subarray_id: int) -> dict:
     Returns:
         dict: The modified JSON with subarray_id added.
     """
-    scan_json = json.loads(scan_json)
+    # Parse the JSON string into a dict
+    scan_json_dict = json.loads(scan_json)
+
+    # Add the subarray_id to the JSON
     if subarray_id is not None:
-        scan_json["subarray_id"] = subarray_id  # Add the subarray_id
-    return scan_json
+        scan_json_dict["subarray_id"] = subarray_id  # Add the subarray_id
+
+    # Return the modified dict
+    return scan_json_dict
 
 
 def remove_timing_beams(configure_json: str) -> str:
