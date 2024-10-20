@@ -1,3 +1,4 @@
+import copy
 import json
 import logging
 import os
@@ -774,10 +775,18 @@ def remove_timing_beams(configure_json: str) -> str:
     Returns:
         str: Modified JSON string without 'timing_beams'.
     """
+    # Load the JSON string into a Python dictionary
     config_dict = json.loads(configure_json)
-    if "csp" in config_dict and "lowcbf" in config_dict["csp"]:
-        config_dict["csp"]["lowcbf"].pop("timing_beams", None)
-    return json.dumps(config_dict)
+
+    # Create a deep copy of the dictionary to avoid modifying the original
+    config_dict_copy = copy.deepcopy(config_dict)
+
+    # Remove 'timing_beams' if it exists in the dictionary
+    if "timing_beams" in config_dict_copy["csp"]["lowcbf"]:
+        del config_dict_copy["csp"]["lowcbf"]["timing_beams"]
+
+    # Convert the modified dictionary back into a JSON string
+    return json.dumps(config_dict_copy, indent=4)
 
 
 def wait_for_partial_or_complete_abort(timeout: int = 110) -> None:
