@@ -16,7 +16,8 @@ from ska_tango_testing.integration import TangoEventTracer, log_events
 from tango import DevState
 
 from tests.resources.test_harness.central_node_low import CentralNodeWrapperLow
-from tests.resources.test_harness.helpers import remove_timing_beams
+
+# from tests.resources.test_harness.helpers import remove_timing_beams
 from tests.resources.test_harness.subarray_node_low import (
     SubarrayNodeWrapperLow,
 )
@@ -28,7 +29,7 @@ from tests.resources.test_support.common_utils.tmc_helpers import (
 from tests.resources.test_support.constant_low import TIMEOUT
 
 
-@pytest.mark.SKA_low
+@pytest.mark.SKA_low1
 @scenario(
     "../features/tmc/SKB_476.feature",
     "Verify SKB-476",
@@ -144,15 +145,12 @@ def check_configure_json_and_invoke_command(
         node wrapper
         key (str): key that should be present in configure json
     """
-    configure_input_json = prepare_json_args_for_commands(
-        "configure_low", command_input_factory
-    )
-    # Remove timing beams from the original JSON
-    config_json = remove_timing_beams(configure_input_json)
 
-    # Verify that the specified key is not in the modified JSON
-    assert key not in json.loads(config_json)["csp"]["lowcbf"].keys()
-    subarray_node_low.store_configuration_data(config_json)
+    configure_input_json = prepare_json_args_for_commands(
+        "configure_low_without_timing_beams", command_input_factory
+    )
+    assert key not in json.loads(configure_input_json)["csp"]["lowcbf"].keys()
+    subarray_node_low.store_configuration_data(configure_input_json)
 
 
 @then("subarray node transitions to observation state READY")
