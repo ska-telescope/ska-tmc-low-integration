@@ -161,7 +161,6 @@ def check_tmc_sdp_subarray_idle(
 def tmc_assign_resources_with_duplicate_id(
     duplicate_id: str,
     input_json1: str,
-    json_id: str,  # Add json_id as a parameter
     central_node_low: CentralNodeWrapperLow,
     event_recorder: EventRecorder,
 ):
@@ -187,7 +186,7 @@ def tmc_assign_resources_with_duplicate_id(
             input_json1
         )
     )
-
+    json_id: str = ""
     # Introduce duplicate ids based on the type and json_id
     if duplicate_id == "eb_id":
         # Create a duplicate eb_id by concatenating the original eb_id with
