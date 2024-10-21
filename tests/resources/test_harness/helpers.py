@@ -13,7 +13,7 @@ from ska_ser_logging import configure_logging
 from ska_tango_base.commands import ResultCode
 from ska_tango_base.control_model import HealthState
 from ska_tango_testing.mock.placeholders import Anything
-from tango import DeviceData, DeviceProxy
+from tango import DeviceProxy
 
 from tests.resources.test_harness.constant import (
     INTERMEDIATE_CONFIGURING_OBS_STATE_DEFECT,
@@ -789,22 +789,17 @@ def remove_timing_beams(configure_json: str) -> str:
     return json.dumps(config_dict_copy, indent=4)
 
 
-def assignresources_json(assign_json: str) -> tuple:
+def assignresources_json(assign_json: str) -> dict:
     """
-    Generate a DeviceData object for assigned resources based on the input
-    JSON.
+    Generate a JSON structure for assigned resources based on the input JSON.
 
     Args:
         assign_json (str): The input JSON string containing resource
         assignments.
 
     Returns:
-        tuple: A tuple containing:
-            - DeviceData: A DeviceData object representing the assigned
-            resources,
-              including interface, subarray beam IDs, station IDs,
-              apertures, and channels.
-            - dict: The original assigned resources dictionary.
+        dict: A dictionary representing the assigned resources, including
+        interface,  subarray beam IDs, station IDs, apertures, and channels.
     """
     # Parse the input JSON string into a Python dictionary
     assign_json_dict = json.loads(assign_json)
@@ -836,12 +831,7 @@ def assignresources_json(assign_json: str) -> tuple:
         ["AP001.02", "AP002.02", "AP003.01"]
     )  # Add new apertures
 
-    # Convert the dictionary to a DeviceData object
-    device_data = DeviceData()
-    for key, value in assign_json1.items():
-        device_data.insert(key, value)
-
-    return device_data, assign_json1
+    return assign_json1
 
 
 def update_json_with_empty_values(assign_json: str) -> dict:
