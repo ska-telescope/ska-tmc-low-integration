@@ -136,20 +136,26 @@ deviceServers:
     MccsConfigureInterfaceURL: "https://schema.skao.int/ska-low-mccs-configure/1.0"
     MccsScanInterfaceURL: "https://schema.skao.int/ska-low-mccs-scan/3.0"
     JonesURI: "tango://jones.skao.int/low/stn-beam/1"
+    SleepTime: 1
+
 
   sdpsubarrayleafnode:
     enabled: true
     file: "data/sdpsubarrayleafnode.yaml"
+    SleepTime: 1
+
 
   sdpmasterleafnode:
     enabled: true
     instances: ["01"]
     file: "data/sdpmasterleafnode.yaml"
+    SleepTime: 1
 
   cspmasterleafnode:
     enabled: true
     instances: ["01"]
     file: "data/cspmasterleafnode.yaml"
+    SleepTime: 1
 
   cspsubarrayleafnode:
     enabled: true
@@ -162,15 +168,21 @@ deviceServers:
     PSTDelayCadence: 300.0
     PSTDelayValidityPeriod: 600.0
     PSTDelayModelTimeInAdvance: 600
+    SleepTime: 1
+
 
   mccsmasterleafnode:
     enabled: true
     instances: ["01"]
     file: "data/mccsmasterleafnode.yaml"
+    SleepTime: 1
+
 
   mccssubarrayleafnode:
     enabled: true
     file: "data/mccssubarrayleafnode.yaml"
+    SleepTime: 1
+
 
   mocks:
     enabled: false
