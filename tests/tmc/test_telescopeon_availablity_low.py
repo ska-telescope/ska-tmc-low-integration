@@ -25,7 +25,7 @@ from tests.resources.test_support.constant_low import (
 def test_assign(json_factory):
     """AssignResources  is executed while pods are deleted."""
 
-    assign_json = json_factory("command_assign_resource_low")
+    assign_json = json_factory("assign_resource_low")
     central_node = DeviceProxy(centralnode)
     _, message = central_node.AssignResources(assign_json)
     assert "Subarray ska_low/tm_subarray_node/1 is not available" in str(
@@ -38,7 +38,7 @@ def test_assign(json_factory):
 def test_release(json_factory):
     """ReleaseResources is executed while pods are deleted."""
 
-    release_json = json_factory("command_release_resource_low")
+    release_json = json_factory("release_resource_low")
     central_node = DeviceProxy(centralnode)
     _, message = central_node.ReleaseResources(release_json)
 
@@ -65,7 +65,7 @@ def test_telescope_on():
 @pytest.mark.SKA_low
 def test_assign_sn_entrypoint_low(json_factory):
     """AssignResources is executed while pods are deleted."""
-    assign_json = json_factory("command_assign_resource_low")
+    assign_json = json_factory("assign_resource_low")
 
     tmcsubarraynode1 = DeviceProxy(tmc_subarraynode1)
     with pytest.raises(Exception) as info:
