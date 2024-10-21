@@ -789,23 +789,37 @@ def remove_timing_beams(configure_json: str) -> str:
     return json.dumps(config_dict_copy, indent=4)
 
 
-def assignresources_json(assign_json: str):
+def assignresources_json(assign_json: str) -> dict:
+    """
+    Generate a JSON structure for assigned resources based on the input JSON.
+
+    Args:
+        assign_json (str): The input JSON string containing resource
+        assignments.
+
+    Returns:
+        dict: A dictionary representing the assigned resources, including
+        interface, subarray beam IDs, station IDs, apertures, and channels.
+    """
+    # Parse the input JSON string into a Python dictionary
+    assign_json_dict = json.loads(assign_json)
+
     assign_json1 = {
         "interface": (
             "https://schema.skao.int/ska-low-mccs-assignedresources/1.0"
         ),
         "subarray_beam_ids": [
             beam["subarray_beam_id"]
-            for beam in assign_json["mccs"]["subarray_beams"]
+            for beam in assign_json_dict["mccs"]["subarray_beams"]
         ],
         "station_ids": [
             str(aperture["station_id"])
-            for beam in assign_json["mccs"]["subarray_beams"]
+            for beam in assign_json_dict["mccs"]["subarray_beams"]
             for aperture in beam["apertures"]
         ],
         "apertures": [
             aperture["aperture_id"]
-            for beam in assign_json["mccs"]["subarray_beams"]
+            for beam in assign_json_dict["mccs"]["subarray_beams"]
             for aperture in beam["apertures"]
         ],
         "channels": [32],
@@ -820,8 +834,17 @@ def assignresources_json(assign_json: str):
     return assign_json1
 
 
-# Function to update the given JSON and set specific values to empty
-def update_json_with_empty_values(assign_json: str):
+def update_json_with_empty_values(assign_json: str) -> dict:
+    """
+    Update the given JSON to set specific fields to empty values.
+
+    Args:
+        assign_json (str): The input JSON string to be updated.
+
+    Returns:
+        dict: A dictionary representing the updated JSON with specified fields
+        set to empty.
+    """
     # Parse the input JSON string into a Python dictionary
     assign_json1 = json.loads(assign_json)
 
