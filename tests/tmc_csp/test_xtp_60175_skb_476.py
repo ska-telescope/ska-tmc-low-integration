@@ -18,6 +18,7 @@ from tango import DevState
 from tests.resources.test_harness.central_node_with_csp_low import (
     CentralNodeCspWrapperLow,
 )
+from tests.resources.test_harness.helpers import remove_timing_beams
 from tests.resources.test_harness.subarray_node_with_csp_low import (
     SubarrayNodeCspWrapperLow,
 )
@@ -216,11 +217,19 @@ def check_configure_json_and_invoke_command(
         node wrapper
         key (str): key that should be present in configure json
     """
+    # Prepare initial JSON input for the configure command
     configure_input_json = prepare_json_args_for_commands(
-        "configure_low_without_timing_beams", command_input_factory
+        "configure_low", command_input_factory
     )
-    assert key not in json.loads(configure_input_json)["csp"]["lowcbf"].keys()
-    subarray_node_real_csp_low.store_configuration_data(configure_input_json)
+
+    # Remove the 'timing_beams' from the configure input JSON
+    config_json = remove_timing_beams(configure_input_json)
+
+    # Check if the 'key' is not present in the modified configure JSON
+    assert key not in json.loads(config_json)["csp"]["lowcbf"].keys()
+
+    # Invoke the command on the subarray node with the modified JSON
+    subarray_node_real_csp_low.store_configuration_data(config_json)
 
 
 @then("csp subbaray node transitions to observation state READY")

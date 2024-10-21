@@ -19,7 +19,7 @@ from tests.resources.test_harness.helpers import (
 )
 
 
-@pytest.mark.tmc_sdp
+@pytest.mark.tmc_sdp1
 @scenario(
     "../features/tmc_sdp/xtp_34886_sdp_json_error_duplicate_id.feature",
     "TMC Subarray report the exception triggered by the SDP subarray "
@@ -161,6 +161,7 @@ def check_tmc_sdp_subarray_idle(
 def tmc_assign_resources_with_duplicate_id(
     duplicate_id: str,
     input_json1: str,
+    json_id: str,  # Add json_id as a parameter
     central_node_low: CentralNodeWrapperLow,
     event_recorder: EventRecorder,
 ):
@@ -179,19 +180,36 @@ def tmc_assign_resources_with_duplicate_id(
         central_node_low.sdp_subarray_leaf_node,
         "longRunningCommandResult",
     )
-    json_id: str = ""
-    if duplicate_id == "eb_id":
-        json_id = "pb_id"
-    else:
-        json_id = "eb_id"
+
+    # Load the original JSON
     assign_input = (
         central_node_low.json_factory.create_centralnode_configuration(
             input_json1
         )
     )
+
+    # Introduce duplicate ids based on the type and json_id
+    if duplicate_id == "eb_id":
+        # Create a duplicate eb_id by concatenating the original eb_id with
+        # json_id
+        assign_input["sdp"]["execution_block"]["eb_id"] = (
+            assign_input["sdp"]["execution_block"]["eb_id"] + f"-{json_id}"
+        )  # Duplicate eb_id
+    elif duplicate_id == "pb_id":
+        # Create a duplicate pb_id by concatenating the original pb_id with
+        # json_id
+        assign_input["sdp"]["processing_blocks"][0]["pb_id"] = (
+            assign_input["sdp"]["processing_blocks"][0]["pb_id"]
+            + f"-{json_id}"
+        )  # Duplicate pb_id
     assign_input = update_eb_pb_ids(
         central_node_low.assign_input, json_id=json_id
     )
+    pytest.result, pytest.unique_id = central_node_low.perform_action(
+        "AssignResources", assign_input
+    )
+
+    # Perform action with the modified JSON containing duplicates
     pytest.result, pytest.unique_id = central_node_low.perform_action(
         "AssignResources", assign_input
     )
