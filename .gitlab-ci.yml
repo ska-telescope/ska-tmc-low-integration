@@ -72,52 +72,6 @@ on-demand-deploy:
   when: manual
   allow_failure: true
 
-on-demand-deploy-sdp: 
-  stage: on-demand
-  tags:
-    - ska-k8s
-  variables:
-    TELESCOPE: 'SKA-low'
-    PORT: "10000"
-    SERVICE_ACCOUNT: "ci-svc-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA"
-    KUBE_NAMESPACE: "ci-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-on-demand-sdp"
-    SDP_SIMULATION_ENABLED: 'false'
-    CSP_SIMULATION_ENABLED: 'false'
-    MCCS_SIMULATION_ENABLED: 'false'
-    TARANTA_ENABLED: "true"
-  script:
-    - make cred SERVICE_ACCOUNT=$SERVICE_ACCOUNT
-    - '[ -f .make/k8s.mk ] || (echo "File k8s.mk not included in Makefile; exit 1")'
-    - make k8s-install-chart
-    - make k8s-wait
-    - make taranta-link
-    - make alarm-handler-configurator-link
-  environment:
-    name: $CI_PROJECT_NAME/$CI_COMMIT_REF_SLUG
-    kubernetes:
-      namespace: $KUBE_NAMESPACE
-    on_stop: on-demand-destroy-sdp
-  when: manual
-  allow_failure: true
-
-on-demand-destroy-sdp:
-  stage: on-demand
-  tags:
-    - ska-k8s
-  variables:
-    SERVICE_ACCOUNT: "ci-svc-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA"
-    KUBE_NAMESPACE: "ci-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-on-demand-sdp"
-  script:
-    - make cred SERVICE_ACCOUNT=$SERVICE_ACCOUNT
-    - '[ -f .make/k8s.mk ] || (echo "File k8s.mk not included in Makefile; exit 1")'
-    - make k8s-uninstall-chart
-  environment:
-    name: $CI_PROJECT_NAME/$CI_COMMIT_REF_SLUG
-    kubernetes:
-      namespace: $KUBE_NAMESPACE
-    action: stop
-  when: manual
-  allow_failure: true
 
 on-demand-destroy:
   stage: on-demand
