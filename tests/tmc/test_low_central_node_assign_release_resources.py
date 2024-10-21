@@ -48,7 +48,6 @@ class TestLowCentralNodeAssignResources:
         event_tracer: TangoEventTracer,
         simulator_factory: SimulatorFactory,
         command_input_factory: JsonFactory,
-        assign_json: str,
     ):
         """
         Test to verify transitions that are triggered by AssignResources
@@ -63,10 +62,10 @@ class TestLowCentralNodeAssignResources:
             "release_resources_low", command_input_factory
         )
 
-        assigned_resources_json = assignresources_json(assign_json)
+        assigned_resources_json = assignresources_json(assign_input_json)
 
         assigned_resources_json_empty = update_json_with_empty_values(
-            assign_json
+            assign_input_json
         )
 
         csp_subarray_sim = simulator_factory.get_or_create_simulator_device(
@@ -78,6 +77,7 @@ class TestLowCentralNodeAssignResources:
         mccs_controller_sim = simulator_factory.get_or_create_simulator_device(
             SimulatorDeviceType.MCCS_MASTER_DEVICE
         )
+
         mccs_subarray_sim = simulator_factory.get_or_create_simulator_device(
             SimulatorDeviceType.MCCS_SUBARRAY_DEVICE
         )
@@ -220,6 +220,7 @@ class TestLowCentralNodeAssignResources:
         )
 
         # Execute release command and verify command completed successfully
+
         _, unique_id = central_node_low.perform_action(
             "ReleaseResources", release_resource_json
         )
@@ -278,11 +279,16 @@ class TestLowCentralNodeAssignResources:
             ),
         )
 
+        # Setting Assigned Resources empty
+
+        mccs_subarray_sim.SetDirectassignedResources(
+            assigned_resources_json_empty
+        )
         assert_that(event_tracer).described_as(
-            "FAILED ASSUMPTION AFTER RELEASE RESOURCES: "
+            "FAILED ASSUMPTION AFTER RELEASE_RESOURCES COMMAND: "
             "Subarray Node device"
             f"({central_node_low.subarray_node.dev_name()}) "
-            "is expected to have assignedResources input json",
+            "is expected assignedResources to be empty",
         ).within_timeout(TIMEOUT).has_change_event_occurred(
             central_node_low.subarray_node,
             "assignedResources",
