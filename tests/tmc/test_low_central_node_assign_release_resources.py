@@ -19,12 +19,15 @@ from tango import DevState
 
 from tests.resources.test_harness.central_node_low import CentralNodeWrapperLow
 from tests.resources.test_harness.constant import tmc_low_subarraynode1
+from tests.resources.test_harness.helpers import (
+    assignresources_json,
+    update_json_with_empty_values,
+)
 from tests.resources.test_harness.simulator_factory import SimulatorFactory
 from tests.resources.test_harness.utils.common_utils import JsonFactory
 from tests.resources.test_harness.utils.enums import SimulatorDeviceType
 from tests.resources.test_support.common_utils.tmc_helpers import (
     prepare_json_args_for_centralnode_commands,
-    prepare_json_args_for_commands,
 )
 from tests.resources.test_support.constant_low import (
     INTERMEDIATE_STATE_DEFECT,
@@ -38,27 +41,19 @@ class TestLowCentralNodeAssignResources:
     simulated master devices (CSP, SDP, MCCS) and the overall
       telescope state."""
 
-    @pytest.mark.SKA_low
+    @pytest.mark.SKA_low1
     def test_low_centralnode_assign_resources(
         self,
         central_node_low: CentralNodeWrapperLow,
         event_tracer: TangoEventTracer,
         simulator_factory: SimulatorFactory,
         command_input_factory: JsonFactory,
+        assign_json: str,
     ):
         """
         Test to verify transitions that are triggered by AssignResources
         command and followed by a completion transition
         assuming that external subsystems work fine.
-        Glossary:
-        - "central_node_low": fixture for a TMC CentralNode Low under test
-        which provides simulated master devices
-        - "event_recorder": fixture for a MockTangoEventCallbackGroup
-        for validating the subscribing and receiving events.
-        - "simulator_factory": fixtur for creating simulator devices for
-        low Telescope respectively.
-        - "command_input_factory": fixture for JsonFactory class,
-        which provides json files for CentralNode
         """
         assign_input_json = prepare_json_args_for_centralnode_commands(
             "assign_resources_low", command_input_factory
@@ -68,12 +63,10 @@ class TestLowCentralNodeAssignResources:
             "release_resources_low", command_input_factory
         )
 
-        assigned_resources_json = prepare_json_args_for_commands(
-            "AssignedResources_low", command_input_factory
-        )
+        assigned_resources_json = assignresources_json(assign_json)
 
-        assigned_resources_json_empty = prepare_json_args_for_commands(
-            "AssignedResources_low_empty", command_input_factory
+        assigned_resources_json_empty = update_json_with_empty_values(
+            assign_json
         )
 
         csp_subarray_sim = simulator_factory.get_or_create_simulator_device(
@@ -85,7 +78,6 @@ class TestLowCentralNodeAssignResources:
         mccs_controller_sim = simulator_factory.get_or_create_simulator_device(
             SimulatorDeviceType.MCCS_MASTER_DEVICE
         )
-
         mccs_subarray_sim = simulator_factory.get_or_create_simulator_device(
             SimulatorDeviceType.MCCS_SUBARRAY_DEVICE
         )
@@ -228,7 +220,6 @@ class TestLowCentralNodeAssignResources:
         )
 
         # Execute release command and verify command completed successfully
-
         _, unique_id = central_node_low.perform_action(
             "ReleaseResources", release_resource_json
         )
@@ -287,16 +278,11 @@ class TestLowCentralNodeAssignResources:
             ),
         )
 
-        # Setting Assigned Resources empty
-
-        mccs_subarray_sim.SetDirectassignedResources(
-            assigned_resources_json_empty
-        )
         assert_that(event_tracer).described_as(
-            "FAILED ASSUMPTION AFTER RELEASE_RESOURCES COMMAND: "
+            "FAILED ASSUMPTION AFTER RELEASE RESOURCES: "
             "Subarray Node device"
             f"({central_node_low.subarray_node.dev_name()}) "
-            "is expected assignedResources to be empty",
+            "is expected to have assignedResources input json",
         ).within_timeout(TIMEOUT).has_change_event_occurred(
             central_node_low.subarray_node,
             "assignedResources",

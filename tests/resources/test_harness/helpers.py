@@ -789,6 +789,52 @@ def remove_timing_beams(configure_json: str) -> str:
     return json.dumps(config_dict_copy, indent=4)
 
 
+def assignresources_json(assign_json: str):
+    assign_json1 = {
+        "interface": (
+            "https://schema.skao.int/ska-low-mccs-assignedresources/1.0"
+        ),
+        "subarray_beam_ids": [
+            beam["subarray_beam_id"]
+            for beam in assign_json["mccs"]["subarray_beams"]
+        ],
+        "station_ids": [
+            str(aperture["station_id"])
+            for beam in assign_json["mccs"]["subarray_beams"]
+            for aperture in beam["apertures"]
+        ],
+        "apertures": [
+            aperture["aperture_id"]
+            for beam in assign_json["mccs"]["subarray_beams"]
+            for aperture in beam["apertures"]
+        ],
+        "channels": [32],
+    }
+
+    # Example to add additional values that are not in request
+    assign_json1["station_ids"].append("3")  # Add station_id 3
+    assign_json1["apertures"].extend(
+        ["AP001.02", "AP002.02", "AP003.01"]
+    )  # Add new apertures
+
+    return assign_json1
+
+
+# Function to update the given JSON and set specific values to empty
+def update_json_with_empty_values(assign_json: str):
+    # Parse the input JSON string into a Python dictionary
+    assign_json1 = json.loads(assign_json)
+
+    # Update the relevant fields to empty values
+    assign_json1["subarray_beam_ids"] = []
+    assign_json1["station_beam_ids"] = []
+    assign_json1["station_ids"] = []
+    assign_json1["apertures"] = []
+    assign_json1["channels"] = [0]  # Set to [0] as per your requirement
+
+    return assign_json1
+
+
 def wait_for_partial_or_complete_abort(timeout: int = 110) -> None:
     """Wait for completion of Partial/Full abort on SubarrayNode by waiting for
     one of 3 states on all the devices - ABORTED, EMPTY or FAULT until
