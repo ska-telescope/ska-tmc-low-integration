@@ -205,10 +205,6 @@ def tmc_assign_resources_with_duplicate_id(
     assign_input = update_eb_pb_ids(
         central_node_low.assign_input, json_id=json_id
     )
-    pytest.result, pytest.unique_id = central_node_low.perform_action(
-        "AssignResources", assign_input
-    )
-
     # Perform action with the modified JSON containing duplicates
     pytest.result, pytest.unique_id = central_node_low.perform_action(
         "AssignResources", assign_input
