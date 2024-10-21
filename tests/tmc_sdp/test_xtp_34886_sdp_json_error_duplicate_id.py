@@ -164,15 +164,15 @@ def tmc_assign_resources_with_duplicate_id(
     central_node_low: CentralNodeWrapperLow,
     event_recorder: EventRecorder,
 ):
-    """Method to assign resources again with
-    duplicate id for SDP Subarray configuration
+    """Method to assign resources again with duplicate id for SDP Subarray
+    configuration.
 
     Args:
-        duplicate_id (str): Type ID to be duplicated(eb_id/pb_id).
-        input_json1 (str): assign resources input json
+        duplicate_id (str): Type ID to be duplicated (eb_id/pb_id).
+        input_json1 (str): assign resources input json.
         central_node_low (CentralNodeWrapperLow): fixture for
-        CentralNodeWrapperLow class instance
-        event_recorder (EventRecorder):
+        CentralNodeWrapperLow class instance.
+        event_recorder (EventRecorder): Event recorder instance.
     """
 
     event_recorder.subscribe_event(
@@ -180,34 +180,48 @@ def tmc_assign_resources_with_duplicate_id(
         "longRunningCommandResult",
     )
 
-    # Load the original JSON
+    # Load the original JSON (this needs to be done before any modification)
     assign_input = (
         central_node_low.json_factory.create_centralnode_configuration(
             input_json1
         )
     )
-    json_id: str = ""
+
+    json_id: str = "001"  # Assign a valid non-empty json_id
+
     # Introduce duplicate ids based on the type and json_id
     if duplicate_id == "eb_id":
-        # Create a duplicate eb_id by concatenating the original eb_id with
-        # json_id
-        assign_input["sdp"]["execution_block"]["eb_id"] = (
-            assign_input["sdp"]["execution_block"]["eb_id"] + f"-{json_id}"
-        )  # Duplicate eb_id
+        # Check if "eb_id" exists and is a string
+        if "eb_id" in assign_input["sdp"]["execution_block"] and isinstance(
+            assign_input["sdp"]["execution_block"]["eb_id"], str
+        ):
+            # Create a duplicate eb_id by concatenating the original
+            # eb_id with json_id
+            assign_input["sdp"]["execution_block"]["eb_id"] = (
+                assign_input["sdp"]["execution_block"]["eb_id"] + f"-{json_id}"
+            )
     elif duplicate_id == "pb_id":
-        # Create a duplicate pb_id by concatenating the original pb_id with
-        # json_id
-        assign_input["sdp"]["processing_blocks"][0]["pb_id"] = (
-            assign_input["sdp"]["processing_blocks"][0]["pb_id"]
-            + f"-{json_id}"
-        )  # Duplicate pb_id
+        # Check if "pb_id" exists and is a string
+        if "pb_id" in assign_input["sdp"]["processing_blocks"][
+            0
+        ] and isinstance(
+            assign_input["sdp"]["processing_blocks"][0]["pb_id"], str
+        ):
+            # Create a duplicate pb_id by concatenating the original
+            # pb_id with json_id
+            assign_input["sdp"]["processing_blocks"][0]["pb_id"] = (
+                assign_input["sdp"]["processing_blocks"][0]["pb_id"]
+                + f"-{json_id}"
+            )
+
+    # Update the JSON with the new duplicate IDs
     assign_input = update_eb_pb_ids(
         central_node_low.assign_input, json_id=json_id
     )
-    # Perform action with the modified JSON containing duplicates
     pytest.result, pytest.unique_id = central_node_low.perform_action(
         "AssignResources", assign_input
     )
+
     assert pytest.unique_id[0].endswith("AssignResources")
     assert pytest.result[0] == ResultCode.QUEUED
     pytest.duplicate_id_type = duplicate_id
