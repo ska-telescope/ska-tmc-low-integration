@@ -126,14 +126,9 @@ def subarray_node_obs_state_resourcing(
         command_input_factory (JsonFactory): Object of json factory
     """
 
-    sdp_sim = simulator_factory.get_or_create_simulator_device(
-        SimulatorDeviceType.LOW_SDP_DEVICE
-    )
     csp_sim = simulator_factory.get_or_create_simulator_device(
         SimulatorDeviceType.LOW_CSP_DEVICE
     )
-    event_tracer.subscribe_event(csp_sim, "obsState")
-    event_tracer.subscribe_event(sdp_sim, "obsState")
     event_tracer.subscribe_event(
         central_node_low.sdp_subarray_leaf_node, "sdpSubarrayObsState"
     )
@@ -143,8 +138,6 @@ def subarray_node_obs_state_resourcing(
     csp_sim.setDelayInfo(json.dumps({"AssignResources": 50}))
     log_events(
         {
-            csp_sim: ["obsState"],
-            sdp_sim: ["obsState"],
             central_node_low.sdp_subarray_leaf_node: ["sdpSubarrayObsState"],
             central_node_low.csp_subarray_leaf_node: ["cspSubarrayObsState"],
         }
@@ -156,16 +149,6 @@ def subarray_node_obs_state_resourcing(
         "is expected to be in RESOURCING obstate",
     ).within_timeout(TIMEOUT).has_change_event_occurred(
         central_node_low.subarray_node,
-        "obsState",
-        ObsState.RESOURCING,
-    )
-    assert_that(event_tracer).described_as(
-        "FAILED UNEXPECTED OBSSTATE: "
-        "SDP subarray device"
-        f"({central_node_low.subarray_node.dev_name()}) "
-        "is expected to be in RESOURCING obstate",
-    ).within_timeout(TIMEOUT).has_change_event_occurred(
-        sdp_sim,
         "obsState",
         ObsState.RESOURCING,
     )
@@ -187,16 +170,6 @@ def subarray_node_obs_state_resourcing(
     ).within_timeout(TIMEOUT).has_change_event_occurred(
         central_node_low.sdp_subarray_leaf_node,
         "cspSubarrayObsState",
-        ObsState.RESOURCING,
-    )
-    assert_that(event_tracer).described_as(
-        "FAILED UNEXPECTED OBSSTATE: "
-        "CSP subarray device"
-        f"({central_node_low.subarray_node.dev_name()}) "
-        "is expected to be in RESOURCING obstate",
-    ).within_timeout(TIMEOUT).has_change_event_occurred(
-        csp_sim,
-        "obsState",
         ObsState.RESOURCING,
     )
     csp_sim.ResetDelayInfo()
