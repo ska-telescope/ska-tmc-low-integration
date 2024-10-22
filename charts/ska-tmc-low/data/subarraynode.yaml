@@ -20,6 +20,8 @@ server:
   {{ $sdp_sa_fqdn_prefix:= .Values.global.sdp_subarray_prefix}}
   {{ $mccs_sa_ln_fqdn_prefix:= .Values.global.mccs_subarray_ln_prefix}}
   {{ $mccs_sa_fqdn_prefix:= .Values.global.mccs_subarray_prefix}}
+  {{ $SleepTime := .Values.deviceServers.subarraynode.SleepTime }}
+  {{ $CommandTimeout := .Values.deviceServers.subarraynode.CommandTimeout }}
 
   {{- range  ( regexSplit " " ((.Values.subarray_count | int) | seq ) -1 ) }}
     - name: "{{ printf "%02s" . }}"
@@ -57,7 +59,7 @@ server:
               - "5"
           - name: "CommandTimeout"
             values:
-              - "70"
+              - "{{ $CommandTimeout }}"
           - name: "CspAssignResourcesInterfaceURL"
             values:
               - "{{ $csp_assign_interface }}"
@@ -75,8 +77,11 @@ server:
               - "{{ $mccs_scan_interface }}"
           - name: "JonesURI"
             values:
-              - "{{ $jones_uri }}"          
-  {{- end}}
+              - "{{ $jones_uri }}"   
+          - name: "SleepTime"
+            values:
+              - "{{ $SleepTime }}"       
+{{- end}}
 depends_on:
   - device: sys/database/2
 image:
