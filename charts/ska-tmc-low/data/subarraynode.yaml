@@ -77,8 +77,8 @@ server:
             values:
               - "{{ $jones_uri }}"   
           - name: "SleepTime"
-          values:
-            - "1"       
+            values:
+              - "1"       
 {{- end}}
 depends_on:
   - device: sys/database/2

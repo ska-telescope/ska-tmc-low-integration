@@ -28,7 +28,7 @@ server:
                 values:
                 - "5"
               - name: "SleepTime"
-              values:
+                values:
                 - "1"
   {{- end}}
 depends_on:

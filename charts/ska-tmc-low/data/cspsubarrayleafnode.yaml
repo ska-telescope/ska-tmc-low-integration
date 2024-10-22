@@ -64,7 +64,7 @@ server:
                 - "50"
               - name: "SleepTime"
                 values:
-                  - "1"
+                - "1"
   {{- end}}
 depends_on:
   - device: sys/database/2
