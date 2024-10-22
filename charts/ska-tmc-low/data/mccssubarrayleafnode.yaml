@@ -8,7 +8,9 @@ server:
   name: "mccs_subarray_leaf_node"
   instances:
   {{ $mccs_sa_fqdn_prefix:= .Values.global.mccs_subarray_prefix}} 
-  {{$mccs_master_fqdn := .Values.global.mccs_master }}
+  {{ $mccs_master_fqdn := .Values.global.mccs_master }}
+  {{ $CommandTimeout := .Values.deviceServers.mccssubarrayleafnode.CommandTimeout }}
+  {{ $SleepTime := .Values.deviceServers.mccssubarrayleafnode.SleepTime}}
   {{- range  ( regexSplit " " ((.Values.subarray_count | int) | seq ) -1 ) }}
     - name: "{{ printf "%02s" . }}"
       classes:
@@ -33,10 +35,10 @@ server:
                 - "5"
               - name: "CommandTimeOut"
                 values:
-                - "{{.Values.deviceServers.mccssubarrayleafnode.CommandTimeout}}"
+                - "{{ $CommandTimeout }}"
               - name: "SleepTime"
                 values:
-                - "{{.Values.deviceServers.mccssubarrayleafnode.SleepTime}}"
+                - "{{ $SleepTime }}"
   {{- end}}
 depends_on:
   - device: sys/database/2
