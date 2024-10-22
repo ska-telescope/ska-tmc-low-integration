@@ -68,7 +68,7 @@ def given_a_tmc_sdp(
 
 @given(
     parsers.parse(
-        "The TMC and SDP subarray {subarray_id} in the IDLE " + "obsState"
+        "The TMC and SDP subarray {subarray_id} in the IDLE obsState"
     )
 )
 def check_tmc_sdp_subarray_idle(
