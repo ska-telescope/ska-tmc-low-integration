@@ -9,6 +9,8 @@ server:
   instances:
   {{ $sdp_sa_fqdn_prefix:= .Values.global.sdp_subarray_prefix}}
   {{- range  ( regexSplit " " ((.Values.subarray_count | int) | seq ) -1 ) }}
+  {{ $CommandTimeout := .Values.deviceServers.sdpsubarrayleafnode.CommandTimeout }}
+  {{ $SleepTime := .Values.deviceServers.sdpsubarrayleafnode.SleepTime }}
     - name: "{{ printf "%02s" . }}"
       classes:
       - name: "SdpSubarrayLeafNode"
@@ -29,10 +31,10 @@ server:
                 - "5"
               - name: "CommandTimeOut"
                 values:
-                - "{{.Values.deviceServers.sdpsubarrayleafnode.CommandTimeout}}"
+                - "{{ $CommandTimeout }}"
               - name: "SleepTime"
                 values:
-                - "{{.Values.deviceServers.sdpsubarrayleafnode.SleepTime}}"
+                - "{{ $SleepTime }}"
   {{- end}}
 depends_on:
   - device: sys/database/2
