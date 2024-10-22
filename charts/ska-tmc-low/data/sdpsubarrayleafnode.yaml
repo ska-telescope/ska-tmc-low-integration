@@ -27,9 +27,12 @@ server:
               - name: "LoggingLevelDefault"
                 values:
                 - "5"
+              - name: "CommandTimeOut"
+                values:
+                - "{{.Values.deviceServers.sdpsubarrayleafnode.CommandTimeout}}"
               - name: "SleepTime"
                 values:
-                - "1"
+                - "{{.Values.deviceServers.sdpsubarrayleafnode.SleepTime}}"
   {{- end}}
 depends_on:
   - device: sys/database/2

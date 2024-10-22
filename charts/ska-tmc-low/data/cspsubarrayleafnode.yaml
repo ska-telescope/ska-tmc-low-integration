@@ -61,10 +61,10 @@ server:
                 - "{{ $PSTDelayValidityPeriod }}"
               - name: "CommandTimeout"
                 values:
-                - "50"
+                - "{{.Values.deviceServers.cspsubarrayleafnode.CommandTimeout}}"
               - name: "SleepTime"
                 values:
-                - "1"
+                - "{{.Values.deviceServers.cspsubarrayleafnode.SleepTime}}"
   {{- end}}
 depends_on:
   - device: sys/database/2

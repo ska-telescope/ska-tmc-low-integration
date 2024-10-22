@@ -27,7 +27,7 @@ server:
             - "5"
         - name: "SleepTime"
           values:
-            - "1"
+            - "{{.Values.deviceServers.cspmasterleafnode.SleepTime}}"
 depends_on:
   - device: sys/database/2
 image:

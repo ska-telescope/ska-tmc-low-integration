@@ -31,9 +31,12 @@ server:
               - name: "LoggingLevelDefault"
                 values:
                 - "5"
+              - name: "CommandTimeOut"
+                values:
+                - "{{.Values.deviceServers.mccssubarrayleafnode.CommandTimeout}}"
               - name: "SleepTime"
                 values:
-                - "1"
+                - "{{.Values.deviceServers.mccssubarrayleafnode.SleepTime}}"
   {{- end}}
 depends_on:
   - device: sys/database/2

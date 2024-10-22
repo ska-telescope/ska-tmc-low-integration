@@ -57,7 +57,7 @@ server:
               - "5"
           - name: "CommandTimeout"
             values:
-              - "70"
+              - "{{.Values.deviceServers.subarraynode.CommandTimeout}}"
           - name: "CspAssignResourcesInterfaceURL"
             values:
               - "{{ $csp_assign_interface }}"
@@ -78,7 +78,7 @@ server:
               - "{{ $jones_uri }}"   
           - name: "SleepTime"
             values:
-              - "1"       
+              - "{{.Values.deviceServers.subarraynode.SleepTime}}"       
 {{- end}}
 depends_on:
   - device: sys/database/2
