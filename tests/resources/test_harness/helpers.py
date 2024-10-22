@@ -858,6 +858,30 @@ def update_json_with_empty_values(assign_json: str) -> dict:
     return assign_json1
 
 
+def duplicate_json(assign_json: dict, duplicate_id: str) -> dict:
+    """Duplicates the necessary values in the JSON based on duplicate_id.
+
+    Args:
+        assign_json (dict): The original JSON to duplicate from.
+        duplicate_id (str): The ID type to duplicate (eb_id or pb_id).
+
+    Returns:
+        dict: The modified JSON with duplicated values.
+    """
+    duplicate_eb_pb_id = assign_json.copy()
+
+    if duplicate_id == "eb_id":
+        duplicate_eb_pb_id["sdp"]["execution_block"][
+            "eb_id"
+        ] += "-dup"  # Duplicate eb_id
+    else:  # Assuming it's pb_id
+        duplicate_eb_pb_id["sdp"]["processing_blocks"][0][
+            "pb_id"
+        ] += "-dup"  # Duplicate pb_id
+
+    return duplicate_eb_pb_id
+
+
 def wait_for_partial_or_complete_abort(timeout: int = 110) -> None:
     """Wait for completion of Partial/Full abort on SubarrayNode by waiting for
     one of 3 states on all the devices - ABORTED, EMPTY or FAULT until
