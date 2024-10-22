@@ -75,8 +75,11 @@ server:
               - "{{ $mccs_scan_interface }}"
           - name: "JonesURI"
             values:
-              - "{{ $jones_uri }}"          
-  {{- end}}
+              - "{{ $jones_uri }}"   
+            - name: "SleepTime"
+            values:
+              - "1"       
+{{- end}}
 depends_on:
   - device: sys/database/2
 image:

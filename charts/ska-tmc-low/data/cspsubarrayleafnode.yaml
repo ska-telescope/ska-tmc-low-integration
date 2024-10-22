@@ -62,6 +62,9 @@ server:
               - name: "CommandTimeout"
                 values:
                 - "50"
+              - name: "SleepTime"
+                values:
+                  - "1"
   {{- end}}
 depends_on:
   - device: sys/database/2

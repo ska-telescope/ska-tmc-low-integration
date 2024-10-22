@@ -31,6 +31,9 @@ server:
               - name: "LoggingLevelDefault"
                 values:
                 - "5"
+              - name: "SleepTime"
+                values:
+                  - "1"
   {{- end}}
 depends_on:
   - device: sys/database/2
