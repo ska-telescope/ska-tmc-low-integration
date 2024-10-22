@@ -10,6 +10,6 @@ Feature: Default
 		And TMC subarray <subarray_id> remain in RESOURCING obsState
 		Then exception is propagated to central node
 		Examples:
-        | subarray_id  | eb_id                    | pb_id                    | duplicate_id |
-        | 1            | eb-test-20220916-00000   | pb-test-20220916-00000   |   eb_id      |
-        | 1            | eb-test-20220917-00000   | pb-test-20220917-00000   |   pb_id      |
+		| duplicate_id | subarray_id |
+		| eb_id        | 1           |
+		| pb_id        | 1           |
