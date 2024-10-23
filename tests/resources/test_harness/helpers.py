@@ -831,7 +831,7 @@ def assignresources_json(assign_json: str) -> dict:
         ["AP001.02", "AP002.02", "AP003.01"]
     )  # Add new apertures
 
-    return assign_json1
+    return json.dumps(assign_json1)
 
 
 def update_json_with_empty_values(assign_json: str) -> dict:
@@ -873,11 +873,11 @@ def duplicate_json(assign_json: dict, duplicate_id: str) -> dict:
     if duplicate_id == "eb_id":
         duplicate_eb_pb_id["sdp"]["execution_block"][
             "eb_id"
-        ] += "-dup"  # Duplicate eb_id
+        ] = "eb-test-20220916-00000"  # Replace eb_id
     else:  # Assuming it's pb_id
         duplicate_eb_pb_id["sdp"]["processing_blocks"][0][
             "pb_id"
-        ] += "-dup"  # Duplicate pb_id
+        ] = "pb-test-20220916-00000"  # Replace pb_id
 
     return duplicate_eb_pb_id
 
