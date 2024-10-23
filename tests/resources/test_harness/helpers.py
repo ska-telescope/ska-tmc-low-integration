@@ -855,7 +855,7 @@ def update_json_with_empty_values(assign_json: str) -> dict:
     assign_json1["apertures"] = []
     assign_json1["channels"] = [0]  # Set to [0] as per your requirement
 
-    return assign_json1
+    return json.dumps(assign_json1)
 
 
 def duplicate_json(assign_json: dict, duplicate_id: str) -> dict:
