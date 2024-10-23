@@ -858,28 +858,35 @@ def update_json_with_empty_values(assign_json: str) -> dict:
     return json.dumps(assign_json1)
 
 
-def duplicate_json(assign_json: dict, duplicate_id: str) -> dict:
-    """Duplicates the necessary values in the JSON based on duplicate_id.
+def modify_json_with_duplicate_ids(
+    assign_json: str, duplicate_eb_id, duplicate_pb_id
+):
+    """
+    Modifies the input JSON by adding duplicate execution block ID (eb_id)
+    and processing block ID (pb_id).
 
-    Args:
-        assign_json (dict): The original JSON to duplicate from.
-        duplicate_id (str): The ID type to duplicate (eb_id or pb_id).
+    Parameters:
+        assign_json (str): The original JSON structure.
+        duplicate_eb_id (str): The duplicate execution block ID.
+        duplicate_pb_id (str): The duplicate processing block ID.
 
     Returns:
-        dict: The modified JSON with duplicated values.
+        dict: The modified JSON with duplicate IDs.
     """
-    duplicate_eb_pb_id = assign_json.copy()
+    # Create a deep copy of the Assign JSON to avoid modifying the structure
+    duplicate_json = copy.deepcopy(assign_json)
 
-    if duplicate_id == "eb_id":
-        duplicate_eb_pb_id["sdp"]["execution_block"][
-            "eb_id"
-        ] = "eb-test-20220916-00000"  # Replace eb_id
-    else:  # Assuming it's pb_id
-        duplicate_eb_pb_id["sdp"]["processing_blocks"][0][
-            "pb_id"
-        ] = "pb-test-20220916-00000"  # Replace pb_id
+    # Add a duplicate processing block ID (pb_id) dynamically
+    duplicate_pb = copy.deepcopy(duplicate_json["sdp"]["processing_blocks"][0])
+    duplicate_json["sdp"]["processing_blocks"].append(duplicate_pb)
 
-    return duplicate_eb_pb_id
+    # Modify duplicate pb_id
+    duplicate_json["sdp"]["processing_blocks"][-1]["pb_id"] = duplicate_pb_id
+
+    # Modify execution block to simulate a duplicate eb_id
+    duplicate_json["sdp"]["execution_block"]["eb_id"] = duplicate_eb_id
+
+    return duplicate_json
 
 
 def wait_for_partial_or_complete_abort(timeout: int = 110) -> None:

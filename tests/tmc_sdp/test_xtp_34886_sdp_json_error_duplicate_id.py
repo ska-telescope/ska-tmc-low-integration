@@ -13,11 +13,10 @@ from tests.resources.test_harness.central_node_low import CentralNodeWrapperLow
 from tests.resources.test_harness.event_recorder import EventRecorder
 from tests.resources.test_harness.helpers import (
     check_for_device_event,
-    duplicate_json,
     get_assign_json_id,
     get_device_simulator_with_given_name,
+    modify_json_with_duplicate_ids,
     prepare_json_args_for_centralnode_commands,
-    update_eb_pb_ids,
 )
 
 
@@ -161,14 +160,14 @@ def tmc_assign_resources_with_duplicate_id(
     event_recorder: EventRecorder,
     command_input_factory,
 ):
-    """Method to assign resources again with duplicate id for SDP Subarray
-    configuration.
+    """Method to assign resources again with
+    duplicate id for SDP Subarray configuration.
 
     Args:
         duplicate_id (str): Type ID to be duplicated (eb_id/pb_id).
         central_node_low (CentralNodeWrapperLow): Fixture for
         CentralNodeWrapperLow class instance.
-        event_recorder (EventRecorder): Event recorder instance.
+        event_recorder (EventRecorder): Event recorder to capture events.
     """
 
     event_recorder.subscribe_event(
@@ -176,30 +175,35 @@ def tmc_assign_resources_with_duplicate_id(
         "longRunningCommandResult",
     )
 
-    # Load the original JSON (this needs to be done before any modification)
+    # Prepare input JSON
     assign_input = prepare_json_args_for_centralnode_commands(
         "assign_resources_low", command_input_factory
     )
 
-    # Determine json_id based on duplicate_id
-    json_id = ""
+    # Determine which ID (eb_id or pb_id) to duplicate
     if duplicate_id == "eb_id":
-        json_id = "pb_id"
+        duplicate_eb_id = "eb_id_to_duplicate"
+        duplicate_pb_id = assign_input["sdp"]["processing_blocks"][0]["pb_id"]
     else:
-        json_id = "eb_id"
+        duplicate_pb_id = "pb_id_to_duplicate"
+        duplicate_eb_id = assign_input["sdp"]["execution_block"]["eb_id"]
 
-    # Create the modified JSON with duplicate values
-    assign_input = duplicate_json(assign_input, duplicate_id)
+    # Modify the JSON with duplicate IDs
+    assign_input = modify_json_with_duplicate_ids(
+        assign_input,
+        duplicate_eb_id=duplicate_eb_id,
+        duplicate_pb_id=duplicate_pb_id,
+    )
 
-    # Update the JSON with the new duplicate IDs
-    assign_input = update_eb_pb_ids(assign_input, json_id=json_id)
-
+    # Perform AssignResources action with the modified JSON
     pytest.result, pytest.unique_id = central_node_low.perform_action(
         "AssignResources", assign_input
     )
-
+    # Assert that the result is queued and the unique ID is correct
     assert pytest.unique_id[0].endswith("AssignResources")
     assert pytest.result[0] == ResultCode.QUEUED
+
+    # Store the duplicate ID for further assertions if necessary
     pytest.duplicate_id_type = duplicate_id
     pytest.duplicate_id = get_assign_json_id(assign_input, duplicate_id)[0]
 
