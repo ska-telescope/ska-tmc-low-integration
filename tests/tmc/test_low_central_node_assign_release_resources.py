@@ -20,8 +20,8 @@ from tango import DevState
 from tests.resources.test_harness.central_node_low import CentralNodeWrapperLow
 from tests.resources.test_harness.constant import tmc_low_subarraynode1
 from tests.resources.test_harness.helpers import (
-    assignresources_json,
-    update_json_with_empty_values,
+    generate_and_get_assign_resource_json,
+    update_assign_json_with_empty_values,
 )
 from tests.resources.test_harness.simulator_factory import SimulatorFactory
 from tests.resources.test_harness.utils.common_utils import JsonFactory
@@ -62,9 +62,11 @@ class TestLowCentralNodeAssignResources:
             "release_resources_low", command_input_factory
         )
 
-        assigned_resources_json = assignresources_json(assign_input_json)
+        assigned_resources_json = generate_and_get_assign_resource_json(
+            assign_input_json
+        )
 
-        assigned_resources_json_empty = update_json_with_empty_values(
+        assigned_resources_json_empty = update_assign_json_with_empty_values(
             assign_input_json
         )
 

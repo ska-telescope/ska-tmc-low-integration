@@ -16,7 +16,6 @@ from ska_tango_testing.integration import TangoEventTracer, log_events
 from tango import DevState
 
 from tests.resources.test_harness.central_node_low import CentralNodeWrapperLow
-from tests.resources.test_harness.helpers import get_subarray_id
 from tests.resources.test_harness.subarray_node_low import (
     SubarrayNodeWrapperLow,
 )
@@ -188,19 +187,16 @@ def invoke_scan_with_subarray_id(
         subarray_node_low (SubarrayNodeWrapperLow): Object of subarray
         node wrapper
     """
+    # Prepare the initial scan input JSON
     scan_input_json = prepare_json_args_for_commands(
         "scan_low", command_input_factory
     )
-    # Add subarray_id and convert back to string
-    scan_input_json = get_subarray_id(scan_input_json, subarray_id=1)
 
-    # Convert the modified dict back to JSON string
-    scan_input_json_str = json.dumps(scan_input_json)
+    # Add the subarray_id to the JSON
+    scan_input_json["subarray_id"] = 1
 
-    # Invoke the Scan command with the correct input format (string)
-    pytest.result, _ = subarray_node_low.subarray_node.Scan(
-        scan_input_json_str
-    )
+    # Invoke the Scan command with the updated input format (string)
+    pytest.result, _ = subarray_node_low.subarray_node.Scan(scan_input_json)
 
 
 @then("TMC SubarrayNode raises exception with ResultCode.REJECTED")

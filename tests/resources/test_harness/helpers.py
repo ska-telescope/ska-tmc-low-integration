@@ -90,7 +90,20 @@ def update_scan_id(input_json: str, scan_id: int) -> str:
     return updated_json
 
 
-def check_subarray_obs_state(obs_state=None, timeout=50):
+def check_subarray_obs_state(obs_state: str = None, timeout: int = 50) -> bool:
+    """
+    Logs and checks if all subarray nodes have transitioned to the given
+    obsState.
+
+    Args:
+        obs_state (str): The target obsState to check for all subarray nodes.
+        timeout (int): Timeout for waiting for the state transition
+        (in seconds).
+
+    Returns:
+        bool: True if all subarray nodes have transitioned to the given
+        obsState, False otherwise.
+    """
     LOGGER.info(
         f"{tmc_low_subarraynode1}.obsState : "
         + str(Resource(tmc_low_subarraynode1).get("obsState"))
@@ -107,6 +120,7 @@ def check_subarray_obs_state(obs_state=None, timeout=50):
         f"{mccs_subarray1}.obsState : "
         + str(Resource(mccs_subarray1).get("obsState"))
     )
+
     the_waiter = Waiter(**device_dict)
     the_waiter.set_wait_for_obs_state(obs_state=obs_state)
     the_waiter.wait(timeout / 0.1)
@@ -203,7 +217,17 @@ def prepare_json_args_for_commands(
 def prepare_json_args_for_centralnode_commands(
     args_for_command: str, command_input_factory: JsonFactory
 ) -> str:
-    """This method return input json based on command args"""
+    """
+    Prepares input JSON based on the command arguments for the Central Node.
+
+    Args:
+        args_for_command (str): Command arguments to generate the input JSON.
+        command_input_factory (JsonFactory): Factory to generate JSON
+         configurations.
+
+    Returns:
+        str: Generated input JSON string for the command.
+    """
     if args_for_command is not None:
         input_json = command_input_factory.create_centralnode_configuration(
             args_for_command
@@ -240,18 +264,26 @@ def set_subarray_to_given_obs_state(
     event_recorder,
     command_input_factory,
 ):
-    """Set the Subarray node to given obsState."""
-    # This method with be removed after the helper devices are updated to have
-    # a ThreadPoolExecutor.
+    """
+    Sets the Subarray node to the specified obsState and verifies state
+    transitions.
+
+    Args:
+        subarray_node: The subarray node to modify.
+        obs_state (str): The desired observation state to set.
+        event_recorder: Utility to record and subscribe to events.
+        command_input_factory: Factory to generate input commands for the
+        transitions.
+
+    Returns:
+        None
+    """
     match obs_state:
         case "RESOURCING":
-            # Setting the device defective
             csp_subarray = DeviceProxy(low_csp_subarray1)
             csp_subarray.SetDefective(json.dumps(INTERMEDIATE_STATE_DEFECT))
-
             subarray_node.force_change_of_obs_state(obs_state)
 
-            # Waiting for SDP Subarray to go to ObsState.IDLE
             sdp_subarray = DeviceProxy(low_sdp_subarray1)
             event_recorder.subscribe_event(sdp_subarray, "obsState")
             assert event_recorder.has_change_event_occurred(
@@ -259,23 +291,19 @@ def set_subarray_to_given_obs_state(
                 "obsState",
                 ObsState.IDLE,
             )
-            # Resetting defect on CSP Subarray.
             csp_subarray.SetDefective(json.dumps({"enabled": False}))
 
         case "CONFIGURING":
             subarray_node.force_change_of_obs_state("IDLE")
-            # Setting the device defective
             csp_subarray = DeviceProxy(low_csp_subarray1)
             csp_subarray.SetDefective(
                 json.dumps(INTERMEDIATE_CONFIGURING_OBS_STATE_DEFECT)
             )
-
             configure_input = prepare_json_args_for_commands(
                 "configure_low", command_input_factory
             )
             subarray_node.execute_transition("Configure", configure_input)
 
-            # Waiting for SDP Subarray to go to ObsState.READY
             sdp_subarray = DeviceProxy(low_sdp_subarray1)
             event_recorder.subscribe_event(sdp_subarray, "obsState")
             assert event_recorder.has_change_event_occurred(
@@ -283,7 +311,6 @@ def set_subarray_to_given_obs_state(
                 "obsState",
                 ObsState.READY,
             )
-            # Resetting defect on CSP Subarray.
             csp_subarray.SetDefective(json.dumps({"enabled": False}))
 
 
@@ -678,7 +705,16 @@ def set_admin_mode_values_mccs():
                             time.sleep(0.1)
 
 
-def set_receive_address(central_node):
+def set_receive_address(central_node) -> None:
+    """
+    Sets the direct receive address for a central node's subarray.
+
+    Args:
+        central_node: The central node for which to set the receive address.
+
+    Returns:
+        None
+    """
     receive_address = json.dumps(
         {
             "science_A": {
@@ -743,28 +779,6 @@ def updated_assign_str(assign_json: str, station_id: int) -> str:
     return updated_assign_str
 
 
-def get_subarray_id(scan_json: str, subarray_id: int) -> dict:
-    """
-    Adds subarray_id to the scan JSON if provided.
-
-    Args:
-        scan_json (str): The original scan JSON as a string.
-        subarray_id (int): The subarray ID to add to the JSON.
-
-    Returns:
-        dict: The modified JSON with subarray_id added.
-    """
-    # Parse the JSON string into a dict
-    scan_json_dict = json.loads(scan_json)
-
-    # Add the subarray_id to the JSON
-    if subarray_id is not None:
-        scan_json_dict["subarray_id"] = subarray_id  # Add the subarray_id
-
-    # Return the modified dict
-    return scan_json_dict
-
-
 def remove_timing_beams(configure_json: str) -> str:
     """
     Removes the 'timing_beams' key from the configure JSON.
@@ -775,36 +789,29 @@ def remove_timing_beams(configure_json: str) -> str:
     Returns:
         str: Modified JSON string without 'timing_beams'.
     """
-    # Load the JSON string into a Python dictionary
     config_dict = json.loads(configure_json)
-
-    # Create a deep copy of the dictionary to avoid modifying the original
     config_dict_copy = copy.deepcopy(config_dict)
 
-    # Remove 'timing_beams' if it exists in the dictionary
     if "timing_beams" in config_dict_copy["csp"]["lowcbf"]:
         del config_dict_copy["csp"]["lowcbf"]["timing_beams"]
 
-    # Convert the modified dictionary back into a JSON string
     return json.dumps(config_dict_copy, indent=4)
 
 
-def assignresources_json(assign_json: str) -> dict:
+def generate_and_get_assign_resource_json(assign_json: str) -> str:
     """
-    Generate a JSON structure for assigned resources based on the input JSON.
+    Generates a JSON structure for assigned resources based on the input JSON.
 
     Args:
         assign_json (str): The input JSON string containing resource
         assignments.
 
     Returns:
-        dict: A dictionary representing the assigned resources, including
-        interface,  subarray beam IDs, station IDs, apertures, and channels.
+        str: JSON string representing the assigned resources.
     """
-    # Parse the input JSON string into a Python dictionary
     assign_json_dict = json.loads(assign_json)
 
-    assign_json1 = {
+    assign_json_mccs_block_modified = {
         "interface": (
             "https://schema.skao.int/ska-low-mccs-assignedresources/1.0"
         ),
@@ -825,68 +832,62 @@ def assignresources_json(assign_json: str) -> dict:
         "channels": [32],
     }
 
-    # Example to add additional values that are not in request
-    assign_json1["station_ids"].append("3")  # Add station_id 3
-    assign_json1["apertures"].extend(
+    assign_json_mccs_block_modified["station_ids"].append("3")
+    assign_json_mccs_block_modified["apertures"].extend(
         ["AP001.02", "AP002.02", "AP003.01"]
-    )  # Add new apertures
+    )
 
-    return json.dumps(assign_json1)
+    return json.dumps(assign_json_mccs_block_modified)
 
 
-def update_json_with_empty_values(assign_json: str) -> dict:
+def update_assign_json_with_empty_values(assign_json: str) -> str:
     """
-    Update the given JSON to set specific fields to empty values.
+    Updates the given JSON to set specific fields to empty values.
 
     Args:
         assign_json (str): The input JSON string to be updated.
 
     Returns:
-        dict: A dictionary representing the updated JSON with specified fields
-        set to empty.
+        str: JSON string with the specified fields set to empty.
     """
-    # Parse the input JSON string into a Python dictionary
-    assign_json1 = json.loads(assign_json)
+    assign_json_mccs_block_modified = json.loads(assign_json)
 
-    # Update the relevant fields to empty values
-    assign_json1["subarray_beam_ids"] = []
-    assign_json1["station_beam_ids"] = []
-    assign_json1["station_ids"] = []
-    assign_json1["apertures"] = []
-    assign_json1["channels"] = [0]  # Set to [0] as per your requirement
+    assign_json_mccs_block_modified["subarray_beam_ids"] = []
+    assign_json_mccs_block_modified["station_beam_ids"] = []
+    assign_json_mccs_block_modified["station_ids"] = []
+    assign_json_mccs_block_modified["apertures"] = []
+    assign_json_mccs_block_modified["channels"] = [0]
 
-    return json.dumps(assign_json1)
+    return json.dumps(assign_json_mccs_block_modified)
 
 
 def modify_json_with_duplicate_ids(
-    assign_json: str, duplicate_eb_id, duplicate_pb_id
-):
+    assign_json: str, duplicate_eb_id: str, duplicate_pb_id: str
+) -> dict:
     """
     Modifies the input JSON by adding duplicate execution block ID (eb_id)
     and processing block ID (pb_id).
 
-    Parameters:
-        assign_json (str): The original JSON structure.
-        duplicate_eb_id (str): The duplicate execution block ID.
-        duplicate_pb_id (str): The duplicate processing block ID.
+    Args:
+        assign_json (str): Input JSON string containing resource assignments.
+        duplicate_eb_id (str): Duplicate execution block ID to add.
+        duplicate_pb_id (str): Duplicate processing block ID to add.
 
     Returns:
-        dict: The modified JSON with duplicate IDs.
+        dict: Modified JSON structure with duplicate IDs added.
     """
-    # Create a deep copy of the Assign JSON to avoid modifying the structure
-    duplicate_json = copy.deepcopy(assign_json)
+    # Load the input JSON string into a dictionary
+    assign_json_duplicate_eb_pb_id = json.loads(assign_json)
 
-    # Add a duplicate processing block ID (pb_id) dynamically
-    duplicate_pb = copy.deepcopy(duplicate_json["sdp"]["processing_blocks"][0])
-    duplicate_json["sdp"]["processing_blocks"].append(duplicate_pb)
+    # Modify the eb_id and pb_id
+    assign_json_duplicate_eb_pb_id["sdp"]["execution_block"][
+        "eb_id"
+    ] = duplicate_eb_id
+    assign_json_duplicate_eb_pb_id["sdp"]["processing_blocks"][0][
+        "pb_id"
+    ] = duplicate_pb_id
 
-    # Modify duplicate pb_id
-    duplicate_json["sdp"]["processing_blocks"][-1]["pb_id"] = duplicate_pb_id
-
-    # Modify execution block to simulate a duplicate eb_id
-    duplicate_json["sdp"]["execution_block"]["eb_id"] = duplicate_eb_id
-
-    return duplicate_json
+    return json.dumps(assign_json_duplicate_eb_pb_id, indent=2)
 
 
 def wait_for_partial_or_complete_abort(timeout: int = 110) -> None:
