@@ -171,21 +171,19 @@ def tmc_assign_resources_with_duplicate_id(
 
     Args:
         duplicate_id (str): Type ID to be duplicated(eb_id/pb_id).
-        input_json1 (str): assign resources input json
         central_node_low (CentralNodeWrapperLow): fixture for
         CentralNodeWrapperLow class instance
-        event_recorder (EventRecorder):
+        event_recorder (EventRecorder): fixture for EventRecorder class
+        instance
     """
 
+    # Subscribe to the event on the SDP subarray leaf node
     event_recorder.subscribe_event(
         central_node_low.sdp_subarray_leaf_node,
         "longRunningCommandResult",
     )
-    json_id: str = ""
-    if duplicate_id == "eb_id":
-        json_id = "pb_id"
-    else:
-        json_id = "eb_id"
+
+    # Create the assign resources input JSON with duplicate IDs
     assign_input = (
         central_node_low.json_factory.create_centralnode_configuration(
             "assign_resources_low"
@@ -195,14 +193,26 @@ def tmc_assign_resources_with_duplicate_id(
         assign_input, "eb-test-20220916-00000", "pb-test-20220916-00000"
     )
 
+    # Update the JSON IDs as per duplicate id type
+    json_id = "pb_id" if duplicate_id == "eb_id" else "eb_id"
     assign_input = update_eb_pb_ids(
         central_node_low.assign_input, json_id=json_id
     )
+
+    # Perform the AssignResources action
     pytest.result, pytest.unique_id = central_node_low.perform_action(
         "AssignResources", assign_json_duplicate_eb_pb_id
     )
-    assert pytest.unique_id[0].endswith("AssignResources")
-    assert pytest.result[0] == ResultCode.QUEUED
+
+    # Assert the command was queued
+    assert pytest.unique_id[0].endswith(
+        "AssignResources"
+    ), "AssignResources command failed"
+    assert (
+        pytest.result[0] == ResultCode.QUEUED
+    ), f"Expected QUEUED result, got {pytest.result[0]}"
+
+    # Save the duplicate ID type and value in pytest for later verification
     pytest.duplicate_id_type = duplicate_id
     pytest.duplicate_id = get_assign_json_id(assign_input, duplicate_id)[0]
 
@@ -234,9 +244,14 @@ def check_sdp_error(
     sdp_subarray_leaf_node = central_node_low.get_subarray_devices_by_id(
         subarray_id
     ).get("sdp_subarray_leaf_node")
-    sdp_subarray_obsstate = sdp_subarray.obsState
 
-    assert sdp_subarray_obsstate == ObsState.IDLE
+    # Check the obsState of the sdp_subarray
+    sdp_subarray_obsstate = sdp_subarray.obsState
+    assert (
+        sdp_subarray_obsstate == ObsState.IDLE
+    ), f"Expected obsState to be IDLE, got {sdp_subarray_obsstate}"
+
+    # Determine exception message based on duplicate id type
     if pytest.duplicate_id_type == "pb_id":
         exception_message = (
             f"Processing block {pytest.duplicate_id} already exists"
@@ -245,13 +260,15 @@ def check_sdp_error(
         exception_message = (
             f"Execution block {pytest.duplicate_id} already exists"
         )
+
+    # Subscribe and check for device event with the exception message
     assert check_for_device_event(
         sdp_subarray_leaf_node,
         "longRunningCommandResult",
         exception_message,
         event_recorder,
         command_name="AssignResources",
-    )
+    ), f"Expected event with exception '{exception_message}' not found"
 
 
 @when(
