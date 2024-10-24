@@ -36,7 +36,7 @@ from tests.resources.test_harness.utils.common_utils import JsonFactory
 
 @pytest.mark.SKA_low
 @scenario(
-    "../features/tmc/check_low_delay_model.feature",
+    "../features/tmc/xtp_32140_low_delay_model.feature",
     "TMC generates delay values",
 )
 def test_low_delay_model():
@@ -78,7 +78,7 @@ def given_telescope_is_in_on_state(
     )
 
 
-@given("subarray is in obsState IDLE")
+@given("subarray is configured and starts generating delay values")
 def subarray_in_idle_obsstate(
     central_node_low: CentralNodeWrapperLow,
     subarray_node_low: SubarrayNodeWrapperLow,
@@ -101,6 +101,9 @@ def subarray_in_idle_obsstate(
     set_receive_address(central_node_low)
     assign_input_json = prepare_json_args_for_centralnode_commands(
         "assign_resources_low", command_input_factory
+    )
+    configure_input_json = prepare_json_args_for_commands(
+        "configure_low", command_input_factory
     )
     _, unique_id = central_node_low.store_resources(assign_input_json)
     assert_that(event_tracer).described_as(
@@ -130,18 +133,6 @@ def subarray_in_idle_obsstate(
         ),
     )
 
-
-@when("I configure the subarray")
-def invoke_configure_command(
-    subarray_node_low: SubarrayNodeWrapperLow,
-    event_tracer: TangoEventTracer,
-    command_input_factory: JsonFactory,
-) -> None:
-    """Invoke Configure command."""
-
-    configure_input_json = prepare_json_args_for_commands(
-        "configure_low", command_input_factory
-    )
     _, unique_id = subarray_node_low.store_configuration_data(
         configure_input_json
     )
@@ -170,6 +161,18 @@ def invoke_configure_command(
             unique_id[0],
             json.dumps((int(ResultCode.OK), "Command Completed")),
         ),
+    )
+    generated_delay_model = (
+        subarray_node_low.csp_subarray_leaf_node.read_attribute(
+            "delayModel"
+        ).value
+    )
+    generated_delay_model_json = json.loads(generated_delay_model)
+    assert generated_delay_model_json != json.dumps(INITIAL_LOW_DELAY_JSON)
+    telmodel_validate(
+        version=LOW_DELAYMODEL_VERSION,
+        config=generated_delay_model_json,
+        strictness=2,
     )
 
 
