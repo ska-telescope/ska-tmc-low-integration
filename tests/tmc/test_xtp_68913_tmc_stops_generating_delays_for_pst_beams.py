@@ -37,9 +37,9 @@ from tests.resources.test_harness.utils.common_utils import JsonFactory
     "../features/tmc/xtp_68913_tmc_stops_generating_delays_pst_beams.feature",
     "TMC stops generating delay values for PST Beams",
 )
-def test_low_delay_model_for_pst_beams():
+def test_tmc_stops_generating_delay_model_for_pst_beams():
     """
-    Test whether delay value for PST Beams is getting generated on CSP
+    Test whether tmc stops generating delay values on for PST Beams on CSP
     Subarray Leaf Node.
     """
 
@@ -78,13 +78,15 @@ def given_telescope_is_in_on_state(
 
 
 @given("subarray is configured and generating delay values for PST Beams")
-def subarray_in_idle_obsstate(
+def subarray_start_generating_delay_values_for_pst_beams(
     central_node_low: CentralNodeWrapperLow,
     subarray_node_low: SubarrayNodeWrapperLow,
     event_tracer: TangoEventTracer,
     command_input_factory: JsonFactory,
 ) -> None:
-    """Checks subarray is in obsState IDLE."""
+    """Checks subarray is configured and delay values are getting generated
+    for PST Beams.
+    """
     event_tracer.subscribe_event(subarray_node_low.subarray_node, "obsState")
     event_tracer.subscribe_event(
         subarray_node_low.subarray_node, "longRunningCommandResult"

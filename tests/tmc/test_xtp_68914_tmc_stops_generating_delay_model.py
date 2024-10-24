@@ -39,9 +39,9 @@ from tests.resources.test_harness.utils.common_utils import JsonFactory
     "../features/tmc/xtp_68914_tmc_stops_generating_low_delay_model.feature",
     "TMC generates delay values",
 )
-def test_low_delay_model():
+def test_test_tmc_stops_generating_delay_model():
     """
-    Test whether delay value are generation on CSP Subarray Leaf Node.
+    Test whether tmc stops generating delay values on CSP Subarray Leaf Node.
     """
 
 
@@ -79,13 +79,13 @@ def given_telescope_is_in_on_state(
 
 
 @given("subarray is configured and starts generating delay values")
-def subarray_in_idle_obsstate(
+def subarray_start_generating_delay_values(
     central_node_low: CentralNodeWrapperLow,
     subarray_node_low: SubarrayNodeWrapperLow,
     event_tracer: TangoEventTracer,
     command_input_factory: JsonFactory,
 ) -> None:
-    """Checks subarray is in obsState IDLE."""
+    """Checks subarray is configured and delay values are getting generated."""
     event_tracer.subscribe_event(subarray_node_low.subarray_node, "obsState")
     event_tracer.subscribe_event(
         subarray_node_low.subarray_node, "longRunningCommandResult"
@@ -162,23 +162,6 @@ def subarray_in_idle_obsstate(
             json.dumps((int(ResultCode.OK), "Command Completed")),
         ),
     )
-    generated_delay_model = (
-        subarray_node_low.csp_subarray_leaf_node.read_attribute(
-            "delayModel"
-        ).value
-    )
-    generated_delay_model_json = json.loads(generated_delay_model)
-    assert generated_delay_model_json != json.dumps(INITIAL_LOW_DELAY_JSON)
-    telmodel_validate(
-        version=LOW_DELAYMODEL_VERSION,
-        config=generated_delay_model_json,
-        strictness=2,
-    )
-
-
-@then("CSP Subarray Leaf Node starts generating delay values")
-def check_if_delay_values_are_generating(subarray_node_low) -> None:
-    """Check if delay values are generating."""
     generated_delay_model = (
         subarray_node_low.csp_subarray_leaf_node.read_attribute(
             "delayModel"
