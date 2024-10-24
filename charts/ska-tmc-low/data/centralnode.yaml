@@ -60,7 +60,10 @@ server:
             - "5"
         - name: "CommandTimeout"
           values:
-            - "80"
+            - "{{.Values.deviceServers.centralnode.CommandTimeout}}"
+        - name: "SleepTime"
+          values:
+            - "{{.Values.deviceServers.centralnode.SleepTime}}"
 
 depends_on:
   - device: sys/database/2

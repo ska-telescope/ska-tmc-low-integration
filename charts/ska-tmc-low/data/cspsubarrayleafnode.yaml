@@ -12,6 +12,8 @@ entrypoints:
 {{- $PSTDelayModelTimeInAdvance := .Values.deviceServers.cspsubarrayleafnode.PSTDelayModelTimeInAdvance }}
 {{- $PSTDelayCadence := .Values.deviceServers.cspsubarrayleafnode.PSTDelayCadence }}
 {{- $PSTDelayValidityPeriod := .Values.deviceServers.cspsubarrayleafnode.PSTDelayValidityPeriod }}
+{{- $CommandTimeout := .Values.deviceServers.cspsubarrayleafnode.CommandTimeout }}
+{{- $SleepTime := .Values.deviceServers.cspsubarrayleafnode.SleepTime }}
 server:
   name: "csp_subarray_leaf_node_low"
   instances:
@@ -61,7 +63,10 @@ server:
                 - "{{ $PSTDelayValidityPeriod }}"
               - name: "CommandTimeout"
                 values:
-                - "50"
+                - "{{ $CommandTimeout }}"
+              - name: "SleepTime"
+                values:
+                - "{{ $SleepTime }}"
   {{- end}}
 depends_on:
   - device: sys/database/2

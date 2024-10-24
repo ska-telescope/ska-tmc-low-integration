@@ -4,6 +4,8 @@ domain: general-monitoring
 instances: ["01"]
 entrypoints:
   - name: "ska_tmc_sdpsubarrayleafnode.sdp_subarray_leaf_node.SdpSubarrayLeafNode"
+{{ $CommandTimeout := .Values.deviceServers.sdpsubarrayleafnode.CommandTimeout }}
+{{ $SleepTime := .Values.deviceServers.sdpsubarrayleafnode.SleepTime }}
 server:
   name: "sdp_subarray_leaf_node"
   instances:
@@ -27,6 +29,12 @@ server:
               - name: "LoggingLevelDefault"
                 values:
                 - "5"
+              - name: "CommandTimeOut"
+                values:
+                - "{{ $CommandTimeout }}"
+              - name: "SleepTime"
+                values:
+                - "{{ $SleepTime }}"
   {{- end}}
 depends_on:
   - device: sys/database/2

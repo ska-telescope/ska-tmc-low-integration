@@ -72,6 +72,7 @@ on-demand-deploy:
   when: manual
   allow_failure: true
 
+
 on-demand-destroy:
   stage: on-demand
   tags:
