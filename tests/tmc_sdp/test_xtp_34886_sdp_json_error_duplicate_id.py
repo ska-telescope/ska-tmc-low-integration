@@ -244,14 +244,9 @@ def check_sdp_error(
     sdp_subarray_leaf_node = central_node_low.get_subarray_devices_by_id(
         subarray_id
     ).get("sdp_subarray_leaf_node")
-
-    # Check the obsState of the sdp_subarray
     sdp_subarray_obsstate = sdp_subarray.obsState
-    assert (
-        sdp_subarray_obsstate == ObsState.IDLE
-    ), f"Expected obsState to be IDLE, got {sdp_subarray_obsstate}"
 
-    # Determine exception message based on duplicate id type
+    assert sdp_subarray_obsstate == ObsState.IDLE
     if pytest.duplicate_id_type == "pb_id":
         exception_message = (
             f"Processing block {pytest.duplicate_id} already exists"
@@ -260,15 +255,13 @@ def check_sdp_error(
         exception_message = (
             f"Execution block {pytest.duplicate_id} already exists"
         )
-
-    # Subscribe and check for device event with the exception message
     assert check_for_device_event(
         sdp_subarray_leaf_node,
         "longRunningCommandResult",
         exception_message,
         event_recorder,
         command_name="AssignResources",
-    ), f"Expected event with exception '{exception_message}' not found"
+    )
 
 
 @when(

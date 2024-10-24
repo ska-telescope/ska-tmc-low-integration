@@ -614,6 +614,37 @@ def update_eb_pb_ids(input_json: str, json_id: str = "") -> str:
     return input_json
 
 
+def update_multiple_scan_types(input_json):
+    """Method to dynamically update scan types inside the JSON."""
+
+    # Define your different scan type values here
+    scan_types = [
+        {
+            "scan_type_id": ".default",
+            "beams": {
+                "vis0": {
+                    "channels_id": "vis_channels",
+                    "polarisations_id": "all",
+                }
+            },
+        },
+        {
+            "scan_type_id": "target:a",
+            "derive_from": ".default",
+            "beams": {"vis0": {"field_id": "field_a"}},
+        },
+        {
+            "scan_type_id": "calibration:b",
+            "derive_from": ".default",
+            "beams": {"vis0": {"field_id": "field_b"}},
+        },
+    ]
+
+    # Update the scan types in the input JSON
+    input_json["sdp"]["execution_block"]["scan_types"] = scan_types
+    return input_json
+
+
 def get_assign_json_id(input_json: str, json_id: str = "") -> list[str]:
     """
     Method to get different eb_id and pb_id
