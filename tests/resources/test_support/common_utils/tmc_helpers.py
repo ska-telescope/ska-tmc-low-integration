@@ -511,7 +511,7 @@ def set_subarray_to_given_obs_state(
                     raise AssertionError("defective is not False")
 
         case "CONFIGURING":
-            assign_input_str = prepare_json_args_for_commands(
+            assign_input_str = prepare_json_args_for_centralnode_commands(
                 "assign_resources_low", command_input_factory
             )
             central_node.store_resources(assign_input_str)
