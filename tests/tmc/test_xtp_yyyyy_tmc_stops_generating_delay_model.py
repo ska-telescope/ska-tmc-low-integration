@@ -36,7 +36,7 @@ from tests.resources.test_harness.utils.common_utils import JsonFactory
 
 @pytest.mark.SKA_low
 @scenario(
-    "../features/tmc/xtp_32140_low_delay_model.feature",
+    "../features/tmc/xtp_yyyyy_tmc_stops_generating_low_delay_model.feature",
     "TMC generates delay values",
 )
 def test_low_delay_model():
