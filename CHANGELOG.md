@@ -16,6 +16,15 @@ Added
 
 *Test Case Updates: Modified test cases to reference JSON files from the TelModel repository, aligning all tests with the updated, harmonized JSON structure.
 
+[0.20.1-rc]
+* Includes improved liveliness probe functionality
+* The updated versions are as follows - 
+        Centralnode - 0.16.7
+        SubarrayNode - 0.24.0 
+        sdpleafnode - 0.17.1 
+        cspleafnode - 0.5.0
+        mccsleafnode - 0.5.0
+       
 [0.20.0-rc]
 * Integrate TMC CSPLeafNodes version 0.21.1 to support PST Beam Delay Calculation
 * Update TMC Configure JSON to support Delay Calculation for PST Beams
@@ -96,3 +105,6 @@ Fixed
 
 [0.14.1]
 * Fixed SKB-300.
+
+[Unreleased]
+* Refactored delay model testcases to remove multiple when then statements. 

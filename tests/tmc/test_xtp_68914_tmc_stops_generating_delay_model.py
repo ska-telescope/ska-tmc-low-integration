@@ -1,7 +1,9 @@
 """
+This module defines a Pytest BDD test scenario for checking the
+delay value generation during the Configure command execution on a
+Telescope Monitoring and Control (TMC) system
 The scenario includes steps to set up the TMC, configure the subarray,
-and checks whether CspSubarrayLeafNode starts generating delay value for
-PST Beams.
+and checks whether CspSubarrayLeafNode starts generating delay value.
 """
 import json
 
@@ -24,6 +26,7 @@ from tests.resources.test_harness.helpers import (
     prepare_json_args_for_centralnode_commands,
     prepare_json_args_for_commands,
     set_receive_address,
+    wait_and_validate_device_attribute_value,
 )
 from tests.resources.test_harness.subarray_node_low import (
     SubarrayNodeWrapperLow,
@@ -33,13 +36,12 @@ from tests.resources.test_harness.utils.common_utils import JsonFactory
 
 @pytest.mark.SKA_low
 @scenario(
-    "../features/tmc/xtp_65989_pst_beam_delay_model.feature",
-    "TMC generates delay values for PST Beams",
+    "../features/tmc/xtp_68914_tmc_stops_generating_low_delay_model.feature",
+    "TMC generates delay values",
 )
-def test_low_delay_model_for_pst_beams():
+def test_test_tmc_stops_generating_delay_model():
     """
-    Test whether delay value for PST Beams is getting generated on CSP
-    Subarray Leaf Node.
+    Test whether tmc stops generating delay values on CSP Subarray Leaf Node.
     """
 
 
@@ -74,16 +76,17 @@ def given_telescope_is_in_on_state(
         "telescopeState",
         DevState.ON,
     )
+    event_tracer.clear_events()
 
 
-@given("subarray is in obsState IDLE")
-def subarray_in_idle_obsstate(
+@given("subarray is configured and starts generating delay values")
+def subarray_start_generating_delay_values(
     central_node_low: CentralNodeWrapperLow,
     subarray_node_low: SubarrayNodeWrapperLow,
     event_tracer: TangoEventTracer,
     command_input_factory: JsonFactory,
 ) -> None:
-    """Checks subarray is in obsState IDLE."""
+    """Checks subarray is configured and delay values are getting generated."""
     event_tracer.subscribe_event(subarray_node_low.subarray_node, "obsState")
     event_tracer.subscribe_event(
         subarray_node_low.subarray_node, "longRunningCommandResult"
@@ -99,6 +102,9 @@ def subarray_in_idle_obsstate(
     set_receive_address(central_node_low)
     assign_input_json = prepare_json_args_for_centralnode_commands(
         "assign_resources_low", command_input_factory
+    )
+    configure_input_json = prepare_json_args_for_commands(
+        "configure_low", command_input_factory
     )
     _, unique_id = central_node_low.store_resources(assign_input_json)
     assert_that(event_tracer).described_as(
@@ -128,18 +134,6 @@ def subarray_in_idle_obsstate(
         ),
     )
 
-
-@when("I configure the subarray")
-def invoke_configure_command(
-    subarray_node_low: SubarrayNodeWrapperLow,
-    event_tracer: TangoEventTracer,
-    command_input_factory: JsonFactory,
-) -> None:
-    """Invoke Configure command."""
-
-    configure_input_json = prepare_json_args_for_commands(
-        "configure_low", command_input_factory
-    )
     _, unique_id = subarray_node_low.store_configuration_data(
         configure_input_json
     )
@@ -169,20 +163,63 @@ def invoke_configure_command(
             json.dumps((int(ResultCode.OK), "Command Completed")),
         ),
     )
-
-
-@then("CSP Subarray Leaf Node starts generating delay values for PST Beams")
-def check_if_delay_values_are_generating(subarray_node_low) -> None:
-    """Check if delay values are generating."""
-    generated_pst_delay_model = (
+    generated_delay_model = (
         subarray_node_low.csp_subarray_leaf_node.read_attribute(
-            "delayModelPSTBeam1"
+            "delayModel"
         ).value
     )
-    generated_pst_delay_model_json = json.loads(generated_pst_delay_model)
-    assert generated_pst_delay_model_json != json.dumps(INITIAL_LOW_DELAY_JSON)
+    generated_delay_model_json = json.loads(generated_delay_model)
+    assert generated_delay_model_json != json.dumps(INITIAL_LOW_DELAY_JSON)
     telmodel_validate(
         version=LOW_DELAYMODEL_VERSION,
-        config=generated_pst_delay_model_json,
+        config=generated_delay_model_json,
         strictness=2,
+    )
+    event_tracer.clear_events()
+
+
+@when("I end the observation")
+def invoke_end_command(
+    subarray_node_low: SubarrayNodeWrapperLow, event_tracer: TangoEventTracer
+) -> None:
+    """Invoke End command."""
+    _, unique_id = subarray_node_low.end_observation()
+
+    assert_that(event_tracer).described_as(
+        'FAILED ASSUMPTION IN "WHEN" STEP: '
+        '"I end the observation"'
+        "Subarray Node device"
+        f"({subarray_node_low.subarray_node.dev_name()}) "
+        "is expected to be in IDLE obstate",
+    ).within_timeout(TIMEOUT).has_change_event_occurred(
+        subarray_node_low.subarray_node,
+        "obsState",
+        ObsState.IDLE,
+    )
+    assert_that(event_tracer).described_as(
+        'FAILED ASSUMPTION IN "WHEN" STEP: '
+        '"I end the observation"'
+        "Subarray Node device"
+        f"({subarray_node_low.subarray_node.dev_name()}) "
+        "is expected have longRunningCommand as"
+        '(unique_id,(ResultCode.OK,"Command Completed"))',
+    ).within_timeout(TIMEOUT).has_change_event_occurred(
+        subarray_node_low.subarray_node,
+        "longRunningCommandResult",
+        (
+            unique_id[0],
+            json.dumps((int(ResultCode.OK), "Command Completed")),
+        ),
+    )
+    event_tracer.clear_events()
+
+
+@then("CSP Subarray Leaf Node stops generating delay values")
+def check_if_delay_values_are_not_generating(subarray_node_low) -> None:
+    """Check if delay values are stopped generating."""
+    assert wait_and_validate_device_attribute_value(
+        subarray_node_low.csp_subarray_leaf_node,
+        "delayModel",
+        json.dumps(INITIAL_LOW_DELAY_JSON),
+        is_json=True,
     )

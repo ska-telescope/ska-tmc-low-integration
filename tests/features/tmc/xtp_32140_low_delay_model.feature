@@ -4,5 +4,3 @@ Scenario: TMC generates delay values
     And subarray is in obsState IDLE
     When I configure the subarray
     Then CSP Subarray Leaf Node starts generating delay values
-    When I end the observation
-    Then CSP Subarray Leaf Node stops generating delay values

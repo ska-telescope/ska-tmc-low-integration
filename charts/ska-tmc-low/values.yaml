@@ -67,21 +67,21 @@ centralnode:
   image:
     registry: artefact.skao.int
     image: ska-tmc-centralnode
-    tag: 0.16.4
+    tag: 0.16.7
     pullPolicy: IfNotPresent
 
 subarraynode:
   image:
     registry: artefact.skao.int
     image: ska-tmc-subarraynode
-    tag: 0.23.3
+    tag: 0.24.0
     pullPolicy: IfNotPresent
 
 sdpleafnodes:
   image:
     registry: artefact.skao.int
     image: ska-tmc-sdpleafnodes
-    tag: 0.16.5
+    tag: 0.17.1
     pullPolicy: IfNotPresent
 
 cspmasterleafnode:
@@ -103,14 +103,14 @@ mccsmasterleafnode:
   image:
     registry: artefact.skao.int
     image: ska-tmc-mccsleafnodes
-    tag: 0.4.3
+    tag: 0.5.0
     pullPolicy: IfNotPresent
 
 mccssubarrayleafnode:
   image:
     registry: artefact.skao.int
     image: ska-tmc-mccsleafnodes
-    tag: 0.4.3
+    tag: 0.5.0
     pullPolicy: IfNotPresent
 
 resources:
@@ -126,6 +126,8 @@ deviceServers:
     enabled: true
     instances: ["01"]
     file: "data/centralnode.yaml"
+    SleepTime: 0.5
+    CommandTimeout: 80
 
   subarraynode:
     enabled: true
@@ -136,20 +138,26 @@ deviceServers:
     MccsConfigureInterfaceURL: "https://schema.skao.int/ska-low-mccs-configure/1.0"
     MccsScanInterfaceURL: "https://schema.skao.int/ska-low-mccs-scan/3.0"
     JonesURI: "tango://jones.skao.int/low/stn-beam/1"
+    SleepTime: 0.5
+    CommandTimeout: 70
 
   sdpsubarrayleafnode:
     enabled: true
     file: "data/sdpsubarrayleafnode.yaml"
+    SleepTime: 0.5
+    CommandTimeout: 50
 
   sdpmasterleafnode:
     enabled: true
     instances: ["01"]
     file: "data/sdpmasterleafnode.yaml"
+    SleepTime: 0.5
 
   cspmasterleafnode:
     enabled: true
     instances: ["01"]
     file: "data/cspmasterleafnode.yaml"
+    SleepTime: 0.5
 
   cspsubarrayleafnode:
     enabled: true
@@ -162,15 +170,20 @@ deviceServers:
     PSTDelayCadence: 300.0
     PSTDelayValidityPeriod: 600.0
     PSTDelayModelTimeInAdvance: 600
+    SleepTime: 0.5
+    CommandTimeout: 50
 
   mccsmasterleafnode:
     enabled: true
     instances: ["01"]
     file: "data/mccsmasterleafnode.yaml"
+    SleepTime: 0.5
 
   mccssubarrayleafnode:
     enabled: true
     file: "data/mccssubarrayleafnode.yaml"
+    SleepTime: 0.5
+    CommandTimeout: 50
 
   mocks:
     enabled: false
