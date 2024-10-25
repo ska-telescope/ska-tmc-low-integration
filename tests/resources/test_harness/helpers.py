@@ -831,14 +831,14 @@ def remove_timing_beams(configure_json: str) -> str:
 
 def generate_and_get_assign_resource_json(assign_json: str) -> str:
     """
-    Generates a JSON structure for assigned resources based on the input JSON.
+    Generates a JSON structure for assign resources based on the input JSON.
 
     Args:
         assign_json (str): The input JSON string containing resource
         assignments.
 
     Returns:
-        str: JSON string representing the assigned resources.
+        str: JSON string representing the assign resources.
     """
     assign_json_dict = json.loads(assign_json)
 
