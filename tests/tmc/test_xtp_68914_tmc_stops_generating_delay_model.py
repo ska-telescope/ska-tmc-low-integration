@@ -76,6 +76,7 @@ def given_telescope_is_in_on_state(
         "telescopeState",
         DevState.ON,
     )
+    event_tracer.clear_events()
 
 
 @given("subarray is configured and starts generating delay values")
@@ -174,6 +175,7 @@ def subarray_start_generating_delay_values(
         config=generated_delay_model_json,
         strictness=2,
     )
+    event_tracer.clear_events()
 
 
 @when("I end the observation")
@@ -209,6 +211,7 @@ def invoke_end_command(
             json.dumps((int(ResultCode.OK), "Command Completed")),
         ),
     )
+    event_tracer.clear_events()
 
 
 @then("CSP Subarray Leaf Node stops generating delay values")
