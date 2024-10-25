@@ -1,7 +1,9 @@
 """
+This module defines a Pytest BDD test scenario for checking the
+delay value generation during the Configure command execution on a
+Telescope Monitoring and Control (TMC) system
 The scenario includes steps to set up the TMC, configure the subarray,
-and checks whether CspSubarrayLeafNode starts generating delay value for
-PST Beams.
+and checks whether CspSubarrayLeafNode starts generating delay value.
 """
 import json
 
@@ -33,13 +35,12 @@ from tests.resources.test_harness.utils.common_utils import JsonFactory
 
 @pytest.mark.SKA_low
 @scenario(
-    "../features/tmc/xtp_65989_pst_beam_delay_model.feature",
-    "TMC generates delay values for PST Beams",
+    "../features/tmc/xtp_32140_low_delay_model.feature",
+    "TMC generates delay values",
 )
-def test_low_delay_model_for_pst_beams():
+def test_low_delay_model():
     """
-    Test whether delay value for PST Beams is getting generated on CSP
-    Subarray Leaf Node.
+    Test whether delay value are generation on CSP Subarray Leaf Node.
     """
 
 
@@ -171,18 +172,18 @@ def invoke_configure_command(
     )
 
 
-@then("CSP Subarray Leaf Node starts generating delay values for PST Beams")
+@then("CSP Subarray Leaf Node starts generating delay values")
 def check_if_delay_values_are_generating(subarray_node_low) -> None:
     """Check if delay values are generating."""
-    generated_pst_delay_model = (
+    generated_delay_model = (
         subarray_node_low.csp_subarray_leaf_node.read_attribute(
-            "delayModelPSTBeam1"
+            "delayModel"
         ).value
     )
-    generated_pst_delay_model_json = json.loads(generated_pst_delay_model)
-    assert generated_pst_delay_model_json != json.dumps(INITIAL_LOW_DELAY_JSON)
+    generated_delay_model_json = json.loads(generated_delay_model)
+    assert generated_delay_model_json != json.dumps(INITIAL_LOW_DELAY_JSON)
     telmodel_validate(
         version=LOW_DELAYMODEL_VERSION,
-        config=generated_pst_delay_model_json,
+        config=generated_delay_model_json,
         strictness=2,
     )

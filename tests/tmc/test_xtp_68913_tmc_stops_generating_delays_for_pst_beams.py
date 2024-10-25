@@ -1,9 +1,7 @@
 """
-This module defines a Pytest BDD test scenario for checking the
-delay value generation during the Configure command execution on a
-Telescope Monitoring and Control (TMC) system
-The scenario includes steps to set up the TMC, configure the subarray,
-and checks whether CspSubarrayLeafNode starts generating delay value.
+The scenario includes steps to set up the TMC, configure the subarray and when
+subarray ends the configuration and CspSubarrayLeafNode stops generating delay
+values for PST Beams.
 """
 import json
 
@@ -36,12 +34,13 @@ from tests.resources.test_harness.utils.common_utils import JsonFactory
 
 @pytest.mark.SKA_low
 @scenario(
-    "../features/tmc/check_low_delay_model.feature",
-    "TMC generates delay values",
+    "../features/tmc/xtp_68913_tmc_stops_generating_delays_pst_beams.feature",
+    "TMC stops generating delay values for PST Beams",
 )
-def test_low_delay_model():
+def test_tmc_stops_generating_delay_model_for_pst_beams():
     """
-    Test whether delay value are generation on CSP Subarray Leaf Node.
+    Test whether tmc stops generating delay values on for PST Beams on CSP
+    Subarray Leaf Node.
     """
 
 
@@ -76,16 +75,19 @@ def given_telescope_is_in_on_state(
         "telescopeState",
         DevState.ON,
     )
+    event_tracer.clear_events()
 
 
-@given("subarray is in obsState IDLE")
-def subarray_in_idle_obsstate(
+@given("subarray is configured and generating delay values for PST Beams")
+def subarray_start_generating_delay_values_for_pst_beams(
     central_node_low: CentralNodeWrapperLow,
     subarray_node_low: SubarrayNodeWrapperLow,
     event_tracer: TangoEventTracer,
     command_input_factory: JsonFactory,
 ) -> None:
-    """Checks subarray is in obsState IDLE."""
+    """Checks subarray is configured and delay values are getting generated
+    for PST Beams.
+    """
     event_tracer.subscribe_event(subarray_node_low.subarray_node, "obsState")
     event_tracer.subscribe_event(
         subarray_node_low.subarray_node, "longRunningCommandResult"
@@ -130,14 +132,7 @@ def subarray_in_idle_obsstate(
         ),
     )
 
-
-@when("I configure the subarray")
-def invoke_configure_command(
-    subarray_node_low: SubarrayNodeWrapperLow,
-    event_tracer: TangoEventTracer,
-    command_input_factory: JsonFactory,
-) -> None:
-    """Invoke Configure command."""
+    # Invoke Configure command
 
     configure_input_json = prepare_json_args_for_commands(
         "configure_low", command_input_factory
@@ -171,23 +166,20 @@ def invoke_configure_command(
             json.dumps((int(ResultCode.OK), "Command Completed")),
         ),
     )
-
-
-@then("CSP Subarray Leaf Node starts generating delay values")
-def check_if_delay_values_are_generating(subarray_node_low) -> None:
-    """Check if delay values are generating."""
-    generated_delay_model = (
+    # Check if delay values are generating
+    generated_pst_delay_model = (
         subarray_node_low.csp_subarray_leaf_node.read_attribute(
-            "delayModel"
+            "delayModelPSTBeam1"
         ).value
     )
-    generated_delay_model_json = json.loads(generated_delay_model)
-    assert generated_delay_model_json != json.dumps(INITIAL_LOW_DELAY_JSON)
+    generated_pst_delay_model_json = json.loads(generated_pst_delay_model)
+    assert generated_pst_delay_model_json != json.dumps(INITIAL_LOW_DELAY_JSON)
     telmodel_validate(
         version=LOW_DELAYMODEL_VERSION,
-        config=generated_delay_model_json,
+        config=generated_pst_delay_model_json,
         strictness=2,
     )
+    event_tracer.clear_events()
 
 
 @when("I end the observation")
@@ -223,14 +215,15 @@ def invoke_end_command(
             json.dumps((int(ResultCode.OK), "Command Completed")),
         ),
     )
+    event_tracer.clear_events()
 
 
-@then("CSP Subarray Leaf Node stops generating delay values")
+@then("CSP Subarray Leaf Node stops generating delay values for PST Beams")
 def check_if_delay_values_are_not_generating(subarray_node_low) -> None:
-    """Check if delay values are stopped generating."""
+    """Check if PST Beam delay values are stopped generating."""
     assert wait_and_validate_device_attribute_value(
         subarray_node_low.csp_subarray_leaf_node,
-        "delayModel",
+        "delayModelPSTBeam1",
         json.dumps(INITIAL_LOW_DELAY_JSON),
         is_json=True,
     )
