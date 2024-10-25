@@ -119,6 +119,27 @@ def check_configure_successful(
     )
 
 
+def get_subarray_input_json(slug):
+    """
+    Args:
+        slug (str): base name of file
+    Return:
+        Read and return content of file
+    """
+    assign_json_file_path = join(
+        dirname(__file__),
+        "..",
+        "..",
+        "..",
+        "data",
+        "subarray",
+        f"{slug}.json",
+    )
+    with open(assign_json_file_path, "r", encoding="UTF-8") as f:
+        assign_json = f.read()
+    return assign_json
+
+
 def get_centralnode_input_json(slug):
     """
     Args:
@@ -187,7 +208,7 @@ class JsonFactory(object):
         Return:
             config_json (str): Return configure json based json type provided
         """
-        return get_subarray_input_json(json_type)
+        return get_centralnode_input_json(json_type)
 
     def create_centralnode_configuration(self, json_type):
         """Read and return configuration json file from

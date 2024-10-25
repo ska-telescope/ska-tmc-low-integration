@@ -8,6 +8,14 @@ This project adheres to `Semantic Versioning <http://semver.org/>`_.
 Added
 -----
 
+[UNRELEASED]
+* Harmonization of JSON Usage Across TMC LOW Integration Repository: 
+*Single Source of JSON Files: Replaced all instances of JSON files in the repository with a single source from the TelModel repository, ensuring consistency and easier maintenance.
+
+*Removal of Redundant JSON Files: Deleted duplicate JSON files from the Integration and TMC Integration repositories to reduce redundancy and improve clarity.
+
+*Test Case Updates: Modified test cases to reference JSON files from the TelModel repository, aligning all tests with the updated, harmonized JSON structure.
+
 [0.20.0-rc]
 * Integrate TMC CSPLeafNodes version 0.21.1 to support PST Beam Delay Calculation
 * Update TMC Configure JSON to support Delay Calculation for PST Beams
@@ -88,14 +96,3 @@ Fixed
 
 [0.14.1]
 * Fixed SKB-300.
-
-
-Unreleased
-----------
-
-* Harmonization of JSON Usage Across TMC LOW Integration Repository: 
-*Single Source of JSON Files: Replaced all instances of JSON files in the repository with a single source from the TelModel repository, ensuring consistency and easier maintenance.
-
-*Removal of Redundant JSON Files: Deleted duplicate JSON files from the Integration and TMC Integration repositories to reduce redundancy and improve clarity.
-
-*Test Case Updates: Modified test cases to reference JSON files from the TelModel repository, aligning all tests with the updated, harmonized JSON structure.
