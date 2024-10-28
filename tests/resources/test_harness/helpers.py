@@ -934,35 +934,23 @@ def wait_for_partial_or_complete_abort(timeout: int = 110) -> None:
         low_sdp_subarray_leaf_node: "sdpSubarrayObsState",
         mccs_subarray_leaf_node: "obsState",
     }
-    end_states_of_devices: dict[str, ObsState] = {}
-    start_time = time.time()
-    count = 0
-    while True:
-        for device_name, attribute_name in DEVICE_ATTRIBUTE_MAP.items():
-            if device_name in end_states_of_devices:
-                continue
-            device_proxy = DeviceProxy(device_name)
-            attribute_value = device_proxy.read_attribute(attribute_name).value
-            if device_name == tmc_low_subarraynode1:
-                expected_value_list = [ObsState.ABORTED, ObsState.FAULT]
-            else:
-                expected_value_list = [
-                    ObsState.ABORTED,
-                    ObsState.FAULT,
-                    ObsState.EMPTY,
-                ]
-            if attribute_value in expected_value_list:
-                count += 1
-                end_states_of_devices[device_name] = attribute_value
-        if count == 4:
-            LOGGER.info(
-                "The final states for all the devices are: %s",
-                end_states_of_devices,
+    event_recorder = EventRecorder()
+
+    # Subscribing to events
+    for dev_proxy, attribute_name in DEVICE_ATTRIBUTE_MAP.items():
+        event_recorder.subscribe_event(dev_proxy, attribute_name, timeout=120)
+
+    # Asserting Events
+    for dev_proxy, attribute_name in DEVICE_ATTRIBUTE_MAP.items():
+        if dev_proxy.dev_name() == tmc_low_subarraynode1:
+            assert event_recorder.has_change_event_occurred_for_given_values(
+                dev_proxy,
+                attribute_name,
+                [ObsState.FAULT, ObsState.ABORTED],
             )
-            break
-        if time.time() - start_time > timeout:
-            raise TimeoutError(
-                "Timeout occurred while waiting for partial abort. "
-                + f"Successful state transitions were: {end_states_of_devices}"
+        else:
+            assert event_recorder.has_change_event_occurred_for_given_values(
+                dev_proxy,
+                attribute_name,
+                [ObsState.FAULT, ObsState.ABORTED, ObsState.EMPTY],
             )
-        time.sleep(1)
