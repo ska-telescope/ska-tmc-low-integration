@@ -178,8 +178,8 @@ def invoke_scan_with_subarray_id(
     command_input_factory: JsonFactory,
     subarray_node_low: SubarrayNodeWrapperLow,
 ):
-    """Method to call Scan command using
-      unnecessary subarray_id key in Scan schema
+    """Method to call Scan command using unnecessary subarray_id key in
+    Scan schema
 
     Args:
         command_input_factory (JsonFactory): object of TangoEventTracer
@@ -187,10 +187,24 @@ def invoke_scan_with_subarray_id(
         subarray_node_low (SubarrayNodeWrapperLow): Object of subarray
         node wrapper
     """
-    scan_input_json = prepare_json_args_for_commands(
-        "Scan_low_with_subarray_id_key", command_input_factory
+    # Prepare the initial scan input JSON
+    scan_input_json_str = prepare_json_args_for_commands(
+        "scan_low", command_input_factory
     )
-    pytest.result, _ = subarray_node_low.subarray_node.Scan(scan_input_json)
+
+    # Convert JSON string to dictionary
+    scan_input_json = json.loads(scan_input_json_str)
+
+    # Add the subarray_id to the JSON dictionary
+    scan_input_json["subarray_id"] = 1
+
+    # Convert dictionary back to JSON string
+    scan_input_json_str = json.dumps(scan_input_json)
+
+    # Invoke the Scan command with the updated input format (string)
+    pytest.result, _ = subarray_node_low.subarray_node.Scan(
+        scan_input_json_str
+    )
 
 
 @then("TMC SubarrayNode raises exception with ResultCode.REJECTED")

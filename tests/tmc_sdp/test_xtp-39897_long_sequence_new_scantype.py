@@ -14,6 +14,7 @@ from tests.resources.test_harness.event_recorder import EventRecorder
 from tests.resources.test_harness.helpers import (
     prepare_json_args_for_centralnode_commands,
     update_eb_pb_ids,
+    update_multiple_scan_types,
 )
 from tests.resources.test_harness.subarray_node_low import (
     SubarrayNodeWrapperLow,
@@ -47,11 +48,22 @@ def reassign_resources(
 ):
     """A method to move subarray into the IDLE ObsState"""
     central_node_low.set_subarray_id(subarray_id)
-    assign_input_json = prepare_json_args_for_centralnode_commands(
-        "assign_resources_low_multiple_scan2", command_input_factory
+    # Prepare the base JSON input
+    assign_json = prepare_json_args_for_centralnode_commands(
+        "assign_resources_low", command_input_factory
     )
-    input_json = update_eb_pb_ids(assign_input_json)
-    assign_str = json.loads(input_json)
+
+    # Dynamically update scan types in the method
+    assign_json_with_multiple_scan = update_multiple_scan_types(assign_json)
+
+    # Update EB and PB ids
+    assign_json_with_multiple_scan = update_eb_pb_ids(
+        assign_json_with_multiple_scan
+    )
+    _, unique_id = central_node_low.store_resources(
+        assign_json_with_multiple_scan
+    )
+    assign_str = json.loads(assign_json_with_multiple_scan)
     assign_str["sdp"]["processing_blocks"][0]["parameters"][
         "time-to-ready"
     ] = 2

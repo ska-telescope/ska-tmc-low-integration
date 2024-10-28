@@ -14,6 +14,7 @@ from tests.resources.test_harness.helpers import (
     prepare_json_args_for_centralnode_commands,
     prepare_json_args_for_commands,
     update_eb_pb_ids,
+    update_multiple_scan_types,
     update_scan_id,
     update_scan_type,
 )
@@ -87,11 +88,21 @@ def assign_resources_to_subarray(
         ),
         "scanID",
     )
-    input_json = prepare_json_args_for_centralnode_commands(
-        "assign_resources_low_multiple_scan", command_input_factory
+    # Prepare the base JSON input
+    assign_json = prepare_json_args_for_centralnode_commands(
+        "assign_resources_low", command_input_factory
     )
-    input_json = update_eb_pb_ids(input_json)
-    _, unique_id = central_node_low.store_resources(input_json)
+
+    # Dynamically update scan types in the method
+    assign_json_with_multiple_scan = update_multiple_scan_types(assign_json)
+
+    # Update EB and PB ids
+    assign_json_with_multiple_scan = update_eb_pb_ids(
+        assign_json_with_multiple_scan
+    )
+    _, unique_id = central_node_low.store_resources(
+        assign_json_with_multiple_scan
+    )
     assert event_recorder.has_change_event_occurred(
         central_node_low.central_node,
         "longRunningCommandResult",

@@ -19,6 +19,7 @@ from tests.resources.test_harness.subarray_node_low import (
 )
 from tests.resources.test_harness.utils.common_utils import JsonFactory
 from tests.resources.test_support.common_utils.tmc_helpers import (
+    prepare_json_args_for_centralnode_commands,
     prepare_json_args_for_commands,
     set_subarray_to_given_obs_state,
 )
@@ -80,7 +81,7 @@ def given_tmc(
         "telescopeState",
         DevState.ON,
     )
-    assign_input_str = prepare_json_args_for_commands(
+    assign_input_str = prepare_json_args_for_centralnode_commands(
         "assign_resources_low", command_input_factory
     )
     configure_input_str = prepare_json_args_for_commands(

@@ -118,7 +118,7 @@ k8s-test-tmc-with-csp:
   environment:
     name: test/$CI_COMMIT_REF_SLUG
     on_stop: stop-k8s-test-tmc-with-csp
-
+  when: manual
 
 stop-k8s-test-tmc-with-csp:
   extends:
@@ -160,6 +160,7 @@ k8s-test-tmc-with-sdp:
   environment:
     name: test/$CI_COMMIT_REF_SLUG
     on_stop: stop-k8s-test-tmc-with-sdp
+  when: manual
     
 stop-k8s-test-tmc-with-sdp:
   extends:
@@ -185,6 +186,7 @@ k8s-test-tmc-with-mccs:
   environment:
     name: test/$CI_COMMIT_REF_SLUG
     on_stop: stop-k8s-test-tmc-with-mccs
+  when: manual
 
 stop-k8s-test-tmc-with-mccs:
   extends:

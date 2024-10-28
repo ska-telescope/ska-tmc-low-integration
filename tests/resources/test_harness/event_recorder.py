@@ -4,10 +4,11 @@ import logging
 from typing import Any
 
 from ska_ser_logging import configure_logging
+from ska_tango_testing.mock.placeholders import Anything
 from ska_tango_testing.mock.tango.event_callback import (
     MockTangoEventCallbackGroup,
 )
-from tango import EventType
+from tango import DeviceProxy, EventType
 
 configure_logging(logging.DEBUG)
 LOGGER = logging.getLogger(__name__)
@@ -101,3 +102,39 @@ class EventRecorder(object):
     def _generate_callable_name(self, device: Any, attribute_name: str):
         """Generate callable name based on device name and attribute name"""
         return f"{device.name()}_{attribute_name}"
+
+    def has_change_event_occurred_for_given_values(
+        self,
+        device: DeviceProxy,
+        attribute_name: str,
+        attribute_values: list[Any],
+        lookahead: int = 7,
+    ) -> bool:
+        """Validate if a change event occurred for one of the given values. Is
+        an extention of has_change_event_occurred."""
+        callable_name = self._generate_callable_name(device, attribute_name)
+        change_event_callback = self.subscribed_events.get(callable_name, None)
+        if change_event_callback:
+            for _ in range(lookahead):
+                assertion_data = change_event_callback[
+                    callable_name
+                ].assert_change_event(Anything)
+                LOGGER.debug(
+                    "Received event for attribute: %s with assertion data: %s",
+                    attribute_name,
+                    assertion_data,
+                )
+                if (
+                    assertion_data["arg0"].attr_value.name.lower()
+                    == attribute_name.lower()
+                ):
+                    if (
+                        assertion_data["arg0"].attr_value.value
+                        in attribute_values
+                    ):
+                        return True
+                    continue
+            return False
+        raise AttributeNotSubscribed(
+            f"Attribute {callable_name} is not subscribed"
+        )

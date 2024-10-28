@@ -208,7 +208,7 @@ class JsonFactory(object):
         Return:
             config_json (str): Return configure json based json type provided
         """
-        return get_subarray_input_json(json_type)
+        return get_centralnode_input_json(json_type)
 
     def create_centralnode_configuration(self, json_type):
         """Read and return configuration json file from

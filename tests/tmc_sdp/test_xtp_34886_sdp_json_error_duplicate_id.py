@@ -15,6 +15,7 @@ from tests.resources.test_harness.helpers import (
     check_for_device_event,
     get_assign_json_id,
     get_device_simulator_with_given_name,
+    modify_json_with_duplicate_ids,
     update_eb_pb_ids,
 )
 
@@ -66,13 +67,11 @@ def given_a_tmc_sdp(
 
 @given(
     parsers.parse(
-        "The TMC and SDP subarray {subarray_id} in the IDLE "
-        + "obsState using {input_json1}"
+        "The TMC and SDP subarray {subarray_id} in the IDLE obsState"
     )
 )
 def check_tmc_sdp_subarray_idle(
     subarray_id: str,
-    input_json1: str,
     central_node_low: CentralNodeWrapperLow,
     event_recorder: EventRecorder,
 ):
@@ -113,14 +112,19 @@ def check_tmc_sdp_subarray_idle(
         "telescopeState",
         DevState.ON,
     )
-
     assign_input = (
         central_node_low.json_factory.create_centralnode_configuration(
-            input_json1
+            "assign_resources_low"
         )
     )
+    assign_json_duplicate_eb_pb_id = modify_json_with_duplicate_ids(
+        assign_input, "eb-test-20220917-00000", "pb-test-20220917-00000"
+    )
+
     central_node_low.assign_input = assign_input
-    _, unique_id = central_node_low.store_resources(assign_input)
+    _, unique_id = central_node_low.store_resources(
+        assign_json_duplicate_eb_pb_id
+    )
 
     assert event_recorder.has_change_event_occurred(
         central_node_low.subarray_node,
@@ -154,13 +158,11 @@ def check_tmc_sdp_subarray_idle(
 
 @when(
     parsers.parse(
-        "TMC executes another AssignResources command "
-        + "with a {duplicate_id} from {input_json1}"
+        "TMC executes another AssignResources command with a {duplicate_id}"
     )
 )
 def tmc_assign_resources_with_duplicate_id(
     duplicate_id: str,
-    input_json1: str,
     central_node_low: CentralNodeWrapperLow,
     event_recorder: EventRecorder,
 ):
@@ -169,34 +171,48 @@ def tmc_assign_resources_with_duplicate_id(
 
     Args:
         duplicate_id (str): Type ID to be duplicated(eb_id/pb_id).
-        input_json1 (str): assign resources input json
         central_node_low (CentralNodeWrapperLow): fixture for
         CentralNodeWrapperLow class instance
-        event_recorder (EventRecorder):
+        event_recorder (EventRecorder): fixture for EventRecorder class
+        instance
     """
 
+    # Subscribe to the event on the SDP subarray leaf node
     event_recorder.subscribe_event(
         central_node_low.sdp_subarray_leaf_node,
         "longRunningCommandResult",
     )
-    json_id: str = ""
-    if duplicate_id == "eb_id":
-        json_id = "pb_id"
-    else:
-        json_id = "eb_id"
+
+    # Create the assign resources input JSON with duplicate IDs
     assign_input = (
         central_node_low.json_factory.create_centralnode_configuration(
-            input_json1
+            "assign_resources_low"
         )
     )
+    assign_json_duplicate_eb_pb_id = modify_json_with_duplicate_ids(
+        assign_input, "eb-test-20220916-00000", "pb-test-20220916-00000"
+    )
+
+    # Update the JSON IDs as per duplicate id type
+    json_id = "pb_id" if duplicate_id == "eb_id" else "eb_id"
     assign_input = update_eb_pb_ids(
         central_node_low.assign_input, json_id=json_id
     )
+
+    # Perform the AssignResources action
     pytest.result, pytest.unique_id = central_node_low.perform_action(
-        "AssignResources", assign_input
+        "AssignResources", assign_json_duplicate_eb_pb_id
     )
-    assert pytest.unique_id[0].endswith("AssignResources")
-    assert pytest.result[0] == ResultCode.QUEUED
+
+    # Assert the command was queued
+    assert pytest.unique_id[0].endswith(
+        "AssignResources"
+    ), "AssignResources command failed"
+    assert (
+        pytest.result[0] == ResultCode.QUEUED
+    ), f"Expected QUEUED result, got {pytest.result[0]}"
+
+    # Save the duplicate ID type and value in pytest for later verification
     pytest.duplicate_id_type = duplicate_id
     pytest.duplicate_id = get_assign_json_id(assign_input, duplicate_id)[0]
 

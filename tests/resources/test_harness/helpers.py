@@ -1,3 +1,4 @@
+import copy
 import json
 import logging
 import os
@@ -89,7 +90,20 @@ def update_scan_id(input_json: str, scan_id: int) -> str:
     return updated_json
 
 
-def check_subarray_obs_state(obs_state=None, timeout=50):
+def check_subarray_obs_state(obs_state: str = None, timeout: int = 50) -> bool:
+    """
+    Logs and checks if all subarray nodes have transitioned to the given
+    obsState.
+
+    Args:
+        obs_state (str): The target obsState to check for all subarray nodes.
+        timeout (int): Timeout for waiting for the state transition
+        (in seconds).
+
+    Returns:
+        bool: True if all subarray nodes have transitioned to the given
+        obsState, False otherwise.
+    """
     LOGGER.info(
         f"{tmc_low_subarraynode1}.obsState : "
         + str(Resource(tmc_low_subarraynode1).get("obsState"))
@@ -106,6 +120,7 @@ def check_subarray_obs_state(obs_state=None, timeout=50):
         f"{mccs_subarray1}.obsState : "
         + str(Resource(mccs_subarray1).get("obsState"))
     )
+
     the_waiter = Waiter(**device_dict)
     the_waiter.set_wait_for_obs_state(obs_state=obs_state)
     the_waiter.wait(timeout / 0.1)
@@ -202,7 +217,17 @@ def prepare_json_args_for_commands(
 def prepare_json_args_for_centralnode_commands(
     args_for_command: str, command_input_factory: JsonFactory
 ) -> str:
-    """This method return input json based on command args"""
+    """
+    Prepares input JSON based on the command arguments for the Central Node.
+
+    Args:
+        args_for_command (str): Command arguments to generate the input JSON.
+        command_input_factory (JsonFactory): Factory to generate JSON
+         configurations.
+
+    Returns:
+        str: Generated input JSON string for the command.
+    """
     if args_for_command is not None:
         input_json = command_input_factory.create_centralnode_configuration(
             args_for_command
@@ -239,18 +264,26 @@ def set_subarray_to_given_obs_state(
     event_recorder,
     command_input_factory,
 ):
-    """Set the Subarray node to given obsState."""
-    # This method with be removed after the helper devices are updated to have
-    # a ThreadPoolExecutor.
+    """
+    Sets the Subarray node to the specified obsState and verifies state
+    transitions.
+
+    Args:
+        subarray_node: The subarray node to modify.
+        obs_state (str): The desired observation state to set.
+        event_recorder: Utility to record and subscribe to events.
+        command_input_factory: Factory to generate input commands for the
+        transitions.
+
+    Returns:
+        None
+    """
     match obs_state:
         case "RESOURCING":
-            # Setting the device defective
             csp_subarray = DeviceProxy(low_csp_subarray1)
             csp_subarray.SetDefective(json.dumps(INTERMEDIATE_STATE_DEFECT))
-
             subarray_node.force_change_of_obs_state(obs_state)
 
-            # Waiting for SDP Subarray to go to ObsState.IDLE
             sdp_subarray = DeviceProxy(low_sdp_subarray1)
             event_recorder.subscribe_event(sdp_subarray, "obsState")
             assert event_recorder.has_change_event_occurred(
@@ -258,23 +291,19 @@ def set_subarray_to_given_obs_state(
                 "obsState",
                 ObsState.IDLE,
             )
-            # Resetting defect on CSP Subarray.
             csp_subarray.SetDefective(json.dumps({"enabled": False}))
 
         case "CONFIGURING":
             subarray_node.force_change_of_obs_state("IDLE")
-            # Setting the device defective
             csp_subarray = DeviceProxy(low_csp_subarray1)
             csp_subarray.SetDefective(
                 json.dumps(INTERMEDIATE_CONFIGURING_OBS_STATE_DEFECT)
             )
-
             configure_input = prepare_json_args_for_commands(
                 "configure_low", command_input_factory
             )
             subarray_node.execute_transition("Configure", configure_input)
 
-            # Waiting for SDP Subarray to go to ObsState.READY
             sdp_subarray = DeviceProxy(low_sdp_subarray1)
             event_recorder.subscribe_event(sdp_subarray, "obsState")
             assert event_recorder.has_change_event_occurred(
@@ -282,7 +311,6 @@ def set_subarray_to_given_obs_state(
                 "obsState",
                 ObsState.READY,
             )
-            # Resetting defect on CSP Subarray.
             csp_subarray.SetDefective(json.dumps({"enabled": False}))
 
 
@@ -586,6 +614,37 @@ def update_eb_pb_ids(input_json: str, json_id: str = "") -> str:
     return input_json
 
 
+def update_multiple_scan_types(input_json):
+    """Method to dynamically update scan types inside the JSON."""
+
+    # Define your different scan type values here
+    scan_types = [
+        {
+            "scan_type_id": ".default",
+            "beams": {
+                "vis0": {
+                    "channels_id": "vis_channels",
+                    "polarisations_id": "all",
+                }
+            },
+        },
+        {
+            "scan_type_id": "target:a",
+            "derive_from": ".default",
+            "beams": {"vis0": {"field_id": "field_a"}},
+        },
+        {
+            "scan_type_id": "calibration:b",
+            "derive_from": ".default",
+            "beams": {"vis0": {"field_id": "field_b"}},
+        },
+    ]
+
+    # Update the scan types in the input JSON
+    input_json["sdp"]["execution_block"]["scan_types"] = scan_types
+    return input_json
+
+
 def get_assign_json_id(input_json: str, json_id: str = "") -> list[str]:
     """
     Method to get different eb_id and pb_id
@@ -677,7 +736,16 @@ def set_admin_mode_values_mccs():
                             time.sleep(0.1)
 
 
-def set_receive_address(central_node):
+def set_receive_address(central_node) -> None:
+    """
+    Sets the direct receive address for a central node's subarray.
+
+    Args:
+        central_node: The central node for which to set the receive address.
+
+    Returns:
+        None
+    """
     receive_address = json.dumps(
         {
             "science_A": {
@@ -742,48 +810,150 @@ def updated_assign_str(assign_json: str, station_id: int) -> str:
     return updated_assign_str
 
 
+def remove_timing_beams(configure_json: str) -> str:
+    """
+    Removes the 'timing_beams' key from the configure JSON.
+
+    Args:
+        configure_json (str): Original JSON string.
+
+    Returns:
+        str: Modified JSON string without 'timing_beams'.
+    """
+    config_dict = json.loads(configure_json)
+    config_dict_copy = copy.deepcopy(config_dict)
+
+    if "timing_beams" in config_dict_copy["csp"]["lowcbf"]:
+        del config_dict_copy["csp"]["lowcbf"]["timing_beams"]
+
+    return json.dumps(config_dict_copy, indent=4)
+
+
+def generate_and_get_assign_resource_json(assign_json: str) -> str:
+    """
+    Generates a JSON structure for assign resources based on the input JSON.
+
+    Args:
+        assign_json (str): The input JSON string containing resource
+        assignments.
+
+    Returns:
+        str: JSON string representing the assign resources.
+    """
+    assign_json_dict = json.loads(assign_json)
+
+    assign_json_mccs_block_modified = {
+        "interface": (
+            "https://schema.skao.int/ska-low-mccs-assignedresources/1.0"
+        ),
+        "subarray_beam_ids": [
+            beam["subarray_beam_id"]
+            for beam in assign_json_dict["mccs"]["subarray_beams"]
+        ],
+        "station_ids": [
+            str(aperture["station_id"])
+            for beam in assign_json_dict["mccs"]["subarray_beams"]
+            for aperture in beam["apertures"]
+        ],
+        "apertures": [
+            aperture["aperture_id"]
+            for beam in assign_json_dict["mccs"]["subarray_beams"]
+            for aperture in beam["apertures"]
+        ],
+        "channels": [32],
+    }
+
+    assign_json_mccs_block_modified["station_ids"].append("3")
+    assign_json_mccs_block_modified["apertures"].extend(
+        ["AP001.02", "AP002.02", "AP003.01"]
+    )
+
+    return json.dumps(assign_json_mccs_block_modified)
+
+
+def update_assign_json_with_empty_values(assign_json: str) -> str:
+    """
+    Updates the given JSON to set specific fields to empty values.
+
+    Args:
+        assign_json (str): The input JSON string to be updated.
+
+    Returns:
+        str: JSON string with the specified fields set to empty.
+    """
+    assign_json_mccs_block_modified = json.loads(assign_json)
+
+    assign_json_mccs_block_modified["subarray_beam_ids"] = []
+    assign_json_mccs_block_modified["station_beam_ids"] = []
+    assign_json_mccs_block_modified["station_ids"] = []
+    assign_json_mccs_block_modified["apertures"] = []
+    assign_json_mccs_block_modified["channels"] = [0]
+
+    return json.dumps(assign_json_mccs_block_modified)
+
+
+def modify_json_with_duplicate_ids(
+    assign_json: str, duplicate_eb_id: str, duplicate_pb_id: str
+) -> dict:
+    """
+    Modifies the input JSON by adding duplicate execution block ID (eb_id)
+    and processing block ID (pb_id).
+
+    Args:
+        assign_json (str): Input JSON string containing resource assignments.
+        duplicate_eb_id (str): Duplicate execution block ID to add.
+        duplicate_pb_id (str): Duplicate processing block ID to add.
+
+    Returns:
+        dict: Modified JSON structure with duplicate IDs added.
+    """
+    # Load the input JSON string into a dictionary
+    assign_json_duplicate_eb_pb_id = json.loads(assign_json)
+
+    # Modify the eb_id and pb_id
+    assign_json_duplicate_eb_pb_id["sdp"]["execution_block"][
+        "eb_id"
+    ] = duplicate_eb_id
+    assign_json_duplicate_eb_pb_id["sdp"]["processing_blocks"][0][
+        "pb_id"
+    ] = duplicate_pb_id
+
+    return json.dumps(assign_json_duplicate_eb_pb_id, indent=2)
+
+
 def wait_for_partial_or_complete_abort(timeout: int = 110) -> None:
     """Wait for completion of Partial/Full abort on SubarrayNode by waiting for
-    one of 3 states on all the devices - ABORTED, EMPTY or FAULT until
-    occurance of timeout.
+    one of 3 states on all the devices - ABORTED, EMPTY, or FAULT until
+    occurrence of timeout.
 
     :param timeout: Timeout value to wait for.
     """
-    DEVICE_ATTRIBUTE_MAP: dict[str, str] = {
-        tmc_low_subarraynode1: "obsState",
-        low_csp_subarray_leaf_node: "cspSubarrayObsState",
-        low_sdp_subarray_leaf_node: "sdpSubarrayObsState",
-        mccs_subarray_leaf_node: "obsState",
+    DEVICE_ATTRIBUTE_MAP = {
+        DeviceProxy(tmc_low_subarraynode1): "obsState",
+        DeviceProxy(low_csp_subarray_leaf_node): "cspSubarrayObsState",
+        DeviceProxy(low_sdp_subarray_leaf_node): "sdpSubarrayObsState",
+        DeviceProxy(mccs_subarray_leaf_node): "obsState",
     }
-    end_states_of_devices: dict[str, ObsState] = {}
-    start_time = time.time()
-    count = 0
-    while True:
-        for device_name, attribute_name in DEVICE_ATTRIBUTE_MAP.items():
-            if device_name in end_states_of_devices:
-                continue
-            device_proxy = DeviceProxy(device_name)
-            attribute_value = device_proxy.read_attribute(attribute_name).value
-            if device_name == tmc_low_subarraynode1:
-                expected_value_list = [ObsState.ABORTED, ObsState.FAULT]
-            else:
-                expected_value_list = [
-                    ObsState.ABORTED,
-                    ObsState.FAULT,
-                    ObsState.EMPTY,
-                ]
-            if attribute_value in expected_value_list:
-                count += 1
-                end_states_of_devices[device_name] = attribute_value
-        if count == 4:
-            LOGGER.info(
-                "The final states for all the devices are: %s",
-                end_states_of_devices,
+    event_recorder = EventRecorder()
+
+    # Subscribing to events
+    for dev_proxy, attribute_name in DEVICE_ATTRIBUTE_MAP.items():
+        event_recorder.subscribe_event(dev_proxy, attribute_name, timeout=120)
+
+    # Asserting Events
+    for dev_proxy, attribute_name in DEVICE_ATTRIBUTE_MAP.items():
+        if (
+            dev_proxy.dev_name()
+            == DeviceProxy(tmc_low_subarraynode1).dev_name()
+        ):
+            assert event_recorder.has_change_event_occurred_for_given_values(
+                dev_proxy,
+                attribute_name,
+                [ObsState.FAULT, ObsState.ABORTED],
             )
-            break
-        if time.time() - start_time > timeout:
-            raise TimeoutError(
-                "Timeout occurred while waiting for partial abort. "
-                + f"Successful state transitions were: {end_states_of_devices}"
+        else:
+            assert event_recorder.has_change_event_occurred_for_given_values(
+                dev_proxy,
+                attribute_name,
+                [ObsState.FAULT, ObsState.ABORTED, ObsState.EMPTY],
             )
-        time.sleep(1)

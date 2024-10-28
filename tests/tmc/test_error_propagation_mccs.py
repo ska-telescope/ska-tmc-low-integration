@@ -28,6 +28,7 @@ from tests.resources.test_harness.subarray_node_low import (
 from tests.resources.test_harness.utils.common_utils import JsonFactory
 from tests.resources.test_harness.utils.enums import SimulatorDeviceType
 from tests.resources.test_support.common_utils.tmc_helpers import (
+    prepare_json_args_for_centralnode_commands,
     prepare_json_args_for_commands,
 )
 
@@ -93,7 +94,7 @@ def check_subarray_obs_state(
     Method to check subarray is in IDLE observation state.
     """
     event_tracer.subscribe_event(subarray_node_low.subarray_node, "obsState")
-    assign_input_str = prepare_json_args_for_commands(
+    assign_input_str = prepare_json_args_for_centralnode_commands(
         "assign_resources_low", command_input_factory
     )
     central_node_low.store_resources(assign_input_str)

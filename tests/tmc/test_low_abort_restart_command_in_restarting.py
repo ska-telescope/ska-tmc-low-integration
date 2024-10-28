@@ -39,8 +39,8 @@ from tests.resources.test_support.constant_low import (
 def test_low_abort_restart_in_restarting(json_factory):
     """Abort and Restart is executed."""
     telescope_control = BaseTelescopeControl()
-    assign_json = json_factory("command_assign_resource_low")
-    release_json = json_factory("command_release_resource_low")
+    assign_json = json_factory("assign_resource_low")
+    release_json = json_factory("release_resource_low")
     tmc_helper = TmcHelper(centralnode, tmc_subarraynode1)
 
     try:
