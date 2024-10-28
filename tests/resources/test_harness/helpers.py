@@ -923,16 +923,16 @@ def modify_json_with_duplicate_ids(
 
 def wait_for_partial_or_complete_abort(timeout: int = 110) -> None:
     """Wait for completion of Partial/Full abort on SubarrayNode by waiting for
-    one of 3 states on all the devices - ABORTED, EMPTY or FAULT until
-    occurance of timeout.
+    one of 3 states on all the devices - ABORTED, EMPTY, or FAULT until
+    occurrence of timeout.
 
     :param timeout: Timeout value to wait for.
     """
-    DEVICE_ATTRIBUTE_MAP: dict[str, str] = {
-        tmc_low_subarraynode1: "obsState",
-        low_csp_subarray_leaf_node: "cspSubarrayObsState",
-        low_sdp_subarray_leaf_node: "sdpSubarrayObsState",
-        mccs_subarray_leaf_node: "obsState",
+    DEVICE_ATTRIBUTE_MAP = {
+        DeviceProxy(tmc_low_subarraynode1): "obsState",
+        DeviceProxy(low_csp_subarray_leaf_node): "cspSubarrayObsState",
+        DeviceProxy(low_sdp_subarray_leaf_node): "sdpSubarrayObsState",
+        DeviceProxy(mccs_subarray_leaf_node): "obsState",
     }
     event_recorder = EventRecorder()
 
@@ -942,7 +942,10 @@ def wait_for_partial_or_complete_abort(timeout: int = 110) -> None:
 
     # Asserting Events
     for dev_proxy, attribute_name in DEVICE_ATTRIBUTE_MAP.items():
-        if dev_proxy.dev_name() == tmc_low_subarraynode1:
+        if (
+            dev_proxy.dev_name()
+            == DeviceProxy(tmc_low_subarraynode1).dev_name()
+        ):
             assert event_recorder.has_change_event_occurred_for_given_values(
                 dev_proxy,
                 attribute_name,
