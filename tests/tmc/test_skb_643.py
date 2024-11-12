@@ -87,10 +87,7 @@ def given_a_tmc(
     )
 
 
-@when(
-    "I invoke the assign command on Subarray Node with only {resource_type} "
-    + "resource"
-)
+@when("I invoke the assign command on TMC Subarray")
 def invoke_assign_resources(
     central_node_low: CentralNodeWrapperLow,
     command_input_factory: JsonFactory,
