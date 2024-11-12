@@ -6,7 +6,6 @@ Control (TMC) system to verify the SKB-643.
 
 
 import json
-from copy import deepcopy
 
 import pytest
 from assertpy import assert_that
@@ -25,18 +24,6 @@ from tests.resources.test_support.common_utils.tmc_helpers import (
     prepare_json_args_for_centralnode_commands,
 )
 from tests.resources.test_support.constant_low import TIMEOUT
-
-# Dictionary mapping for resource-specific parameters
-RESOURCE_CONFIG = {
-    "pst": {
-        "beams_id_key": "beams_id",
-        "beams_id_values": [1],
-    },  # Use 'beams_id' as expected after processing
-    "pss": {
-        "beams_id_key": "beams_id",
-        "beams_id_values": [1, 2, 3],
-    },  # Same for 'pss'
-}
 
 
 @pytest.mark.SKA_low1
@@ -102,43 +89,58 @@ def given_a_tmc(
 
 @when(
     "I invoke the assign command on Subarray Node with only {resource_type} "
-    "resource"
+    + "resource"
 )
 def invoke_assign_resources(
     central_node_low: CentralNodeWrapperLow,
     command_input_factory: JsonFactory,
-    resource_type,
     event_recorder,
 ):
     """Invoke assign resources."""
-    config = RESOURCE_CONFIG[resource_type]
-
     assign_input_json = prepare_json_args_for_centralnode_commands(
         "assign_resources_low", command_input_factory
     )
-    assign_data = deepcopy(
-        json.loads(assign_input_json)
-        if isinstance(assign_input_json, str)
-        else assign_input_json
-    )
-
-    if "csp" not in assign_data:
-        assign_data["csp"] = {}
-
-    # Add the resource configuration using the proper key for 'beams_id'
-    assign_data["csp"][resource_type] = {
-        config["beams_id_key"]: config["beams_id_values"]
-    }
-
-    # Convert assign_data to JSON string if needed
-    assign_data_json = json.dumps(assign_data)
-
-    _, unique_id = central_node_low.store_resources(assign_data_json)
+    _, unique_id = central_node_low.store_resources(assign_input_json)
     event_recorder.has_change_event_occurred(
         central_node_low.central_node,
         "longRunningCommandResult",
         (unique_id[0], json.dumps((int(ResultCode.OK), "Command Completed"))),
     )
+
+
+@then(
+    "TMC subarray invokes configure on csp with json"
+    + " containing beam_ids for pst and pss"
+)
+def check_beam_ids_in_json(subarray_node):
+    """Check beam id for csp assign json"""
+    # Retrieve the JSON input from the last command call to CSP
+    input_json = subarray_node.subarray_devices[
+        "csp_subarray"
+    ].commandCallInfo[-1][-1]
+
+    # Parse the JSON
+    csp_config = json.loads(input_json)["csp"]
+
+    # Check for "beam_ids" in both "pst" and "pss" configurations
+    for resource_type in ["pst", "pss"]:
+        assert (
+            resource_type in csp_config
+        ), f"Expected '{resource_type}' in CSP config"
+
+        resource_data = csp_config[resource_type]
+        beam_ids_key = f"{resource_type}_beam_ids"
+
+        # Verify the presence of the beam_ids key
+        assert (
+            beam_ids_key in resource_data
+        ), f"Expected '{beam_ids_key}' key in {resource_type} config"
+
+        # Verify that beam_ids is not empty
+        beam_ids = resource_data[beam_ids_key]
+        assert (
+            beam_ids
+        ), f"'{beam_ids_key}' in {resource_type} config should not be empty"
 
 
 @then("TMC Subarray transitions to observation state IDLE")
