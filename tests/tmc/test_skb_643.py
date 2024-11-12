@@ -39,16 +39,16 @@ RESOURCE_CONFIG = {
 }
 
 
-@pytest.mark.SKA_low
+@pytest.mark.SKA_low1
 @scenario(
     "../features/tmc/SKB_643.feature",
     "Verify SKB-643",
 )
 def test_verify_skb_643():
-    """BDD test scenario for verifying SKB-438"""
+    """BDD test scenario for verifying SKB-643"""
 
 
-@given("Subarray Node is in observation state EMPTY")
+@given("TMC Subarray is in observation state EMPTY")
 def given_a_tmc(
     central_node_low: CentralNodeWrapperLow, event_tracer: TangoEventTracer
 ):
@@ -141,7 +141,7 @@ def invoke_assign_resources(
     )
 
 
-@then("Subarray Node transitions to observation state IDLE")
+@then("TMC Subarray transitions to observation state IDLE")
 def check_subarray_is_in_idle(
     event_tracer: TangoEventTracer,
     subarray_node_low: SubarrayNodeWrapperLow,
