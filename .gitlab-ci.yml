@@ -186,17 +186,8 @@ k8s-test:
 
 deploy-integration:
   rules:
-    - if: '$CI_COMMIT_REF_NAME != $CI_DEFAULT_BRANCH || $CI_COMMIT_TAG'
-  variables:
-    KUBE_NAMESPACE: 'ci-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA'
-    SERVICE_ACCOUNT: "ci-svc-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA"
-    MARK: 'tmc_csp_delay'
-  before_script:
-    - make cred SERVICE_ACCOUNT=$SERVICE_ACCOUNT
-    - '[ -f .make/k8s.mk ] || (echo "File k8s.mk not included in Makefile; exit 1")'
-    - 'make help | grep k8s-test'
-    - make k8s-install-chart
-    - make k8s-wait
+    - if: $CI_COMMIT_REF_NAME != $CI_DEFAULT_BRANCH
+  after_script:
     - make k8s-test MARK='tmc_csp_delay'
 
 
@@ -210,7 +201,7 @@ info-integration:
 
 stop-integration:
   rules:
-    - if: '$CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH || $CI_COMMIT_TAG'
+    - if: '$CI_COMMIT_REF_NAME != $CI_DEFAULT_BRANCH
 
 #staging
 deploy-staging:
