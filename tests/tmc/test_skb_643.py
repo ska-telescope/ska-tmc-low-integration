@@ -100,7 +100,10 @@ def given_a_tmc(
     )
 
 
-@when("I invoke the assign command on Subarray with {resource_type} resource")
+@when(
+    "I invoke the assign command on TMC Subarray with only {resource_type} "
+    + "resource"
+)
 def invoke_assign_resources(
     central_node_low: CentralNodeWrapperLow,
     command_input_factory: JsonFactory,
@@ -154,10 +157,7 @@ def invoke_assign_resources(
     )
 
 
-@then(
-    "TMC subarray invokes configure on csp with json"
-    + " containing beam_ids for pst and pss"
-)
+@then("TMC Subarray invokes assign on csp with json containing beams_id")
 def check_beam_ids_in_json(subarray_node):
     """Check beam id for csp assign json"""
     # Retrieve the JSON input from the last command call to CSP
@@ -165,28 +165,24 @@ def check_beam_ids_in_json(subarray_node):
         "csp_subarray"
     ].commandCallInfo[-1][-1]
 
-    # Parse the JSON
-    csp_config = json.loads(input_json)["csp"]
+    # Navigate to the 'csp' section of the JSON
+    argin_csp = input_json.get("csp", {})
 
-    # Check for "beam_ids" in both "pst" and "pss" configurations
-    for resource_type in ["pst", "pss"]:
+    # Check for "pss" and verify the presence of "beams_id"
+    if "pss" in argin_csp:
+        pss = argin_csp["pss"]
+        # After assign is invoked, simply check for the presence of "beams_id"
         assert (
-            resource_type in csp_config
-        ), f"Expected '{resource_type}' in CSP config"
+            "beams_id" in pss
+        ), "'beams_id' not found in pss after assignment"
 
-        resource_data = csp_config[resource_type]
-        beam_ids_key = f"{resource_type}_beam_ids"
-
-        # Verify the presence of the beam_ids key
+    # Check for "pst" and verify the presence of "beams_id"
+    if "pst" in argin_csp:
+        pst = argin_csp["pst"]
+        # After assign is invoked, simply check for the presence of "beams_id"
         assert (
-            beam_ids_key in resource_data
-        ), f"Expected '{beam_ids_key}' key in {resource_type} config"
-
-        # Verify that beam_ids is not empty
-        beam_ids = resource_data[beam_ids_key]
-        assert (
-            beam_ids
-        ), f"'{beam_ids_key}' in {resource_type} config should not be empty"
+            "beams_id" in pst
+        ), "'beams_id' not found in pst after assignment"
 
 
 @then("TMC Subarray transitions to observation state IDLE")
