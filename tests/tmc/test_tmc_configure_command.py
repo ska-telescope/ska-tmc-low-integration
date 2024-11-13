@@ -10,6 +10,7 @@ configuration is verified by checking that the subarray transitions to
 the READY observation state.
 """
 import json
+import time
 
 import pytest
 from assertpy import assert_that
@@ -32,6 +33,7 @@ from tests.resources.test_support.common_utils.tmc_helpers import (
 )
 
 
+@pytest.mark.tmc_csp_delay
 @pytest.mark.SKA_low
 @scenario(
     "../features/tmc/check_configure_command.feature",
@@ -225,3 +227,4 @@ def check_configure_completion(
         "obsState",
         ObsState.READY,
     )
+    time.sleep(21600)
