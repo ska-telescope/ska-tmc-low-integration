@@ -198,9 +198,7 @@ deploy-integration:
     - make k8s-install-chart
     - make k8s-wait
     - make k8s-test MARK = 'tmc_csp_delay'
-  after_script:
-    - pip3 install -q -U ska-ser-xray
-    - XRAY_TEST_RESULT_FILE="build/cucumber.json" make xray-publish
+
 
 redeploy-integration:
   rules:
