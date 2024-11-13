@@ -10,7 +10,7 @@ from copy import deepcopy
 
 import pytest
 from assertpy import assert_that
-from pytest_bdd import given, scenario, then, when
+from pytest_bdd import given, parsers, scenario, then, when
 from ska_control_model import ObsState
 from ska_tango_base.commands import ResultCode
 from ska_tango_testing.integration import TangoEventTracer, log_events
@@ -101,8 +101,10 @@ def given_a_tmc(
 
 
 @when(
-    "I invoke the assign command on TMC Subarray with only {resource_type} "
-    + "resource"
+    parsers.parse(
+        "I invoke the assign command on TMC Subarray with only "
+        + "{resource_type} resource"
+    )
 )
 def invoke_assign_resources(
     central_node_low: CentralNodeWrapperLow,
