@@ -187,6 +187,10 @@ k8s-test:
 deploy-integration:
   rules:
     - if: $CI_COMMIT_REF_NAME != $CI_DEFAULT_BRANCH
+  variables:
+    KUBE_NAMESPACE: "integration-$CI_PROJECT_NAME"
+    K8S_SERVICE_ACCOUNT: "ci-svc-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA"
+    TARANTA_ENABLED: "true"
   after_script:
     - make k8s-wait
     - make k8s-test MARK='tmc_csp_delay'
