@@ -100,10 +100,7 @@ def given_a_tmc(
     )
 
 
-@when(
-    "I invoke the assign command on Subarray Node with only {resource_type} "
-    "resource"
-)
+@when("I invoke the assign command on Subarray with {resource_type} resource")
 def invoke_assign_resources(
     central_node_low: CentralNodeWrapperLow,
     command_input_factory: JsonFactory,
@@ -125,11 +122,9 @@ def invoke_assign_resources(
     if "csp" not in assign_data:
         assign_data["csp"] = {}
 
-    # Add the resource configuration using the proper key for 'beams_id'
     assign_data["csp"][resource_type] = {
         config["beams_id_key"]: config["beams_id_values"]
     }
-
     # Convert assign_data to JSON string if needed
     assign_data_json = json.dumps(assign_data)
 
