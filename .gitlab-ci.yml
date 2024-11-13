@@ -197,7 +197,7 @@ deploy-integration:
     - 'make help | grep k8s-test'
     - make k8s-install-chart
     - make k8s-wait
-    - make k8s-test MARK = 'tmc_csp_delay'
+    - make k8s-test MARK='tmc_csp_delay'
 
 
 redeploy-integration:
