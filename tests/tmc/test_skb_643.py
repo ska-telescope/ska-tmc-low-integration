@@ -171,7 +171,7 @@ def check_beam_ids_in_json(subarray_node_low: SubarrayNodeWrapperLow):
         try:
             input_json = json.loads(input_json)
         except json.JSONDecodeError as e:
-            raise ValueError(f"Failed to decode JSON: {e}")
+            raise ValueError(f"Failed to decode JSON: {e}") from e
 
     # Navigate to the 'csp' section of the JSON
     argin_csp = input_json.get("csp", {})
