@@ -26,14 +26,13 @@ from tests.resources.test_support.common_utils.tmc_helpers import (
 )
 from tests.resources.test_support.constant_low import TIMEOUT
 
-# Dictionary mapping for resource-specific parameters
 RESOURCE_CONFIG = {
     "pst": {
-        "beams_id_key": "pst_beams_id",
+        "beams_id_key": "pst_beam_ids",
         "beams_id_values": [1],
     },  # Use 'beams_id' as expected after processing
     "pss": {
-        "beams_id_key": "pss_beams_id",
+        "beams_id_key": "pss_beam_ids",
         "beams_id_values": [1, 2, 3],
     },  # Same for 'pss'
 }
