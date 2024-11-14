@@ -8,17 +8,17 @@ This project adheres to `Semantic Versioning <http://semver.org/>`_.
 Added
 -----
 
-[UNRELEASED]
-[UNRELEASED]
-* Harmonization of JSON Usage Across TMC LOW Integration Repository:
-* Single Source of JSON Files: Replaced all instances of JSON files in the repository with a single source from the TelModel repository, ensuring consistency and easier maintenance.
-* Removal of Redundant JSON Files: Deleted duplicate JSON files from the Integration and TMC Integration repositories to reduce redundancy and improve clarity.
-* Test Case Updates: Modified test cases to reference JSON files from the TelModel repository, aligning all tests with the updated, harmonized JSON structure.
-
-[0.20.2-rc]
+[0.20.1-rc.1]
+* Resolved SKB-329
+* The updated versions are as follows - 
+* CSPLeafNodes - 0.21.3
 * Updated Subarray Node v0.26.1 to fix SKB-643 and SKB-618
 
 [0.20.1-rc]
+* Harmonization of JSON Usage Across TMC LOW Integration Repository:
+* Single Source of JSON Files: Replaced all instances of JSON files in the repository with a single source from the TelModel repository, ensuring consistency and    easier maintenance.
+* Removal of Redundant JSON Files: Deleted duplicate JSON files from the Integration and TMC Integration repositories to reduce redundancy and improve clarity.
+* Test Case Updates: Modified test cases to reference JSON files from the TelModel repository, aligning all tests with the updated, harmonized JSON structure.
 * Includes improved liveliness probe functionality
 * The updated versions are as follows - 
 * Centralnode - 0.16.7
@@ -26,8 +26,8 @@ Added
 * Sdpleafnode - 0.17.1 
 * Cspleafnode - 0.5.0
 * Mccsleafnode - 0.5.0
-       
-[0.20.0-rc]
+
+[0.20.0]
 * Integrate TMC CSPLeafNodes version 0.21.1 to support PST Beam Delay Calculation
 * Update TMC Configure JSON to support Delay Calculation for PST Beams
 * Dependency Update:
