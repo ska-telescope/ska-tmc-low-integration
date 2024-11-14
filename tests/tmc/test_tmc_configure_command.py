@@ -10,7 +10,6 @@ configuration is verified by checking that the subarray transitions to
 the READY observation state.
 """
 import json
-import time
 
 import pytest
 from assertpy import assert_that
@@ -226,4 +225,3 @@ def check_configure_completion(
         "obsState",
         ObsState.READY,
     )
-    time.sleep(21600)
