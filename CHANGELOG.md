@@ -15,6 +15,8 @@ Added
 * Removal of Redundant JSON Files: Deleted duplicate JSON files from the Integration and TMC Integration repositories to reduce redundancy and improve clarity.
 * Test Case Updates: Modified test cases to reference JSON files from the TelModel repository, aligning all tests with the updated, harmonized JSON structure.
 
+[0.20.2-rc]
+* Updated Subarray Node v0.26.1 to fix SKB-643 and SKB-618
 
 [0.20.1-rc]
 * Includes improved liveliness probe functionality

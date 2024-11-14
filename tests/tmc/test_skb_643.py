@@ -38,7 +38,7 @@ RESOURCE_CONFIG = {
 }
 
 
-@pytest.mark.SKA_low1
+@pytest.mark.SKA_low
 @scenario(
     "../features/tmc/SKB_643.feature",
     "Verify SKB-643",
