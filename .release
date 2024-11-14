@@ -1,10 +1,10 @@
-release=0.20.2-rc.1
-tag=0.20.2-rc.1
+release=0.20.1-rc.1
+tag=0.20.1-rc.1
 tag_description=
 **Charts:**
-**1. ska-tmc-low-integration 0.20.1-rc - 0.20.2-rc.1**
+**1. ska-tmc-low-integration 0.20.1-rc - 0.20.1-rc.1**
 
-    **1.1 ska-tmc-low - 0.20.1-rc - 0.20.2-rc.1:
+    **1.1 ska-tmc-low - 0.20.1-rc - 0.20.1-rc.1:
        a. Resolved SKB-329
        b. The updated versions are as follows - 
         CSPLeafNodes - 0.21.3
@@ -12,9 +12,9 @@ tag_description=
 
 release_notes=
 **Charts:**
-**1. ska-tmc-low-integration 0.20.1-rc - 0.20.2-rc.1**
+**1. ska-tmc-low-integration 0.20.1-rc - 0.20.1-rc.1**
 
- **1.1 ska-tmc-low - 0.20.1-rc - 0.20.2-rc.1:
+ **1.1 ska-tmc-low - 0.20.1-rc - 0.20.1-rc.1:
        a. Resolved SKB-329
        b. The updated versions are as follows - 
         CSPLeafNodes - 0.21.3
