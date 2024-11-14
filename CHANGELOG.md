@@ -12,6 +12,7 @@ Added
 * Resolved SKB-329
 * The updated versions are as follows - 
 * CSPLeafNodes - 0.21.3
+* Updated Subarray Node v0.26.1 to fix SKB-643 and SKB-618
 
 [0.20.1-rc]
 * Harmonization of JSON Usage Across TMC LOW Integration Repository:

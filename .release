@@ -8,6 +8,7 @@ tag_description=
        a. Resolved SKB-329
        b. The updated versions are as follows - 
         CSPLeafNodes - 0.21.3
+       c. Updated Subarray Node v0.26.1 to fix SKB-643 and SKB-618
        
 
 release_notes=
@@ -18,4 +19,5 @@ release_notes=
        a. Resolved SKB-329
        b. The updated versions are as follows - 
         CSPLeafNodes - 0.21.3
+       c. Updated Subarray Node v0.26.1 to fix SKB-643 and SKB-618
        

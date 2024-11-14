@@ -127,7 +127,7 @@ def central_node_assign_resources(
 
 @when(
     parsers.parse(
-        "I invoke configure command without {key} " + "in csp configure json"
+        "I invoke configure command without {key} in csp configure json"
     )
 )
 def check_configure_json_and_invoke_command(
