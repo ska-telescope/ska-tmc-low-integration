@@ -1,29 +1,21 @@
-release=0.20.1-rc
-tag=0.20.1-rc
+release=0.20.2-rc.1
+tag=0.20.2-rc.1
 tag_description=
 **Charts:**
-**1. ska-tmc-low-integration 0.20.0-rc - 0.20.1-rc**
+**1. ska-tmc-low-integration 0.20.1-rc - 0.20.2-rc.1**
 
-    **1.1 ska-tmc-low - 0.20.0-rc - 0.20.1-rc:
-       a. Includes improved liveliness probe functionality
+    **1.1 ska-tmc-low - 0.20.1-rc - 0.20.2-rc.1:
+       a. Resolved SKB-329
        b. The updated versions are as follows - 
-        Centralnode - 0.16.7
-        SubarrayNode - 0.24.0 
-        sdpleafnode - 0.17.1 
-        cspleafnode - 0.5.0
-        mccsleafnode - 0.5.0
+        CSPLeafNodes - 0.21.3
        
 
 release_notes=
 **Charts:**
-**1. ska-tmc-low-integration 0.20.0-rc - 0.20.1-rc**
+**1. ska-tmc-low-integration 0.20.1-rc - 0.20.2-rc.1**
 
- **1.1 ska-tmc-low - 0.20.0-rc - 0.20.1-rc:
-       a. Includes improved liveliness probe functionality
+ **1.1 ska-tmc-low - 0.20.1-rc - 0.20.2-rc.1:
+       a. Resolved SKB-329
        b. The updated versions are as follows - 
-        Centralnode - 0.16.7
-        SubarrayNode - 0.24.0 
-        sdpleafnode - 0.17.1 
-        cspleafnode - 0.5.0
-        mccsleafnode - 0.5.0
+        CSPLeafNodes - 0.21.3
        
