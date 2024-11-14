@@ -159,10 +159,10 @@ def invoke_assign_resources(
 
 
 @then("TMC Subarray invokes assign on csp with json containing beams_id")
-def check_beam_ids_in_json(subarray_node):
+def check_beam_ids_in_json(subarray_node_low: SubarrayNodeWrapperLow):
     """Check beam id for csp assign json"""
     # Retrieve the JSON input from the last command call to CSP
-    input_json = subarray_node.subarray_devices[
+    input_json = subarray_node_low.subarray_devices[
         "csp_subarray"
     ].commandCallInfo[-1][-1]
 
