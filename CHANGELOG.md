@@ -7,7 +7,7 @@ This project adheres to `Semantic Versioning <http://semver.org/>`_.
 
 Added
 -----
-[0.20.0-rc]
+[0.20.0]
 * Integrate TMC CSPLeafNodes version 0.21.1 to support PST Beam Delay Calculation
 * Update TMC Configure JSON to support Delay Calculation for PST Beams
 * Dependency Update:
