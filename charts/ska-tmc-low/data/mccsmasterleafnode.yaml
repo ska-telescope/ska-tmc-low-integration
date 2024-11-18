@@ -18,16 +18,19 @@ server:
           - "{{.Values.global.mccs_master}}"
         - name: "SkaLevel"
           values:
-            - "3"
+          - "3"
         - name: "LoggingTargetsDefault"
           values:
-            - "tango::logger"
+          - "tango::logger"
         - name: "LoggingLevelDefault"
           values:
-            - "5"
+          - "5"
         - name: "SleepTime"
           values:
-            - "{{.Values.deviceServers.mccsmasterleafnode.SleepTime}}"
+          - "{{.Values.deviceServers.mccsmasterleafnode.SleepTime}}"
+        - name: "CommandTimeout"
+          values:
+          - "{{.Values.deviceServers.mccsmasterleafnode.CommandTimeout}}"
 depends_on:
   - device: sys/database/2
 image:

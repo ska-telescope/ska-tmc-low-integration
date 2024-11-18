@@ -103,14 +103,14 @@ mccsmasterleafnode:
   image:
     registry: artefact.skao.int
     image: ska-tmc-mccsleafnodes
-    tag: 0.5.0
+    tag: 0.5.1
     pullPolicy: IfNotPresent
 
 mccssubarrayleafnode:
   image:
     registry: artefact.skao.int
     image: ska-tmc-mccsleafnodes
-    tag: 0.5.0
+    tag: 0.5.1
     pullPolicy: IfNotPresent
 
 resources:
@@ -178,6 +178,7 @@ deviceServers:
     instances: ["01"]
     file: "data/mccsmasterleafnode.yaml"
     SleepTime: 0.5
+    CommandTimeout: 50
 
   mccssubarrayleafnode:
     enabled: true

@@ -1,23 +1,19 @@
-release=0.20.1-rc.1
-tag=0.20.1-rc.1
+release=0.20.1-rc.2
+tag=0.20.1-rc.2
 tag_description=
 **Charts:**
-**1. ska-tmc-low-integration 0.20.1-rc - 0.20.1-rc.1**
+**1. ska-tmc-low-integration 0.20.1-rc.1 - 0.20.1-rc.2**
 
-    **1.1 ska-tmc-low - 0.20.1-rc - 0.20.1-rc.1:
-       a. Resolved SKB-329
-       b. The updated versions are as follows - 
-        CSPLeafNodes - 0.21.3
-       c. Updated Subarray Node v0.26.1 to fix SKB-643 and SKB-618
+    **1.1 ska-tmc-low - 0.20.1-rc.1 - 0.20.1-rc.2:
+       a. Fixed SKB-648
+       b. Updated ska-tmc-mccsleafnodes v0.5.1 to fix SKB-627
        
 
 release_notes=
 **Charts:**
-**1. ska-tmc-low-integration 0.20.1-rc - 0.20.1-rc.1**
+**1. ska-tmc-low-integration 0.20.1-rc.1 - 0.20.1-rc.2**
 
- **1.1 ska-tmc-low - 0.20.1-rc - 0.20.1-rc.1:
-       a. Resolved SKB-329
-       b. The updated versions are as follows - 
-        CSPLeafNodes - 0.21.3
-       c. Updated Subarray Node v0.26.1 to fix SKB-643 and SKB-618
+ **1.1 ska-tmc-low - 0.20.1-rc.1 - 0.20.1-rc.2:
+        a. Fixed SKB-648
+        b. Updated ska-tmc-mccsleafnodes v0.5.1 to fix SKB-627
        

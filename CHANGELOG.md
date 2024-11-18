@@ -9,6 +9,10 @@ Added
 -----
 
 [0.20.1-rc.1]
+* Fixed SKB-648
+* Updated ska-tmc-mccsleafnodes v0.5.1 to fix SKB-627
+
+[0.20.1-rc.1]
 * Resolved SKB-329
 * The updated versions are as follows - 
 * CSPLeafNodes - 0.21.3
