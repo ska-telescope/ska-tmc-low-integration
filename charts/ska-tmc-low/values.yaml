@@ -178,6 +178,7 @@ deviceServers:
     instances: ["01"]
     file: "data/mccsmasterleafnode.yaml"
     SleepTime: 0.5
+    CommandTimeout: 50
 
   mccssubarrayleafnode:
     enabled: true
