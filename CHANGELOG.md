@@ -7,8 +7,11 @@ This project adheres to `Semantic Versioning <http://semver.org/>`_.
 
 Added
 -----
+[0.20.1-rc.3]
+* Fix bug SKB-634, SKB-641
+* Update the image of SubarrayNode to 0.26.4
 
-[0.20.1-rc.1]
+[0.20.1-rc.2]
 * Fixed SKB-648
 * Updated ska-tmc-mccsleafnodes v0.5.1 to fix SKB-627
 
