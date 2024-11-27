@@ -1,0 +1,185 @@
+Flattened state machine for operational and observation state diagram
+
+This is the source of truth for the obsstate transitions
+to be tested. Validated by Giorgio Brajnik on July 2024.
+
+1. INIT --> (AUTO: Initialised) --> OFF
+2. INIT --> (AUTO: fatal error) --> OP_FAULT
+3. OFF --> (CMD: On) --> EMPTY
+4. OFF --> (AUTO: fatal error) --> OP_FAULT
+5. OP_FAULT --> (CMD: Reset) --> OFF
+6. EMPTY --> (CMD: AssignResources) --> RESOURCING
+7. EMPTY --> (CMD: Off) --> OFF
+8. EMPTY --> (AUTO: Observation Fault) --> OBS_FAULT
+9. EMPTY --> (AUTO: Fatal error) --> OP_FAULT
+10. RESOURCING --> (AUTO: Assigned) --> IDLE
+11. RESOURCING --> (AUTO: Released) --> IDLE
+12. RESOURCING --> (CMD: Abort) --> ABORTING
+13. RESOURCING --> (AUTO: All released) --> EMPTY
+14. RESOURCING --> (AUTO: Observation fault) --> OBS_FAULT
+15. RESOURCING --> (AUTO: Fatal error) --> OP_FAULT
+16. IDLE --> (CMD: Configure) --> CONFIGURING
+17. IDLE --> (CMD: ReleaseResources) --> RESOURCING
+18. IDLE --> (CMD: AssignResources) --> RESOURCING
+19. IDLE --> (CMD: Abort) --> ABORTING
+20. IDLE --> (AUTO: Observation Fault) --> OBS_FAULT
+21. IDLE --> (AUTO: Fatal error) --> OP_FAULT
+22. CONFIGURING --> (AUTO: Ready) --> READY
+23. CONFIGURING --> (AUTO: Observation Fault) --> OBS_FAULT
+24. CONFIGURING --> (AUTO: Fatal error) --> OP_FAULT
+25. CONFIGURING --> (CMD: Abort) --> ABORTING
+26. READY --> (CMD: Scan) --> SCANNING
+27. READY --> (CMD: End) --> IDLE
+28. READY --> (CMD: Abort) --> ABORTING
+29. READY --> (CMD: Configure) --> CONFIGURING
+30. READY --> (AUTO: Observation Fault) --> OBS_FAULT
+31. READY --> (AUTO: Fatal error) --> OP_FAULT
+32. SCANNING --> (CMD: EndScan) --> READY
+33. SCANNING --> (AUTO: ScanComplete) --> READY
+34. SCANNING --> (CMD: Abort) --> ABORTING
+35. SCANNING --> (AUTO: Observation Fault) --> OBS_FAULT
+36. SCANNING --> (AUTO: Fatal error) --> OP_FAULT
+37. ABORTING --> (AUTO: Abort complete) --> ABORTED
+38. ABORTING --> (AUTO: Observation Fault) --> OBS_FAULT
+39. ABORTING --> (AUTO: Fatal error) --> OP_FAULT
+40. ABORTED --> (CMD: Restart) --> RESTARTING
+41. ABORTED --> (AUTO: Observation Fault) --> OBS_FAULT
+42. ABORTED --> (AUTO: Fatal error) --> OP_FAULT
+43. RESTARTING --> (AUTO: Restart Complete) --> EMPTY
+44. RESTARTING --> (AUTO: Observation Fault) --> OBS_FAULT
+45. RESTARTING --> (AUTO: Fatal error) --> OP_FAULT
+46. OBS_FAULT --> (CMD: Restart) --> RESTARTING
+47. OBS_FAULT --> (AUTO: Observation Fault) --> OBS_FAULT
+48. OBS_FAULT --> (AUTO: Fatal error) --> OP_FAULT
+
+
+# list of pairs of consecutive transitions
+
+1.: INIT --> (AUTO: Fatal error) --> OFF --> (AUTO: Fatal error) --> EMPTY
+2.: INIT --> (AUTO: Fatal error) --> OFF --> (AUTO: Fatal error) --> OP_FAULT
+3.: INIT --> (AUTO: Fatal error) --> OP_FAULT --> (AUTO: Fatal error) --> OFF
+4.: OFF --> (AUTO: Fatal error) --> EMPTY --> (AUTO: Fatal error) --> RESOURCING
+5.: OFF --> (AUTO: Fatal error) --> EMPTY --> (AUTO: Fatal error) --> OFF
+6.: OFF --> (AUTO: Fatal error) --> EMPTY --> (AUTO: Fatal error) --> OBS_FAULT
+7.: OFF --> (AUTO: Fatal error) --> EMPTY --> (AUTO: Fatal error) --> OP_FAULT
+8.: OFF --> (AUTO: Fatal error) --> OP_FAULT --> (AUTO: Fatal error) --> OFF
+9.: OP_FAULT --> (AUTO: Fatal error) --> OFF --> (AUTO: Fatal error) --> EMPTY
+10.: OP_FAULT --> (AUTO: Fatal error) --> OFF --> (AUTO: Fatal error) --> OP_FAULT
+11.: EMPTY --> (AUTO: Fatal error) --> RESOURCING --> (AUTO: Fatal error) --> IDLE
+12.: EMPTY --> (AUTO: Fatal error) --> RESOURCING --> (AUTO: Fatal error) --> ABORTING
+13.: EMPTY --> (AUTO: Fatal error) --> RESOURCING --> (AUTO: Fatal error) --> EMPTY
+14.: EMPTY --> (AUTO: Fatal error) --> RESOURCING --> (AUTO: Fatal error) --> OBS_FAULT
+15.: EMPTY --> (AUTO: Fatal error) --> RESOURCING --> (AUTO: Fatal error) --> OP_FAULT
+16.: EMPTY --> (AUTO: Fatal error) --> OFF --> (AUTO: Fatal error) --> EMPTY
+17.: EMPTY --> (AUTO: Fatal error) --> OFF --> (AUTO: Fatal error) --> OP_FAULT
+18.: EMPTY --> (AUTO: Fatal error) --> OBS_FAULT --> (AUTO: Fatal error) --> RESTARTING
+19.: EMPTY --> (AUTO: Fatal error) --> OBS_FAULT --> (AUTO: Fatal error) --> OBS_FAULT
+20.: EMPTY --> (AUTO: Fatal error) --> OBS_FAULT --> (AUTO: Fatal error) --> OP_FAULT
+21.: EMPTY --> (AUTO: Fatal error) --> OP_FAULT --> (AUTO: Fatal error) --> OFF
+22.: RESOURCING --> (AUTO: Fatal error) --> IDLE --> (AUTO: Fatal error) --> CONFIGURING
+23.: RESOURCING --> (AUTO: Fatal error) --> IDLE --> (AUTO: Fatal error) --> RESOURCING
+24.: RESOURCING --> (AUTO: Fatal error) --> IDLE --> (AUTO: Fatal error) --> ABORTING
+25.: RESOURCING --> (AUTO: Fatal error) --> IDLE --> (AUTO: Fatal error) --> OBS_FAULT
+26.: RESOURCING --> (AUTO: Fatal error) --> IDLE --> (AUTO: Fatal error) --> OP_FAULT
+27.: RESOURCING --> (AUTO: Fatal error) --> ABORTING --> (AUTO: Fatal error) --> ABORTED
+28.: RESOURCING --> (AUTO: Fatal error) --> ABORTING --> (AUTO: Fatal error) --> OBS_FAULT
+29.: RESOURCING --> (AUTO: Fatal error) --> ABORTING --> (AUTO: Fatal error) --> OP_FAULT
+30.: RESOURCING --> (AUTO: Fatal error) --> EMPTY --> (AUTO: Fatal error) --> RESOURCING
+31.: RESOURCING --> (AUTO: Fatal error) --> EMPTY --> (AUTO: Fatal error) --> OFF
+32.: RESOURCING --> (AUTO: Fatal error) --> EMPTY --> (AUTO: Fatal error) --> OBS_FAULT
+33.: RESOURCING --> (AUTO: Fatal error) --> EMPTY --> (AUTO: Fatal error) --> OP_FAULT
+34.: RESOURCING --> (AUTO: Fatal error) --> OBS_FAULT --> (AUTO: Fatal error) --> RESTARTING
+35.: RESOURCING --> (AUTO: Fatal error) --> OBS_FAULT --> (AUTO: Fatal error) --> OBS_FAULT
+36.: RESOURCING --> (AUTO: Fatal error) --> OBS_FAULT --> (AUTO: Fatal error) --> OP_FAULT
+37.: RESOURCING --> (AUTO: Fatal error) --> OP_FAULT --> (AUTO: Fatal error) --> OFF
+38.: IDLE --> (AUTO: Fatal error) --> CONFIGURING --> (AUTO: Fatal error) --> READY
+39.: IDLE --> (AUTO: Fatal error) --> CONFIGURING --> (AUTO: Fatal error) --> OBS_FAULT
+40.: IDLE --> (AUTO: Fatal error) --> CONFIGURING --> (AUTO: Fatal error) --> OP_FAULT
+41.: IDLE --> (AUTO: Fatal error) --> CONFIGURING --> (AUTO: Fatal error) --> ABORTING
+42.: IDLE --> (AUTO: Fatal error) --> RESOURCING --> (AUTO: Fatal error) --> IDLE
+43.: IDLE --> (AUTO: Fatal error) --> RESOURCING --> (AUTO: Fatal error) --> ABORTING
+44.: IDLE --> (AUTO: Fatal error) --> RESOURCING --> (AUTO: Fatal error) --> EMPTY
+45.: IDLE --> (AUTO: Fatal error) --> RESOURCING --> (AUTO: Fatal error) --> OBS_FAULT
+46.: IDLE --> (AUTO: Fatal error) --> RESOURCING --> (AUTO: Fatal error) --> OP_FAULT
+47.: IDLE --> (AUTO: Fatal error) --> ABORTING --> (AUTO: Fatal error) --> ABORTED
+48.: IDLE --> (AUTO: Fatal error) --> ABORTING --> (AUTO: Fatal error) --> OBS_FAULT
+49.: IDLE --> (AUTO: Fatal error) --> ABORTING --> (AUTO: Fatal error) --> OP_FAULT
+50.: IDLE --> (AUTO: Fatal error) --> OBS_FAULT --> (AUTO: Fatal error) --> RESTARTING
+51.: IDLE --> (AUTO: Fatal error) --> OBS_FAULT --> (AUTO: Fatal error) --> OBS_FAULT
+52.: IDLE --> (AUTO: Fatal error) --> OBS_FAULT --> (AUTO: Fatal error) --> OP_FAULT
+53.: IDLE --> (AUTO: Fatal error) --> OP_FAULT --> (AUTO: Fatal error) --> OFF
+54.: CONFIGURING --> (AUTO: Fatal error) --> READY --> (AUTO: Fatal error) --> SCANNING
+55.: CONFIGURING --> (AUTO: Fatal error) --> READY --> (AUTO: Fatal error) --> IDLE
+56.: CONFIGURING --> (AUTO: Fatal error) --> READY --> (AUTO: Fatal error) --> ABORTING
+57.: CONFIGURING --> (AUTO: Fatal error) --> READY --> (AUTO: Fatal error) --> CONFIGURING
+58.: CONFIGURING --> (AUTO: Fatal error) --> READY --> (AUTO: Fatal error) --> OBS_FAULT
+59.: CONFIGURING --> (AUTO: Fatal error) --> READY --> (AUTO: Fatal error) --> OP_FAULT
+60.: CONFIGURING --> (AUTO: Fatal error) --> OBS_FAULT --> (AUTO: Fatal error) --> RESTARTING
+61.: CONFIGURING --> (AUTO: Fatal error) --> OBS_FAULT --> (AUTO: Fatal error) --> OBS_FAULT
+62.: CONFIGURING --> (AUTO: Fatal error) --> OBS_FAULT --> (AUTO: Fatal error) --> OP_FAULT
+63.: CONFIGURING --> (AUTO: Fatal error) --> OP_FAULT --> (AUTO: Fatal error) --> OFF
+64.: CONFIGURING --> (AUTO: Fatal error) --> ABORTING --> (AUTO: Fatal error) --> ABORTED
+65.: CONFIGURING --> (AUTO: Fatal error) --> ABORTING --> (AUTO: Fatal error) --> OBS_FAULT
+66.: CONFIGURING --> (AUTO: Fatal error) --> ABORTING --> (AUTO: Fatal error) --> OP_FAULT
+67.: READY --> (AUTO: Fatal error) --> SCANNING --> (AUTO: Fatal error) --> READY
+68.: READY --> (AUTO: Fatal error) --> SCANNING --> (AUTO: Fatal error) --> ABORTING
+69.: READY --> (AUTO: Fatal error) --> SCANNING --> (AUTO: Fatal error) --> OBS_FAULT
+70.: READY --> (AUTO: Fatal error) --> SCANNING --> (AUTO: Fatal error) --> OP_FAULT
+71.: READY --> (AUTO: Fatal error) --> IDLE --> (AUTO: Fatal error) --> CONFIGURING
+72.: READY --> (AUTO: Fatal error) --> IDLE --> (AUTO: Fatal error) --> RESOURCING
+73.: READY --> (AUTO: Fatal error) --> IDLE --> (AUTO: Fatal error) --> ABORTING
+74.: READY --> (AUTO: Fatal error) --> IDLE --> (AUTO: Fatal error) --> OBS_FAULT
+75.: READY --> (AUTO: Fatal error) --> IDLE --> (AUTO: Fatal error) --> OP_FAULT
+76.: READY --> (AUTO: Fatal error) --> ABORTING --> (AUTO: Fatal error) --> ABORTED
+77.: READY --> (AUTO: Fatal error) --> ABORTING --> (AUTO: Fatal error) --> OBS_FAULT
+78.: READY --> (AUTO: Fatal error) --> ABORTING --> (AUTO: Fatal error) --> OP_FAULT
+79.: READY --> (AUTO: Fatal error) --> CONFIGURING --> (AUTO: Fatal error) --> READY
+80.: READY --> (AUTO: Fatal error) --> CONFIGURING --> (AUTO: Fatal error) --> OBS_FAULT
+81.: READY --> (AUTO: Fatal error) --> CONFIGURING --> (AUTO: Fatal error) --> OP_FAULT
+82.: READY --> (AUTO: Fatal error) --> CONFIGURING --> (AUTO: Fatal error) --> ABORTING
+83.: READY --> (AUTO: Fatal error) --> OBS_FAULT --> (AUTO: Fatal error) --> RESTARTING
+84.: READY --> (AUTO: Fatal error) --> OBS_FAULT --> (AUTO: Fatal error) --> OBS_FAULT
+85.: READY --> (AUTO: Fatal error) --> OBS_FAULT --> (AUTO: Fatal error) --> OP_FAULT
+86.: READY --> (AUTO: Fatal error) --> OP_FAULT --> (AUTO: Fatal error) --> OFF
+87.: SCANNING --> (AUTO: Fatal error) --> READY --> (AUTO: Fatal error) --> SCANNING
+88.: SCANNING --> (AUTO: Fatal error) --> READY --> (AUTO: Fatal error) --> IDLE
+89.: SCANNING --> (AUTO: Fatal error) --> READY --> (AUTO: Fatal error) --> ABORTING
+90.: SCANNING --> (AUTO: Fatal error) --> READY --> (AUTO: Fatal error) --> CONFIGURING
+91.: SCANNING --> (AUTO: Fatal error) --> READY --> (AUTO: Fatal error) --> OBS_FAULT
+92.: SCANNING --> (AUTO: Fatal error) --> READY --> (AUTO: Fatal error) --> OP_FAULT
+93.: SCANNING --> (AUTO: Fatal error) --> ABORTING --> (AUTO: Fatal error) --> ABORTED
+94.: SCANNING --> (AUTO: Fatal error) --> ABORTING --> (AUTO: Fatal error) --> OBS_FAULT
+95.: SCANNING --> (AUTO: Fatal error) --> ABORTING --> (AUTO: Fatal error) --> OP_FAULT
+96.: SCANNING --> (AUTO: Fatal error) --> OBS_FAULT --> (AUTO: Fatal error) --> RESTARTING
+97.: SCANNING --> (AUTO: Fatal error) --> OBS_FAULT --> (AUTO: Fatal error) --> OBS_FAULT
+98.: SCANNING --> (AUTO: Fatal error) --> OBS_FAULT --> (AUTO: Fatal error) --> OP_FAULT
+99.: SCANNING --> (AUTO: Fatal error) --> OP_FAULT --> (AUTO: Fatal error) --> OFF
+100.: ABORTING --> (AUTO: Fatal error) --> ABORTED --> (AUTO: Fatal error) --> RESTARTING
+101.: ABORTING --> (AUTO: Fatal error) --> ABORTED --> (AUTO: Fatal error) --> OBS_FAULT
+102.: ABORTING --> (AUTO: Fatal error) --> ABORTED --> (AUTO: Fatal error) --> OP_FAULT
+103.: ABORTING --> (AUTO: Fatal error) --> OBS_FAULT --> (AUTO: Fatal error) --> RESTARTING
+104.: ABORTING --> (AUTO: Fatal error) --> OBS_FAULT --> (AUTO: Fatal error) --> OBS_FAULT
+105.: ABORTING --> (AUTO: Fatal error) --> OBS_FAULT --> (AUTO: Fatal error) --> OP_FAULT
+106.: ABORTING --> (AUTO: Fatal error) --> OP_FAULT --> (AUTO: Fatal error) --> OFF
+107.: ABORTED --> (AUTO: Fatal error) --> RESTARTING --> (AUTO: Fatal error) --> EMPTY
+108.: ABORTED --> (AUTO: Fatal error) --> RESTARTING --> (AUTO: Fatal error) --> OBS_FAULT
+109.: ABORTED --> (AUTO: Fatal error) --> RESTARTING --> (AUTO: Fatal error) --> OP_FAULT
+110.: ABORTED --> (AUTO: Fatal error) --> OBS_FAULT --> (AUTO: Fatal error) --> RESTARTING
+111.: ABORTED --> (AUTO: Fatal error) --> OBS_FAULT --> (AUTO: Fatal error) --> OBS_FAULT
+112.: ABORTED --> (AUTO: Fatal error) --> OBS_FAULT --> (AUTO: Fatal error) --> OP_FAULT
+113.: ABORTED --> (AUTO: Fatal error) --> OP_FAULT --> (AUTO: Fatal error) --> OFF
+114.: RESTARTING --> (AUTO: Fatal error) --> EMPTY --> (AUTO: Fatal error) --> RESOURCING
+115.: RESTARTING --> (AUTO: Fatal error) --> EMPTY --> (AUTO: Fatal error) --> OFF
+116.: RESTARTING --> (AUTO: Fatal error) --> EMPTY --> (AUTO: Fatal error) --> OBS_FAULT
+117.: RESTARTING --> (AUTO: Fatal error) --> EMPTY --> (AUTO: Fatal error) --> OP_FAULT
+118.: RESTARTING --> (AUTO: Fatal error) --> OBS_FAULT --> (AUTO: Fatal error) --> RESTARTING
+119.: RESTARTING --> (AUTO: Fatal error) --> OBS_FAULT --> (AUTO: Fatal error) --> OBS_FAULT
+120.: RESTARTING --> (AUTO: Fatal error) --> OBS_FAULT --> (AUTO: Fatal error) --> OP_FAULT
+121.: RESTARTING --> (AUTO: Fatal error) --> OP_FAULT --> (AUTO: Fatal error) --> OFF
+122.: OBS_FAULT --> (AUTO: Fatal error) --> RESTARTING --> (AUTO: Fatal error) --> EMPTY
+123.: OBS_FAULT --> (AUTO: Fatal error) --> RESTARTING --> (AUTO: Fatal error) --> OBS_FAULT
+124.: OBS_FAULT --> (AUTO: Fatal error) --> RESTARTING --> (AUTO: Fatal error) --> OP_FAULT
+125.: OBS_FAULT --> (AUTO: Fatal error) --> OBS_FAULT --> (AUTO: Fatal error) --> RESTARTING
+126.: OBS_FAULT --> (AUTO: Fatal error) --> OBS_FAULT --> (AUTO: Fatal error) --> OBS_FAULT
+127.: OBS_FAULT --> (AUTO: Fatal error) --> OBS_FAULT --> (AUTO: Fatal error) --> OP_FAULT
+128.: OBS_FAULT --> (AUTO: Fatal error) --> OP_FAULT --> (AUTO: Fatal error) --> OFF
