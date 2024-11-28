@@ -3,6 +3,8 @@
 tmc:
   is_emulated: false # Not supported otherwise, default is false
 
+  target: "low" # Supported "low", "mid" (case insensitive), default is "mid"
+
   # Expected device names (Required)
   centralnode_name: "ska_low/tm_central/central_node"
   tmc_subarraynode1_name: "ska_low/tm_subarray_node/1"
