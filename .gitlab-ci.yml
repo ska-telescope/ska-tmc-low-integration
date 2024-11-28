@@ -127,6 +127,27 @@ stop-k8s-test-tmc-with-csp:
   variables:
     KUBE_NAMESPACE: 'ci-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-csp-low'
 
+# CLONED JOB FOR TMC WITH CSP w new ITH tests
+k8s-test-tmc-with-csp-new-ith:
+  extends:
+    - k8s-test
+  variables:
+    KUBE_NAMESPACE: 'ci-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-csp-low-new-ith'
+    SERVICE_ACCOUNT: "ci-svc-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-csp-low-new-ith"
+    MARK: 'tmc_csp_new_ITH'
+    COUNT: 1
+    CSP_SIMULATION_ENABLED: 'false'
+  environment:
+    name: test/$CI_COMMIT_REF_SLUG
+    on_stop: stop-k8s-test-tmc-with-csp-new-ith-new-ith
+  when: manual
+
+stop-k8s-test-tmc-with-csp-new-ith:
+  extends:
+    - stop-k8s-test
+  variables:
+    KUBE_NAMESPACE: 'ci-$CI_PROJECT_NAME-$CI_COMMIT_SHORT_SHA-csp-low-new-ith'
+
 k8s-test-tmc-with-sdp:
   extends:
     - k8s-test

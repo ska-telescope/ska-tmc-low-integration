@@ -2128,8 +2128,8 @@ ska-tango-testing = "^0.7.2"
 [package.source]
 type = "git"
 url = "https://gitlab.com/ska-telescope/ska-integration-test-harness.git"
-reference = "sst-982-lrc-is-verified-in-actions"
-resolved_reference = "45823a1f61de5c9a965df6d353f2f390bb302241"
+reference = "sst-1012-make-ith-support-low"
+resolved_reference = "00378f126d066282273a95fbcac2e56b54acf166"
 
 [[package]]
 name = "ska-ser-logging"
@@ -2767,4 +2767,4 @@ reference = "PyPI-public"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "d9d6ebf84f3a7a858734d7195a699a360b5e7464cb800fafe3db4461c42b1918"
+content-hash = "18e8f4d96c3365c8a9451b54dfa9b34991c1f64b47d0ffb86468b90e0ce74383"
