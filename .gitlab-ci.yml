@@ -139,7 +139,7 @@ k8s-test-tmc-with-csp-new-ith:
     CSP_SIMULATION_ENABLED: 'false'
   environment:
     name: test/$CI_COMMIT_REF_SLUG
-    on_stop: stop-k8s-test-tmc-with-csp-new-ith-new-ith
+    on_stop: stop-k8s-test-tmc-with-csp-new-ith
   when: manual
 
 stop-k8s-test-tmc-with-csp-new-ith:
