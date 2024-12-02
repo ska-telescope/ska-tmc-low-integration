@@ -1,5 +1,8 @@
 """Configurations needed for the tests using the new harness."""
 
+# pylint: disable=redefined-outer-name
+
+
 import logging
 import os
 from dataclasses import dataclass
@@ -81,13 +84,14 @@ def telescope_wrapper(
 
     # after a test is completed, reset the telescope to its initial state
     # (obsState=READY, telescopeState=OFF, no resources assigned)
-    n_tries = 2
+    n_tries = 1
     for i in range(n_tries):
         try:
             telescope.tear_down()
             break
+        # pylint: disable=broad-exception-caught
         except Exception as e:
-            logging.error(f"Error during tear down: {e}")
+            logging.error("Error during tear down: %s", e)
             if i == n_tries - 1:
                 raise e
 

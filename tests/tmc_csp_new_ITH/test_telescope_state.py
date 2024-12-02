@@ -155,7 +155,7 @@ def verify_off_state(
 def verify_standby_state(
     event_tracer: TangoEventTracer,
     tmc: TMCFacade,
-    csp: CSPFacade,
+    # csp: CSPFacade,
 ):
     """TMC should transition to the STANDBY state."""
     assert_that(event_tracer).within_timeout(ASSERTIONS_TIMEOUT).described_as(

@@ -108,7 +108,6 @@ def test_ready_to_configuring_to_ready():
 )
 def test_scanning_to_ready():
     """Test SCANNING to READY transitions."""
-    pass
 
 
 # ------------------------------------------------------------
