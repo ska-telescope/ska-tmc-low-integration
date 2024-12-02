@@ -1,9 +1,9 @@
 # A configuration file for the test harness
 
+target: "low" # Supported "low", "mid" (case insensitive), default is "mid"
+
 tmc:
   is_emulated: false # Not supported otherwise, default is false
-
-  target: "low" # Supported "low", "mid" (case insensitive), default is "mid"
 
   # Expected device names (Required)
   centralnode_name: "ska_low/tm_central/central_node"
@@ -21,6 +21,9 @@ csp:
   # Expected device names
   csp_master_name: "low-csp/control/0"
   csp_subarray1_name: "low-csp/subarray/01"
+
+  # PST is required when in Low and CSP is not emulated
+  pst_name: "low-csp/pst/0"
 
 sdp:
   is_emulated: true # Supported false too, default is true
