@@ -2129,7 +2129,7 @@ ska-tango-testing = "^0.7.2"
 type = "git"
 url = "https://gitlab.com/ska-telescope/ska-integration-test-harness.git"
 reference = "sst-1012-make-ith-support-low"
-resolved_reference = "69876ba7da12739b4258e83651f07059b82d2f91"
+resolved_reference = "abec6bade8e1e2d8db4d254f7f6ec93c04eccc59"
 
 [[package]]
 name = "ska-ser-logging"
