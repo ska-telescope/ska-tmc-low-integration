@@ -168,7 +168,7 @@ def send_assign_resources_command(
     context_fixt.when_action_name = "AssignResources"
 
     json_input = MyFileJSONInput(
-        "centralnode", "assign_resources_mid"
+        "centralnode", "assign_resources_low"
     ).with_attribute("subarray_id", 1)
 
     context_fixt.when_action_result = tmc.assign_resources(
@@ -199,7 +199,7 @@ def send_assign_additional_resources_command(
 
     # TODO: change this input to assign additional resources
     json_input = MyFileJSONInput(
-        "centralnode", "assign_resources_mid"
+        "centralnode", "assign_resources_low"
     ).with_attribute("subarray_id", 1)
 
     context_fixt.when_action_result = tmc.assign_resources(
@@ -229,7 +229,7 @@ def send_release_resources_command(
     context_fixt.when_action_name = "ReleaseResources"
 
     json_input = MyFileJSONInput(
-        "centralnode", "release_resources_mid"
+        "centralnode", "release_resources_low"
     ).with_attribute("subarray_id", 1)
 
     context_fixt.when_action_result = tmc.release_resources(
@@ -255,7 +255,7 @@ def send_configure_command(
     """
     context_fixt.when_action_name = "Configure"
 
-    json_input = MyFileJSONInput("subarray", "configure_mid")
+    json_input = MyFileJSONInput("subarray", "configure_low")
 
     context_fixt.when_action_result = tmc.configure(
         json_input,
@@ -278,7 +278,7 @@ def send_scan_command(
     """
     context_fixt.when_action_name = "Scan"
 
-    json_input = MyFileJSONInput("subarray", "scan_mid")
+    json_input = MyFileJSONInput("subarray", "scan_low")
 
     context_fixt.when_action_result = tmc.scan(
         json_input,

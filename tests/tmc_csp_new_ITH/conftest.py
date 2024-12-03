@@ -39,7 +39,7 @@ DEFAULT_VCC_CONFIG_INPUT = DictJSONInput(
             + "ska-sdp-tmlite-repository-1.0.0#tmdata"
         ],
         "tm_data_filepath": (
-            "instrument/ska1_mid_psi/ska-mid-cbf-system-parameters.json",
+            "instrument/ska1_low_psi/ska-mid-cbf-system-parameters.json",
         ),
     }
 )
@@ -81,7 +81,6 @@ def telescope_wrapper(
     telescope = test_harness_builder.build()
     telescope.actions_default_timeout = 60
     yield telescope
-    return
 
     # after a test is completed, reset the telescope to its initial state
     # (obsState=READY, telescopeState=OFF, no resources assigned)
@@ -227,7 +226,7 @@ def subarray_can_be_used(
     event_tracer: TangoEventTracer,
 ):
     """Set up the subarray (and the subscriptions) to be used in the test."""
-    # tmc.set_subarray_id(int(subarray_id))
+    tmc.set_subarray_id(int(subarray_id))
     _setup_event_subscriptions(tmc, csp, sdp, event_tracer)
 
 
@@ -264,7 +263,7 @@ def subarray_in_idle_state(
     )
 
     json_input = MyFileJSONInput(
-        "centralnode", "assign_resources_mid"
+        "centralnode", "assign_resources_low"
     ).with_attribute("subarray_id", 1)
 
     context_fixt.when_action_result = tmc.assign_resources(

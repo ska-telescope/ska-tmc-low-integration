@@ -171,3 +171,19 @@ cred:
 test-requirements:
 	@poetry export --without-hashes --with dev --format requirements.txt --output tests/requirements.txt
 k8s-pre-test: test-requirements
+
+
+# ----------------------------------------------------------------------------
+# Trick to select a subset of the tests to run by their python name
+# Very useful when debugging a single test
+# 
+# Example:
+# make k8s-test MARK=tmc_csp PYTHON_TEST_NAME="abort"
+# # Expected result: among all the tests with "tmc_csp" as a marker,
+# #  			  only the ones with "abort" in their name will be run.
+
+PYTHON_TEST_NAME ?= ## -k parameter for pytest
+
+ifneq ($(PYTHON_TEST_NAME),)
+PYTHON_VARS_AFTER_PYTEST += -k '$(PYTHON_TEST_NAME)'
+endif

@@ -22,7 +22,7 @@ class MyFileJSONInput(FileJSONInput):
 
         :param target_file_folder_name: The target file folder name
             (e.g. "subarray").
-        :param target_file_slug: The target file slug (e.g. "configure_mid").
+        :param target_file_slug: The target file slug (e.g. "configure_low").
         """
         self.target_file_folder_name = target_file_folder_name
         self.target_file_slug = target_file_slug
