@@ -382,6 +382,7 @@ class CentralNodeWrapperLow(object):
                     json.dumps((int(ResultCode.OK), "Command Completed")),
                 ),
             )
+
         if SIMULATED_DEVICES_DICT["sdp_and_mccs"]:
             if self.pst.obsState == ObsState.ABORTED:
                 log_events({self.pst: ["obsState"]})

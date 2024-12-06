@@ -32,5 +32,10 @@ sdp:
   sdp_master_name: "low-sdp/control/0"
   sdp_subarray1_name: "low-sdp/subarray/01"
 
-# TODO: Add MCCS configuration
+mccs:
+  is_emulated: true # Supported false too, default is true
+
+  # Expected device names (Required)
+  mccs_controller_name: "low-mccs/control/control"
+  mccs_subarray1_name: "low-mccs/subarray/01"
 
